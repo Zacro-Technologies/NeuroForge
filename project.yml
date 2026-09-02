@@ -1,0 +1,122 @@
+name: NeuroForge
+
+options:
+  bundleIdPrefix: com.zacrotech
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "26.4"
+    macOS: "26.4"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: 6.0
+    SWIFT_STRICT_CONCURRENCY: complete
+    # Xcode 26's Swift frontend currently crashes while batch-compiling the
+    # largest SwiftUI source group. Single-file compilation is deterministic
+    # and passes the same strict concurrency and warnings-as-errors gates.
+    SWIFT_ENABLE_BATCH_MODE: NO
+    SWIFT_TREAT_WARNINGS_AS_ERRORS: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+    CLANG_WARN_DOCUMENTATION_COMMENTS: YES
+    MARKETING_VERSION: 1.0.0
+    CURRENT_PROJECT_VERSION: 4
+
+packages:
+  SwiftMath:
+    url: https://github.com/mgriebling/SwiftMath.git
+    revision: 1d2c90827e9c3908269d810d055fb03b7da5fd53
+
+targets:
+  NeuroForge:
+    type: application
+    platform: auto
+    supportedDestinations: [iOS, macOS]
+    sources:
+      - path: Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zacrotech.NeuroForge
+        PRODUCT_NAME: NeuroForge
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Sources/Resources/Info.plist
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": Sources/Resources/NeuroForgeTestFlight.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": Sources/Resources/NeuroForgeTestFlight.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Sources/Resources/NeuroForgeMac.entitlements
+        APS_ENVIRONMENT: development
+        ICLOUD_CONTAINER_ENVIRONMENT: Development
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 34NS8XN5F9
+      configs:
+        Release:
+          APS_ENVIRONMENT: production
+          ICLOUD_CONTAINER_ENVIRONMENT: Production
+    dependencies:
+      - package: SwiftMath
+      - target: NeuroForgeWidgets
+        embed: true
+        platformFilter: iOS
+    scheme:
+      testTargets:
+        - NeuroForgeTests
+
+  NeuroForgeTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: NeuroForge
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zacrotech.NeuroForgeTests
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGNING_ALLOWED: NO
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/NeuroForge.app/Contents/MacOS/NeuroForge"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
+  NeuroForgeUITests:
+    type: bundle.ui-testing
+    platform: auto
+    supportedDestinations: [iOS, macOS]
+    sources:
+      - path: UITests
+    dependencies:
+      - target: NeuroForge
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zacrotech.NeuroForgeUITests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: NeuroForge
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 34NS8XN5F9
+
+  NeuroForgeWidgets:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "26.4"
+    sources:
+      - path: Widgets
+      - path: Sources/Integrations/NFWidgetSnapshot.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zacrotech.NeuroForge.Widgets
+        PRODUCT_NAME: NeuroForgeWidgets
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Widgets/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Widgets/NeuroForgeWidgets.entitlements
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 34NS8XN5F9
+        SKIP_INSTALL: YES
+
+schemes:
+  NeuroForgeUISmoke:
+    build:
+      targets:
+        NeuroForge: all
+        NeuroForgeUITests: [test]
+    test:
+      config: Debug
+      targets:
+        - NeuroForgeUITests

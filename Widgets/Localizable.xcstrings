@@ -1,0 +1,168 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "NeuroForge Today, %@. No plan yet. Open NeuroForge.": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "NeuroForge Today, %@. No plan yet. Open NeuroForge." } }, "ja": { "stringUnit": { "state": "translated", "value": "NeuroForge 今日（%@）。プランはまだありません。NeuroForgeを開いてください。" } } } },
+    "NeuroForge Today, %@. %@ plan, not started. Start plan.": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "NeuroForge Today, %1$@. %2$@ plan, not started. Start plan." } }, "ja": { "stringUnit": { "state": "translated", "value": "NeuroForge 今日（%1$@）。%2$@のプランは未開始です。プランを開始してください。" } } } },
+    "NeuroForge Today, %@. %lld/%lld complete. Continue plan.": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "NeuroForge Today, %1$@. %2$lld/%3$lld complete. Continue plan." } }, "ja": { "stringUnit": { "state": "translated", "value": "NeuroForge 今日（%1$@）。%2$lld/%3$lld完了。プランを続けてください。" } } } },
+    "NeuroForge Today, %@. Plan complete. Review today’s work.": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "NeuroForge Today, %@. Plan complete. Review today’s work." } }, "ja": { "stringUnit": { "state": "translated", "value": "NeuroForge 今日（%@）。プラン完了。今日の学習を確認しましょう。" } } } },
+    "NeuroForge Today. No plan yet. Open NeuroForge.": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "NeuroForge Today. No plan yet. Open NeuroForge." } }, "ja": { "stringUnit": { "state": "translated", "value": "NeuroForge Today。プランはまだありません。NeuroForgeを開いてください。" } } } },
+    "NeuroForge Today. Plan complete. Review today’s work.": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "NeuroForge Today. Plan complete. Review today’s work." } }, "ja": { "stringUnit": { "state": "translated", "value": "NeuroForge Today。プラン完了。今日の学習を確認しましょう。" } } } },
+    "No plan yet": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "No plan yet" } }, "ja": { "stringUnit": { "state": "translated", "value": "プランはまだありません" } } } },
+    "Open NeuroForge": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Open NeuroForge" } }, "ja": { "stringUnit": { "state": "translated", "value": "NeuroForgeを開く" } } } },
+    "Review today": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Review today" } }, "ja": { "stringUnit": { "state": "translated", "value": "今日を振り返る" } } } },
+    "Today’s plan complete": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "Today’s plan complete" } }, "ja": { "stringUnit": { "state": "translated", "value": "今日のプラン完了" } } } },
+    "%lld/%lld complete": {
+      "comment": "Compact widget progress; placeholders are completed and expected item counts.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld/%2$lld complete"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld/%2$lld 完了"
+          }
+        }
+      }
+    },
+    "%lldm": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld分"
+          }
+        }
+      }
+    },
+    "Complete": {
+      "comment": "Widget status when every item in today's plan is complete.",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "完了"
+          }
+        }
+      }
+    },
+    "Continue · %lldm plan": {
+      "comment": "Widget action label; the placeholder is the scheduled plan length in minutes.",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "続ける・%lld分プラン"
+          }
+        }
+      }
+    },
+    "NeuroForge": {
+      "comment": "Product name. Do not translate.",
+      "extractionState": "manual",
+      "shouldTranslate": false
+    },
+    "NeuroForge Today": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NeuroForge 今日"
+          }
+        }
+      }
+    },
+    "Open NeuroForge to prepare today’s private plan.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NeuroForgeを開いて、今日の非公開プランを準備してください。"
+          }
+        }
+      }
+    },
+    "Plan ready in app": {
+      "comment": "Compact widget status when a private plan is ready in NeuroForge.",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリでプランを準備済み"
+          }
+        }
+      }
+    },
+    "Start or continue today’s privacy-safe training plan.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今日のプライバシーに配慮したトレーニングプランを開始または続行します。"
+          }
+        }
+      }
+    },
+    "Start · %lldm plan": {
+      "comment": "Widget action label; the placeholder is the scheduled plan length in minutes.",
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開始・%lld分プラン"
+          }
+        }
+      }
+    },
+    "1 minute": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "1 minute" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "1分" } }
+      }
+    },
+    "%lld min": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%lld min" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%lld分" } }
+      }
+    },
+    "%lld minutes": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "%lld minutes" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "%lld分" } }
+      }
+    },
+    "Start · %@ plan": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Start · %@ plan" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "開始・%@プラン" } }
+      }
+    },
+    "Continue · %@ plan": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "Continue · %@ plan" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "続ける・%@プラン" } }
+      }
+    },
+    "NeuroForge Today. %@ plan, not started. Start plan.": {
+      "localizations": {
+        "en": { "stringUnit": { "state": "translated", "value": "NeuroForge Today. %@ plan, not started. Start plan." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "NeuroForge 今日。%@のプランは未開始です。プランを開始してください。" } }
+      }
+    },
+    "Today": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "今日"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.2"
+}

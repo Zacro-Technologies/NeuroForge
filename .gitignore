@@ -1,0 +1,14 @@
+.DS_Store
+DerivedData/
+build/
+.build/
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+
+# Release manifests are signed offline. Never commit signing material.
+*.pem
+*.key
+*private-key*
+*private_key*
