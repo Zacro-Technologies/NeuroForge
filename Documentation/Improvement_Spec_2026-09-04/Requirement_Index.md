@@ -2,13 +2,13 @@
 
 Generated from the six authoritative specification documents by `validate_spec.py`. All requirements are **specified**; this index does not mark future implementation as verified.
 
-**256 unique normative requirements.** Test/fixture IDs and audit findings are additional references, not included in this count.
+**258 unique normative requirements.** Test/fixture IDs and audit findings are additional references, not included in this count.
 
 [Master specification](README.md) · [Complete reading copy](Complete_Specification.md) · [Documentation validation](Specification_Validation.md)
 
 ## NeuroForge improvement specification
 
-10 requirements in [README.md](README.md).
+12 requirements in [README.md](README.md).
 
 | Requirement | Contract | Status |
 |---|---|---|
@@ -19,9 +19,11 @@ Generated from the six authoritative specification documents by `validate_spec.p
 | [PRD-005](README.md#prd-005) | Useful breadth | Specified |
 | [PRD-006](README.md#prd-006) | Clear interface hierarchy | Specified |
 | [PRD-007](README.md#prd-007) | Inclusive operation | Specified |
-| [PRD-008](README.md#prd-008) | Historical honesty and privacy | Specified |
+| [PRD-008](README.md#prd-008) | Authentic learning history | Specified |
 | [PRD-009](README.md#prd-009) | Release evidence matches claims | Specified |
 | [PRD-010](README.md#prd-010) | Scope stays coherent | Specified |
+| [PRD-011](README.md#prd-011) | AI throughout the learning experience | Specified |
+| [PRD-012](README.md#prd-012) | Useful offline availability | Specified |
 
 ## NeuroForge improvement specification: experience, interaction and accessibility
 
@@ -62,7 +64,7 @@ Generated from the six authoritative specification documents by `validate_spec.p
 | [INT-003](01_Experience_and_Interaction.md#int-003) | Quantitative reasoning: predict, inspect and compare data | Specified |
 | [INT-004](01_Experience_and_Interaction.md#int-004) | Scientific reasoning: claim, evidence and experimental choice | Specified |
 | [INT-005](01_Experience_and_Interaction.md#int-005) | Logic and debugging: visible state trace | Specified |
-| [INT-006](01_Experience_and_Interaction.md#int-006) | Retrieval: recall, reference and honest self-check | Specified |
+| [INT-006](01_Experience_and_Interaction.md#int-006) | Retrieval: recall, AI grading and targeted follow-up | Specified |
 | [INT-007](01_Experience_and_Interaction.md#int-007) | Transfer: choose the useful structure in a new context | Specified |
 | [INT-008](01_Experience_and_Interaction.md#int-008) | Ordering, touch and keyboard conventions | Specified |
 | [A11Y-001](01_Experience_and_Interaction.md#a11y-001) | Layout matrix and breakpoints | Specified |
@@ -84,7 +86,7 @@ Generated from the six authoritative specification documents by `validate_spec.p
 | Requirement | Contract | Status |
 |---|---|---|
 | [CON-001](02_Content_and_Scoring.md#con-001) | One contract must drive generation, rendering, validation, and explanation | Specified |
-| [CON-002](02_Content_and_Scoring.md#con-002) | Parameters must be generated before prose | Specified |
+| [CON-002](02_Content_and_Scoring.md#con-002) | Generation must produce a coherent task, reference and rubric | Specified |
 | [CON-003](02_Content_and_Scoring.md#con-003) | Generation failure must remain a content failure | Specified |
 | [CON-004](02_Content_and_Scoring.md#con-004) | Every representation needs a declared instructional role | Specified |
 | [CON-005](02_Content_and_Scoring.md#con-005) | An item must state what is being judged | Specified |
@@ -104,12 +106,12 @@ Generated from the six authoritative specification documents by `validate_spec.p
 | [SCO-006](02_Content_and_Scoring.md#sco-006) | Single-choice scoring requires a unique semantic answer | Specified |
 | [SCO-007](02_Content_and_Scoring.md#sco-007) | Multiple-choice credit must be explicit and resistant to selecting everything | Specified |
 | [SCO-008](02_Content_and_Scoring.md#sco-008) | Ordered steps must represent dependency rather than stylistic preference | Specified |
-| [SCO-009](02_Content_and_Scoring.md#sco-009) | Short text must declare its supported interpretation | Specified |
+| [SCO-009](02_Content_and_Scoring.md#sco-009) | Short responses use the evaluator suited to their meaning | Specified |
 | [SCO-010](02_Content_and_Scoring.md#sco-010) | Restricted symbolic equivalence must preserve symbol roles | Specified |
 | [SCO-011](02_Content_and_Scoring.md#sco-011) | Symbolic processing must have bounded complexity | Specified |
 | [SCO-012](02_Content_and_Scoring.md#sco-012) | Prose grading must preserve direction, conditions, and negation | Specified |
 | [SCO-013](02_Content_and_Scoring.md#sco-013) | Retrieval computations must use computational response contracts | Specified |
-| [SCO-014](02_Content_and_Scoring.md#sco-014) | Self-check must be honest about its authority | Specified |
+| [SCO-014](02_Content_and_Scoring.md#sco-014) | Self-check remains an explicit alternative to AI grading | Specified |
 | [SCO-015](02_Content_and_Scoring.md#sco-015) | Composite and state answers must grade typed components | Specified |
 | [SCO-016](02_Content_and_Scoring.md#sco-016) | Estimates and units require explicit semantic policies | Specified |
 | [SCO-017](02_Content_and_Scoring.md#sco-017) | Claim/evidence tasks must encode support constraints | Specified |
@@ -119,7 +121,7 @@ Generated from the six authoritative specification documents by `validate_spec.p
 | [CON-022](02_Content_and_Scoring.md#con-022) | The release manifest must cover the actual delivered bank | Specified |
 | [CON-023](02_Content_and_Scoring.md#con-023) | Every family needs an editorial record and an independent reviewer | Specified |
 | [CON-024](02_Content_and_Scoring.md#con-024) | Editorial review must evaluate language as part of correctness | Specified |
-| [CON-025](02_Content_and_Scoring.md#con-025) | Feedback must be authored as a learning sequence | Specified |
+| [CON-025](02_Content_and_Scoring.md#con-025) | Authored and AI feedback must form a useful learning sequence | Specified |
 | [CON-026](02_Content_and_Scoring.md#con-026) | Metacognitive tasks must not masquerade as subject knowledge | Specified |
 | [CON-027](02_Content_and_Scoring.md#con-027) | Content incidents need a reproducible correction path | Specified |
 | [CON-014](02_Content_and_Scoring.md#con-014) | Balanced admission must precede balanced delivery | Specified |
@@ -164,7 +166,7 @@ Generated from the six authoritative specification documents by `validate_spec.p
 | [EVD-007](03_Adaptive_Learning_and_Evidence.md#evd-007) | Give uncertainty an honest, implementable meaning | Specified |
 | [EVD-008](03_Adaptive_Learning_and_Evidence.md#evd-008) | Make invalid content exclusions affect every derived view | Specified |
 | [EVD-009](03_Adaptive_Learning_and_Evidence.md#evd-009) | Preserve active time and exclude interrupted items from clean speed evidence | Specified |
-| [EVD-010](03_Adaptive_Learning_and_Evidence.md#evd-010) | Keep personal study separate from built-in skill evidence | Specified |
+| [EVD-010](03_Adaptive_Learning_and_Evidence.md#evd-010) | Give personal study graded progress at its supported scope | Specified |
 | [EVD-011](03_Adaptive_Learning_and_Evidence.md#evd-011) | Limit improvement statements to comparable observed tasks | Specified |
 | [ADP-013](03_Adaptive_Learning_and_Evidence.md#adp-013) | Protect an assessment contract rather than a nominal seed namespace | Specified |
 | [ADP-014](03_Adaptive_Learning_and_Evidence.md#adp-014) | Use the same band evidence model with a separate protected channel | Specified |
@@ -173,7 +175,7 @@ Generated from the six authoritative specification documents by `validate_spec.p
 | [SCH-002](03_Adaptive_Learning_and_Evidence.md#sch-002) | Filter hard constraints before ranking candidates | Specified |
 | [SCH-003](03_Adaptive_Learning_and_Evidence.md#sch-003) | Balance at the experience level, not only at bank construction | Specified |
 | [SCH-004](03_Adaptive_Learning_and_Evidence.md#sch-004) | Handle content shortage visibly and safely | Specified |
-| [SCH-005](03_Adaptive_Learning_and_Evidence.md#sch-005) | Use deterministic tie-breaking and persist the actual path | Specified |
+| [SCH-005](03_Adaptive_Learning_and_Evidence.md#sch-005) | Persist accepted AI selections and use stable fallback tie-breaking | Specified |
 | [SCH-006](03_Adaptive_Learning_and_Evidence.md#sch-006) | Keep review objectives separate from literal question repetition | Specified |
 | [SCH-007](03_Adaptive_Learning_and_Evidence.md#sch-007) | Use a bounded, explainable initial interval ladder | Specified |
 | [SCH-008](03_Adaptive_Learning_and_Evidence.md#sch-008) | Make the mistake queue actionable and criterion-specific | Specified |
@@ -182,7 +184,7 @@ Generated from the six authoritative specification documents by `validate_spec.p
 | [SCH-011](03_Adaptive_Learning_and_Evidence.md#sch-011) | Derive workload from item durations and interaction overhead | Specified |
 | [SCH-012](03_Adaptive_Learning_and_Evidence.md#sch-012) | Handle stopping and completion without falsifying achievement | Specified |
 | [SCH-013](03_Adaptive_Learning_and_Evidence.md#sch-013) | Respect travel, offline use and changes in available content | Specified |
-| [EVD-013](03_Adaptive_Learning_and_Evidence.md#evd-013) | Guarantee deterministic equivalence | Specified |
+| [EVD-013](03_Adaptive_Learning_and_Evidence.md#evd-013) | Replay accepted grades and decisions faithfully | Specified |
 | [EVD-014](03_Adaptive_Learning_and_Evidence.md#evd-014) | Make policy versions deployable without silent reinterpretation | Specified |
 | [SCH-014](03_Adaptive_Learning_and_Evidence.md#sch-014) | Map the implementation to current components | Specified |
 | [ADP-015](03_Adaptive_Learning_and_Evidence.md#adp-015) | Validate the proposed bands with representative learners | Specified |
@@ -196,7 +198,7 @@ Generated from the six authoritative specification documents by `validate_spec.p
 |---|---|---|
 | [CORE-001](04_Runtime_Data_and_Migration.md#core-001) | One learning runtime | Specified |
 | [CORE-002](04_Runtime_Data_and_Migration.md#core-002) | Separate responsibilities | Specified |
-| [CORE-003](04_Runtime_Data_and_Migration.md#core-003) | Pure boundaries | Specified |
+| [CORE-003](04_Runtime_Data_and_Migration.md#core-003) | Explicit inputs and replay boundaries | Specified |
 | [CORE-004](04_Runtime_Data_and_Migration.md#core-004) | Concurrency | Specified |
 | [CORE-005](04_Runtime_Data_and_Migration.md#core-005) | Versioned interfaces | Specified |
 | [RUN-001](04_Runtime_Data_and_Migration.md#run-001) | A run has a durable identity before interaction | Specified |
@@ -206,10 +208,10 @@ Generated from the six authoritative specification documents by `validate_spec.p
 | [RUN-005](04_Runtime_Data_and_Migration.md#run-005) | Same-device window ownership | Specified |
 | [RUN-006](04_Runtime_Data_and_Migration.md#run-006) | Cross-device limit | Specified |
 | [RUN-007](04_Runtime_Data_and_Migration.md#run-007) | Lifecycle states | Specified |
-| [RUN-008](04_Runtime_Data_and_Migration.md#run-008) | Ordinary deterministic answer | Specified |
+| [RUN-008](04_Runtime_Data_and_Migration.md#run-008) | Answer evaluation | Specified |
 | [RUN-009](04_Runtime_Data_and_Migration.md#run-009) | Confidence | Specified |
 | [RUN-010](04_Runtime_Data_and_Migration.md#run-010) | Reflection | Specified |
-| [RUN-011](04_Runtime_Data_and_Migration.md#run-011) | Protected feedback | Specified |
+| [RUN-011](04_Runtime_Data_and_Migration.md#run-011) | Protected evaluation and feedback | Specified |
 | [RUN-012](04_Runtime_Data_and_Migration.md#run-012) | Reference/self-check | Specified |
 | [RUN-013](04_Runtime_Data_and_Migration.md#run-013) | Hint progression | Specified |
 | [RUN-014](04_Runtime_Data_and_Migration.md#run-014) | Skip | Specified |
@@ -224,15 +226,15 @@ Generated from the six authoritative specification documents by `validate_spec.p
 | [DATA-007](04_Runtime_Data_and_Migration.md#data-007) | Scratchpad portability | Specified |
 | [DATA-008](04_Runtime_Data_and_Migration.md#data-008) | Resume algorithm | Specified |
 | [DATA-009](04_Runtime_Data_and_Migration.md#data-009) | Language changes | Specified |
-| [DATA-010](04_Runtime_Data_and_Migration.md#data-010) | Idempotent commit protocol | Specified |
+| [DATA-010](04_Runtime_Data_and_Migration.md#data-010) | Idempotent evaluation and commit protocol | Specified |
 | [DATA-011](04_Runtime_Data_and_Migration.md#data-011) | Crash boundaries | Specified |
 | [DATA-012](04_Runtime_Data_and_Migration.md#data-012) | Payload conflict | Specified |
 | [DATA-013](04_Runtime_Data_and_Migration.md#data-013) | Derived state | Specified |
 | [DATA-014](04_Runtime_Data_and_Migration.md#data-014) | Save failure UI | Specified |
 | [DATA-015](04_Runtime_Data_and_Migration.md#data-015) | Reservation atomicity and adaptive delivery | Specified |
 | [DATA-016](04_Runtime_Data_and_Migration.md#data-016) | Proposed schema additions | Specified |
-| [DATA-017](04_Runtime_Data_and_Migration.md#data-017) | Privacy partition | Specified |
-| [DATA-018](04_Runtime_Data_and_Migration.md#data-018) | Legacy scope | Specified |
+| [DATA-017](04_Runtime_Data_and_Migration.md#data-017) | Storage and AI processing scopes | Specified |
+| [DATA-018](04_Runtime_Data_and_Migration.md#data-018) | Legacy scope and service use | Specified |
 | [DATA-019](04_Runtime_Data_and_Migration.md#data-019) | Content storage | Specified |
 | [DATA-020](04_Runtime_Data_and_Migration.md#data-020) | Size and corrupt input | Specified |
 | [DATA-021](04_Runtime_Data_and_Migration.md#data-021) | Presentation is typed | Specified |
@@ -287,16 +289,16 @@ Generated from the six authoritative specification documents by `validate_spec.p
 | [QA-REQ-022](05_QA_and_Delivery.md#qa-req-022) | Hang closure | Specified |
 | [QA-REQ-023](05_QA_and_Delivery.md#qa-req-023) | Migration/restore run sheet | Specified |
 | [QA-REQ-024](05_QA_and_Delivery.md#qa-req-024) | Correction validation | Specified |
-| [QA-REQ-025](05_QA_and_Delivery.md#qa-req-025) | Local data and diagnostics boundaries | Specified |
+| [QA-REQ-025](05_QA_and_Delivery.md#qa-req-025) | Feature processing and diagnostics boundaries | Specified |
 | [QA-REQ-026](05_QA_and_Delivery.md#qa-req-026) | Signed integration matrix | Specified |
 | [QA-REQ-027](05_QA_and_Delivery.md#qa-req-027) | Formative usability rounds | Specified |
-| [QA-REQ-028](05_QA_and_Delivery.md#qa-req-028) | Question usefulness review | Specified |
+| [QA-REQ-028](05_QA_and_Delivery.md#qa-req-028) | Learning output and feature usefulness review | Specified |
 | [QA-REQ-029](05_QA_and_Delivery.md#qa-req-029) | Learning evaluation is a separate study | Specified |
 | [QA-REQ-030](05_QA_and_Delivery.md#qa-req-030) | Product metrics with honest denominators | Specified |
 | [DEL-001](05_QA_and_Delivery.md#del-001) | Deliver slices with dependent gates | Specified |
 | [DEL-002](05_QA_and_Delivery.md#del-002) | First reviewable vertical slice | Specified |
 | [DEL-003](05_QA_and_Delivery.md#del-003) | Preserve source-of-truth build configuration | Specified |
-| [DEL-004](05_QA_and_Delivery.md#del-004) | Capability gating | Specified |
+| [DEL-004](05_QA_and_Delivery.md#del-004) | Capability routing and staged delivery | Specified |
 | [DEL-005](05_QA_and_Delivery.md#del-005) | Definition of done per package | Specified |
 | [DEL-006](05_QA_and_Delivery.md#del-006) | Severity and release decisions | Specified |
 | [DEL-007](05_QA_and_Delivery.md#del-007) | Rollout order | Specified |

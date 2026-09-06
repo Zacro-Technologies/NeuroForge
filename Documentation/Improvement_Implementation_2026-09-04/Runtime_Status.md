@@ -1,5 +1,7 @@
 # Runtime implementation ledger — 4 September 2026
 
+> **v1.1 direction update:** this ledger retains prior implementation evidence. [AI-centered requirements](../Improvement_Spec_2026-09-04/README.md) supersede earlier AI/privacy restrictions; [changed contracts](AI_Direction_Revision_Status.md) are specified pending implementation reassessment. No new AI capability is established by this documentation change.
+
 Current integration update (5 September): ordinary/source/protected and modern/legacy generated explicit Submit now persist prepared state, exact history snapshot and feedback through the shared background storage actor. The MainActor retains only the live-model receipt insertion and UI publication after verified acknowledgement. Actual iOS passes33 worker/submission regressions onf9541cc4; complete Mac passes1343 onf4c27814. Typed cold archive validation and fingerprint generation have separate non-inlined frames, fixing reproduced cooperative-worker stack overflows. Other Next/Skip/End/initial/administrative writes and bulk dashboard projections remain engineering work. Installed advanced coordinate/reflection journeys are running separately; no complete device-matrix or migration certification is implied.
 
 This is an implementation and remaining-work ledger, not full specification or distribution certification. Test results are recorded separately in the run manifest. No signed integrations or manual device checks are inferred from unit tests.

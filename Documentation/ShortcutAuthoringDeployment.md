@@ -1,5 +1,7 @@
 # Question Writer Shortcut deployment
 
+> **Scope of this guide:** this describes the existing implementation/deployment. The [revised product direction](AI_Product_Direction_2026-09-05.md) permits integrated local/cloud AI tutoring, grading and generation. Existing Shortcut consent mechanics and bundled-inventory signing requirements are not general admission gates for the new AI features. This documentation revision changes no deployed behavior.
+
 NeuroForge uses one external authoring route: the user-installed
 `NeuroForge Private Authoring` Shortcut at
 `https://www.icloud.com/shortcuts/225ee5b407ed4bffbd3add2bf0c9ab8e`.

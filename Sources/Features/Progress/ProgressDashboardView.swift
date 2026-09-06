@@ -81,6 +81,20 @@ struct ProgressDashboardView: View {
         }.count
     }
 
+    private var aiLearningScopes: [NFAILearningProgress.Scope] {
+        _ = store.localSessionRevision
+        let receipts = Dictionary(uniqueKeysWithValues: store.localSessions.archive.snapshots.compactMap { snapshot -> (UUID, NFAIGradeReceipt)? in
+            guard let grade = snapshot.aiGrade, grade.request.exercise == snapshot.exercise else { return nil }
+            return (snapshot.attemptID, grade)
+        })
+        guard !receipts.isEmpty else { return [] }
+        let attempts = store.attempts.filter {
+            receipts[$0.id] != nil && filters.includes($0, at: dashboardClock.capturedAt, calendar: dashboardClock.calendar)
+        }.map { store.historyPresentation(for: NFReadOnlyAttemptSnapshot(attempt: $0)) }
+        let reviews = store.generatedPracticeRuns.flatMap { $0.aiGradeReviews ?? [] }
+        return NFAILearningProgress.make(attempts: attempts, originalReceipts: receipts, reviewJobs: reviews)
+    }
+
     private var isDashboardActive: Bool { scenePhase == .active && selectedSection == "Overview" }
 
     private var dashboardRequest: NFProgressDashboardRequest {
@@ -135,6 +149,11 @@ struct ProgressDashboardView: View {
                                 .accessibilityIdentifier("progress-projection-loading")
                         } else {
                         overviewHero
+                        if !aiLearningScopes.isEmpty {
+                            NFAILearningProgressView(scopes: aiLearningScopes) { scope in
+                                navigation.progress.append(.chartHistory(scope.attemptIDs))
+                            }
+                        }
                         historicalPracticeCard
                         if let progress = dashboardSnapshot?.forge { forgeJourneyCard(progress) }
                         prioritySection
@@ -2129,6 +2148,10 @@ struct NFReadOnlyAttemptSnapshot: Identifiable {
     let inputMode: String
     let sessionSource: SessionSource?
     private(set) var correction: NFHistoryCorrectionPresentation? = nil
+    private(set) var aiGrade: NFAIGradeReceipt? = nil
+    private(set) var reviewedAIGrade: NFAIGradeReceipt? = nil
+    private var aiCredit: Double? = nil
+    var effectiveAIGrade: NFAIGradeReceipt? { reviewedAIGrade ?? aiGrade }
     private var protectedSnapshot = false
     var source: NFAttemptHistorySource { protectedSnapshot ? .protectedAssessment : recordedSource }
     var correctAnswer: String { source == .protectedAssessment ? "" : recordedCorrectAnswer }
@@ -2208,10 +2231,10 @@ struct NFReadOnlyAttemptSnapshot: Identifiable {
     var effectiveResult: NFAttemptHistoryResult {
         guard source != .protectedAssessment, selfCheckRating == nil else { return .all }
         if correction?.excludesAccuracy == true { return .all }
-        guard let credit = correction?.correctedCredit else { return result }
+        guard let credit = correction?.correctedCredit ?? aiCredit else { return result }
         return credit >= 1 ? .correct : (credit > 0 ? .partial : .incorrect)
     }
-    var effectiveCredit: Double { correction?.correctedCredit ?? deterministicCredit }
+    var effectiveCredit: Double { correction?.correctedCredit ?? aiCredit ?? deterministicCredit }
     var hasDisputedKey: Bool { correction?.excludesAccuracy == true && correction?.isSelfReported != true }
     var effectiveWasTimed: Bool { wasTimed && correction?.excludedScopes.contains(.cleanSpeed) != true }
 
@@ -2233,12 +2256,29 @@ struct NFReadOnlyAttemptSnapshot: Identifiable {
             requiresTypedEnvelope: requiresTypedResponse)
     }
 
+    func applyingAIGrade(_ receipt: NFAIGradeReceipt?, reviews: [NFAIGradingJob]) -> Self {
+        var copy = self
+        guard source != .protectedAssessment, let receipt,
+              receipt.request.attemptID == id,
+              receipt.request.runID == sessionID,
+              receipt.request.exercise.prompt == prompt, receipt.request.exercise.lab == lab,
+              receipt.request.exercise.templateID == templateID,
+              receipt.request.response == NFResponsePresentation.decode(rawResponse),
+              let original = try? NFAIGradeValidator.score(receipt, for: receipt.request),
+              original.credit == deterministicCredit, original.scoringVersion == scoringVersion else { return copy }
+        copy.aiGrade = receipt
+        copy.reviewedAIGrade = NFAIGradeReviewProjection.latestAcceptedReview(of: receipt, jobs: reviews)
+        copy.aiCredit = copy.reviewedAIGrade.flatMap { try? NFAIGradeValidator.score($0, for: $0.request).credit } ?? original.credit
+        return copy
+    }
+
     func reviewExplanation(exercise: NFExercise?) -> String {
         guard source != .protectedAssessment, exercise?.assessmentProtected != true else {
             return NFAppLocalization.localizedCatalogValue("Your results appear after this block. Practice this skill with a fresh question.", locale: NFAppLocalization.preferredLocale)
         }
         if let selfCheckRating { return NFResponsePresentation.ratingTitle(selfCheckRating) }
         if correction?.isSelfReported == true { return resultTitle }
+        if !hasDisputedKey, let grade = effectiveAIGrade { return grade.explanation }
         if let exercise {
             // An invalidated key has no newly endorsed explanation. The view
             // labels this exact historical text as disputed before showing it.
@@ -2389,13 +2429,18 @@ struct NFReadOnlyAttemptSnapshot: Identifiable {
 extension AppStore {
     func historyPresentation(for original: NFReadOnlyAttemptSnapshot) -> NFReadOnlyAttemptSnapshot {
         _ = localSessionRevision
-        return original.applyingHistoricalCorrections(dispositions: evidenceDispositions,
+        let snapshot = localSessions.archive.snapshots.first { $0.attemptID == original.id }
+        let corrected = original.applyingHistoricalCorrections(dispositions: evidenceDispositions,
             corrections: localSessions.archive.contentCorrections ?? [],
             activeIDs: localSessions.archive.activeContentCorrectionIDs?[original.id.uuidString],
             protectedSnapshot: localSessions.archive.snapshots.first { $0.attemptID == original.id }?.exercise.assessmentProtected == true
                 || localSessions.archive.unavailableHistorySnapshots?.contains(where: {
                     $0.attemptID == original.id && $0.reason == .protectedContent
                 }) == true || localSessions.archive.withheldProtectedConflictAttemptIDs?.contains(original.id) == true)
+        guard let grade = snapshot?.aiGrade, snapshot?.exercise == grade.request.exercise else { return corrected }
+        let run = localSessions.archive.privateStudyRuns?.first { $0.id == grade.request.runID }
+        let reviews = run.flatMap { try? JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: $0.payload) }?.aiGradeReviews ?? []
+        return corrected.applyingAIGrade(grade, reviews: reviews)
     }
 }
 
@@ -2728,6 +2773,14 @@ struct NFAttemptReviewDetailView: View {
         return value
     }
     @State private var showsReport = false
+    @State private var showsTutor = false
+    private var tutorContext: NFAITutorContext? {
+        guard let exercise = permittedExercise,
+              let response = NFResponsePresentation.decode(presented.rawResponse),
+              !presented.hasDisputedKey else { return nil }
+        return store.learningContext(exercise: exercise, response: response, feedback: savedExplanation,
+            savedSources: presented.aiGrade?.request.sourceChunks ?? [], attemptID: presented.id)
+    }
     private var savedExpectedAnswer: String? {
         guard presented.source != .protectedAssessment else { return nil }
         if let exercise = permittedExercise { return NFResponsePresentation.expectedAnswer(for: exercise) }
@@ -2883,6 +2936,32 @@ struct NFAttemptReviewDetailView: View {
                         Text(savedExplanation)
                             .foregroundStyle(.secondary)
                             .textSelection(.enabled)
+                        if let grade = presented.effectiveAIGrade {
+                            Text(presented.reviewedAIGrade == nil ? "AI-graded feedback" : "Reviewed AI feedback")
+                                .font(.caption).foregroundStyle(.secondary)
+                            if let step = grade.nextStep { Text(step).font(.subheadline) }
+                            DisclosureGroup("Rubric and grade details") {
+                                ForEach(grade.criteria, id: \.criterionID) { criterion in
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(grade.request.exercise.aiRubric?.criteria.first { $0.id == criterion.criterionID }?.description ?? criterion.criterionID)
+                                            .font(.subheadline.bold())
+                                        Text(criterion.explanation).font(.subheadline)
+                                        Text(criterion.credit.formatted(.percent.precision(.fractionLength(0))))
+                                            .font(.caption).foregroundStyle(.secondary)
+                                    }.padding(.vertical, 4)
+                                }
+                                Text(grade.modelIdentifier).font(.caption).textSelection(.enabled)
+                                if presented.reviewedAIGrade != nil, let original = presented.aiGrade {
+                                    LabeledContent("Original credit", value: presented.deterministicCredit.formatted(.percent.precision(.fractionLength(0))))
+                                    Text(original.explanation).font(.footnote)
+                                }
+                            }
+                        }
+                        if tutorContext != nil {
+                            Button { showsTutor = true } label: {
+                                Label("Ask about this answer", systemImage: "text.bubble").frame(minHeight: 44)
+                            }.buttonStyle(.bordered)
+                        }
                     }
                     .nfCard()
 
@@ -2939,6 +3018,9 @@ struct NFAttemptReviewDetailView: View {
             }
         }
         .navigationTitle("Answer review")
+        .sheet(isPresented: $showsTutor) {
+            if let context = tutorContext { NFAITutorView(context: context).environment(store) }
+        }
         .sheet(isPresented: $showsReport) {
             if presented.source != .protectedAssessment, let exercise = permittedExercise, !exercise.assessmentProtected {
                 ReportExerciseView(exercise: exercise, assessmentDescriptorID: nil)

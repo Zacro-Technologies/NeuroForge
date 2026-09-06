@@ -1,10 +1,12 @@
 # NeuroForge improvement specification: experience, interaction and accessibility
 
-Date: 2026-09-04. Status: proposed implementation requirements, not a description of completed work. Owner: experience implementation, coordinated with the core learning, content, navigation, persistence and release specifications in this directory.
+Date: 2026-09-04. Product direction revised: 2026-09-05. Status: proposed implementation requirements, not a description of completed work. Owner: experience implementation, coordinated with the core learning, content, navigation, persistence and release specifications in this directory.
 
 This appendix defines how the application should behave for a learner. Requirement identifiers are stable: `UX-###` covers journeys and screens, `INT-###` covers learning interactions, `A11Y-###` covers accessible operation, and `COPY-###` covers language. A requirement is complete only when its behavior, state handling and acceptance criteria work in the running application. A passing source-contract test is supporting evidence, not a substitute for a usable screen.
 
-The intended product is a practical STEM learning companion. The main experience should answer three questions quickly: what should I practice, why is it useful, and what did I learn? The application must preserve the existing strengths—offline practice, durable progress, protected skill checks, local sources, 3D representations and scratchpad—while removing unnecessary administrative work around them.
+The intended product is an AI-centered STEM learning companion. AI tutoring, question generation, feedback, short-response grading and personalized follow-up belong in the main learning experience. The learner should be able to ask a question, practice an idea, explain their reasoning, receive useful assessment and continue with help matched to their work. AI is a core product capability, not an optional question-export utility.
+
+Local processing exists to keep the app responsive and reasonably useful offline. It is not a privacy-first product premise or a reason to restrict useful cloud AI. Choose local or cloud execution according to capability, connectivity, quality, latency and configured cost. Saved sources, questions, answers and explanations remain available offline; supported local AI and deterministic practice provide useful work when a network or stronger model is unavailable. Provider configuration and routing belong in supporting settings, while Today, Practice, Sources and the answer loop lead with learning.
 
 ## 1. Decisions and boundaries
 
@@ -14,15 +16,15 @@ The intended product is a practical STEM learning companion. The main experience
 
 Keep exactly five primary destinations, in this order: **Today, Practice, Progress, Sources, Settings**. Rename the current Forge destination to Today. The NeuroForge brand and earned milestones can remain, but users should not have to learn a brand metaphor to identify their daily task.
 
-Review and History are explicit sections within Progress, not a sixth destination. Today includes a shortcut to due reviews. Question creation belongs to Practice and is also available contextually from a source. A generated question set is a learning resource, not a separate primary navigation mode.
+Review and History are explicit sections within Progress, not a sixth destination. Today includes a shortcut to due reviews. Question creation belongs to Practice and is also available contextually from a source. AI tutoring is available in Today, Practice, source reading and answer feedback with the relevant learning context carried forward. A generated question set is a learning resource; learners should not have to enter a separate AI administration destination to use the tutor.
 
 | Destination | User's reason for visiting | First visible action | Supporting routes |
 |---|---|---|---|
-| Today | Know what to do now and continue interrupted work | Continue session, or Start today's practice | Due review, adjust plan, completed daily review |
-| Practice | Choose a particular skill, activity or topic | Search or recommended practice | Recent activities, exact catalog, custom question sets |
+| Today | Know what to do now and continue interrupted work | Continue session, or Start today's practice | Ask the tutor, due review, adjust plan, completed daily review |
+| Practice | Learn or practice a particular skill, activity or topic | Search, describe a learning goal, or recommended practice | AI tutor, recent activities, exact catalog, AI-created question sets |
 | Progress | Understand results and revisit learning | Overview with Review and History visible | Skill detail, filtered history, answer detail, annotations |
-| Sources | Study material the learner supplied | Import source or open a recent source | Source detail, reading, review, question creation, collections |
-| Settings | Change a preference or manage data | Search settings | Practice, accessibility, notifications, Question Writer, data and sync, about |
+| Sources | Learn from material the learner supplied | Import source or open a recent source | Ask about this source, summaries, reading, AI-graded recall, question creation, collections |
+| Settings | Change a preference or manage data | Search settings | Practice, accessibility, notifications, AI and offline, data and sync, about |
 
 Acceptance: labels, commands, deep links, empty states and onboarding all name these same five destinations. No user-facing control says “Open Library” when the destination is named Sources. No standalone AI Studio or Review tab is added.
 
@@ -40,9 +42,9 @@ Acceptance: when a reviewer sees a grayscale screenshot without reading every pa
 
 ### UX-003 — Learning and evidence policies belong to the core model
 
-The UI must consume an explicit session policy rather than infer evidence status from a color, title or destination. At minimum it needs to know whether the task is ordinary practice, a protected skill check, calibration, delayed review or personal-source practice; whether hints are allowed; whether confidence is required before commit; whether feedback is immediate or delayed; and which edits are allowed before and after commit.
+The UI must consume an explicit session policy rather than infer evidence status from a color, title or destination. At minimum it needs to know whether the task is ordinary practice, AI tutoring, a protected skill check, calibration, delayed review or personal-source practice; which components use an exact evaluator, AI rubric grading or learner self-check; whether hints are allowed; whether confidence is required before commit; whether feedback is immediate or delayed; and which edits are allowed before and after commit.
 
-The shared confidence policy is normative: protected baseline/reassessment and explicit calibration require inline confidence before submit, with no default. Ordinary scored practice offers optional inline confidence, with one deterministic invitation expanded in each group of five presentation ordinals under EVD-005; skipping the invitation never blocks submission. Timed Rapid Recall/fluency suppresses confidence collection entirely so it does not contaminate timing. Missing confidence is absent evidence, never a carried-forward or fabricated level. Ordinary correction is immediate, with optional reflection afterward and no preselected error diagnosis. See the core learning specification for authoritative sampling, evidence and adaptation rules.
+The shared confidence policy is normative: protected baseline/reassessment and explicit calibration require inline confidence before submit, with no default. Ordinary scored practice offers optional inline confidence, with one deterministic invitation expanded in each group of five presentation ordinals under EVD-005; skipping the invitation never blocks submission. Timed Rapid Recall/fluency suppresses confidence collection entirely so it does not contaminate timing. Missing confidence is absent evidence, never a carried-forward or fabricated level. Ordinary correction is shown as soon as its saved evaluation is available, with a responsive checking state for AI grading, optional reflection afterward and no preselected error diagnosis. Qualified AI grades are normal learning results that can inform practice difficulty, topic progress, review scheduling and the next recommendation under the core policy; they are not automatically reduced to self-ratings or discarded because they used a model. See the core learning specification for authoritative sampling, evidence and adaptation rules.
 
 Challenge bands are B1 Foundation, B2 Developing, B3 Challenging and B4 Advanced. These labels describe editorial challenge, not a measured grade, age, intelligence level or validated population percentile. Do not show an Expert label that overstates the content's depth.
 
@@ -79,7 +81,7 @@ Autosave reversible drafts locally where existing persistence contracts permit. 
 
 Follow the safe-exit transaction rules in RUN-022. If a draft has no prepared durable commit, offer Retry saving, Keep editing, Copy/Export recovery and explicit Discard unsaved changes. Discard returns to the last acknowledged checkpoint and explains exactly which unacknowledged input would be lost. It never deletes an existing attempt or prepared commit intent. Never label destructive discard as Done.
 
-Every stage accepts an exit request. Cancel disposable next-item generation while keeping the prior acknowledged state; accepted reservations remain consumed. During answer or self-check commit, queue the close and reconcile the write. If the recovery intent is already durable but the destination store remains unavailable, allow close with **Answer waiting to finish saving** and restore that exact pending intent later. Do not show the ordinary Saved state, erase the journal, or let the learner edit a prepared commit into a different response using the same attempt identity. This policy applies to navigation and window closure as well as Save and close. Failed save must not silently convert a complete session into an empty draft.
+Every stage accepts an exit request. Cancel disposable next-item generation while keeping the prior acknowledged state; accepted reservations remain consumed. During answer, AI-grade or self-check persistence, queue the close and reconcile the write. A network grading request may remain pending after safe close; it must not trap the learner until the provider responds. If the recovery intent is already durable but the destination store remains unavailable, allow close with **Answer waiting to finish saving** and restore that exact pending intent later. Do not show the ordinary Saved state, erase the journal, or let the learner edit a prepared commit into a different response using the same attempt identity. This policy applies to navigation and window closure as well as Save and close. Failed save must not silently convert a complete session into an empty draft.
 
 Protected assessment and any explicitly required reflection do not justify trapping the learner. Save the exact pending state, leave safely and resume at the same stage. The current reflection checkpoint already records a pending attempt, trigger, reason and note; expose that capability instead of removing Save and close.
 
@@ -93,7 +95,7 @@ Acceptance: force a save failure at answer, confidence, reflection, source note 
 
 The first screen should offer a concrete example of the product within one primary action: **Try a sample**. Secondary actions are **Set up my practice** and a clearly placed **Restore a backup**. The sample is optional and low stakes. Do not require account setup, a full questionnaire, a source import, notification permission or external model setup before a learner can try the product.
 
-The first sample should take roughly 30–60 seconds for a typical learner, but its interface is untimed. Use one approachable authored item with meaningful feedback. For example, choose a useful mental-math strategy or identify what a simple data comparison can support. It must show the pattern of prompt, response, helpful explanation and next step. It must not present a trivial interaction as an intelligence assessment.
+The first sample should take roughly 30–60 seconds for a typical learner, but its interface is untimed. Use one approachable item with meaningful feedback and a contextual **Ask a follow-up** action. When AI is available, demonstrate it with a brief explanation question or tutor exchange; when it is unavailable, the bundled sample and explanation still work, and the tutor action describes its actual availability. For example, choose a useful mental-math strategy or identify what a simple data comparison can support. It must show the pattern of prompt, response, helpful explanation and next step. It must not present a trivial interaction as an intelligence assessment.
 
 Sample results do not become protected skill evidence. If retained as activity, identify them as sample practice and keep that rule explicit. At sample completion, show **Make this fit me** and **Try another skill**. Back returns safely; leaving the app preserves setup progress.
 
@@ -135,10 +137,10 @@ Order Today as follows:
 2. One current-task surface: interrupted session if present, otherwise today's next section.
 3. Due reviews, when applicable, with a clear count and estimated duration.
 4. A compact preview of remaining daily sections.
-5. One optional recommendation, such as a starting check or a different skill.
+5. A contextual tutor entry and one optional recommendation, such as a starting check, a concept explanation or a different skill.
 6. Small completion/consistency summary with milestones behind a disclosure or dedicated detail.
 
-The current-task surface shows title, skill, estimated time, number or range of questions where meaningful, and one ordinary-language reason. For example: “Practice ratios · about 5 min. Your last two sets suggest another round will help.” Do not require reading a priority formula.
+The current-task surface shows title, skill, estimated time, number or range of questions where meaningful, and one ordinary-language reason. For example: “Practice ratios · about 5 min. Your last two sets suggest another round will help.” AI coaching may explain the recommendation and propose a short plan using the learner's actual goals, recent work and due reviews. The learner can ask **Why this?**, **Teach me first**, or describe a different goal. The displayed explanation must correspond to the actual plan; an AI suggestion becomes a plan change only through the normal saved plan operation. Do not require reading a priority formula.
 
 Primary CTA is **Continue session**, **Start today's practice**, or **Review today's results**, depending on state. Secondary actions are **Adjust** and **Choose another activity**. After completing today, congratulate briefly, show what was practiced, and offer due review or optional practice without replacing the completed plan with a fresh zero-percent plan.
 
@@ -175,7 +177,7 @@ A loading state must not show fake progress. A transient failure should not fill
 
 ### UX-012 — Exact activity discovery
 
-Practice opens with search, one recommendation, recent/resumable activities, and a compact skill browser. Search returns matching **activities** as well as parent skills. A result should show the activity name, skill, expected interaction, approximate time and level. Selecting “Estimate then calculate” must open that activity, not force the learner to find it again in Mental Math.
+Practice opens with search, a natural-language **What do you want to learn?** entry, one recommendation, recent/resumable activities, and a compact skill browser. The learner can start a tutor conversation, request examples, or turn a goal into a short question set without first choosing internal catalog fields. Search returns matching **activities** as well as parent skills. A result should show the activity name, skill, expected interaction, approximate time and level. Selecting “Estimate then calculate” must open that activity, not force the learner to find it again in Mental Math.
 
 Use filters only where they help: Skill, Context, Duration, Level. Search and filters are visible together; active chips show constraints; Clear all is available. Preserve them when returning from an activity. No-results copy names the active constraints and offers a reset. Do not search only internal keywords while ignoring translated display text.
 
@@ -201,19 +203,23 @@ Acceptance: novice and established profiles receive intentionally different defa
 
 Use the screen title **Create a question set**. Primary input is “What do you want to practice?” with optional source selection. Offer a few useful starter sets that explain what they teach. Suggest skill, form and level; keep detailed form count/objective configuration under **More options**.
 
-Source selection opens a searchable chooser showing filename, preparation status and allowed question route. A disabled source must explain why and expose the relevant recovery. Do not list an unbounded document library inline above Create. Selecting multiple sources summarizes the selection and permits review.
+Source selection opens a searchable chooser showing filename, preparation status and available learning actions. A disabled source must explain why and expose the relevant recovery. Do not list an unbounded document library inline above Create. Selecting multiple sources summarizes the selection and permits review.
 
-Show the current route in ordinary terms: “Created on this device” or “Uses Question Writer.” Before an external run, present exactly the excerpts and destination choice required by the core privacy flow. Preserve existing explicit source-sharing authorization; simplifying the UI must not weaken it. External setup can use a short guided checklist, but never pretend a Shortcut is native in-app generation.
+AI creates a coherent set from the learner's goal, selected material, current level and desired duration. It may propose varied questions, useful examples, response-specific rubrics and targeted follow-ups. Source-based questions retain the passages and locations needed to explain and grade them. The learner can refine the request conversationally and preview or edit a generated set before starting; a compact validated quick-start path may start directly when that was the requested action.
 
-States: ready, preparing, awaiting external app, cancelling, saved, failed with retry, failed with supported offline fallback. On completion, move focus to the result and show **Start set**, **Review questions**, and the retention choice. A failed run retains the configuration. Closing an external app returns to a recoverable in-app state.
+Use in-app AI as the normal experience. Route automatically to a capable configured local or cloud model; show an ordinary availability or download message only when it affects what the learner can do. Cloud processing is supported because it can offer stronger teaching and grading. Explain connection, provider and usage choices in **AI and offline** settings, with any necessary setup presented once in context. Do not require an excerpt-by-excerpt privacy ceremony for every normal AI action. A legacy Shortcut or external app integration may remain an explicitly named alternate route, but must not stand in for the central in-app feature or be presented as native generation.
+
+States: ready, preparing, cancelling, saved, failed with retry, and available offline alternative. Show progress without fabricating percentages. A failed run retains the request and source selection. Offer Retry, a supported local model, saved questions or bundled practice according to actual capability. On completion, move focus to the result and show **Start set**, **Review questions**, and the retention choice. Saved accepted questions and grading context remain usable across relaunch and network loss; an unavailable online service does not erase a set or regenerate its current question.
+
+Acceptance: create a set from a plain-language goal and from a selected source; ask for a refinement; start, save, resume and study it offline; verify the same question and rubric are retained. Supported local AI performs generation without a network; unsupported devices provide useful saved/bundled practice and clear online availability. Model setup and implementation details must not dominate this journey.
 
 <a id="ux-015"></a>
 
 ### UX-015 — Saved versus temporary sets and collections
 
-Make content retention explicit before the learner relies on a set. A temporary generated set says “Temporary · new practice available for 7 days.” Seven days is the default new-launch eligibility of its inventory, not a promise to delete every saved answer or stop unfinished work at that boundary. A deliberately saved set says “Saved on this device.” New private study snapshots and saved collections are local-only in this release; this work does not extend iCloud excerpt scope. Do not call a seven-day cache a permanent library.
+Make content retention explicit before the learner relies on a set. A temporary generated set says “Temporary · new practice available for 7 days.” Seven days is the default new-launch eligibility of its inventory, not a promise to delete every saved answer or stop unfinished work at that boundary. A deliberately saved set says “Saved on this device.” Study snapshots and saved collections must retain the content needed for offline use. Show sync availability only when the implemented data contract supports it; offline retention must not depend on a successful cloud round trip. Do not call a seven-day cache a permanent library.
 
-Provide **Save set** to opt into durable local retention until the learner deletes the set. Saving captures the question/feedback/context version needed to study later. Do not claim synced availability for these saved sets or collections. Retaining personal material must be user-controlled and reversible.
+Provide **Save set** to opt into durable local retention until the learner deletes the set. Saving captures the question/feedback/context version needed to study later. Show **Available offline** after required assets have actually been retained. Any supported sync is additional availability, not a prerequisite for local study. Saving and deleting material remain explicit, understandable resource actions.
 
 Collections are optional organization: title, description, included sources and saved sets, last practiced, next review. Defaults are Recent and Saved; creating a collection is not required to start. Actions are Rename, Add/remove item, Practice, Export where supported, and Delete. Removing from a collection is not deleting the underlying source or attempt history; the menu must distinguish them.
 
@@ -229,7 +235,7 @@ Acceptance: advance the clock through day seven with an untouched temporary set,
 
 Use one continuous problem surface with a stable header, stimulus, response area and action footer. Submitting must not replace the entire screen with confidence or feedback for ordinary practice. Preserve the prompt and the learner's response as feedback appears. A collapsed prompt may be available after a long explanation, but the learner can expand it without losing scroll position.
 
-Header: Back/Save and close action, activity name, current position, optional timer. Utility actions: scratchpad, report, and pause; secondary utilities can live in a menu. Do not repeat the lab name in multiple pills and headers unless the current activity changed skills and that distinction matters.
+Header: Back/Save and close action, activity name, current position, optional timer. Utility actions: Ask the tutor, scratchpad, report, and pause; secondary utilities can live in a menu. Do not repeat the lab name in multiple pills and headers unless the current activity changed skills and that distinction matters.
 
 Footer has one primary action appropriate to stage: Check answer, Confirm answer, Continue, Finish set, or Continue next section. It reserves safe-area and keyboard space. Skip is separate and says its evidence consequence concisely. Do not align Hint, Skip and a long Submit label in an unconditional horizontal row on compact screens.
 
@@ -242,14 +248,16 @@ The session presentation reducer must expose explicit states so controls cannot 
 | Answering, valid ordinary | Same surface; optional confidence according to policy | Check answer | Save exact input and any chosen confidence; ignore duplicate activation while commit is pending |
 | Answering, protected/calibration | Same surface; required confidence with no default | Confirm answer only after response and confidence are valid | Save exact draft without revealing any correctness |
 | Commit pending | Response remains visible; progress state on action | Disabled with Saving… | Exit request is queued; reconcile commit. A durable pending intent may close as Answer waiting to finish saving under RUN-022. Never claim normal saved success or discard the journal |
-| Ordinary feedback | Prompt, submitted response, result and explanation together | Continue | Optional reflection and repair can be deferred; Save and close preserves completed attempt |
+| AI grading pending | Saved submitted response; Checking your answer…; retained prompt and draft grade status | Continue other practice or wait where session policy permits | Save and close retains the pending request. Stop waiting, retry and offline alternatives remain available; a timeout never becomes an incorrect grade |
+| AI grading needs clarification/review | Submitted response and the specific ambiguous criterion or missing context | Clarify or Review grade | Keep the original answer; a clarification or grade review is linked, not a silent edit of the original |
+| Ordinary feedback | Prompt, submitted response, exact or AI-rubric result and explanation together | Continue | Ask the tutor, review grade, optional reflection and repair remain available; Save and close preserves the result |
 | Protected answer saved | Prompt/response summary and neutral Answer saved | Continue | No key, correctness, grading color, result sound or leaked accessible value; save exact protected stage |
 | Self-check reference | Original recall response plus source reference and match choices | Save self-check after rating | Recall input remains historically fixed; Save and close resumes comparison without pretending an independent score |
 | Reflection draft | Prompt/feedback context where allowed; optional or explicitly required reflection | Save reflection or Continue as policy permits | Save and close always works; no preselected diagnosis or unexplained required note |
 | Section summary | Saved counts, takeaway and remaining section estimate | Continue next section or Finish set | Closing returns to launch context; retry unfinished save before showing success |
 | Paused | Brief paused overlay over inaccessible background content | Resume | Save and close at every resumable stage; elapsed pause excluded from active timing |
 
-Resume restores the exact recorded phase, including protected acknowledgement and revealed-but-unrated self-check comparison. A completed protected answer never resumes through the ordinary correctness-feedback renderer. A retry uses the same pending attempt identity. A repair uses a new identity. A new question clears answer, validation, optional confidence, hint state and transient feedback only after the prior stage has been checkpointed. This separation is required to avoid the common “next item shows previous answer” and “retry duplicates score” failures.
+Resume restores the exact recorded phase, including pending AI grading, a completed AI grade, protected acknowledgement and revealed-but-unrated self-check comparison. Reopening a saved grade displays that result without rerunning a model. Retried requests and late replies cannot grade a changed answer or duplicate its completion. A completed protected answer never resumes through the ordinary correctness-feedback renderer. A retry uses the same pending attempt identity. A repair uses a new identity. A new question clears answer, validation, optional confidence, hint state and transient feedback only after the prior stage has been checkpointed. This separation is required to avoid the common “next item shows previous answer” and “retry duplicates score” failures.
 
 <a id="ux-017"></a>
 
@@ -267,15 +275,17 @@ Acceptance: automation proves ordering of response, confidence and key reveal. V
 
 ### UX-018 — Feedback that teaches
 
-Ordinary-practice feedback appears immediately after successful commit and has this order:
+Ordinary-practice feedback appears as soon as the answer and its evaluation are successfully saved, with a responsive pending state when AI evaluation is still running, and has this order:
 
 1. Result: Correct, Partly correct, or Let's review this.
-2. The learner's answer and the expected answer, using readable typed presentation.
+2. The learner's answer and a correct answer or concise rubric criteria, using readable typed presentation. Open explanations need not match one canonical sentence.
 3. One decisive explanation of why or how.
 4. Optional worked steps, source evidence or a diagram.
-5. Continue and, when useful, Try a similar question.
+5. Continue and, when useful, Ask the tutor, Review grade or Try a similar question.
 
-Avoid generic “The durable scorer recorded…” as teaching copy. Do not repeat the entire question in an explanation without adding reasoning. Partial credit must identify which part worked and which part needs repair. For personal self-checks, use Matched, Partly, or Not yet, never a Correct banner, “100%,” or deterministic ability-evidence framing. Say “Your self-check: partly matched” when the learner rated the match; the app has not independently proved the open response.
+Avoid generic “The durable scorer recorded…” as teaching copy. Do not repeat the entire question in an explanation without adding reasoning. Partial credit must identify which part worked and which part needs repair. AI grading of short/free-text responses uses the task's semantic rubric and shows useful criterion-level feedback, including credited reasoning, missing conditions and contradictions. A compact **AI-graded** label or result detail identifies the method without turning feedback into a provider report. An accepted AI grade can count toward normal learning progression. Model confidence must not be displayed as a validated probability of correctness. If the evaluation is uncertain, name the uncertain point and offer clarification or review; do not hide uncertainty behind a decisive grade. For personal self-checks, use Matched, Partly, or Not yet, never a Correct banner, “100%,” or deterministic ability-evidence framing. Say “Your self-check: partly matched” when the learner rated the match; the app has not independently proved the open response.
+
+**Review grade** lets the learner point to overlooked reasoning, request an explanation of a criterion, or request a fresh evaluation of the same saved response and rubric. Keep the original grade and show any reviewed replacement with a short reason; update downstream learning summaries through the core correction policy. **Try again** creates a new linked answer and preserves the original. A service failure leaves the response saved and ungraded, with Retry when available or an explicitly chosen self-check. Neither pending work nor self-check is silently presented as an AI grade.
 
 Protected responses show neutral “Answer saved” with no per-item correctness or solution. Say “Your results appear after this block.” At block completion show dimensional summaries and concept guidance; **Practice this skill** launches a fresh instructional variant. Reusable protected items never expose exact keys or solutions in ordinary history or exports intended for learner review. Only explicitly retired/disclosed forms may reveal exact item feedback, with the core exposure/invalidation transaction; that is not default shipping behavior. Do not render hidden keys inside accessibility labels, source previews, diagnostic details or a repair button.
 
@@ -283,21 +293,27 @@ Protected responses show neutral “Answer saved” with no per-item correctness
 
 ### UX-019 — Graduated help and repair
 
-Hints are an ordered ladder: a directional cue, a more concrete step, then a worked step or solution if permitted. Each tap reveals the next available help. Label the remaining state honestly: Hint 1 of 3, Next hint, Show worked step. Do not disable help after the first hint while later authored hints exist.
+AI help is contextual to the actual question, current working, previous help and requested learning style. A learner can ask a free-form question, request a different explanation or example, or choose **Give me a hint**. The tutor should lead with the smallest useful assistance and preserve the current question while teaching. Hints are an ordered ladder: a directional cue, a more concrete step, then a worked step or solution if permitted. Each tap reveals the next useful help; authored steps and AI-generated explanations can both supply the ladder. Check numerical, logical and source claims against available exact tools or retained source context. Label the remaining state honestly: Hint 1 of 3, Next hint, Show worked step. Do not disable help after the first hint while later authored hints exist.
 
 Record actual help used. A correct assisted answer must not be displayed as independent mastery. A solution reveal can end scoring or convert the attempt's evidence according to core policy; the interface explains that before reveal where it materially changes the outcome.
 
 After a mistake or substantial help, offer a fresh related item that practices the same subskill with different surface content. It must not be the identical keyed question with a different title. The repair uses a new attempt and preserves the original result. The learner can defer it to Review rather than elongating a short session unexpectedly.
 
-Acceptance: all authored hint levels are reachable; first clue is useful for the specific item; help counts are accurate; protected questions cannot expose hints; repair content is valid, distinct and matched to the intended subskill.
+The learner can ask follow-up questions after feedback, request a worked alternative method and ask for a targeted new problem. Save useful explanations for offline review. When AI is unavailable, previously saved help and authored hints remain usable; do not promise a new tailored explanation that the current route cannot produce. Protected checks keep their declared unaided conditions, while ordinary learning remains free to use the tutor with assistance recorded.
+
+**Presentation and initiative.** Ordinary answering, grading and continuation do not require a chat exchange. Offer the smallest suitable interaction: inline feedback for a grade, a worked step beside the problem, or an optional conversation when follow-up would help. Opening the tutor is a learner action; suggestions do not open it, steal focus or replace the active response. Keep one primary action. At a feedback checkpoint, present one recommended optional learning follow-up; additional help and grade-review controls remain available as secondary actions. Use method disclosure once where it clarifies a result, without repeating AI badges, sparkle treatments or generated summaries across every surface.
+
+Suggestions must refer to the actual answer, requested goal or a supported learning need. The learner can dismiss or defer them without blocking Continue or losing work. Retain that choice with the relevant item/session state so rerendering, returning or resuming does not repeat the same offer for unchanged work. A new substantive result or an explicit learner request may justify a new suggestion. Do not generate replacement suggestions merely because a screen refreshed. Concise output comes first; deeper explanation remains available on request. Loading, streamed text and completion preserve the problem, draft, focus and reachable primary controls instead of causing distracting layout movement.
+
+Acceptance: contextual and authored help both work; all authored hint levels are reachable; first clue is useful for the specific item; help counts are accurate; protected questions cannot expose hints; repair content is valid, distinct and matched to the intended subskill. Complete ordinary practice without opening chat; verify a requested tutor stays contextual, a dismissed offer remains dismissed on resume, and long/pending/failed output does not obscure the learner's work or primary action. Review usefulness and presentation through QA-REQ-028.
 
 <a id="ux-020"></a>
 
 ### UX-020 — Reflection is useful and never a trap
 
-For ordinary practice, show the explanation first, then an optional concise reflection: “What will you check next time?” Offer a few relevant reasons and an explicit “Not sure yet,” with no error diagnosis preselected. An inferred reason is visibly a suggestion, not a user-confirmed diagnosis. Pre-feedback reflection is allowed only for an explicitly designated metacognition task, with its purpose explained and Save and close available. A generic transfer label, wrong answer, repeated error or high confidence alone does not make reflection mandatory or move it ahead of ordinary correction.
+For ordinary practice, show the explanation first, then an optional concise reflection: “What will you check next time?” Offer a few relevant reasons and an explicit “Not sure yet,” with no error diagnosis preselected. An AI-inferred reason is visibly a suggestion, not a user-confirmed diagnosis. The tutor may propose a concrete next-step reflection based on the actual response and rubric feedback, and the learner can accept, edit or dismiss it. Pre-feedback reflection is allowed only for an explicitly designated metacognition task, with its purpose explained and Save and close available. A generic transfer label, wrong answer, repeated error or high confidence alone does not make reflection mandatory or move it ahead of ordinary correction.
 
-Do not preselect a reason and then count a quick Save as independent learner reflection. Persist user confirmation separately from deterministic error classification. An optional note remains optional; empty notes should not be an unexplained blocker. Character limits show remaining space only when relevant rather than dominating an empty screen.
+Do not preselect a reason and then count a quick Save as independent learner reflection. Persist user confirmation separately from exact or AI-inferred error classification. An optional note remains optional; empty notes should not be an unexplained blocker. Character limits show remaining space only when relevant rather than dominating an empty screen.
 
 Acceptance: the learner can view normal correction without completing a survey, edit a reflection without changing the original score, and safely resume a pending required reflection. Error-pattern reporting distinguishes inferred and self-reported reasons.
 
@@ -305,9 +321,9 @@ Acceptance: the learner can view normal correction without completing a survey, 
 
 ### UX-021 — Session exit, pause and completion
 
-Pause freezes active timing according to core policy and clearly offers Resume and Save and close in every resumable stage, including confidence and reflection. Backgrounding checkpoints the current stage and stops answer timing. Returning to the foreground starts a new answer-time segment only after explicit run resumption into an eligible visible answering state. Paused, loading, feedback, self-check comparison, reflection and summary never accrue answer-solving time. Previously accumulated time remains; an unknown interruption is marked honestly and excluded from clean speed evidence. Separately labeled session-use time may include other active learning phases. Closing the scratchpad must not accidentally commit an answer.
+Pause freezes active timing according to core policy and clearly offers Resume and Save and close in every resumable stage, including confidence and reflection. Backgrounding checkpoints the current stage and stops answer timing. Returning to the foreground starts a new answer-time segment only after explicit run resumption into an eligible visible answering state. Paused, loading, AI grading waits, feedback, self-check comparison, reflection and summary never accrue answer-solving time. Previously accumulated time remains; an unknown interruption is marked honestly and excluded from clean speed evidence. Separately labeled session-use time may include other active learning phases. Closing the scratchpad must not accidentally commit an answer.
 
-Completion summarizes work: questions attempted, correct/partial outcomes where appropriate, help used, one learning takeaway, and an optional next action. XP can appear as a small acknowledgement. Do not show a celebratory complete state before writes succeed. If a section is incomplete because the learner skipped everything or evidence was insufficient, say what happened without pretending a valid assessment result exists.
+Completion summarizes work: questions attempted, exact or AI-rubric correct/partial outcomes where appropriate, separately labeled pending or self-check results, help used, one learning takeaway, and an optional next action. AI may produce the takeaway and recommend a next lesson from saved work; its summary must agree with those records. XP can appear as a small acknowledgement. Do not show a celebratory complete state before writes succeed. If a section is incomplete because the learner skipped everything or evidence was insufficient, say what happened without pretending a valid assessment result exists.
 
 For daily sections, **Continue next section** is primary when the learner chose a multi-section session; **Finish for now** remains available. The summary identifies the remaining time estimate before continuing. Completing the last section returns to stable Today completion.
 
@@ -319,7 +335,7 @@ Acceptance: pause/resume, quit/relaunch, skip, error reflection, last-question c
 
 Preserve typed notes and PencilKit drawing. On iPad and sufficiently wide Mac windows, provide a split pane with the problem on one side and scratchpad on the other. At compact widths use an expandable panel or sheet with a pinned problem preview that can expand to include the relevant table/diagram.
 
-Include Draw/Notes where supported, Undo, Redo and Clear. Clear should offer immediate Undo; do not require a frightening confirmation for every reversible stroke reset. Keep scratchpad outside scoring unless a particular future interaction explicitly uses structured working as a response. Preserve unsupported drawing bytes when opening a note on a platform that cannot edit them.
+Include Draw/Notes where supported, Undo, Redo and Clear. Clear should offer immediate Undo; do not require a frightening confirmation for every reversible stroke reset. Scratchpad content is not automatically part of the submitted answer. Offer **Explain my working** or **Use this in my answer** where the AI route supports the input; let the learner inspect recognized handwriting or a diagram interpretation before relying on it. Clearly identify the material submitted for grading when a task accepts working as part of its response. A failed or unsupported recognition attempt leaves the original notes/drawing intact and offers typed input. Preserve unsupported drawing bytes when opening a note on a platform that cannot edit them.
 
 Acceptance: a learner can refer to the original question while writing; drawing survives close/reopen and supported export/restore; Mac opening an iPad drawing does not erase it; keyboard and screen-reader users receive a fully usable notes path.
 
@@ -331,7 +347,7 @@ Acceptance: a learner can refer to the original question while writing; drawing 
 
 Progress has three explicit, visible sections or a segmented control: **Overview, Review, History**. Default to Overview and retain the last selection during same-session navigation. Overview shows recent learning, one next-practice recommendation, consistency and skill summaries. Put details of uncertainty, evidence channels and methods under clearly labeled disclosures.
 
-Do not lead with an empty ring and “unassessed.” A first-use state says what practice will reveal and provides Start practice or a starting check. A filtered-empty state states that history still exists and offers Clear filters. Explain personal-source practice separately without suggesting it was wasted because it does not affect protected skill estimates.
+Do not lead with an empty ring and “unassessed.” A first-use state says what practice will reveal and provides Start practice or a starting check. A filtered-empty state states that history still exists and offers Clear filters. Show meaningful progress from AI-graded general and personal-source practice, with summaries of learned topics, rubric strengths, repeated gaps and due reviews. Separate formal skill-check results and learner self-ratings where their interpretation differs; do not treat all AI/source practice as non-learning activity. AI can explain a trend and propose a next action using the displayed evidence, with uncertainty proportional to the available work.
 
 Charts support point inspection: date, activity type, sample count and displayed value, plus a route to the relevant history. Preserve an accessible table/summary. A chart is not a replacement for an understandable sentence about what changed, and a tiny sample must not be presented as robust improvement.
 
@@ -351,7 +367,7 @@ Acceptance: due count matches the core schedule; not-due items are not silently 
 
 History lists all relevant saved attempts, with filters for date, skill, result, support and source. Reusable protected items use safe dimensional/concept guidance and never reveal exact keys or solutions; exports intended for learner review preserve that rule. Keep advanced timing/confidence/version filters under More filters. Rows show a readable prompt excerpt, readable answer and result. Search uses visible text, not only serialized payloads or internal IDs.
 
-Answer detail must reconstruct enough original context to understand the work: prompt, options or structured input labels, table/diagram, learner response, expected result where allowed, original teaching explanation, hints used and source citations. The original attempt remains immutable. A learner may add a note, bookmark, report, or start a similar question, all as separate actions/data.
+Answer detail must reconstruct enough original context to understand the work: prompt, options or structured input labels, table/diagram, learner response, expected result where allowed, original teaching explanation, hints used and source citations. The original attempt remains immutable. For AI-graded work, retain criterion results, the feedback actually shown and any linked grade review; replay does not depend on the original provider still being available. A learner may ask the tutor about this answer, add a note, bookmark, report, review a grade or start a similar question, all as separate actions/data.
 
 Fix the verified raw JSON leak at its presentation boundary. Current `saveExerciseAttempt` encodes `NFExerciseResponse` into `AttemptRecord.response` (`PersistenceModels.swift:3041–3050`); snapshot/history/detail render it directly (`ProgressDashboardView.swift:1888`, `:2270`, `:2333`). Preserve the raw payload for compatibility, but render a typed display representation:
 
@@ -361,7 +377,7 @@ Fix the verified raw JSON leak at its presentation boundary. Current `saveExerci
 | Single choice | Saved visible option label, not option ID |
 | Multiple choice | Selected visible labels in original option order |
 | Ordered steps | Numbered saved step labels |
-| Short text | Exact entered prose with readable line breaks |
+| Short text | Exact entered prose with readable line breaks, rubric feedback where AI-graded, and linked grade review |
 | Self-check | Learner's answer, then their match rating |
 | Claim/evidence | Named claim with selected evidence labels and relation |
 | Logic state | Named fields and values; named rule if selected |
@@ -388,25 +404,25 @@ Acceptance: fresh, empty, processing, partial batch, cancelled, duplicate, unrea
 
 ### UX-027 — Source detail and studying
 
-Source detail leads with **Read source**, **Review from memory**, and **Create question set**, enabled according to readiness and permissions. Show a short content preview and where the original is stored. File metadata, detailed extraction diagnostics and sync mechanics are optional details.
+Source detail leads with **Ask about this source**, **Read source**, **Review from memory**, and **Create question set**, enabled according to readiness and available capabilities. Select one primary action for the current context. The tutor can summarize a section, explain a concept or diagram, compare passages, build a study plan and turn confusion into focused practice. Show a short content preview and where the original is stored. File metadata, detailed extraction diagnostics and sync mechanics are optional details.
 
-A reading view provides search, clear excerpt location, readable text/math/tables and links back to original context. A review prompt requires recall before revealing reference. A self-check makes the learner's role explicit and uses Matched, Partly, or Not yet without a numeric correctness percentage. The question-creation route carries the source selection and returns to the source when closed.
+A reading view provides search, clear excerpt location, readable text/math/tables and links back to original context. A recall prompt captures the response before revealing reference. AI rubric grading is the normal supported route for short explanations and source recall, with citations to the actual retained source context. A self-check remains an optional alternative and offline fallback, labeled Matched, Partly, or Not yet; it is distinct from an AI grade. The question-creation route carries the source selection and returns to the source when closed.
 
-Question privacy and sync are separate controls with plain explanations. Disabling question generation does not imply deleting the original. Syncing an original does not imply extracted text/index sync. User-facing copy must describe actual capability, not aspirations.
+Source learning uses local or cloud AI according to the configured capability and connection. Reading, saved explanations and prepared practice remain useful offline; local extraction/indexing and supported local AI improve that availability. Source citations open the relevant passage. If a question needs information absent from the selected material, the tutor says what is missing or distinguishes broader explanation from a claim supported by that source. AI use, downloads and sync are ordinary availability settings, not the central study workflow.
 
-Acceptance: a source can be read, reviewed and used for permitted generation with predictable returns. Missing/changed/deleted source chunks offer recovery instead of an empty modal. Reference excerpts preserve citations and do not overstate factual authority.
+Acceptance: import material, ask a source question, inspect its citation, generate practice, submit a paraphrased short response, receive an AI rubric grade, and review the saved explanation offline with predictable returns. Missing/changed/deleted source chunks offer recovery instead of an empty modal. Reference excerpts preserve citations and do not overstate factual authority.
 
 <a id="ux-028"></a>
 
 ### UX-028 — Searchable Settings categories
 
-Replace the broad card dashboard with searchable categories: Practice; Accessibility; Notifications; Question Writer; Data and sync; About. Search matches labels and common synonyms such as language, dark, sound, export, reminders and timer. Each result deep-links to the control and highlights it briefly without disruptive animation.
+Replace the broad card dashboard with searchable categories: Practice; Accessibility; Notifications; AI and offline; Data and sync; About. Search matches labels and common synonyms such as language, dark, sound, export, reminders and timer. Each result deep-links to the control and highlights it briefly without disruptive animation.
 
-Practice contains duration, timing, contexts, emphasis and day boundary. Accessibility contains language, timer visibility, motion, supported visual alternatives and input preferences/calibration. Notifications describes permission and schedule state. Question Writer shows configuration and a test/recovery action. Data and sync contains export/restore, local storage, sync status, reports and deletion. About contains version and methodology.
+Practice contains duration, timing, contexts, emphasis and day boundary. Accessibility contains language, timer visibility, motion, supported visual alternatives and input preferences/calibration. Notifications describes permission and schedule state. AI and offline shows automatic/local/cloud preferences, available capabilities, optional model downloads and their size, configured provider/account, usage or cost where applicable, and connection/test/recovery actions. Sensible defaults should work without technical model selection; advanced provider details are secondary. Legacy Question Writer integration belongs here as an optional integration. Data and sync contains export/restore, local storage, sync status, reports and deletion. About contains version and methodology.
 
 Use live values where changes are immediately saved. Editors with multiple related changes have explicit Save/Cancel and dirty-state behavior. Data deletion remains a separate destructive flow with concrete scope and progress. Never convert a failure to “Done” simply because local cleanup started.
 
-Acceptance: a learner can find language, hide timer, sound, duration, export and restore by both browsing and search. Changing unrelated preferences preserves active session and daily completion. Deletion/export behaviors match the privacy specification.
+Acceptance: a learner can find language, hide timer, sound, duration, export and restore by both browsing and search. Changing unrelated preferences preserves active session and daily completion. Deletion/export and offline availability match the data and service specification.
 
 ## 9. Rich interaction slices that teach a specific skill
 
@@ -456,7 +472,7 @@ Use a concrete miniature study. Ask the learner to connect a claim to supporting
 
 Pointer users may drag a piece of evidence to a claim. Every relationship must also be creatable by choosing a claim and checking evidence options. Show current connections in text. Undo and Clear current claim are available. Validation states exactly what is incomplete without implying which evidence is correct.
 
-Feedback identifies what the evidence supports, what it does not establish, and one relevant confound or control. Repair changes the study context while keeping the inference structure. Open-ended explanations can be optional reflection unless a validated scoring scheme exists.
+Feedback identifies what the evidence supports, what it does not establish, and one relevant confound or control. Repair changes the study context while keeping the inference structure. Open-ended explanations are a first-class answer option using AI rubric grading for claim scope, evidence support, confounds and experimental reasoning. Exact structured relationship checks can remain components of the same task. The tutor can discuss an alternative experimental design and explain which rubric conditions it satisfies.
 
 Acceptance: all required claims can be mapped, incomplete structure cannot be committed, relationships remain readable in history, accessible controls produce the same mapping, and no raw claim/evidence ID is displayed.
 
@@ -474,15 +490,17 @@ Acceptance: UI state matches interpreter state; prediction is captured before re
 
 <a id="int-006"></a>
 
-### INT-006 — Retrieval: recall, reference and honest self-check
+### INT-006 — Retrieval: recall, AI grading and targeted follow-up
 
-Present a focused question from a known source and let the learner answer before seeing the excerpt. After confidence where required, show the relevant reference with a precise location and a short criteria list. Ask Matched, Partly, or Not yet only when the response is genuinely self-checked; label the result accordingly.
+Present a focused question from a known source and let the learner answer in their own words before seeing the excerpt. After confidence where required and submission, AI evaluates the response against a saved target-specific rubric: important concepts, relationship direction, conditions, omissions and contradictions. Give a normal learning grade and concise feedback tied to the response, with source locations for the relevant criteria. Accept accurate paraphrases, brief answers and valid alternative examples without requiring the reference's exact wording.
+
+The learner can ask why a criterion was missed, challenge an overlooked explanation, revise in a new linked attempt or start a targeted follow-up. If AI is unavailable or the learner chooses self-check, show the reference and target-specific checklist, then ask Matched, Partly, or Not yet. Save that as a self-rating and keep its interpretation separate from the AI grade. Pending grading can be resumed without losing the original recall.
 
 Offer an option to mark the question ambiguous or the excerpt insufficient. A repair may rephrase the same idea or ask a related retrieval question, but must not claim source-grounded quality if the source only contains fragments. Scheduling follows the core retention model and keeps early re-exposure distinct from a valid delayed check.
 
-Accessible equivalent: labeled text entry, standard dictation support where available, expandable source text, keyboard-operable match choices. Read reference only after the user chooses to reveal it.
+Accessible equivalent: labeled text entry, standard dictation support where available, expandable source text, keyboard-operable rubric and grade-review actions, and match choices for self-check. Announce the completion or failure of grading once, and read reference only after the response is submitted or the learner chooses to reveal it.
 
-Acceptance: no key before recall; the source citation opens useful context; matched status is not misrepresented as independently verified correctness; source deletion or reprocessing yields recovery without a blank screen.
+Acceptance: correct paraphrase, omission, reversed relation and contradictory response produce the expected rubric outcomes; grade review preserves the original; no key appears before recall; citations open useful context; local/cloud loss offers a truthful fallback; self-rating is not presented as an AI grade; source deletion or reprocessing yields recovery without a blank screen.
 
 <a id="int-007"></a>
 
@@ -490,7 +508,7 @@ Acceptance: no key before recall; the source citation opens useful context; matc
 
 Use a task that genuinely requires carrying a familiar relationship into a different context. For example, after proportional reasoning, compare resource allocation in a different domain with changed surface details. The learner selects or constructs the useful relationship and solves. A debrief may invite an optional explanation of what carried over. Pre-feedback reflection is permitted only when the task is separately and explicitly designated as a metacognition task; transfer alone is not a mandatory-reflection policy.
 
-Keep the first release constrained: two skills, a bounded problem and a deterministic response schema. Optional scaffolding can identify the relevant relationship, but that changes evidence status according to core rules. A debrief explicitly connects the old and new contexts, including what differs. Do not relabel ordinary multiple choice as transfer because its story mentions another discipline.
+Start with two skills and a bounded problem, using exact evaluation for computable results and AI rubric grading for the explanation of what transfers and what assumptions change. AI should support richer open responses, alternative valid solution strategies and a debrief tailored to the learner's reasoning. Optional scaffolding can identify the relevant relationship, but that changes evidence status according to core rules. A debrief explicitly connects the old and new contexts, including what differs. Do not relabel ordinary multiple choice as transfer because its story mentions another discipline.
 
 Accessible equivalent: text/table representation, labeled relationship selection and numeric/structured response. Reflection can be typed and resumed. Time pressure is not added merely to make transfer feel harder.
 
@@ -604,9 +622,9 @@ Acceptance: with motion, audio and haptics disabled, every state transition rema
 | Your saved answer | Immutable response |
 | Practice XP / Participation | Forge XP / engagement as learner-facing metric names |
 | Explanation | Durable scoring explanation |
-| Checked answer | Deterministically validated payload |
+| Checked answer / AI-graded answer where the distinction helps | Deterministically validated payload; unreviewed model suggestion as the blanket label for AI grades |
 | Source | Library item/chunk when naming navigation |
-| Question Writer | Internal Shortcut implementation name except setup details |
+| AI tutor / Create a question set / AI and offline | Question Writer as the name for every AI feature; provider or model implementation terms in the learning flow |
 | Saved on this device | Persisted locally |
 
 Technical terminology may be necessary in advanced methodology or developer exports. Keep those surfaces explicitly secondary. A statement such as “This task does not change your skill estimate” can be useful; “Immutable score preserving seeded diagnostic” is not.
@@ -634,6 +652,14 @@ Technical terminology may be necessary in advanced methodology or developer expo
 | Correct result | Correct |
 | Partial result | Partly correct |
 | Incorrect result | Let's review this |
+| AI grading pending | Checking your answer… |
+| AI rubric outcome | Partly correct · Your explanation identifies the cause; add the condition under which it applies. |
+| AI grade method detail | AI-graded against this question's criteria |
+| Grade clarification | I couldn't tell whether you meant the rate or the total. Clarify this part. |
+| AI grading unavailable | Your answer is saved. Retry grading when available, or compare it with the reference. |
+| Grade review | Review grade / Explain this criterion / Try again |
+| Contextual tutor | Ask the tutor / Explain another way / Give me a similar question |
+| Offline fallback | You're offline. Saved practice and available on-device features still work. |
 | Self-check outcome | Your self-check: partly matched |
 | Due review | Ready to review |
 | No reviews due | You're up to date. |
@@ -670,13 +696,13 @@ Acceptance: run the same first-use, incorrect-answer, confidence, source import,
 
 **Package A: repair visible defects and navigation.** Fix raw JSON presentation for all response families, reflection safe exit, stale nested content, and any reproduced navigation hang. Correct mismatched destination names. Add direct History and Review entry points. Preserve all existing scoring and persistence contracts.
 
-**Package B: rebuild the answer loop.** Create the continuous problem/response/feedback surface, inline confidence policy, graduated hints, readable original feedback and targeted repair. Include smallest-width, keyboard and VoiceOver operation before adding more activity types.
+**Package B: make AI central to the answer loop.** Create the continuous problem/response/feedback surface with short-response AI rubric grading, contextual tutor conversation, inline confidence policy, graduated AI/authored hints, readable original feedback, grade review and targeted repair. Include pending/failed grading and local/cloud/offline transitions as ordinary states. Include smallest-width, keyboard and VoiceOver operation before adding more activity types.
 
-**Package C: simplify discovery and first use.** Implement Today hierarchy, sample-first onboarding, optional starting check, exact activity search, explicit adaptive difficulty versus timing, and categorized Settings. Connect all routes to the core navigation model.
+**Package C: simplify discovery and first use.** Implement Today hierarchy and AI coaching, sample-first onboarding, natural-language learning goals, in-app question generation, optional starting check, exact activity search, explicit adaptive difficulty versus timing, and categorized Settings. Connect all routes to the core navigation model.
 
-**Package D: durable study resources.** Implement saved/temporary distinction, collection organization, original-context answer snapshots and useful source reading/review returns. Align retention and deletion with the privacy/persistence specification.
+**Package D: source-driven AI study and offline continuity.** Implement source tutoring, explanations and question creation, saved/temporary distinction, collection organization, original-context answer and AI-grade snapshots, and useful source reading/review returns. Align retention, offline assets, grading retries and deletion with the data/service specification.
 
-**Package E: polished interaction slices.** Implement one bounded slice per family with deterministic/accessible response equivalence, then broaden content only after usability and question-quality review.
+**Package E: polished interaction slices.** Implement one bounded slice per family with accessible response equivalence and exact, AI-rubric or combined evaluation appropriate to the task, then broaden content after usability and question-quality review. AI generation, tutoring and short-response grading are release deliverables in Packages B–D; finishing every offline-bank expansion is not a prerequisite for useful AI learning.
 
 <a id="ux-030"></a>
 
@@ -684,7 +710,7 @@ Acceptance: run the same first-use, incorrect-answer, confidence, source import,
 
 For every package, provide a traceable list of implemented requirement IDs, automated checks that validate actual behavior, screenshots where layout matters, and a concise manual journey ledger. Record platform, OS, device/window size, language, text size, input method and whether the data fixture is fresh or established.
 
-The minimum manual suite covers fresh sample/setup; optional check pause/resume; correct/wrong/partial answer; hints through their final level; required confidence; optional and required reflection; save failure/retry; all eight response representations in history; daily completion and preference edit; deep destination switching; empty/processing/failed source; generated-set expiry versus saved retention; keyboard and VoiceOver; minimum-width and largest-text presentation.
+The minimum manual suite covers plain-language goal → generated set → short response → AI grade → follow-up tutor → reviewed grade; source question and citation; local AI where supported; cloud AI, timeout, interrupted/retried grading and airplane-mode saved practice; fresh sample/setup; optional check pause/resume; correct/wrong/partial answer; hints through their final level; required confidence; optional and required reflection; save failure/retry; all eight response representations in history; daily completion and preference edit; deep destination switching; empty/processing/failed source; generated-set expiry versus saved retention; keyboard and VoiceOver; minimum-width and largest-text presentation.
 
 Use representative usability sessions to evaluate clarity and perceived professionalism. Ask learners to perform tasks without coaching, then explain what they believe happened. Log wrong turns, hesitation, misunderstood labels, unintended difficulty, skipped explanations and reports of repetitive questions. Measure first-practice access, time spent on administrative controls versus solving, successful error recovery, and ability to find a prior explanation. Proposed targets include a first practice within two clear setup decisions, one obvious resume action, no mandatory full-page confidence detour in ordinary practice, and all critical tasks independently completable with keyboard and VoiceOver.
 

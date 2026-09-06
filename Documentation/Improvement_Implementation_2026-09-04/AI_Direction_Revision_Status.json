@@ -1,0 +1,1225 @@
+{
+  "specificationVersion": "1.1",
+  "previousSpecificationVersion": "1.0",
+  "revisionDate": "2026-09-05",
+  "scope": "Documentation only; application implementation not changed.",
+  "changedRequirementCount": 152,
+  "requirements": [
+    {
+      "id": "PRD-001",
+      "title": "Trustworthy attempts",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "README.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "PRD-003",
+      "title": "A complete learning loop",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "README.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "PRD-004",
+      "title": "Meaningful personalization",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "README.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "PRD-008",
+      "title": "Authentic learning history",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "README.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "PRD-010",
+      "title": "Scope stays coherent",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "README.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "PRD-011",
+      "title": "AI throughout the learning experience",
+      "status": "specified",
+      "priorStatus": null,
+      "source": "README.md",
+      "reason": "New AI-centered product requirement; no implementation or acceptance is claimed by this documentation revision."
+    },
+    {
+      "id": "PRD-012",
+      "title": "Useful offline availability",
+      "status": "specified",
+      "priorStatus": null,
+      "source": "README.md",
+      "reason": "New AI-centered product requirement; no implementation or acceptance is claimed by this documentation revision."
+    },
+    {
+      "id": "UX-001",
+      "title": "Five stable destinations",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-003",
+      "title": "Learning and evidence policies belong to the core model",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-005",
+      "title": "Unsaved work and reversible navigation",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-006",
+      "title": "Sample-first onboarding",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-009",
+      "title": "Today screen composition and defaults",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-012",
+      "title": "Exact activity discovery",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-014",
+      "title": "Question creation as a guided task",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-015",
+      "title": "Saved versus temporary sets and collections",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-016",
+      "title": "Keep the problem present through the answer loop",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-018",
+      "title": "Feedback that teaches",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-019",
+      "title": "Graduated help and repair",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-020",
+      "title": "Reflection is useful and never a trap",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-021",
+      "title": "Session exit, pause and completion",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-022",
+      "title": "Scratchpad with visible context",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-023",
+      "title": "Progress overview leads with useful interpretation",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-025",
+      "title": "History is directly readable, searchable and replayable",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-027",
+      "title": "Source detail and studying",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-028",
+      "title": "Searchable Settings categories",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "INT-004",
+      "title": "Scientific reasoning: claim, evidence and experimental choice",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "INT-006",
+      "title": "Retrieval: recall, AI grading and targeted follow-up",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "INT-007",
+      "title": "Transfer: choose the useful structure in a new context",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "COPY-001",
+      "title": "Vocabulary contract",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "COPY-002",
+      "title": "Standard action and state catalog",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-029",
+      "title": "Package order",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "UX-030",
+      "title": "Release evidence required for this appendix",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "01_Experience_and_Interaction.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-001",
+      "title": "One contract must drive generation, rendering, validation, and explanation",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-002",
+      "title": "Generation must produce a coherent task, reference and rubric",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-003",
+      "title": "Generation failure must remain a content failure",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-005",
+      "title": "An item must state what is being judged",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-009",
+      "title": "Distractors must express plausible errors",
+      "status": "specified",
+      "priorStatus": "specified",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-001",
+      "title": "Correctness and credit must be consistent",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-002",
+      "title": "Scoring must produce an inspectable component result",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-003",
+      "title": "Parsing policy must follow the answer domain",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-004",
+      "title": "The eight response types remain the stable surface contract",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-009",
+      "title": "Short responses use the evaluator suited to their meaning",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-010",
+      "title": "Restricted symbolic equivalence must preserve symbol roles",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-011",
+      "title": "Symbolic processing must have bounded complexity",
+      "status": "specified",
+      "priorStatus": "implemented",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-012",
+      "title": "Prose grading must preserve direction, conditions, and negation",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-014",
+      "title": "Self-check remains an explicit alternative to AI grading",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-015",
+      "title": "Composite and state answers must grade typed components",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-018",
+      "title": "Feedback and replay must preserve the original result",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-022",
+      "title": "The release manifest must cover the actual delivered bank",
+      "status": "specified",
+      "priorStatus": "specified",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-023",
+      "title": "Every family needs an editorial record and an independent reviewer",
+      "status": "specified",
+      "priorStatus": "specified",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-025",
+      "title": "Authored and AI feedback must form a useful learning sequence",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-027",
+      "title": "Content incidents need a reproducible correction path",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-014",
+      "title": "Balanced admission must precede balanced delivery",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-018",
+      "title": "Exhaustion fallback must preserve the guarantee it actually has",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-019",
+      "title": "Epoch boundaries must solve capacity before reserving",
+      "status": "specified",
+      "priorStatus": "specified",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-028",
+      "title": "The matrix is the migration inventory, not a new count claim",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-029",
+      "title": "Family expansion must preserve a coherent operation",
+      "status": "specified",
+      "priorStatus": "specified",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCO-019",
+      "title": "The score test corpus must contain both meaning-preserving and meaning-changing edits",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-031",
+      "title": "Release review must inspect representative learner sessions",
+      "status": "specified",
+      "priorStatus": "specified",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-032",
+      "title": "Instrument quality without inventing a psychometric model",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-033",
+      "title": "Implement in a dependency order that cannot hide unresolved defects",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CON-034",
+      "title": "The chapter is complete only when quality and honesty agree",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "02_Content_and_Scoring.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "ADP-001",
+      "title": "Make the delivered question, the explanation and the record agree",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "ADP-002",
+      "title": "Use a shared, explicit item contract",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "ADP-009",
+      "title": "Explain the change in learner language",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "EVD-001",
+      "title": "Reduce durable events into separate evidence channels",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "EVD-002",
+      "title": "Use `EditorialBandEvidenceV1` for both live and replayed results",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "EVD-003",
+      "title": "Define an independent observation before counting it",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "EVD-004",
+      "title": "Assistance produces a learning outcome, not an unassisted success",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "ADP-011",
+      "title": "Apply a bounded practice staircase",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "EVD-005",
+      "title": "Collect confidence only under a defined purpose",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "EVD-006",
+      "title": "Treat partial credit according to the rubric, not the renderer",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "EVD-008",
+      "title": "Make invalid content exclusions affect every derived view",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "EVD-010",
+      "title": "Give personal study graded progress at its supported scope",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "ADP-013",
+      "title": "Protect an assessment contract rather than a nominal seed namespace",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCH-002",
+      "title": "Filter hard constraints before ranking candidates",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCH-003",
+      "title": "Balance at the experience level, not only at bank construction",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCH-004",
+      "title": "Handle content shortage visibly and safely",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCH-005",
+      "title": "Persist accepted AI selections and use stable fallback tie-breaking",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCH-006",
+      "title": "Keep review objectives separate from literal question repetition",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCH-007",
+      "title": "Use a bounded, explainable initial interval ladder",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCH-008",
+      "title": "Make the mistake queue actionable and criterion-specific",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCH-010",
+      "title": "Preserve the canonical daily plan while allowing real adaptation inside it",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCH-011",
+      "title": "Derive workload from item durations and interaction overhead",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCH-013",
+      "title": "Respect travel, offline use and changes in available content",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "EVD-013",
+      "title": "Replay accepted grades and decisions faithfully",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "EVD-014",
+      "title": "Make policy versions deployable without silent reinterpretation",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "SCH-014",
+      "title": "Map the implementation to current components",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "ADP-015",
+      "title": "Validate the proposed bands with representative learners",
+      "status": "specified",
+      "priorStatus": "specified",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "EVD-015",
+      "title": "Require evidence integrity before stronger product claims",
+      "status": "specified",
+      "priorStatus": "in progress",
+      "source": "03_Adaptive_Learning_and_Evidence.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CORE-001",
+      "title": "One learning runtime",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CORE-002",
+      "title": "Separate responsibilities",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CORE-003",
+      "title": "Explicit inputs and replay boundaries",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CORE-004",
+      "title": "Concurrency",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "CORE-005",
+      "title": "Versioned interfaces",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "RUN-003",
+      "title": "Persist the complete launch contract",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "RUN-007",
+      "title": "Lifecycle states",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "RUN-008",
+      "title": "Answer evaluation",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "RUN-011",
+      "title": "Protected evaluation and feedback",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "RUN-012",
+      "title": "Reference/self-check",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "RUN-013",
+      "title": "Hint progression",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "RUN-014",
+      "title": "Skip",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "RUN-016",
+      "title": "Ending",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-002",
+      "title": "Evaluation identity",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-003",
+      "title": "Current-item fields",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-004",
+      "title": "Time accounting",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-006",
+      "title": "Save guarantees",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-008",
+      "title": "Resume algorithm",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-010",
+      "title": "Idempotent evaluation and commit protocol",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-011",
+      "title": "Crash boundaries",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-015",
+      "title": "Reservation atomicity and adaptive delivery",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-016",
+      "title": "Proposed schema additions",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-017",
+      "title": "Storage and AI processing scopes",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-018",
+      "title": "Legacy scope and service use",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-019",
+      "title": "Content storage",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-020",
+      "title": "Size and corrupt input",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-022",
+      "title": "Complete review context",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-023",
+      "title": "Historical evidence correction",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DATA-024",
+      "title": "Rules for each audited defect",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "RUN-019",
+      "title": "Cold launch and recovery",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "RUN-022",
+      "title": "Safe exit during work and failure",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "MIG-005",
+      "title": "Archive version",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "MIG-006",
+      "title": "Export completeness and protection",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "MIG-007",
+      "title": "Restore transaction",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "MIG-009",
+      "title": "Cloud deployment",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "MIG-010",
+      "title": "Deletion and account lifecycle",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "04_Runtime_Data_and_Migration.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-002",
+      "title": "Five independent gates",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-003",
+      "title": "Test the shipped configuration",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-004",
+      "title": "Independent oracle rule",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-006",
+      "title": "Layer responsibilities",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-007",
+      "title": "Golden fixture package",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-008",
+      "title": "Reproduction identity",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-009",
+      "title": "Bounded exhaustive versus sampled checks",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-011",
+      "title": "Variety report",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-013",
+      "title": "Timing robustness",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-017",
+      "title": "Journey coverage",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-019",
+      "title": "Visual artifact review",
+      "status": "specified",
+      "priorStatus": "external or manual gate outstanding",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-021",
+      "title": "Proposed performance budgets",
+      "status": "specified",
+      "priorStatus": "external or manual gate outstanding",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-022",
+      "title": "Hang closure",
+      "status": "specified",
+      "priorStatus": "external or manual gate outstanding",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-023",
+      "title": "Migration/restore run sheet",
+      "status": "specified",
+      "priorStatus": "external or manual gate outstanding",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-025",
+      "title": "Feature processing and diagnostics boundaries",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-026",
+      "title": "Signed integration matrix",
+      "status": "specified",
+      "priorStatus": "external or manual gate outstanding",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-027",
+      "title": "Formative usability rounds",
+      "status": "specified",
+      "priorStatus": "external or manual gate outstanding",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-028",
+      "title": "Learning output and feature usefulness review",
+      "status": "specified",
+      "priorStatus": "external or manual gate outstanding",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "QA-REQ-030",
+      "title": "Product metrics with honest denominators",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DEL-001",
+      "title": "Deliver slices with dependent gates",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DEL-002",
+      "title": "First reviewable vertical slice",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DEL-004",
+      "title": "Capability routing and staged delivery",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DEL-005",
+      "title": "Definition of done per package",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DEL-006",
+      "title": "Severity and release decisions",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DEL-009",
+      "title": "Release evidence bundle",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    },
+    {
+      "id": "DEL-010",
+      "title": "Final closure questions",
+      "status": "specified",
+      "priorStatus": "partial",
+      "source": "05_QA_and_Delivery.md",
+      "reason": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope."
+    }
+  ]
+}

@@ -77,9 +77,12 @@ struct NFGeneratedPracticeDraft: Codable, Identifiable, Sendable {
     var terminalState: NFGeneratedTerminalState? = nil
     var terminalInventory: NFGeneratedTerminalInventory? = nil
     var pendingUnscored: NFGeneratedRunState.Outcome? = nil
+    /// Pinned before transport; job status and receipts live in the repository namespace.
+    var aiGradingRequest: NFAIGradeRequest? = nil
+    var aiGradeReviews: [NFAIGradingJob]? = nil
 
     var unavailableReason: String? {
-        guard schemaVersion == 1,
+        guard [1, 2].contains(schemaVersion),
               scorerVersion == NFExerciseScoringEngine.scoringVersion,
               presentationVersion == NFGeneratedPracticeCompatibility.presentationVersion,
               selectionPolicyVersion == NFGeneratedPracticeCompatibility.selectionPolicyVersion,
@@ -98,6 +101,39 @@ struct NFGeneratedPracticeDraft: Codable, Identifiable, Sendable {
         let unscored = runState?.pendingUnscored ?? pendingUnscored
         if unscored != nil && unscored != .skipped && unscored != .revealed { return NFGeneratedPracticeCompatibility.unavailableMessage }
         let exercise = result.questions[index].authoritativeExercise
+        let containsAI = result.questions.contains { $0.authoritativeExercise.aiRubric != nil }
+        guard schemaVersion == 2 || (!containsAI && aiGradingRequest == nil && aiGradeReviews == nil) else {
+            return NFGeneratedPracticeCompatibility.unavailableMessage
+        }
+        if let grading = aiGradingRequest {
+            guard schemaVersion == 2, grading.runID == id, grading.attemptID == pendingAttemptID,
+                  grading.slotID == runState?.current.id.uuidString, grading.exercise == exercise,
+                  grading.response == response, grading.reviewOf == nil,
+                  (try? NFAIGradeValidator.validateRequest(grading)) != nil else {
+                return NFGeneratedPracticeCompatibility.unavailableMessage
+            }
+        }
+        if let score = lastScore, exercise.aiRubric != nil, unscored == nil {
+            guard let grading = aiGradingRequest, score.aiGrade?.request == grading,
+                  NFAIGradeValidator.validatesScore(score, exercise: exercise, response: response,
+                    attemptID: pendingAttemptID) else { return NFGeneratedPracticeCompatibility.unavailableMessage }
+        }
+        if let reviews = aiGradeReviews {
+            guard reviews.count <= 16, Set(reviews.map(\.id)).count == reviews.count,
+                  reviews.allSatisfy({ review in
+                      guard review.ownerDeviceID == ownerDeviceID, review.request.runID == id,
+                            review.request.reviewOf != nil,
+                            let slot = runState?.slots.first(where: { $0.attemptID == review.request.attemptID }),
+                            slot.id.uuidString == review.request.slotID,
+                            slot.exerciseDigest == (try? NFLocalItemCheckpoint.digest(review.request.exercise)),
+                            (try? NFAIGradingJobStore.validate(review)) != nil else { return false }
+                      if review.request.attemptID == pendingAttemptID {
+                          return review.request.response == response && review.request.exercise == exercise
+                            && review.request.reviewOf == lastScore?.aiGrade?.id
+                      }
+                      return slot.outcome == .scored
+                  }) else { return NFGeneratedPracticeCompatibility.unavailableMessage }
+        }
         guard NFTransferRelationshipDraft.permits(transferRelationship, exercise: exercise, response: response, committing: [1, 2].contains(stage) && unscored == nil), transferRelationship?.awaitsRelationship != true || !hintRevealed,
               NFScienceStudyDraft.permits(scienceStudy, exercise: exercise, response: response, committing: [1, 2].contains(stage) && unscored == nil),
               dataInspection?.isCompatible(with: exercise) != false,
@@ -277,6 +313,20 @@ extension NFLocalSessionRepository {
                   try draft.preservesAcceptedInventory(from: previous),
                   state.slots.count >= old.slots.count, state.slots.count <= old.slots.count + 1 else {
                 throw RepositoryError.staleRevision
+            }
+            if previous.index == draft.index, let frozen = previous.aiGradingRequest {
+                guard draft.aiGradingRequest == frozen, previous.response == draft.response,
+                      previous.confidence == draft.confidence else { throw RepositoryError.conflictingAttempt }
+            }
+            let oldReviews = previous.aiGradeReviews ?? []
+            do {
+                let newReviews = draft.aiGradeReviews ?? []
+                guard newReviews.count >= oldReviews.count,
+                      zip(oldReviews, newReviews).allSatisfy({ old, new in
+                          old.request == new.request && old.ownerDeviceID == new.ownerDeviceID
+                            && (old.receipt == nil || old.receipt == new.receipt)
+                            && new.events.starts(with: old.events)
+                      }) else { throw RepositoryError.conflictingAttempt }
             }
             if previous.index == draft.index, previous.stage == 1 || previous.stage == 2 {
                 guard previous.response == draft.response, previous.scoredResponse == draft.scoredResponse,

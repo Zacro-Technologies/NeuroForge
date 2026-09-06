@@ -18066,8 +18066,13 @@
       }
     },
     "Automatic": {
-      "comment": "AI routing preference that may select an eligible Apple model route.",
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -31483,10 +31488,16 @@
     },
     "Earned credit": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Earned credit"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "獲得したクレジット"
+            "value": "獲得した達成度"
           }
         }
       }
@@ -44955,6 +44966,12 @@
     },
     "Model": {
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Model"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -49751,8 +49768,13 @@
       }
     },
     "Off": {
-      "comment": "Runtime disabled-service status in Settings.",
       "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        },
         "ja": {
           "stringUnit": {
             "state": "translated",
@@ -98380,6 +98402,1321 @@
           "stringUnit": {
             "state": "translated",
             "value": "練習 · 復習の条件が変更されました"
+          }
+        }
+      }
+    },
+    "AI evaluates the meaning of your answer against these criteria.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI evaluates the meaning of your answer against these criteria."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIは、次の基準に沿って回答の意味を評価します。"
+          }
+        }
+      }
+    },
+    "Ask AI about this answer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask AI about this answer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この回答についてAIに聞く"
+          }
+        }
+      }
+    },
+    "Grading your saved answer…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Grading your saved answer…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存した回答を評価中…"
+          }
+        }
+      }
+    },
+    "Answer saved — grading pending": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Answer saved — grading pending"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回答を保存済み・評価待ち"
+          }
+        }
+      }
+    },
+    "Cancel grading": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel grading"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "評価をキャンセル"
+          }
+        }
+      }
+    },
+    "Retry grading": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry grading"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "評価を再試行"
+          }
+        }
+      }
+    },
+    "Compare with reference — no score": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compare with reference — no score"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "参考回答と比較する（採点なし）"
+          }
+        }
+      }
+    },
+    "Saved AI evaluation": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved AI evaluation"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存したAI評価"
+          }
+        }
+      }
+    },
+    "Evaluation details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evaluation details"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "評価の詳細"
+          }
+        }
+      }
+    },
+    "Provider": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provider"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロバイダ"
+          }
+        }
+      }
+    },
+    "Request a grade review": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Request a grade review"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "評価の見直しを依頼"
+          }
+        }
+      }
+    },
+    "The original evaluation stays saved. A review is added separately.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The original evaluation stays saved. A review is added separately."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "元の評価は保存したまま、見直した評価を別に追加します。"
+          }
+        }
+      }
+    },
+    "What should the evaluator reconsider?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What should the evaluator reconsider?"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "どの点を見直してほしいですか？"
+          }
+        }
+      }
+    },
+    "Review this grade": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review this grade"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この評価を見直す"
+          }
+        }
+      }
+    },
+    "Reviewing the saved answer…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reviewing the saved answer…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存した回答を見直し中…"
+          }
+        }
+      }
+    },
+    "Saved review": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved review"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存した見直し評価"
+          }
+        }
+      }
+    },
+    "Your answer is saved. Retry grading when you are ready.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your answer is saved. Retry grading when you are ready."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回答は保存されています。準備ができたら評価を再試行できます。"
+          }
+        }
+      }
+    },
+    "Your answer is saved. The grading request could not be loaded; try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your answer is saved. The grading request could not be loaded; try again."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回答は保存されています。評価依頼を読み込めませんでした。もう一度お試しください。"
+          }
+        }
+      }
+    },
+    "Your answer is saved. Grading did not finish. Retry or compare with the reference.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your answer is saved. Grading did not finish. Retry or compare with the reference."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "回答は保存されています。評価が完了しませんでした。再試行するか、参考回答と比較できます。"
+          }
+        }
+      }
+    },
+    "The returned grade could not be verified. Your answer is saved; you can try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The returned grade could not be verified. Your answer is saved; you can try again."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "返された評価を確認できませんでした。回答は保存されています。もう一度お試しいただけます。"
+          }
+        }
+      }
+    },
+    "Evaluation was cancelled. Your saved answer is retained.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evaluation was cancelled. Your saved answer is retained."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "評価をキャンセルしました。保存した回答は保持されています。"
+          }
+        }
+      }
+    },
+    "Your review request is saved. Retry when you are ready.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your review request is saved. Retry when you are ready."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "見直し依頼は保存されています。準備ができたら再試行できます。"
+          }
+        }
+      }
+    },
+    "The grading request could not be saved. Your answer is retained.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The grading request could not be saved. Your answer is retained."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "評価依頼を保存できませんでした。回答は保持されています。"
+          }
+        }
+      }
+    },
+    "This saved grading request needs a compatible version of NeuroForge.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This saved grading request needs a compatible version of NeuroForge."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この評価依頼を開くには、対応するバージョンのNeuroForgeが必要です。"
+          }
+        }
+      }
+    },
+    "This grading request does not match the saved answer.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This grading request does not match the saved answer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "評価依頼が保存した回答と一致しません。"
+          }
+        }
+      }
+    },
+    "The saved grading request changed. Reload it before retrying.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The saved grading request changed. Reload it before retrying."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存した評価依頼が変更されました。再読み込みしてからお試しください。"
+          }
+        }
+      }
+    },
+    "This grading request is too large to save. Your original answer is retained.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This grading request is too large to save. Your original answer is retained."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "評価依頼が大きすぎるため保存できません。元の回答は保持されています。"
+          }
+        }
+      }
+    },
+    "AI and offline settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI and offline settings"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIとオフラインの設定"
+          }
+        }
+      }
+    },
+    "AI options": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI options"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIのオプション"
+          }
+        }
+      }
+    },
+    "Ask about this answer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask about this answer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この回答について質問"
+          }
+        }
+      }
+    },
+    "Create with built-in rules": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create with built-in rules"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "内蔵ルールで作成"
+          }
+        }
+      }
+    },
+    "Rubric and grade details": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rubric and grade details"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "評価基準と採点の詳細"
+          }
+        }
+      }
+    },
+    "Stops creating this set. Your topic and source selection are kept.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stops creating this set. Your topic and source selection are kept."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "問題セットの作成を停止します。トピックと選択した資料は保持されます。"
+          }
+        }
+      }
+    },
+    "AI practice with feedback": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI practice with feedback"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIによる練習とフィードバック"
+          }
+        }
+      }
+    },
+    "AI-graded feedback": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI-graded feedback"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIの採点によるフィードバック"
+          }
+        }
+      }
+    },
+    "Reviewed AI feedback": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reviewed AI feedback"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "見直し後のAIフィードバック"
+          }
+        }
+      }
+    },
+    "%lld of %lld questions prepared": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of %lld questions prepared"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%2$lld問中%1$lld問を作成済み"
+          }
+        }
+      }
+    },
+    "On device": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On device"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オンデバイス"
+          }
+        }
+      }
+    },
+    "AI and offline": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI and offline"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIとオフライン"
+          }
+        }
+      }
+    },
+    "AI practice with a saved rubric": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI practice with a saved rubric"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "評価基準を保存するAI練習"
+          }
+        }
+      }
+    },
+    "The question, reference answer and rubric are saved together. Response structure and source references were checked; these checks do not certify factual accuracy or grading quality.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The question, reference answer and rubric are saved together. Response structure and source references were checked; these checks do not certify factual accuracy or grading quality."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "問題、参考回答、評価基準をまとめて保存します。回答の構造と資料への参照は確認済みですが、事実の正確さや採点の品質を保証する確認ではありません。"
+          }
+        }
+      }
+    },
+    "Create focused questions with a saved rubric. Answer in your own words, get partial credit and a useful next step. Available on-device AI keeps practice working offline.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create focused questions with a saved rubric. Answer in your own words, get partial credit and a useful next step. Available on-device AI keeps practice working offline."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "目的に合った問題と評価基準を作成します。自分の言葉で回答し、部分点と次の学習に役立つ助言を得られます。オンデバイスAIを利用できる場合は、オフラインでも練習できます。"
+          }
+        }
+      }
+    },
+    "Created with on-device AI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Created with on-device AI"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オンデバイスAIで作成"
+          }
+        }
+      }
+    },
+    "Created with cloud AI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Created with cloud AI"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クラウドAIで作成"
+          }
+        }
+      }
+    },
+    "A selected source is set to Source review only. Change its AI setting in Sources before creating questions.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A selected source is set to Source review only. Change its AI setting in Sources before creating questions."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選択した資料は「資料の復習のみ」に設定されています。問題を作成するには、資料のAI設定を変更してください。"
+          }
+        }
+      }
+    },
+    "This answer needs a supported question and rubric before it can be graded.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This answer needs a supported question and rubric before it can be graded."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この回答を採点するには、対応する問題と評価基準が必要です。"
+          }
+        }
+      }
+    },
+    "The evaluator needs more information to give a supported grade. Your answer is saved.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The evaluator needs more information to give a supported grade. Your answer is saved."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "根拠のある評価を行うには、追加の情報が必要です。回答は保存されています。"
+          }
+        }
+      }
+    },
+    "https://api.example.com/v1/chat/completions": {
+      "shouldTranslate": false
+    },
+    "Your AI practice": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your AI practice"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIでの練習"
+          }
+        }
+      }
+    },
+    "Credit describes these saved answers, including accepted grade reviews.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Credit describes these saved answers, including accepted grade reviews."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "達成度は、受理された見直し評価を含む、これらの保存済み回答についての結果です。"
+          }
+        }
+      }
+    },
+    "Evaluated answers": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evaluated answers"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "評価済みの回答"
+          }
+        }
+      }
+    },
+    "A criterion to practise": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A criterion to practise"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "練習する評価基準"
+          }
+        }
+      }
+    },
+    "From a saved answer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From a saved answer"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "保存済み回答から"
+          }
+        }
+      }
+    },
+    "Original feedback": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original feedback"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "元のフィードバック"
+          }
+        }
+      }
+    },
+    "View these saved answers": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View these saved answers"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "これらの保存済み回答を見る"
+          }
+        }
+      }
+    },
+    "Continue a saved set, including questions created with AI.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue a saved set, including questions created with AI."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIで作成した問題を含め、保存済みのセットを続けられます。"
+          }
+        }
+      }
+    },
+    "Optional. Create questions from your material, with references you can revisit. Each source’s AI setting controls which models can use its excerpts.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional. Create questions from your material, with references you can revisit. Each source’s AI setting controls which models can use its excerpts."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自分の資料から、参照先を確認できる問題を作れます（任意）。資料ごとのAI設定により、抜粋を利用できるモデルが決まります。"
+          }
+        }
+      }
+    },
+    "Question creation is disabled for this source. Open the source to change its AI setting.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Question creation is disabled for this source. Open the source to change its AI setting."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この資料では問題の作成が無効になっています。資料を開いてAI設定を変更してください。"
+          }
+        }
+      }
+    },
+    "Automatic AI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic AI"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動AI"
+          }
+        }
+      }
+    },
+    "On-device AI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On-device AI"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オンデバイスAI"
+          }
+        }
+      }
+    },
+    "AI off; offline study available": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI off; offline study available"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIはオフです。オフライン学習は利用できます"
+          }
+        }
+      }
+    },
+    "Automatic AI allowed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic AI allowed"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自動AIの利用を許可"
+          }
+        }
+      }
+    },
+    "On-device AI allowed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On-device AI allowed"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "オンデバイスAIの利用を許可"
+          }
+        }
+      }
+    },
+    "Turn your material into practice.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn your material into practice."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "手元の資料を学習に活かしましょう。"
+          }
+        }
+      }
+    },
+    "Import and text recognition": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import and text recognition"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み込みと文字認識"
+          }
+        }
+      }
+    },
+    "Import files up to 50 MB for offline reading and practice. Code and structured data are read as text and never run. Scanned PDFs use local OCR when you choose it; images use local OCR during import. New sources use Automatic AI. You can choose On-device AI or Source review only for each source.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import files up to 50 MB for offline reading and practice. Code and structured data are read as text and never run. Scanned PDFs use local OCR when you choose it; images use local OCR during import. New sources use Automatic AI. You can choose On-device AI or Source review only for each source."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50 MBまでのファイルを読み込み、オフラインで閲覧・学習できます。コードや構造化データはテキストとして読み取り、実行しません。スキャンPDFは選択時に、画像は読み込み時に端末内で文字認識します。新しい資料では自動AIを使用します。資料ごとにオンデバイスAIやソースレビューのみに変更できます。"
+          }
+        }
+      }
+    },
+    "Recall from memory or create short-answer practice with AI feedback.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recall from memory or create short-answer practice with AI feedback."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "記憶から思い出す練習や、AIのフィードバックを受けられる短文回答の問題を作れます。"
+          }
+        }
+      }
+    },
+    "Review what you remember, then compare with the source.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review what you remember, then compare with the source."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "覚えている内容を思い出し、資料と比較しましょう。"
+          }
+        }
+      }
+    },
+    "AI short-answer sets can use readable code, tables, and other source text. Model availability is checked when you create the set.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI short-answer sets can use readable code, tables, and other source text. Model availability is checked when you create the set."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "読み取れたコード、表などの資料から、AIで短文回答の問題を作れます。モデルが利用できるかどうかは、作成時に確認します。"
+          }
+        }
+      }
+    },
+    "Source review works with this format. Enable AI for this source and in Settings to create short-answer questions.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source review works with this format. Enable AI for this source and in Settings to create short-answer questions."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この形式でもソースレビューを利用できます。短文回答の問題を作るには、この資料と「設定」でAIを有効にしてください。"
+          }
+        }
+      }
+    },
+    "App storage": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App storage"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アプリ内の保存領域"
+          }
+        }
+      }
+    },
+    "Source AI availability": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source AI availability"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "資料のAI利用"
+          }
+        }
+      }
+    },
+    "Choose how AI can help you study this source. On-device AI supports offline learning when a suitable model is available.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose how AI can help you study this source. On-device AI supports offline learning when a suitable model is available."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この資料の学習にAIをどう使うか選べます。適したモデルが利用できる場合、オンデバイスAIはオフラインでも学習を支援します。"
+          }
+        }
+      }
+    },
+    "Source AI use": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source AI use"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "資料でのAI利用"
+          }
+        }
+      }
+    },
+    "Saving source AI setting…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saving source AI setting…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "資料のAI設定を保存中…"
+          }
+        }
+      }
+    },
+    "Relevant excerpts can be used by your configured AI service.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relevant excerpts can be used by your configured AI service."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "設定したAIサービスで、必要な抜粋を使用できます。"
+          }
+        }
+      }
+    },
+    "AI work uses a suitable on-device model, so it can run without a connection.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI work uses a suitable on-device model, so it can run without a connection."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "適した端末内モデルを使い、インターネットに接続せずにAIを利用できます。"
+          }
+        }
+      }
+    },
+    "Browse and review this source without AI.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Browse and review this source without AI."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIを使わずに、この資料を閲覧・復習できます。"
+          }
+        }
+      }
+    },
+    "AI can use relevant excerpts for short-answer questions, grading, and explanations. Automatic mode uses your configured cloud provider or a suitable on-device model. Source reading stays available offline. The optional Question Writer Shortcut still asks before sending excerpts.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI can use relevant excerpts for short-answer questions, grading, and explanations. Automatic mode uses your configured cloud provider or a suitable on-device model. Source reading stays available offline. The optional Question Writer Shortcut still asks before sending excerpts."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AIは必要な抜粋を使って、短文回答の問題作成、採点、解説を行えます。自動モードでは、設定したクラウドサービスまたは適した端末内モデルを使用します。資料はオフラインでも読めます。任意で使うQuestion Writerショートカットでは、抜粋の送信前に引き続き確認します。"
+          }
+        }
+      }
+    },
+    "This source uses on-device AI for questions, grading, and explanations. If a suitable local model is unavailable, source review and reading remain available. This choice is respected even when a cloud provider is configured.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This source uses on-device AI for questions, grading, and explanations. If a suitable local model is unavailable, source review and reading remain available. This choice is respected even when a cloud provider is configured."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この資料の問題作成、採点、解説にはオンデバイスAIを使います。適した端末内モデルが利用できない場合も、資料の閲覧とソースレビューは利用できます。クラウドサービスを設定しても、この選択は維持されます。"
+          }
+        }
+      }
+    },
+    "AI does not use this source for questions, grading, or explanations. Source review and browsing remain available offline.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI does not use this source for questions, grading, or explanations. Source review and browsing remain available offline."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この資料はAIによる問題作成、採点、解説には使いません。オフラインでもソースレビューと閲覧を利用できます。"
+          }
+        }
+      }
+    },
+    "The source AI setting was not saved. The previous choice is still active.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The source AI setting was not saved. The previous choice is still active."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "資料のAI設定を保存できませんでした。以前の選択が引き続き有効です。"
+          }
+        }
+      }
+    },
+    "The extracted index is stored locally for offline use. Relevant excerpts may be sent to your configured AI service when this source and Settings allow Automatic AI.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The extracted index is stored locally for offline use. Relevant excerpts may be sent to your configured AI service when this source and Settings allow Automatic AI."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抽出した索引は端末内に保存し、オフラインで使用します。この資料と「設定」で自動AIを許可している場合、必要な抜粋を設定済みのAIサービスに送信することがあります。"
           }
         }
       }

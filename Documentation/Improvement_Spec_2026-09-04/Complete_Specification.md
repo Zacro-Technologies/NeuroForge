@@ -1,6 +1,6 @@
 # NeuroForge — Complete improvement specification
 
-**4 September 2026 · Version 1.0 · Proposed implementation baseline**
+**5 September 2026 · Version 1.1 · AI-centered product direction · Specification only**
 
 This generated reading copy combines the master and five chapters. Edit the source chapters, then run `validate_spec.py` to rebuild it. It specifies future behavior; it does not certify that the app implements it.
 
@@ -12,15 +12,17 @@ This generated reading copy combines the master and five chapters. Edit the sour
 
 # NeuroForge improvement specification
 
-**Version 1.0 · 4 September 2026 · Proposed implementation baseline**
+**Version 1.1 · Revised 5 September 2026 · AI-centered product direction · Specification only**
 
-NeuroForge should become a dependable practice app in which a learner can understand the task, answer fairly, get useful help, continue saved work, and see why the next question suits them. The first priority is to repair grading, continuity and evidence integrity. The next is to make practice genuinely varied and adaptive, simplify the answer loop, and add interactions that teach something specific.
+NeuroForge is an AI-centered STEM learning app. AI should help learners understand material, answer in their own words, receive meaningful grades and feedback, practice weak areas, and turn their own sources into useful learning sessions. Tutoring, question generation, short-response grading, hints, coaching and personalized planning belong in the main learning experience.
+
+Local processing exists to make the app work reasonably well offline. It is an availability and responsiveness strategy, not a privacy-led product premise or a reason to restrict AI. Use capable local models when they fit the task and use cloud models when they improve the experience. Preserve an offline foundation of downloaded material, saved sessions, authored exercises, exact evaluators and useful fallbacks; do not promise that every advanced model feature works without a suitable model or connection.
 
 This specification turns the [4 September QA findings](../QA_2026-09-04/README.md) into implementation requirements, data contracts, screen behavior, content standards, concrete examples, failure handling and release tests. It covers the existing seven labs, all 58 current activity families, all eight response schemas, the daily plan, protected checks, source study, question creation, review/history, persistence, accessibility and supported integrations.
 
 **This is a specification, not a claim that these improvements are already implemented.** No production app changes are included in this documentation package. The audit's executed tests establish the starting state; future acceptance cases below remain work to perform during implementation.
 
-For one searchable document, open the [complete specification](Complete_Specification.md). Use the [requirement index](Requirement_Index.md) to jump directly to an implementation contract. The package contains 256 normative requirements; the [validation record](Specification_Validation.md) documents structural checks and coverage.
+For one searchable document, open the [complete specification](Complete_Specification.md). Use the [requirement index](Requirement_Index.md) to jump directly to an implementation contract. The package contains 258 normative requirements; the [validation record](Specification_Validation.md) documents structural checks and coverage.
 
 ## 1. How to use this package
 
@@ -30,7 +32,7 @@ For one searchable document, open the [complete specification](Complete_Specific
 | [01 — Experience and interaction](01_Experience_and_Interaction.md) | Product design, SwiftUI, accessibility, localization | Every principal screen; continuous answering; hints/repair; source study; history; seven interactive slices; responsive tokens; copy and focus behavior |
 | [02 — Content and scoring](02_Content_and_Scoring.md) | Content engineering, subject reviewers, learning design | Typed item contracts; all eight scoring domains; fairness/equivalence; protected scaffolds; finite inventory; worked examples; all 58 family progressions |
 | [03 — Adaptive learning and evidence](03_Adaptive_Learning_and_Evidence.md) | Learning design, engine, persistence, research | B1–B4 demands; cold start; exact policy transitions; overrides; evidence eligibility; confidence; protected checks; review schedules; 60 simulation fixtures |
-| [04 — Runtime, data and migration](04_Runtime_Data_and_Migration.md) | App/runtime, persistence, integrations | Run/slot identity; state machine; snapshots; timing; commit recovery; navigation; privacy partition; legacy evidence corrections; schema/archive migration |
+| [04 — Runtime, data and migration](04_Runtime_Data_and_Migration.md) | App/runtime, persistence, integrations | Run/slot identity; state machine; snapshots; timing; commit recovery; navigation; local/cloud AI jobs and grade receipts; legacy evidence corrections; schema/archive migration |
 | [05 — QA and delivery](05_QA_and_Delivery.md) | QA, release owner, all implementers | Known-defect regressions; failure injection; devices/accessibility; performance budgets; signed integrations; usability protocol; work packages; release gates |
 | [Requirement index](Requirement_Index.md) | Implementers and reviewers | Searchable links to every normative requirement definition, grouped by owner chapter |
 
@@ -42,12 +44,15 @@ Read the master first. Then read the owning feature chapter and its dependencies
 
 Use this precedence when a conflict appears: this master decision register → the chapter that owns the contract → illustrative examples and tests. Content owns truth/score semantics; adaptive learning owns selection/evidence policy; runtime owns persistence/ownership/recovery; experience owns presentation within those constraints; QA owns how fulfillment is demonstrated. Resolve contradictions in the documents before using precedence to implement a surprising behavior. Do not silently weaken a requirement because its fixture is inconvenient.
 
-This package replaces the earlier audit's suggested UX and learning defaults where it makes a more precise decision. The audit remains the record of observed evidence. Existing project privacy, content-integrity and release requirements remain in force unless a specific replacement is documented here. In particular, there is no implied permission to widen source transmission, erase history, weaken signed content admission, or call an unverified integration certified.
+This revision supersedes the earlier privacy-led, Shortcut-only and deterministic-only product restrictions in the original product plan, audits and implementation ledgers. AI may grade responses, generate substantive learning content, recommend plans and use relevant answers, selected source material and learning context through a configured local or cloud service. A second per-run source-transmission permission is not a required product step. Existing explicit user settings remain respected until changed; new defaults and migration are specified in chapter 04. Basic credential handling, truthful service disclosures, data recovery and applicable platform requirements remain ordinary engineering obligations. They are not the product's central value proposition.
+
+The audits and recorded test runs remain historical evidence of the earlier app. They are not rewritten to imply AI grading has already been implemented or evaluated. A changed requirement must be reassessed against this revision before it can be marked complete. [The direction change record](../AI_Product_Direction_2026-09-05.md) maps the old and new decisions.
 
 ## 2. The product problems being solved
 
 | User concern | Verified starting problem | Target behavior |
 |---|---|---|
+| “AI feels peripheral” | Models were restricted to optional authoring/explanations; prose often became self-rating | AI tutoring, semantic rubric grading, source study and personalized coaching throughout the learning loop |
 | “It feels clunky” | Separate confidence/reflection/feedback pages, disappearing problem context, long card stacks, weak continuation | One continuous learning surface; appropriate inline confidence; correction before optional reflection; exact Continue; one obvious next action |
 | “It feels unprofessional” | Raw serialized answers in history, technical scorer copy, broken section switching, wrapped controls, unfair scores | Readable authentic history, stable navigation, consistent terms, accessible layouts and trustworthy feedback |
 | “Do the features work?” | Concrete grading defects, lost focused-session continuation, inaccessible later hints; integrations incompletely certified | Known defects closed with behavioral tests; all enabled journeys and external boundaries receive explicit release evidence |
@@ -69,7 +74,9 @@ The QA build was based on `f9b846015676e6b3bed7a4f7037e59475dda1b49`, version 1.
 
 ### PRD-001 — Trustworthy attempts
 
-Every new authoritative score must refer to the exact displayed item, its reviewed evaluation contract and the learner's actual response. Declared equivalents earn identical credit. A malformed input, ambiguous interpretation, invalid item, self-rating, skipped item and objectively wrong answer are distinguishable outcomes. No UI convenience may collapse them into a misleading percentage.
+Every accepted grade must refer to the exact displayed item, its declared rubric/evaluation contract and the learner's actual response. Use exact evaluators for exact numeric, symbolic and structured tasks where they work well; use validated AI rubric grading for short answers, explanations, reasoning, critique and other semantic responses. AI grades may award partial credit and guide ordinary practice progression. The learner gets criterion-level feedback, a concise reason and a way to question or request review of the grade.
+
+Equivalent meanings should receive equivalent credit under the evaluated rubric. Ambiguous interpretation, inadequate evidence, unavailable evaluation, invalid items, self-ratings, skipped items and wrong answers remain distinguishable. An AI outage or uncertain judgment is not a zero. A stored accepted grade is replayed on resume; a fresh model run cannot silently rewrite it.
 
 <a id="prd-002"></a>
 
@@ -81,13 +88,13 @@ An acknowledged same-device save must preserve run identity, position, exact con
 
 ### PRD-003 — A complete learning loop
 
-Ordinary practice supports attempt → accurate feedback → useful explanation/help → optional fresh repair → later review. The original problem remains available while learning from it. Immediate repair success is distinguishable from delayed retention and unfamiliar application. Repeated help does not inflate independent skill evidence.
+Ordinary practice supports attempt → exact or AI rubric grading → contextual AI feedback/tutoring → optional fresh repair → later review. AI can ask a guiding question, explain a missing step, compare approaches, generate a suitable follow-up and discuss selected source material. The original problem remains available while learning from it. Immediate repair success is distinguishable from delayed retention and unfamiliar application. Repeated help does not inflate independent skill evidence.
 
 <a id="prd-004"></a>
 
 ### PRD-004 — Meaningful personalization
 
-Adaptation shall change the delivered task demands within a reviewed objective/family. Learner goals, starting preferences, prerequisite evidence, recent independent performance and available content guide selection. Confidence, time pressure, XP and self-report do not manufacture ability. Explain a consequential band change with the actual reason and allow explicit ordinary-practice control.
+Adaptation shall change delivered task demands within the supported objective/family. AI can interpret learning goals, diagnose response patterns, propose practice sequences and explain useful next steps. Learner goals, starting preferences, prerequisite evidence, accepted exact/AI rubric grades, assistance history and available content guide selection. Committed recommendations obey the declared duration, difficulty, accessibility and assessment constraints and remain stable on resume. Confidence, time pressure, XP and self-report do not manufacture ability. Explain a consequential band change with the actual reason and allow explicit ordinary-practice control.
 
 <a id="prd-005"></a>
 
@@ -109,9 +116,9 @@ Every enabled learning operation works with applicable touch, keyboard and acces
 
 <a id="prd-008"></a>
 
-### PRD-008 — Historical honesty and privacy
+### PRD-008 — Authentic learning history
 
-Preserve original attempts, content/scorer identities and authentic available context. Corrections are append-only dispositions. New source/AI snapshots and saved collections stay local under the specified scope. Protected keys do not leak through history, accessibility or nested exported records. A personal-study rating is never presented as independently verified standardized mastery.
+Preserve original attempts, content/evaluator identities, AI grade receipts and authentic available context. Corrections and grade reviews are append-only revisions. Keep enough local material to resume and read saved learning history offline; cloud processing and optional synchronization can support the requested AI features. Keep reusable assessment solutions out of the active assessment UI to preserve its intended exercise. Self-ratings, AI-evaluated personal study and standardized evidence have accurate labels; personal learning progress is useful without claiming population norms.
 
 <a id="prd-009"></a>
 
@@ -123,7 +130,23 @@ Enabled capabilities need their applicable content, runtime, experience, learnin
 
 ### PRD-010 — Scope stays coherent
 
-Implement the dependent work packages as complete vertical slices. Preserve existing useful features and source policies. Prioritize correctness, continuity and the learning loop before additional reward systems or social features. This scope does not add a social feed, leaderboard, new currency, remote analytics service, unrestricted code execution, or live cross-device mid-question handoff. Those would need their own product and data contracts.
+Implement the dependent work packages as complete vertical slices with AI in the first learning slice. Native/local model integration, direct cloud-provider integration and any narrowly needed service infrastructure are in scope; a user-owned Shortcut may remain an optional integration but is not the only permitted AI route. Provider choice is driven by learning quality, supported languages/modalities, latency, cost and offline fallback. New AI work is not gated on finishing every offline question-bank quota. Preserve existing useful features and exact saved work. Social feeds, leaderboards, a new currency, unrestricted code execution and live cross-device mid-question editing remain separate product work.
+
+<a id="prd-011"></a>
+
+### PRD-011 — AI throughout the learning experience
+
+The intended release includes a contextual AI tutor; adaptive hints and worked explanations; rubric-based grading of short/free-text responses with partial credit; question and repair generation; source-grounded Q&A, summaries and study sets; personalized plans and progress coaching; and model-assisted interpretation of supported handwritten work, diagrams or images when useful. These capabilities are reachable from the task/source/progress context without moving every interaction to an isolated AI studio. Each has a defined input context, quality acceptance, saved result, cancellation/retry behavior and offline alternative. Handwriting/image interpretation is shown for correction before it becomes the submitted answer.
+
+AI may propose or evaluate substantive learning work. The application validates and commits the resulting structured content, grades and decisions so learners can continue consistently. Model/provider details belong in settings or optional details except when availability, cost or uncertainty affects the learner's next action.
+
+**Quality and restraint are part of this requirement.** Each AI capability must address a concrete learner need and fit a deliberate moment in the workflow. Specify its expected benefit, presentation, optional depth and full loading/error/offline behavior, then evaluate whether the output and interaction justify their waiting time and effort. AI grading belongs in normal submission/feedback; tutoring and source assistance belong beside the work they explain. Ordinary practice must not require a chat conversation. Preserve one clear primary action and concise useful output; avoid ubiquitous AI decoration, competing generated cards and repetitive unsolicited suggestions. The intended capability breadth remains, with feature usefulness and professional presentation accepted through UX-019 and QA-REQ-028 before expanding variants.
+
+<a id="prd-012"></a>
+
+### PRD-012 — Useful offline availability
+
+Without a network connection the learner can start available authored/downloaded practice, use downloaded sources and saved explanations, edit and save answers, resume sessions, and inspect local history. A capable installed model supplies offline tutoring, generation and rubric grading within its tested task/language limits. Exact evaluators remain available for their supported domains. If a required AI capability is unavailable, save the answer and pending evaluation, offer available practice or clearly labeled reference/self-check, and retry through the normal queue when an appropriate route returns. Never manufacture a wrong grade, discard work, penalize progression for waiting, or imply full cloud/local feature parity. Downloads, model availability and storage needs are understandable in normal settings.
 
 ## 4. Shared decision register
 
@@ -138,19 +161,21 @@ These decisions are binding across the chapters. Their purpose is to prevent sep
 | D-05 Confidence | Required inline before submit for protected checks/explicit calibration, with no default. Optional in ordinary scored practice, expanded for one deterministic slot in each five presentation ordinals. Suppressed in timed fluency. Never changes correctness, XP or ability. | UX-017, EVD-005, RUN-009 |
 | D-06 Reflection | Ordinary correction comes first; reflection is optional. No preselected learner diagnosis. Explicit metacognition tasks may ask first with a clear purpose and “Not sure yet”; every stage saves/exits safely. | UX-020, RUN-010/022 |
 | D-07 Protected feedback | Per-item “Answer saved”; completed-block dimension/concept guidance. Reusable exact keys remain hidden. Practice this skill uses a fresh instructional variant. Disclosure requires a separately retired form and durable exposure transaction; it is not the default. | EVD-012, RUN-011, DATA-010 |
-| D-08 Self-check authority | Matched / Partly / Not yet are self-report. No deterministic Correct/100% or independent built-in ability credit. Legacy records receive provenance-based dispositions, not silent overwrites. | SCO-014, EVD-010, DATA-024 |
+| D-08 Grade and self-check | AI rubric grades are evaluated outcomes usable in their declared practice scope. Matched / Partly / Not yet remain optional self-report, never a substitute silently presented as AI grading. Legacy records retain their original provenance. | SCO-014, EVD-010, DATA-024 |
 | D-09 Reservation strategy | `fixedBlock` consumes accepted exact block reservations at launch. `adaptiveItem` consumes one exact first item at launch, then one item per accepted selection decision. Max two advisory prewarm candidates consume nothing. | CON-017/019, SCH-005, DATA-015 |
 | D-10 Novelty and exposure | Consumed identity and displayed exposure are separate. Abandoned accepted reservations remain consumed. Skipped ineligible inventory stays available. No same-run semantic repeat across epochs; intentional review is a separately labeled lane. | CON-016–019, SCH-002–005 |
 | D-11 Resume scope | Exact resume guaranteed on the saving device. Multiple suspended runs, one writable run per device; coordinated same-device window takeover. No new mid-question cross-device sync. | RUN-001–006 |
 | D-12 Archive ownership | Restore preserves original identities/drafts. Writable continuation requires verified original local ownership and valid content. Different-device/unverifiable-owner unfinished runs are read-only recovery with separate fresh practice. | MIG-006–007 |
 | D-13 Temporary versus saved | Temporary generated inventory allows new launches for seven days. Save set retains a local collection until deletion. An accepted unfinished run pins what it needs to finish; attempted-history snapshots survive inventory expiry. | UX-015, DATA-017–019 |
-| D-14 Source and AI scope | New private source/AI study snapshots, drafts and saved collections are local-only. Existing explicit progress/source policies preserved; no new source-upload or analytics consent inferred. | EVD-010, DATA-017–018, QA-REQ-025 |
+| D-14 Local/cloud AI | Local storage supports offline continuity. Configured cloud AI can process the relevant selected sources, answers and learning context for requested features. Automatic routing is the normal default; local-only/off controls remain available without a repeated consent maze. | EVD-010, DATA-017–018, QA-REQ-025 |
 | D-15 Evidence | One versioned `EditorialBandEvidenceV1` reducer for live/history. Separate current target, demonstrated band, protected evidence, retention/application, confidence, speed, personal study and XP. | EVD-001–015 |
 | D-16 Protected assessment dimensions | Seven performance dimensions plus separately derived confidence calibration. Knowledge of calibration is not calibrated behavior. Coverage determines completion; sitting time budget supports exact continuation. | ADP-013–014, SCH-001 |
 | D-17 Canonical daily plan | Preserve plan/block identity and original completion contract. Adapt within a block; readiness/profile changes and repair do not silently expand or replace completed obligations. | SCH-010–013, RUN-015–016 |
 | D-18 Corrections | Original records immutable. Verified corrections/exclusions are versioned, idempotent dispositions, with truthful history and no fabricated learner regression. Retain existing reward economy; no duplicate/negative XP from repairs. | EVD-008/014, DATA-013/023–025 |
-| D-19 Grading boundary | Syntax/ambiguity clarification differs from a scoreable semantic mistake. Known wrong units or assertions follow the rubric; unsupported prose can become explicit self-check, never fake objective grading. | SCO-001–017, RUN-008, DATA-010 |
-| D-20 Delivery floor and feasibility | Planned new offline edition retains at least 1,000 valid semantic contracts per lab with exact editorial quotas. Deficits block the claimed edition; do not fill them by relabeling repeats or weakening truth checks. | CON-014–019/029, QA-REQ-010–011 |
+| D-19 Evaluation contract | Exact evaluation for exact tasks; AI rubric evaluation for semantic/open responses. Both retain the declared evaluator and accepted result. Uncertainty/outage yields clarification or pending review, not a fabricated zero; self-check remains optional. | SCO-001–017, RUN-008, DATA-010 |
+| D-20 Offline inventory and AI delivery | The claimed expanded offline edition retains its 1,000 valid semantic contracts per lab and quotas. Deficits block that edition claim, not independent AI tutoring/grading/generation. Generated task quality is validated per contract; do not miscount variants. | CON-014–019/029, QA-REQ-010–011 |
+| D-21 AI is core | Tutor, grading, generation, source learning and coaching are first-class product capabilities, with multimodal assistance where supported. They are not postponed until a deterministic-only product is finished. | PRD-001/003/011 |
+| D-22 Offline purpose | Local processing provides availability and responsiveness. Prefer the capable route; retain useful practice and pending work when advanced AI is unavailable. No privacy-led ban on cloud providers. | PRD-012, CORE-004, RUN-008 |
 
 These choices are not all empirically validated design truths. They are a coherent starting contract based on observed failures and the app's existing architecture. Changeable thresholds and research-dependent claims are called out below.
 
@@ -162,7 +187,9 @@ These choices are not all empirically validated design truths. They are a cohere
 | Developing learner | Practice a target, understand an error, solve a fresh repair, return to a scheduled check | Repetition of one number template; explanations that merely restate the stored key |
 | Experienced STEM learner | Select harder reviewed tasks with interacting constraints, unfamiliar representation or justified assumptions | Larger numbers or tighter timer passed off as advanced reasoning |
 | Short or interrupted session | Enter an answer, leave during any phase, continue exactly later | New quiz after Save & close; missing hint/timing history; compulsory reflection trap |
-| Learner studying personal material | Import a source, recall a meaningful target, inspect reference, self-rate honestly, save reusable local set | Generated reference treated as authoritative truth; silent expiry of unfinished work; accidental source transmission |
+| Learner studying personal material | Import a source, ask questions, generate study tasks, answer in their own words, receive AI rubric feedback with citations, save reusable study work | Unsupported source claims, shallow keyword grading, forced self-rating despite available AI, or expiry of unfinished work |
+| Learner without connectivity | Continue downloaded practice/source work; use capable local AI; save pending grades when needed | Cloud dependency blocks all practice, an outage becomes a wrong answer, or saved feedback disappears |
+| Learner explaining a solution or showing handwritten work | Discuss steps with the AI tutor, confirm extracted notation, receive criterion-level evaluation and targeted follow-up | Transcript/recognition error silently becomes the submitted answer; feedback ignores the learner's reasoning |
 | Learner with accessibility needs | Read/hear equivalent givens, manipulate through accessible controls, use untimed mode, reach feedback and Continue | Answer-leaking alt text, drag-only task, clipped primary action, timed evidence compared across incompatible conditions |
 | Learner disputing a grade | Report exact context, retain authentic response, inspect correction/disposition later, practice a valid replacement | Silent record rewrite, report counted as wrong, unresolved bad item served again locally |
 
@@ -196,17 +223,17 @@ The broad audit also left incomplete certification work: physical integrations, 
 
 | Priority | Contents | Why it comes here |
 |---|---|---|
-| P0/P1 trust foundation | Correct grading/content; protected boundaries; stable run identity, commit recovery and exact resume; navigation reliability | Later progress and interaction improvements cannot be trusted on defective attempts or lost state |
-| Core learning release | Real bands, viable varied inventory, authoritative evidence, continuous answer loop, progressive help, readable history/review | Establishes the behavior that makes the app useful across repeated sessions |
+| P0/P1 AI learning foundation | Contextual AI tutoring and short-response rubric grading, exact evaluators where useful, durable pending/accepted results, save/resume and offline alternatives | Establishes the intended learning experience and reliable work together |
+| Core learning release | AI-generated and reviewed practice, source Q&A/study sets, meaningful bands, personalized coaching/plans, continuous help, readable history/review | Establishes the behavior that makes the app useful across repeated sessions |
 | Experience completion | Today/Practice discovery, source-set clarity, typography/layout/copy, full accessibility/localization and all states | Makes that reliable behavior comprehensible and operable on supported devices |
 | Interactive depth | Complete domain-specific interactions with meaningful scoring, assistance policy and accessible alternatives | Adds useful learning depth once truth, state and evidence can support it |
 | Outcome validation | Representative demand pilots and separately designed retention/application research | Supports stronger claims only after the product and content are stable enough to study |
 
 Chapter 05 defines WP-00 through WP-10 and five release gates. Some work can run in parallel: content authors can fill family/band deficits while runtime engineers repair saving; design can validate a continuous numeric practice slice while evidence replay is implemented. Dependence remains explicit. A polished screen alone does not complete a package if its history, exit or grading behavior is still wrong.
 
-The first vertical slice is a complete Mental Mathematics focused session with a reviewed demand pair, fair numeric interpretation, staged help, inline feedback, save on question three, exact relaunch continuation, readable history and a separate repair item. Include protected and self-check fixtures through the same lifecycle. Use this to validate shared contracts before scaling across the catalog.
+The first vertical slice combines an exact-answer STEM problem and a short written explanation of the learner's reasoning. The learner can ask a contextual AI tutor for an appropriate hint, submit prose for criterion-level AI grading, inspect feedback, request a grade review, try a generated repair, and resume exactly after closing during evaluation. Include a source-grounded variation and an offline/local-model or pending-grade variation. This validates the central AI experience and shared lifecycle together before scaling across the catalog.
 
-This specification does not promise a calendar date or person-week estimate. The main effort uncertainty is substantive authoring and independent review for every admitted family/band/structure, followed by migration and physical integration validation. Size those packages against actual capacity deficits and existing module boundaries; do not substitute generic “add 7,000 questions” tickets for the detailed family contracts.
+This specification does not promise a calendar date or person-week estimate. The main effort uncertainties include AI tutor/grader quality and integration, useful offline capability, substantive offline content review, migration and physical integration validation. Validated ordinary AI-generation pipelines do not require human approval of every generated question; comparable protected assessments and claimed reviewed editions retain their specific admission requirements. Size those packages against actual capacity deficits and existing module boundaries; do not substitute generic “add 7,000 questions” tickets for the detailed family contracts.
 
 ## 8. Success measures and validation-dependent defaults
 
@@ -217,7 +244,7 @@ This specification does not promise a calendar date or person-week estimate. The
 | Less friction | Decisions/taps, wrong turns, abandonments, unaided task observation | No mandatory ordinary confidence/reflection page detour; core task criteria from QA-REQ-027 |
 | Real challenge | Demand-vector differences, band transitions, reviewer ordering, participant task performance | Delivered question changes meaningfully; unsupported bands disclosed; quantitative policy remains a proposed V1 model |
 | Genuine variety | Admission and delivered distributions, structure/target identities, capacity reports | Exact proposed edition quotas; runtime preference targets met where feasible without violating eligibility/no-repeat |
-| Useful feedback | Explanation comprehension, fresh repair and delayed task outcomes | Learners can identify the relevant correction and attempt a fresh task; delayed learning reported separately |
+| Useful AI learning support | Rubric agreement and semantic robustness, tutor/source correctness, explanation comprehension, fresh repair and delayed task outcomes | Learners can identify the relevant correction and attempt a fresh task; delayed learning reported separately |
 | Accessible operation | Manual VoiceOver/keyboard, actual target/contrast/layout checks | No essential unreachable/unlabeled/clipped operation in supported scope |
 | Honest progress | Event replay, provenance and participant explanation | Independent/assisted/personal study/XP remain distinguishable; unknown evidence does not become false certainty |
 
@@ -229,15 +256,16 @@ A human pilot is required to judge whether questions feel appropriately challeng
 
 | Risk/dependency | Required response |
 |---|---|
-| Insufficient authored content for balanced bands/forms | Admission emits exact deficits; continue a valid accurately described scope or hold the new edition. Do not invent suitable equations/figures or weaken the published floor. |
-| Unsupported symbolic/prose equivalence | Bounded grammar and explicit rubric; clarification/self-check where authority is insufficient; preserved original response. No hidden model judgment in protected scoring. |
+| Insufficient authored content for balanced bands/forms | Admission emits exact deficits; continue a valid accurately described scope or hold the new edition. Do not present unvalidated or contradictory equations/figures as suitable or weaken the published offline-edition floor. |
+| Incorrect or uncertain AI grading | Rubric and task/language-specific evaluator validation, exact tools when relevant, preserved response, visible criterion feedback, disagreement review and abstention/pending states. Protected protocols additionally establish comparability. |
+| Cloud latency, cost, quota or model changes | Capability routing and bounded requests, local/cache alternatives, durable pending work, model/version evaluation and explicit grade revisions. No unlimited/free-cloud assumption. |
 | Old records lack snapshots or true difficulty | Preserve authentic history, mark unknown/legacy provenance, offer recovery; no fabricated reconstruction or retroactive B4. |
 | Store partition and cross-store writes | Durable local journal plus idempotent domain attempt identity; explicit local/cloud record inventory; actual migration fixtures. |
 | Protected content is bundled offline | Prevent accidental UI/export leakage and track exposure; do not advertise cryptographic exam security against local binary inspection. |
 | Navigation hang was observed on beta macOS | Repair known stale-path behavior, investigate stable supported OS with traces, record remaining platform-specific evidence honestly. |
 | New local retention interacts with expiry | Expire temporary new-launch inventory; pin accepted unfinished runs/history; explicit saved-set deletion preview. |
 | Signed systems cannot be verified by mocks | Use physical devices/accounts and run sheets before certifying enabled distribution capabilities. |
-| New study data or telemetry would expand privacy scope | Local QA/research defaults only; separate explicit consent and protocol for transmission; no analytics service implied. |
+| AI service or research data handling is unclear | Document the actual provider, operational context and service settings. Requested AI processing is a normal feature; separate research participation and applicable platform disclosures remain explicit. |
 
 These are implementation constraints with defined handling, not permission questions awaiting the user. The remaining empirical work is scheduled in the delivery gates; it does not prevent implementing the specified first slice.
 
@@ -263,11 +291,13 @@ Platform guidance informs implementation details: state-driven routing and resto
 
 # NeuroForge improvement specification: experience, interaction and accessibility
 
-Date: 2026-09-04. Status: proposed implementation requirements, not a description of completed work. Owner: experience implementation, coordinated with the core learning, content, navigation, persistence and release specifications in this directory.
+Date: 2026-09-04. Product direction revised: 2026-09-05. Status: proposed implementation requirements, not a description of completed work. Owner: experience implementation, coordinated with the core learning, content, navigation, persistence and release specifications in this directory.
 
 This appendix defines how the application should behave for a learner. Requirement identifiers are stable: `UX-###` covers journeys and screens, `INT-###` covers learning interactions, `A11Y-###` covers accessible operation, and `COPY-###` covers language. A requirement is complete only when its behavior, state handling and acceptance criteria work in the running application. A passing source-contract test is supporting evidence, not a substitute for a usable screen.
 
-The intended product is a practical STEM learning companion. The main experience should answer three questions quickly: what should I practice, why is it useful, and what did I learn? The application must preserve the existing strengths—offline practice, durable progress, protected skill checks, local sources, 3D representations and scratchpad—while removing unnecessary administrative work around them.
+The intended product is an AI-centered STEM learning companion. AI tutoring, question generation, feedback, short-response grading and personalized follow-up belong in the main learning experience. The learner should be able to ask a question, practice an idea, explain their reasoning, receive useful assessment and continue with help matched to their work. AI is a core product capability, not an optional question-export utility.
+
+Local processing exists to keep the app responsive and reasonably useful offline. It is not a privacy-first product premise or a reason to restrict useful cloud AI. Choose local or cloud execution according to capability, connectivity, quality, latency and configured cost. Saved sources, questions, answers and explanations remain available offline; supported local AI and deterministic practice provide useful work when a network or stronger model is unavailable. Provider configuration and routing belong in supporting settings, while Today, Practice, Sources and the answer loop lead with learning.
 
 ## 1. Decisions and boundaries
 
@@ -277,15 +307,15 @@ The intended product is a practical STEM learning companion. The main experience
 
 Keep exactly five primary destinations, in this order: **Today, Practice, Progress, Sources, Settings**. Rename the current Forge destination to Today. The NeuroForge brand and earned milestones can remain, but users should not have to learn a brand metaphor to identify their daily task.
 
-Review and History are explicit sections within Progress, not a sixth destination. Today includes a shortcut to due reviews. Question creation belongs to Practice and is also available contextually from a source. A generated question set is a learning resource, not a separate primary navigation mode.
+Review and History are explicit sections within Progress, not a sixth destination. Today includes a shortcut to due reviews. Question creation belongs to Practice and is also available contextually from a source. AI tutoring is available in Today, Practice, source reading and answer feedback with the relevant learning context carried forward. A generated question set is a learning resource; learners should not have to enter a separate AI administration destination to use the tutor.
 
 | Destination | User's reason for visiting | First visible action | Supporting routes |
 |---|---|---|---|
-| Today | Know what to do now and continue interrupted work | Continue session, or Start today's practice | Due review, adjust plan, completed daily review |
-| Practice | Choose a particular skill, activity or topic | Search or recommended practice | Recent activities, exact catalog, custom question sets |
+| Today | Know what to do now and continue interrupted work | Continue session, or Start today's practice | Ask the tutor, due review, adjust plan, completed daily review |
+| Practice | Learn or practice a particular skill, activity or topic | Search, describe a learning goal, or recommended practice | AI tutor, recent activities, exact catalog, AI-created question sets |
 | Progress | Understand results and revisit learning | Overview with Review and History visible | Skill detail, filtered history, answer detail, annotations |
-| Sources | Study material the learner supplied | Import source or open a recent source | Source detail, reading, review, question creation, collections |
-| Settings | Change a preference or manage data | Search settings | Practice, accessibility, notifications, Question Writer, data and sync, about |
+| Sources | Learn from material the learner supplied | Import source or open a recent source | Ask about this source, summaries, reading, AI-graded recall, question creation, collections |
+| Settings | Change a preference or manage data | Search settings | Practice, accessibility, notifications, AI and offline, data and sync, about |
 
 Acceptance: labels, commands, deep links, empty states and onboarding all name these same five destinations. No user-facing control says “Open Library” when the destination is named Sources. No standalone AI Studio or Review tab is added.
 
@@ -303,9 +333,9 @@ Acceptance: when a reviewer sees a grayscale screenshot without reading every pa
 
 ### UX-003 — Learning and evidence policies belong to the core model
 
-The UI must consume an explicit session policy rather than infer evidence status from a color, title or destination. At minimum it needs to know whether the task is ordinary practice, a protected skill check, calibration, delayed review or personal-source practice; whether hints are allowed; whether confidence is required before commit; whether feedback is immediate or delayed; and which edits are allowed before and after commit.
+The UI must consume an explicit session policy rather than infer evidence status from a color, title or destination. At minimum it needs to know whether the task is ordinary practice, AI tutoring, a protected skill check, calibration, delayed review or personal-source practice; which components use an exact evaluator, AI rubric grading or learner self-check; whether hints are allowed; whether confidence is required before commit; whether feedback is immediate or delayed; and which edits are allowed before and after commit.
 
-The shared confidence policy is normative: protected baseline/reassessment and explicit calibration require inline confidence before submit, with no default. Ordinary scored practice offers optional inline confidence, with one deterministic invitation expanded in each group of five presentation ordinals under EVD-005; skipping the invitation never blocks submission. Timed Rapid Recall/fluency suppresses confidence collection entirely so it does not contaminate timing. Missing confidence is absent evidence, never a carried-forward or fabricated level. Ordinary correction is immediate, with optional reflection afterward and no preselected error diagnosis. See the core learning specification for authoritative sampling, evidence and adaptation rules.
+The shared confidence policy is normative: protected baseline/reassessment and explicit calibration require inline confidence before submit, with no default. Ordinary scored practice offers optional inline confidence, with one deterministic invitation expanded in each group of five presentation ordinals under EVD-005; skipping the invitation never blocks submission. Timed Rapid Recall/fluency suppresses confidence collection entirely so it does not contaminate timing. Missing confidence is absent evidence, never a carried-forward or fabricated level. Ordinary correction is shown as soon as its saved evaluation is available, with a responsive checking state for AI grading, optional reflection afterward and no preselected error diagnosis. Qualified AI grades are normal learning results that can inform practice difficulty, topic progress, review scheduling and the next recommendation under the core policy; they are not automatically reduced to self-ratings or discarded because they used a model. See the core learning specification for authoritative sampling, evidence and adaptation rules.
 
 Challenge bands are B1 Foundation, B2 Developing, B3 Challenging and B4 Advanced. These labels describe editorial challenge, not a measured grade, age, intelligence level or validated population percentile. Do not show an Expert label that overstates the content's depth.
 
@@ -342,7 +372,7 @@ Autosave reversible drafts locally where existing persistence contracts permit. 
 
 Follow the safe-exit transaction rules in RUN-022. If a draft has no prepared durable commit, offer Retry saving, Keep editing, Copy/Export recovery and explicit Discard unsaved changes. Discard returns to the last acknowledged checkpoint and explains exactly which unacknowledged input would be lost. It never deletes an existing attempt or prepared commit intent. Never label destructive discard as Done.
 
-Every stage accepts an exit request. Cancel disposable next-item generation while keeping the prior acknowledged state; accepted reservations remain consumed. During answer or self-check commit, queue the close and reconcile the write. If the recovery intent is already durable but the destination store remains unavailable, allow close with **Answer waiting to finish saving** and restore that exact pending intent later. Do not show the ordinary Saved state, erase the journal, or let the learner edit a prepared commit into a different response using the same attempt identity. This policy applies to navigation and window closure as well as Save and close. Failed save must not silently convert a complete session into an empty draft.
+Every stage accepts an exit request. Cancel disposable next-item generation while keeping the prior acknowledged state; accepted reservations remain consumed. During answer, AI-grade or self-check persistence, queue the close and reconcile the write. A network grading request may remain pending after safe close; it must not trap the learner until the provider responds. If the recovery intent is already durable but the destination store remains unavailable, allow close with **Answer waiting to finish saving** and restore that exact pending intent later. Do not show the ordinary Saved state, erase the journal, or let the learner edit a prepared commit into a different response using the same attempt identity. This policy applies to navigation and window closure as well as Save and close. Failed save must not silently convert a complete session into an empty draft.
 
 Protected assessment and any explicitly required reflection do not justify trapping the learner. Save the exact pending state, leave safely and resume at the same stage. The current reflection checkpoint already records a pending attempt, trigger, reason and note; expose that capability instead of removing Save and close.
 
@@ -356,7 +386,7 @@ Acceptance: force a save failure at answer, confidence, reflection, source note 
 
 The first screen should offer a concrete example of the product within one primary action: **Try a sample**. Secondary actions are **Set up my practice** and a clearly placed **Restore a backup**. The sample is optional and low stakes. Do not require account setup, a full questionnaire, a source import, notification permission or external model setup before a learner can try the product.
 
-The first sample should take roughly 30–60 seconds for a typical learner, but its interface is untimed. Use one approachable authored item with meaningful feedback. For example, choose a useful mental-math strategy or identify what a simple data comparison can support. It must show the pattern of prompt, response, helpful explanation and next step. It must not present a trivial interaction as an intelligence assessment.
+The first sample should take roughly 30–60 seconds for a typical learner, but its interface is untimed. Use one approachable item with meaningful feedback and a contextual **Ask a follow-up** action. When AI is available, demonstrate it with a brief explanation question or tutor exchange; when it is unavailable, the bundled sample and explanation still work, and the tutor action describes its actual availability. For example, choose a useful mental-math strategy or identify what a simple data comparison can support. It must show the pattern of prompt, response, helpful explanation and next step. It must not present a trivial interaction as an intelligence assessment.
 
 Sample results do not become protected skill evidence. If retained as activity, identify them as sample practice and keep that rule explicit. At sample completion, show **Make this fit me** and **Try another skill**. Back returns safely; leaving the app preserves setup progress.
 
@@ -398,10 +428,10 @@ Order Today as follows:
 2. One current-task surface: interrupted session if present, otherwise today's next section.
 3. Due reviews, when applicable, with a clear count and estimated duration.
 4. A compact preview of remaining daily sections.
-5. One optional recommendation, such as a starting check or a different skill.
+5. A contextual tutor entry and one optional recommendation, such as a starting check, a concept explanation or a different skill.
 6. Small completion/consistency summary with milestones behind a disclosure or dedicated detail.
 
-The current-task surface shows title, skill, estimated time, number or range of questions where meaningful, and one ordinary-language reason. For example: “Practice ratios · about 5 min. Your last two sets suggest another round will help.” Do not require reading a priority formula.
+The current-task surface shows title, skill, estimated time, number or range of questions where meaningful, and one ordinary-language reason. For example: “Practice ratios · about 5 min. Your last two sets suggest another round will help.” AI coaching may explain the recommendation and propose a short plan using the learner's actual goals, recent work and due reviews. The learner can ask **Why this?**, **Teach me first**, or describe a different goal. The displayed explanation must correspond to the actual plan; an AI suggestion becomes a plan change only through the normal saved plan operation. Do not require reading a priority formula.
 
 Primary CTA is **Continue session**, **Start today's practice**, or **Review today's results**, depending on state. Secondary actions are **Adjust** and **Choose another activity**. After completing today, congratulate briefly, show what was practiced, and offer due review or optional practice without replacing the completed plan with a fresh zero-percent plan.
 
@@ -438,7 +468,7 @@ A loading state must not show fake progress. A transient failure should not fill
 
 ### UX-012 — Exact activity discovery
 
-Practice opens with search, one recommendation, recent/resumable activities, and a compact skill browser. Search returns matching **activities** as well as parent skills. A result should show the activity name, skill, expected interaction, approximate time and level. Selecting “Estimate then calculate” must open that activity, not force the learner to find it again in Mental Math.
+Practice opens with search, a natural-language **What do you want to learn?** entry, one recommendation, recent/resumable activities, and a compact skill browser. The learner can start a tutor conversation, request examples, or turn a goal into a short question set without first choosing internal catalog fields. Search returns matching **activities** as well as parent skills. A result should show the activity name, skill, expected interaction, approximate time and level. Selecting “Estimate then calculate” must open that activity, not force the learner to find it again in Mental Math.
 
 Use filters only where they help: Skill, Context, Duration, Level. Search and filters are visible together; active chips show constraints; Clear all is available. Preserve them when returning from an activity. No-results copy names the active constraints and offers a reset. Do not search only internal keywords while ignoring translated display text.
 
@@ -464,19 +494,23 @@ Acceptance: novice and established profiles receive intentionally different defa
 
 Use the screen title **Create a question set**. Primary input is “What do you want to practice?” with optional source selection. Offer a few useful starter sets that explain what they teach. Suggest skill, form and level; keep detailed form count/objective configuration under **More options**.
 
-Source selection opens a searchable chooser showing filename, preparation status and allowed question route. A disabled source must explain why and expose the relevant recovery. Do not list an unbounded document library inline above Create. Selecting multiple sources summarizes the selection and permits review.
+Source selection opens a searchable chooser showing filename, preparation status and available learning actions. A disabled source must explain why and expose the relevant recovery. Do not list an unbounded document library inline above Create. Selecting multiple sources summarizes the selection and permits review.
 
-Show the current route in ordinary terms: “Created on this device” or “Uses Question Writer.” Before an external run, present exactly the excerpts and destination choice required by the core privacy flow. Preserve existing explicit source-sharing authorization; simplifying the UI must not weaken it. External setup can use a short guided checklist, but never pretend a Shortcut is native in-app generation.
+AI creates a coherent set from the learner's goal, selected material, current level and desired duration. It may propose varied questions, useful examples, response-specific rubrics and targeted follow-ups. Source-based questions retain the passages and locations needed to explain and grade them. The learner can refine the request conversationally and preview or edit a generated set before starting; a compact validated quick-start path may start directly when that was the requested action.
 
-States: ready, preparing, awaiting external app, cancelling, saved, failed with retry, failed with supported offline fallback. On completion, move focus to the result and show **Start set**, **Review questions**, and the retention choice. A failed run retains the configuration. Closing an external app returns to a recoverable in-app state.
+Use in-app AI as the normal experience. Route automatically to a capable configured local or cloud model; show an ordinary availability or download message only when it affects what the learner can do. Cloud processing is supported because it can offer stronger teaching and grading. Explain connection, provider and usage choices in **AI and offline** settings, with any necessary setup presented once in context. Do not require an excerpt-by-excerpt privacy ceremony for every normal AI action. A legacy Shortcut or external app integration may remain an explicitly named alternate route, but must not stand in for the central in-app feature or be presented as native generation.
+
+States: ready, preparing, cancelling, saved, failed with retry, and available offline alternative. Show progress without fabricating percentages. A failed run retains the request and source selection. Offer Retry, a supported local model, saved questions or bundled practice according to actual capability. On completion, move focus to the result and show **Start set**, **Review questions**, and the retention choice. Saved accepted questions and grading context remain usable across relaunch and network loss; an unavailable online service does not erase a set or regenerate its current question.
+
+Acceptance: create a set from a plain-language goal and from a selected source; ask for a refinement; start, save, resume and study it offline; verify the same question and rubric are retained. Supported local AI performs generation without a network; unsupported devices provide useful saved/bundled practice and clear online availability. Model setup and implementation details must not dominate this journey.
 
 <a id="ux-015"></a>
 
 ### UX-015 — Saved versus temporary sets and collections
 
-Make content retention explicit before the learner relies on a set. A temporary generated set says “Temporary · new practice available for 7 days.” Seven days is the default new-launch eligibility of its inventory, not a promise to delete every saved answer or stop unfinished work at that boundary. A deliberately saved set says “Saved on this device.” New private study snapshots and saved collections are local-only in this release; this work does not extend iCloud excerpt scope. Do not call a seven-day cache a permanent library.
+Make content retention explicit before the learner relies on a set. A temporary generated set says “Temporary · new practice available for 7 days.” Seven days is the default new-launch eligibility of its inventory, not a promise to delete every saved answer or stop unfinished work at that boundary. A deliberately saved set says “Saved on this device.” Study snapshots and saved collections must retain the content needed for offline use. Show sync availability only when the implemented data contract supports it; offline retention must not depend on a successful cloud round trip. Do not call a seven-day cache a permanent library.
 
-Provide **Save set** to opt into durable local retention until the learner deletes the set. Saving captures the question/feedback/context version needed to study later. Do not claim synced availability for these saved sets or collections. Retaining personal material must be user-controlled and reversible.
+Provide **Save set** to opt into durable local retention until the learner deletes the set. Saving captures the question/feedback/context version needed to study later. Show **Available offline** after required assets have actually been retained. Any supported sync is additional availability, not a prerequisite for local study. Saving and deleting material remain explicit, understandable resource actions.
 
 Collections are optional organization: title, description, included sources and saved sets, last practiced, next review. Defaults are Recent and Saved; creating a collection is not required to start. Actions are Rename, Add/remove item, Practice, Export where supported, and Delete. Removing from a collection is not deleting the underlying source or attempt history; the menu must distinguish them.
 
@@ -492,7 +526,7 @@ Acceptance: advance the clock through day seven with an untouched temporary set,
 
 Use one continuous problem surface with a stable header, stimulus, response area and action footer. Submitting must not replace the entire screen with confidence or feedback for ordinary practice. Preserve the prompt and the learner's response as feedback appears. A collapsed prompt may be available after a long explanation, but the learner can expand it without losing scroll position.
 
-Header: Back/Save and close action, activity name, current position, optional timer. Utility actions: scratchpad, report, and pause; secondary utilities can live in a menu. Do not repeat the lab name in multiple pills and headers unless the current activity changed skills and that distinction matters.
+Header: Back/Save and close action, activity name, current position, optional timer. Utility actions: Ask the tutor, scratchpad, report, and pause; secondary utilities can live in a menu. Do not repeat the lab name in multiple pills and headers unless the current activity changed skills and that distinction matters.
 
 Footer has one primary action appropriate to stage: Check answer, Confirm answer, Continue, Finish set, or Continue next section. It reserves safe-area and keyboard space. Skip is separate and says its evidence consequence concisely. Do not align Hint, Skip and a long Submit label in an unconditional horizontal row on compact screens.
 
@@ -505,14 +539,16 @@ The session presentation reducer must expose explicit states so controls cannot 
 | Answering, valid ordinary | Same surface; optional confidence according to policy | Check answer | Save exact input and any chosen confidence; ignore duplicate activation while commit is pending |
 | Answering, protected/calibration | Same surface; required confidence with no default | Confirm answer only after response and confidence are valid | Save exact draft without revealing any correctness |
 | Commit pending | Response remains visible; progress state on action | Disabled with Saving… | Exit request is queued; reconcile commit. A durable pending intent may close as Answer waiting to finish saving under RUN-022. Never claim normal saved success or discard the journal |
-| Ordinary feedback | Prompt, submitted response, result and explanation together | Continue | Optional reflection and repair can be deferred; Save and close preserves completed attempt |
+| AI grading pending | Saved submitted response; Checking your answer…; retained prompt and draft grade status | Continue other practice or wait where session policy permits | Save and close retains the pending request. Stop waiting, retry and offline alternatives remain available; a timeout never becomes an incorrect grade |
+| AI grading needs clarification/review | Submitted response and the specific ambiguous criterion or missing context | Clarify or Review grade | Keep the original answer; a clarification or grade review is linked, not a silent edit of the original |
+| Ordinary feedback | Prompt, submitted response, exact or AI-rubric result and explanation together | Continue | Ask the tutor, review grade, optional reflection and repair remain available; Save and close preserves the result |
 | Protected answer saved | Prompt/response summary and neutral Answer saved | Continue | No key, correctness, grading color, result sound or leaked accessible value; save exact protected stage |
 | Self-check reference | Original recall response plus source reference and match choices | Save self-check after rating | Recall input remains historically fixed; Save and close resumes comparison without pretending an independent score |
 | Reflection draft | Prompt/feedback context where allowed; optional or explicitly required reflection | Save reflection or Continue as policy permits | Save and close always works; no preselected diagnosis or unexplained required note |
 | Section summary | Saved counts, takeaway and remaining section estimate | Continue next section or Finish set | Closing returns to launch context; retry unfinished save before showing success |
 | Paused | Brief paused overlay over inaccessible background content | Resume | Save and close at every resumable stage; elapsed pause excluded from active timing |
 
-Resume restores the exact recorded phase, including protected acknowledgement and revealed-but-unrated self-check comparison. A completed protected answer never resumes through the ordinary correctness-feedback renderer. A retry uses the same pending attempt identity. A repair uses a new identity. A new question clears answer, validation, optional confidence, hint state and transient feedback only after the prior stage has been checkpointed. This separation is required to avoid the common “next item shows previous answer” and “retry duplicates score” failures.
+Resume restores the exact recorded phase, including pending AI grading, a completed AI grade, protected acknowledgement and revealed-but-unrated self-check comparison. Reopening a saved grade displays that result without rerunning a model. Retried requests and late replies cannot grade a changed answer or duplicate its completion. A completed protected answer never resumes through the ordinary correctness-feedback renderer. A retry uses the same pending attempt identity. A repair uses a new identity. A new question clears answer, validation, optional confidence, hint state and transient feedback only after the prior stage has been checkpointed. This separation is required to avoid the common “next item shows previous answer” and “retry duplicates score” failures.
 
 <a id="ux-017"></a>
 
@@ -530,15 +566,17 @@ Acceptance: automation proves ordering of response, confidence and key reveal. V
 
 ### UX-018 — Feedback that teaches
 
-Ordinary-practice feedback appears immediately after successful commit and has this order:
+Ordinary-practice feedback appears as soon as the answer and its evaluation are successfully saved, with a responsive pending state when AI evaluation is still running, and has this order:
 
 1. Result: Correct, Partly correct, or Let's review this.
-2. The learner's answer and the expected answer, using readable typed presentation.
+2. The learner's answer and a correct answer or concise rubric criteria, using readable typed presentation. Open explanations need not match one canonical sentence.
 3. One decisive explanation of why or how.
 4. Optional worked steps, source evidence or a diagram.
-5. Continue and, when useful, Try a similar question.
+5. Continue and, when useful, Ask the tutor, Review grade or Try a similar question.
 
-Avoid generic “The durable scorer recorded…” as teaching copy. Do not repeat the entire question in an explanation without adding reasoning. Partial credit must identify which part worked and which part needs repair. For personal self-checks, use Matched, Partly, or Not yet, never a Correct banner, “100%,” or deterministic ability-evidence framing. Say “Your self-check: partly matched” when the learner rated the match; the app has not independently proved the open response.
+Avoid generic “The durable scorer recorded…” as teaching copy. Do not repeat the entire question in an explanation without adding reasoning. Partial credit must identify which part worked and which part needs repair. AI grading of short/free-text responses uses the task's semantic rubric and shows useful criterion-level feedback, including credited reasoning, missing conditions and contradictions. A compact **AI-graded** label or result detail identifies the method without turning feedback into a provider report. An accepted AI grade can count toward normal learning progression. Model confidence must not be displayed as a validated probability of correctness. If the evaluation is uncertain, name the uncertain point and offer clarification or review; do not hide uncertainty behind a decisive grade. For personal self-checks, use Matched, Partly, or Not yet, never a Correct banner, “100%,” or deterministic ability-evidence framing. Say “Your self-check: partly matched” when the learner rated the match; the app has not independently proved the open response.
+
+**Review grade** lets the learner point to overlooked reasoning, request an explanation of a criterion, or request a fresh evaluation of the same saved response and rubric. Keep the original grade and show any reviewed replacement with a short reason; update downstream learning summaries through the core correction policy. **Try again** creates a new linked answer and preserves the original. A service failure leaves the response saved and ungraded, with Retry when available or an explicitly chosen self-check. Neither pending work nor self-check is silently presented as an AI grade.
 
 Protected responses show neutral “Answer saved” with no per-item correctness or solution. Say “Your results appear after this block.” At block completion show dimensional summaries and concept guidance; **Practice this skill** launches a fresh instructional variant. Reusable protected items never expose exact keys or solutions in ordinary history or exports intended for learner review. Only explicitly retired/disclosed forms may reveal exact item feedback, with the core exposure/invalidation transaction; that is not default shipping behavior. Do not render hidden keys inside accessibility labels, source previews, diagnostic details or a repair button.
 
@@ -546,21 +584,27 @@ Protected responses show neutral “Answer saved” with no per-item correctness
 
 ### UX-019 — Graduated help and repair
 
-Hints are an ordered ladder: a directional cue, a more concrete step, then a worked step or solution if permitted. Each tap reveals the next available help. Label the remaining state honestly: Hint 1 of 3, Next hint, Show worked step. Do not disable help after the first hint while later authored hints exist.
+AI help is contextual to the actual question, current working, previous help and requested learning style. A learner can ask a free-form question, request a different explanation or example, or choose **Give me a hint**. The tutor should lead with the smallest useful assistance and preserve the current question while teaching. Hints are an ordered ladder: a directional cue, a more concrete step, then a worked step or solution if permitted. Each tap reveals the next useful help; authored steps and AI-generated explanations can both supply the ladder. Check numerical, logical and source claims against available exact tools or retained source context. Label the remaining state honestly: Hint 1 of 3, Next hint, Show worked step. Do not disable help after the first hint while later authored hints exist.
 
 Record actual help used. A correct assisted answer must not be displayed as independent mastery. A solution reveal can end scoring or convert the attempt's evidence according to core policy; the interface explains that before reveal where it materially changes the outcome.
 
 After a mistake or substantial help, offer a fresh related item that practices the same subskill with different surface content. It must not be the identical keyed question with a different title. The repair uses a new attempt and preserves the original result. The learner can defer it to Review rather than elongating a short session unexpectedly.
 
-Acceptance: all authored hint levels are reachable; first clue is useful for the specific item; help counts are accurate; protected questions cannot expose hints; repair content is valid, distinct and matched to the intended subskill.
+The learner can ask follow-up questions after feedback, request a worked alternative method and ask for a targeted new problem. Save useful explanations for offline review. When AI is unavailable, previously saved help and authored hints remain usable; do not promise a new tailored explanation that the current route cannot produce. Protected checks keep their declared unaided conditions, while ordinary learning remains free to use the tutor with assistance recorded.
+
+**Presentation and initiative.** Ordinary answering, grading and continuation do not require a chat exchange. Offer the smallest suitable interaction: inline feedback for a grade, a worked step beside the problem, or an optional conversation when follow-up would help. Opening the tutor is a learner action; suggestions do not open it, steal focus or replace the active response. Keep one primary action. At a feedback checkpoint, present one recommended optional learning follow-up; additional help and grade-review controls remain available as secondary actions. Use method disclosure once where it clarifies a result, without repeating AI badges, sparkle treatments or generated summaries across every surface.
+
+Suggestions must refer to the actual answer, requested goal or a supported learning need. The learner can dismiss or defer them without blocking Continue or losing work. Retain that choice with the relevant item/session state so rerendering, returning or resuming does not repeat the same offer for unchanged work. A new substantive result or an explicit learner request may justify a new suggestion. Do not generate replacement suggestions merely because a screen refreshed. Concise output comes first; deeper explanation remains available on request. Loading, streamed text and completion preserve the problem, draft, focus and reachable primary controls instead of causing distracting layout movement.
+
+Acceptance: contextual and authored help both work; all authored hint levels are reachable; first clue is useful for the specific item; help counts are accurate; protected questions cannot expose hints; repair content is valid, distinct and matched to the intended subskill. Complete ordinary practice without opening chat; verify a requested tutor stays contextual, a dismissed offer remains dismissed on resume, and long/pending/failed output does not obscure the learner's work or primary action. Review usefulness and presentation through QA-REQ-028.
 
 <a id="ux-020"></a>
 
 ### UX-020 — Reflection is useful and never a trap
 
-For ordinary practice, show the explanation first, then an optional concise reflection: “What will you check next time?” Offer a few relevant reasons and an explicit “Not sure yet,” with no error diagnosis preselected. An inferred reason is visibly a suggestion, not a user-confirmed diagnosis. Pre-feedback reflection is allowed only for an explicitly designated metacognition task, with its purpose explained and Save and close available. A generic transfer label, wrong answer, repeated error or high confidence alone does not make reflection mandatory or move it ahead of ordinary correction.
+For ordinary practice, show the explanation first, then an optional concise reflection: “What will you check next time?” Offer a few relevant reasons and an explicit “Not sure yet,” with no error diagnosis preselected. An AI-inferred reason is visibly a suggestion, not a user-confirmed diagnosis. The tutor may propose a concrete next-step reflection based on the actual response and rubric feedback, and the learner can accept, edit or dismiss it. Pre-feedback reflection is allowed only for an explicitly designated metacognition task, with its purpose explained and Save and close available. A generic transfer label, wrong answer, repeated error or high confidence alone does not make reflection mandatory or move it ahead of ordinary correction.
 
-Do not preselect a reason and then count a quick Save as independent learner reflection. Persist user confirmation separately from deterministic error classification. An optional note remains optional; empty notes should not be an unexplained blocker. Character limits show remaining space only when relevant rather than dominating an empty screen.
+Do not preselect a reason and then count a quick Save as independent learner reflection. Persist user confirmation separately from exact or AI-inferred error classification. An optional note remains optional; empty notes should not be an unexplained blocker. Character limits show remaining space only when relevant rather than dominating an empty screen.
 
 Acceptance: the learner can view normal correction without completing a survey, edit a reflection without changing the original score, and safely resume a pending required reflection. Error-pattern reporting distinguishes inferred and self-reported reasons.
 
@@ -568,9 +612,9 @@ Acceptance: the learner can view normal correction without completing a survey, 
 
 ### UX-021 — Session exit, pause and completion
 
-Pause freezes active timing according to core policy and clearly offers Resume and Save and close in every resumable stage, including confidence and reflection. Backgrounding checkpoints the current stage and stops answer timing. Returning to the foreground starts a new answer-time segment only after explicit run resumption into an eligible visible answering state. Paused, loading, feedback, self-check comparison, reflection and summary never accrue answer-solving time. Previously accumulated time remains; an unknown interruption is marked honestly and excluded from clean speed evidence. Separately labeled session-use time may include other active learning phases. Closing the scratchpad must not accidentally commit an answer.
+Pause freezes active timing according to core policy and clearly offers Resume and Save and close in every resumable stage, including confidence and reflection. Backgrounding checkpoints the current stage and stops answer timing. Returning to the foreground starts a new answer-time segment only after explicit run resumption into an eligible visible answering state. Paused, loading, AI grading waits, feedback, self-check comparison, reflection and summary never accrue answer-solving time. Previously accumulated time remains; an unknown interruption is marked honestly and excluded from clean speed evidence. Separately labeled session-use time may include other active learning phases. Closing the scratchpad must not accidentally commit an answer.
 
-Completion summarizes work: questions attempted, correct/partial outcomes where appropriate, help used, one learning takeaway, and an optional next action. XP can appear as a small acknowledgement. Do not show a celebratory complete state before writes succeed. If a section is incomplete because the learner skipped everything or evidence was insufficient, say what happened without pretending a valid assessment result exists.
+Completion summarizes work: questions attempted, exact or AI-rubric correct/partial outcomes where appropriate, separately labeled pending or self-check results, help used, one learning takeaway, and an optional next action. AI may produce the takeaway and recommend a next lesson from saved work; its summary must agree with those records. XP can appear as a small acknowledgement. Do not show a celebratory complete state before writes succeed. If a section is incomplete because the learner skipped everything or evidence was insufficient, say what happened without pretending a valid assessment result exists.
 
 For daily sections, **Continue next section** is primary when the learner chose a multi-section session; **Finish for now** remains available. The summary identifies the remaining time estimate before continuing. Completing the last section returns to stable Today completion.
 
@@ -582,7 +626,7 @@ Acceptance: pause/resume, quit/relaunch, skip, error reflection, last-question c
 
 Preserve typed notes and PencilKit drawing. On iPad and sufficiently wide Mac windows, provide a split pane with the problem on one side and scratchpad on the other. At compact widths use an expandable panel or sheet with a pinned problem preview that can expand to include the relevant table/diagram.
 
-Include Draw/Notes where supported, Undo, Redo and Clear. Clear should offer immediate Undo; do not require a frightening confirmation for every reversible stroke reset. Keep scratchpad outside scoring unless a particular future interaction explicitly uses structured working as a response. Preserve unsupported drawing bytes when opening a note on a platform that cannot edit them.
+Include Draw/Notes where supported, Undo, Redo and Clear. Clear should offer immediate Undo; do not require a frightening confirmation for every reversible stroke reset. Scratchpad content is not automatically part of the submitted answer. Offer **Explain my working** or **Use this in my answer** where the AI route supports the input; let the learner inspect recognized handwriting or a diagram interpretation before relying on it. Clearly identify the material submitted for grading when a task accepts working as part of its response. A failed or unsupported recognition attempt leaves the original notes/drawing intact and offers typed input. Preserve unsupported drawing bytes when opening a note on a platform that cannot edit them.
 
 Acceptance: a learner can refer to the original question while writing; drawing survives close/reopen and supported export/restore; Mac opening an iPad drawing does not erase it; keyboard and screen-reader users receive a fully usable notes path.
 
@@ -594,7 +638,7 @@ Acceptance: a learner can refer to the original question while writing; drawing 
 
 Progress has three explicit, visible sections or a segmented control: **Overview, Review, History**. Default to Overview and retain the last selection during same-session navigation. Overview shows recent learning, one next-practice recommendation, consistency and skill summaries. Put details of uncertainty, evidence channels and methods under clearly labeled disclosures.
 
-Do not lead with an empty ring and “unassessed.” A first-use state says what practice will reveal and provides Start practice or a starting check. A filtered-empty state states that history still exists and offers Clear filters. Explain personal-source practice separately without suggesting it was wasted because it does not affect protected skill estimates.
+Do not lead with an empty ring and “unassessed.” A first-use state says what practice will reveal and provides Start practice or a starting check. A filtered-empty state states that history still exists and offers Clear filters. Show meaningful progress from AI-graded general and personal-source practice, with summaries of learned topics, rubric strengths, repeated gaps and due reviews. Separate formal skill-check results and learner self-ratings where their interpretation differs; do not treat all AI/source practice as non-learning activity. AI can explain a trend and propose a next action using the displayed evidence, with uncertainty proportional to the available work.
 
 Charts support point inspection: date, activity type, sample count and displayed value, plus a route to the relevant history. Preserve an accessible table/summary. A chart is not a replacement for an understandable sentence about what changed, and a tiny sample must not be presented as robust improvement.
 
@@ -614,7 +658,7 @@ Acceptance: due count matches the core schedule; not-due items are not silently 
 
 History lists all relevant saved attempts, with filters for date, skill, result, support and source. Reusable protected items use safe dimensional/concept guidance and never reveal exact keys or solutions; exports intended for learner review preserve that rule. Keep advanced timing/confidence/version filters under More filters. Rows show a readable prompt excerpt, readable answer and result. Search uses visible text, not only serialized payloads or internal IDs.
 
-Answer detail must reconstruct enough original context to understand the work: prompt, options or structured input labels, table/diagram, learner response, expected result where allowed, original teaching explanation, hints used and source citations. The original attempt remains immutable. A learner may add a note, bookmark, report, or start a similar question, all as separate actions/data.
+Answer detail must reconstruct enough original context to understand the work: prompt, options or structured input labels, table/diagram, learner response, expected result where allowed, original teaching explanation, hints used and source citations. The original attempt remains immutable. For AI-graded work, retain criterion results, the feedback actually shown and any linked grade review; replay does not depend on the original provider still being available. A learner may ask the tutor about this answer, add a note, bookmark, report, review a grade or start a similar question, all as separate actions/data.
 
 Fix the verified raw JSON leak at its presentation boundary. Current `saveExerciseAttempt` encodes `NFExerciseResponse` into `AttemptRecord.response` (`PersistenceModels.swift:3041–3050`); snapshot/history/detail render it directly (`ProgressDashboardView.swift:1888`, `:2270`, `:2333`). Preserve the raw payload for compatibility, but render a typed display representation:
 
@@ -624,7 +668,7 @@ Fix the verified raw JSON leak at its presentation boundary. Current `saveExerci
 | Single choice | Saved visible option label, not option ID |
 | Multiple choice | Selected visible labels in original option order |
 | Ordered steps | Numbered saved step labels |
-| Short text | Exact entered prose with readable line breaks |
+| Short text | Exact entered prose with readable line breaks, rubric feedback where AI-graded, and linked grade review |
 | Self-check | Learner's answer, then their match rating |
 | Claim/evidence | Named claim with selected evidence labels and relation |
 | Logic state | Named fields and values; named rule if selected |
@@ -651,25 +695,25 @@ Acceptance: fresh, empty, processing, partial batch, cancelled, duplicate, unrea
 
 ### UX-027 — Source detail and studying
 
-Source detail leads with **Read source**, **Review from memory**, and **Create question set**, enabled according to readiness and permissions. Show a short content preview and where the original is stored. File metadata, detailed extraction diagnostics and sync mechanics are optional details.
+Source detail leads with **Ask about this source**, **Read source**, **Review from memory**, and **Create question set**, enabled according to readiness and available capabilities. Select one primary action for the current context. The tutor can summarize a section, explain a concept or diagram, compare passages, build a study plan and turn confusion into focused practice. Show a short content preview and where the original is stored. File metadata, detailed extraction diagnostics and sync mechanics are optional details.
 
-A reading view provides search, clear excerpt location, readable text/math/tables and links back to original context. A review prompt requires recall before revealing reference. A self-check makes the learner's role explicit and uses Matched, Partly, or Not yet without a numeric correctness percentage. The question-creation route carries the source selection and returns to the source when closed.
+A reading view provides search, clear excerpt location, readable text/math/tables and links back to original context. A recall prompt captures the response before revealing reference. AI rubric grading is the normal supported route for short explanations and source recall, with citations to the actual retained source context. A self-check remains an optional alternative and offline fallback, labeled Matched, Partly, or Not yet; it is distinct from an AI grade. The question-creation route carries the source selection and returns to the source when closed.
 
-Question privacy and sync are separate controls with plain explanations. Disabling question generation does not imply deleting the original. Syncing an original does not imply extracted text/index sync. User-facing copy must describe actual capability, not aspirations.
+Source learning uses local or cloud AI according to the configured capability and connection. Reading, saved explanations and prepared practice remain useful offline; local extraction/indexing and supported local AI improve that availability. Source citations open the relevant passage. If a question needs information absent from the selected material, the tutor says what is missing or distinguishes broader explanation from a claim supported by that source. AI use, downloads and sync are ordinary availability settings, not the central study workflow.
 
-Acceptance: a source can be read, reviewed and used for permitted generation with predictable returns. Missing/changed/deleted source chunks offer recovery instead of an empty modal. Reference excerpts preserve citations and do not overstate factual authority.
+Acceptance: import material, ask a source question, inspect its citation, generate practice, submit a paraphrased short response, receive an AI rubric grade, and review the saved explanation offline with predictable returns. Missing/changed/deleted source chunks offer recovery instead of an empty modal. Reference excerpts preserve citations and do not overstate factual authority.
 
 <a id="ux-028"></a>
 
 ### UX-028 — Searchable Settings categories
 
-Replace the broad card dashboard with searchable categories: Practice; Accessibility; Notifications; Question Writer; Data and sync; About. Search matches labels and common synonyms such as language, dark, sound, export, reminders and timer. Each result deep-links to the control and highlights it briefly without disruptive animation.
+Replace the broad card dashboard with searchable categories: Practice; Accessibility; Notifications; AI and offline; Data and sync; About. Search matches labels and common synonyms such as language, dark, sound, export, reminders and timer. Each result deep-links to the control and highlights it briefly without disruptive animation.
 
-Practice contains duration, timing, contexts, emphasis and day boundary. Accessibility contains language, timer visibility, motion, supported visual alternatives and input preferences/calibration. Notifications describes permission and schedule state. Question Writer shows configuration and a test/recovery action. Data and sync contains export/restore, local storage, sync status, reports and deletion. About contains version and methodology.
+Practice contains duration, timing, contexts, emphasis and day boundary. Accessibility contains language, timer visibility, motion, supported visual alternatives and input preferences/calibration. Notifications describes permission and schedule state. AI and offline shows automatic/local/cloud preferences, available capabilities, optional model downloads and their size, configured provider/account, usage or cost where applicable, and connection/test/recovery actions. Sensible defaults should work without technical model selection; advanced provider details are secondary. Legacy Question Writer integration belongs here as an optional integration. Data and sync contains export/restore, local storage, sync status, reports and deletion. About contains version and methodology.
 
 Use live values where changes are immediately saved. Editors with multiple related changes have explicit Save/Cancel and dirty-state behavior. Data deletion remains a separate destructive flow with concrete scope and progress. Never convert a failure to “Done” simply because local cleanup started.
 
-Acceptance: a learner can find language, hide timer, sound, duration, export and restore by both browsing and search. Changing unrelated preferences preserves active session and daily completion. Deletion/export behaviors match the privacy specification.
+Acceptance: a learner can find language, hide timer, sound, duration, export and restore by both browsing and search. Changing unrelated preferences preserves active session and daily completion. Deletion/export and offline availability match the data and service specification.
 
 ## 9. Rich interaction slices that teach a specific skill
 
@@ -719,7 +763,7 @@ Use a concrete miniature study. Ask the learner to connect a claim to supporting
 
 Pointer users may drag a piece of evidence to a claim. Every relationship must also be creatable by choosing a claim and checking evidence options. Show current connections in text. Undo and Clear current claim are available. Validation states exactly what is incomplete without implying which evidence is correct.
 
-Feedback identifies what the evidence supports, what it does not establish, and one relevant confound or control. Repair changes the study context while keeping the inference structure. Open-ended explanations can be optional reflection unless a validated scoring scheme exists.
+Feedback identifies what the evidence supports, what it does not establish, and one relevant confound or control. Repair changes the study context while keeping the inference structure. Open-ended explanations are a first-class answer option using AI rubric grading for claim scope, evidence support, confounds and experimental reasoning. Exact structured relationship checks can remain components of the same task. The tutor can discuss an alternative experimental design and explain which rubric conditions it satisfies.
 
 Acceptance: all required claims can be mapped, incomplete structure cannot be committed, relationships remain readable in history, accessible controls produce the same mapping, and no raw claim/evidence ID is displayed.
 
@@ -737,15 +781,17 @@ Acceptance: UI state matches interpreter state; prediction is captured before re
 
 <a id="int-006"></a>
 
-### INT-006 — Retrieval: recall, reference and honest self-check
+### INT-006 — Retrieval: recall, AI grading and targeted follow-up
 
-Present a focused question from a known source and let the learner answer before seeing the excerpt. After confidence where required, show the relevant reference with a precise location and a short criteria list. Ask Matched, Partly, or Not yet only when the response is genuinely self-checked; label the result accordingly.
+Present a focused question from a known source and let the learner answer in their own words before seeing the excerpt. After confidence where required and submission, AI evaluates the response against a saved target-specific rubric: important concepts, relationship direction, conditions, omissions and contradictions. Give a normal learning grade and concise feedback tied to the response, with source locations for the relevant criteria. Accept accurate paraphrases, brief answers and valid alternative examples without requiring the reference's exact wording.
+
+The learner can ask why a criterion was missed, challenge an overlooked explanation, revise in a new linked attempt or start a targeted follow-up. If AI is unavailable or the learner chooses self-check, show the reference and target-specific checklist, then ask Matched, Partly, or Not yet. Save that as a self-rating and keep its interpretation separate from the AI grade. Pending grading can be resumed without losing the original recall.
 
 Offer an option to mark the question ambiguous or the excerpt insufficient. A repair may rephrase the same idea or ask a related retrieval question, but must not claim source-grounded quality if the source only contains fragments. Scheduling follows the core retention model and keeps early re-exposure distinct from a valid delayed check.
 
-Accessible equivalent: labeled text entry, standard dictation support where available, expandable source text, keyboard-operable match choices. Read reference only after the user chooses to reveal it.
+Accessible equivalent: labeled text entry, standard dictation support where available, expandable source text, keyboard-operable rubric and grade-review actions, and match choices for self-check. Announce the completion or failure of grading once, and read reference only after the response is submitted or the learner chooses to reveal it.
 
-Acceptance: no key before recall; the source citation opens useful context; matched status is not misrepresented as independently verified correctness; source deletion or reprocessing yields recovery without a blank screen.
+Acceptance: correct paraphrase, omission, reversed relation and contradictory response produce the expected rubric outcomes; grade review preserves the original; no key appears before recall; citations open useful context; local/cloud loss offers a truthful fallback; self-rating is not presented as an AI grade; source deletion or reprocessing yields recovery without a blank screen.
 
 <a id="int-007"></a>
 
@@ -753,7 +799,7 @@ Acceptance: no key before recall; the source citation opens useful context; matc
 
 Use a task that genuinely requires carrying a familiar relationship into a different context. For example, after proportional reasoning, compare resource allocation in a different domain with changed surface details. The learner selects or constructs the useful relationship and solves. A debrief may invite an optional explanation of what carried over. Pre-feedback reflection is permitted only when the task is separately and explicitly designated as a metacognition task; transfer alone is not a mandatory-reflection policy.
 
-Keep the first release constrained: two skills, a bounded problem and a deterministic response schema. Optional scaffolding can identify the relevant relationship, but that changes evidence status according to core rules. A debrief explicitly connects the old and new contexts, including what differs. Do not relabel ordinary multiple choice as transfer because its story mentions another discipline.
+Start with two skills and a bounded problem, using exact evaluation for computable results and AI rubric grading for the explanation of what transfers and what assumptions change. AI should support richer open responses, alternative valid solution strategies and a debrief tailored to the learner's reasoning. Optional scaffolding can identify the relevant relationship, but that changes evidence status according to core rules. A debrief explicitly connects the old and new contexts, including what differs. Do not relabel ordinary multiple choice as transfer because its story mentions another discipline.
 
 Accessible equivalent: text/table representation, labeled relationship selection and numeric/structured response. Reflection can be typed and resumed. Time pressure is not added merely to make transfer feel harder.
 
@@ -867,9 +913,9 @@ Acceptance: with motion, audio and haptics disabled, every state transition rema
 | Your saved answer | Immutable response |
 | Practice XP / Participation | Forge XP / engagement as learner-facing metric names |
 | Explanation | Durable scoring explanation |
-| Checked answer | Deterministically validated payload |
+| Checked answer / AI-graded answer where the distinction helps | Deterministically validated payload; unreviewed model suggestion as the blanket label for AI grades |
 | Source | Library item/chunk when naming navigation |
-| Question Writer | Internal Shortcut implementation name except setup details |
+| AI tutor / Create a question set / AI and offline | Question Writer as the name for every AI feature; provider or model implementation terms in the learning flow |
 | Saved on this device | Persisted locally |
 
 Technical terminology may be necessary in advanced methodology or developer exports. Keep those surfaces explicitly secondary. A statement such as “This task does not change your skill estimate” can be useful; “Immutable score preserving seeded diagnostic” is not.
@@ -897,6 +943,14 @@ Technical terminology may be necessary in advanced methodology or developer expo
 | Correct result | Correct |
 | Partial result | Partly correct |
 | Incorrect result | Let's review this |
+| AI grading pending | Checking your answer… |
+| AI rubric outcome | Partly correct · Your explanation identifies the cause; add the condition under which it applies. |
+| AI grade method detail | AI-graded against this question's criteria |
+| Grade clarification | I couldn't tell whether you meant the rate or the total. Clarify this part. |
+| AI grading unavailable | Your answer is saved. Retry grading when available, or compare it with the reference. |
+| Grade review | Review grade / Explain this criterion / Try again |
+| Contextual tutor | Ask the tutor / Explain another way / Give me a similar question |
+| Offline fallback | You're offline. Saved practice and available on-device features still work. |
 | Self-check outcome | Your self-check: partly matched |
 | Due review | Ready to review |
 | No reviews due | You're up to date. |
@@ -933,13 +987,13 @@ Acceptance: run the same first-use, incorrect-answer, confidence, source import,
 
 **Package A: repair visible defects and navigation.** Fix raw JSON presentation for all response families, reflection safe exit, stale nested content, and any reproduced navigation hang. Correct mismatched destination names. Add direct History and Review entry points. Preserve all existing scoring and persistence contracts.
 
-**Package B: rebuild the answer loop.** Create the continuous problem/response/feedback surface, inline confidence policy, graduated hints, readable original feedback and targeted repair. Include smallest-width, keyboard and VoiceOver operation before adding more activity types.
+**Package B: make AI central to the answer loop.** Create the continuous problem/response/feedback surface with short-response AI rubric grading, contextual tutor conversation, inline confidence policy, graduated AI/authored hints, readable original feedback, grade review and targeted repair. Include pending/failed grading and local/cloud/offline transitions as ordinary states. Include smallest-width, keyboard and VoiceOver operation before adding more activity types.
 
-**Package C: simplify discovery and first use.** Implement Today hierarchy, sample-first onboarding, optional starting check, exact activity search, explicit adaptive difficulty versus timing, and categorized Settings. Connect all routes to the core navigation model.
+**Package C: simplify discovery and first use.** Implement Today hierarchy and AI coaching, sample-first onboarding, natural-language learning goals, in-app question generation, optional starting check, exact activity search, explicit adaptive difficulty versus timing, and categorized Settings. Connect all routes to the core navigation model.
 
-**Package D: durable study resources.** Implement saved/temporary distinction, collection organization, original-context answer snapshots and useful source reading/review returns. Align retention and deletion with the privacy/persistence specification.
+**Package D: source-driven AI study and offline continuity.** Implement source tutoring, explanations and question creation, saved/temporary distinction, collection organization, original-context answer and AI-grade snapshots, and useful source reading/review returns. Align retention, offline assets, grading retries and deletion with the data/service specification.
 
-**Package E: polished interaction slices.** Implement one bounded slice per family with deterministic/accessible response equivalence, then broaden content only after usability and question-quality review.
+**Package E: polished interaction slices.** Implement one bounded slice per family with accessible response equivalence and exact, AI-rubric or combined evaluation appropriate to the task, then broaden content after usability and question-quality review. AI generation, tutoring and short-response grading are release deliverables in Packages B–D; finishing every offline-bank expansion is not a prerequisite for useful AI learning.
 
 <a id="ux-030"></a>
 
@@ -947,7 +1001,7 @@ Acceptance: run the same first-use, incorrect-answer, confidence, source import,
 
 For every package, provide a traceable list of implemented requirement IDs, automated checks that validate actual behavior, screenshots where layout matters, and a concise manual journey ledger. Record platform, OS, device/window size, language, text size, input method and whether the data fixture is fresh or established.
 
-The minimum manual suite covers fresh sample/setup; optional check pause/resume; correct/wrong/partial answer; hints through their final level; required confidence; optional and required reflection; save failure/retry; all eight response representations in history; daily completion and preference edit; deep destination switching; empty/processing/failed source; generated-set expiry versus saved retention; keyboard and VoiceOver; minimum-width and largest-text presentation.
+The minimum manual suite covers plain-language goal → generated set → short response → AI grade → follow-up tutor → reviewed grade; source question and citation; local AI where supported; cloud AI, timeout, interrupted/retried grading and airplane-mode saved practice; fresh sample/setup; optional check pause/resume; correct/wrong/partial answer; hints through their final level; required confidence; optional and required reflection; save failure/retry; all eight response representations in history; daily completion and preference edit; deep destination switching; empty/processing/failed source; generated-set expiry versus saved retention; keyboard and VoiceOver; minimum-width and largest-text presentation.
 
 Use representative usability sessions to evaluate clarity and perceived professionalism. Ask learners to perform tasks without coaching, then explain what they believe happened. Log wrong turns, hesitation, misunderstood labels, unintended difficulty, skipped explanations and reports of repetitive questions. Measure first-practice access, time spent on administrative controls versus solving, successful error recovery, and ability to find a prior explanation. Proposed targets include a first practice within two clear setup decisions, one obvious resume action, no mandatory full-page confidence detour in ordinary practice, and all critical tasks independently completable with keyboard and VoiceOver.
 
@@ -959,9 +1013,9 @@ Do not declare the app professional because the UI tests pass or the cards look 
 
 # 02 — Content, question quality, and scoring specification
 
-**Status:** proposed implementation specification, based on QA executed on 4 September 2026. Requirements using **must** describe the intended replacement behavior. They do not describe capabilities already delivered. No application implementation is included in this chapter.
+**Status:** proposed implementation specification, based on QA executed on 4 September 2026 and revised for the AI-centered product direction on 5 September 2026. Requirements using **must** describe the intended replacement behavior. They do not describe capabilities already delivered. No application implementation is included in this chapter.
 
-**Scope:** deterministic exercise contracts, editorial production, the eight existing response types, answer equivalence, feedback authority, item identity, the mixed offline banks, all 58 existing catalog activities, and seven complete worked examples. The adaptation chapter owns learner estimation and scheduling policy. The application/state chapter owns persistence transactions and migrations. The interaction chapter owns controls, layouts, and accessibility implementation. Those implementations must preserve the content and scoring invariants defined here.
+**Scope:** AI-generated learning content, semantic rubric grading of short/free-text responses, contextual feedback and tutoring, exact exercise evaluators, editorial production, the eight existing response types, answer equivalence, grade review, item identity, the mixed offline banks, all 58 existing catalog activities, and seven complete worked examples. The adaptation chapter owns learner estimation and scheduling policy. The application/state chapter owns persistence transactions and migrations. The interaction chapter owns controls, layouts, and accessibility implementation. Those implementations must preserve the content and scoring invariants defined here.
 
 ## 1. Evidence and the outcomes this chapter must deliver
 
@@ -979,7 +1033,9 @@ The executable evidence is recorded in [ExecutedProbeResults.txt](../QA_2026-09-
 | QA-C08 | Source inspection shows solution cues in context and representations rendered before answers, including protected checks. | Baseline and independent practice can be answered from a supplied solution cue. | CON-004; CON-008; QA-S06 |
 | QA-C09 | The same seed at target difficulty 0.2 and 0.9 produces identical problem, response contract, representations, and ID; metadata alone changes. | The requested challenge level does not necessarily change the task. | CON-011 through CON-013; family matrix |
 
-The implementation outcome is a question system in which a learner can understand the task, give an ordinary correct response, trust the result, learn from an error, encounter genuinely different problems, and recognize why a later task is harder. The chapter does not claim any resulting change in general intelligence or externally validated psychometric performance.
+The implementation outcome is an AI-centered question and teaching system in which a learner can ask for a topic or source-based lesson, answer naturally, receive meaningful rubric feedback, discuss their reasoning, challenge a grade and continue with appropriately targeted practice. AI generation and grading are normal learning features. Exact evaluators remain valuable for arithmetic, symbolic domains, geometry, choice sets and executable logic where they provide stronger correctness checks.
+
+Local processing supports reasonable offline use, responsiveness and continuity. It does not impose a blanket local-only or deterministic-only rule on teaching or grading. Capable local models and cloud models may both generate questions, grade explanations and tutor; the route depends on capability, connectivity, quality, latency and configured cost. Saved learning materials, original responses and completed grades must remain readable offline. An unavailable AI service leads to pending grading, retry, an available local route or explicit self-check, never a fabricated incorrect answer. The chapter does not claim any resulting change in general intelligence or externally validated psychometric performance.
 
 ## 2. The authoritative exercise contract
 
@@ -995,28 +1051,32 @@ Replace the implicit relationship between strings, answer keys, and metadata wit
 | Task | Plain-language question, requested deliverable, essential givens, assumptions, domain restrictions, answer format, units | The question is answerable from the intended prerequisites plus these givens. |
 | Objective | One primary operation; optional explicitly weighted subordinate operations; prerequisite concept IDs | A workflow or confidence exercise cannot silently become evidence that an unrelated fact was recalled. |
 | Representations | Structured table/chart/geometry/code/equation data; role of each representation; accessible equivalent | All visible claims, summaries, and accessible descriptions derive from the same underlying data. |
-| Answer authority | One of the eight response contracts, semantic alternatives, forbidden assertions, partial-credit policy, independently verified reference | Rendering does not invent an answer; scoring does not infer authority from display text. |
+| Answer authority | Response contract and evaluator kind: exact, AI rubric, combined, or self-check; semantic alternatives, required criteria, forbidden assertions, partial-credit policy, supporting reference and rubric version | Rendering does not invent an answer. AI grades judge the response against the saved criteria and evidence; learner self-ratings remain a separate result kind. |
 | Assistance | Essential givens, optional hint stages, worked solution, reference material, allowed teaching modes | Solution-bearing material is unavailable before an independent response. |
 | Difficulty intent | `editorialBand` B1–B4, `demandVector`, prerequisite demands, named parameter bounds, reason for each demand | A level describes actual task demands and is separately identified from empirical difficulty estimates. |
-| Feedback | Correct reasoning, shortest decisive step, misconception-specific explanation, next attempt recommendation | Explanations must be true for the actual parameters and learner response. |
-| Provenance | Author/reviewer IDs, review date, source references when needed, generator/oracle versions, verification record | A future content audit can reproduce what was approved and why. |
+| Feedback | Correct reasoning, shortest decisive step, criterion feedback, contextual AI explanation, next attempt recommendation | Feedback addresses the actual response and retained evidence; unsupported diagnoses are qualified rather than asserted as fact. |
+| Provenance | Authored or AI-generated origin, generation/rubric/evaluator versions, retained source references, relevant author/reviewer records, verification method and model/route metadata for AI work | The question and saved grade can be inspected later without rerunning a model or pretending dynamic AI output was individually human-approved. |
 | Delivery | Eligible modes, `independentEligible`, `protectedEligible`, compatible response forms, time eligibility, novelty relationship, required assets, locale support | Unsupported forms and missing assets are excluded before reservation. |
 
 A suggested implementation shape is a versioned `NFExerciseContract` containing a discriminated `NFAuthoritativeResponseContract`, an `NFStimulusModel`, and `NFContentReviewRecord`. These names are proposed types, not assertions about existing APIs. Prefer typed values and enums to adding more magic strings to tags. `NFExercise` may initially remain the rendered/session object produced from that contract.
 
 <a id="con-002"></a>
 
-### CON-002 — Parameters must be generated before prose
+### CON-002 — Generation must produce a coherent task, reference and rubric
 
-Generation must follow this order: select an eligible family and demand specification; draw bounded substantive parameters; derive the stimulus model; derive the answer with an independent or independently checked method; construct and validate alternatives; select compatible representations; render localized task text; validate the complete item. A rejected candidate must never reach a session. The seed and generator version must reproduce the rejection as well as valid outputs.
+Use AI to create question sets, examples, explanations, source recall and follow-up tasks from learner goals, selected material and recent learning needs. Every accepted task must retain its prompt, actual givens, requested deliverable, response form, difficulty intent, rubric, reference evidence and provenance before the learner answers. Generation must not invent its grading standard after seeing the response. Source-driven generation should use the supplied passages and preserve useful citations; broader subject knowledge must be distinguished from what the selected source says.
 
-For finite small domains, release tooling must enumerate the whole domain. For larger domains, it must enumerate all boundary partitions and run a deterministic property sweep. “The canonical answer scored as correct” is necessary but cannot replace independent truth checks. Calculation chains must have an independent arithmetic oracle; cube nets must be checked by geometric folding rather than a hand-maintained opposite-face list; logical patches must be executed by the restricted interpreter against the contract's test inputs.
+For exact generated families, follow this order: select an eligible family and demand specification; draw bounded substantive parameters; derive the stimulus model; derive the answer with an independent or independently checked method; construct and validate alternatives; select compatible representations; render localized task text; validate the complete item. The seed and generator version must reproduce the rejection as well as valid outputs. For AI-generated tasks, retain the accepted generated artifact and generation configuration; do not promise that rerunning a model with the same seed recreates its prose. Check schema, required assets, source support, ambiguity and rubric sufficiency, using exact tools for any computable components. A rejected candidate must not reach a session.
+
+Runtime AI practice does not require every question to be pre-authored or individually signed into the bundled offline inventory. Its creation and evaluation policies need meaningful quality evaluation, and its results retain their origin. The reviewed standardized bank and protected skill-check forms retain their own admission requirements. This distinction preserves usable AI generation without falsely describing it as a pre-reviewed standardized item.
+
+For exact generators with finite small domains, release tooling must enumerate the whole domain. For larger domains, it must enumerate all boundary partitions and run a deterministic property sweep. “The canonical answer scored as correct” is necessary but cannot replace independent truth checks. Calculation chains must have an independent arithmetic oracle; cube nets must be checked by geometric folding rather than a hand-maintained opposite-face list; logical patches must be executed by the restricted interpreter against the contract's test inputs.
 
 <a id="con-003"></a>
 
 ### CON-003 — Generation failure must remain a content failure
 
-A runtime content error must produce a replacement reservation or a clear inability to continue, never an incorrect score for the learner. Keep a reason such as `duplicateAnswer`, `noValidInterpretation`, `missingAsset`, `unsupportedLocale`, `oracleMismatch`, or `ungradableResponseContract`. Record the content edition, family, seed, and contract revision. Do not include imported private document text in a general diagnostics log. A repeated failing family is quarantined for the current session; the reservation rules in section 6 determine what can replace it.
+A runtime content error must produce a replacement reservation or a clear inability to continue, never an incorrect score for the learner. Keep a reason such as `duplicateAnswer`, `noValidInterpretation`, `missingAsset`, `unsupportedLocale`, `oracleMismatch`, or `ungradableResponseContract`. AI timeout, model unavailability, insufficient source context and invalid output are generation failures with Retry or another supported learning route. Record the content identity, family or generation request, generator/model and contract revision. Preserve the relevant source and question with the study record; general diagnostics should use bounded identifiers and failure details rather than duplicating whole documents. A repeated failing family is quarantined for the current session; the reservation rules in section 6 determine what can replace it.
 
 <a id="con-004"></a>
 
@@ -1030,7 +1090,7 @@ The counterexample `2×3=6`, the conclusion “the divisor is zero,” and a ful
 
 ### CON-005 — An item must state what is being judged
 
-The contract must identify whether it judges a final value, exact representation, method, explanation, uncertainty interpretation, minimal counterexample, or a set of simultaneous criteria. Instructions must not request three deliverables when the scorer grades one. Do not ask “estimate” while silently requiring one exact string. Do not ask “which experiment?” while grading the order of generic study steps. If more than one answer is valid, encode the alternatives or change the task.
+The contract must identify whether it judges a final value, exact representation, method, explanation, uncertainty interpretation, minimal counterexample, or a set of simultaneous criteria. Instructions must not request three deliverables when the scorer grades one. Do not ask “estimate” while silently requiring one exact string. Do not ask “which experiment?” while grading the order of generic study steps. If more than one answer is valid, encode exact alternatives or a semantic rubric that accepts the valid reasoning. Open-response rubrics must describe necessary concepts and reasoning without demanding one model sentence, one writing style or an arbitrary response length.
 
 ## 3. Correctness, ambiguity, and content quality
 
@@ -1064,7 +1124,7 @@ A release test must generate every family in each protected purpose and inspect 
 
 ### CON-009 — Distractors must express plausible errors
 
-Each distractor must have an authored misconception ID and a one-sentence explanation of why that error produces this specific alternative. Generic “always,” “ignore the evidence,” or obviously unrelated text is insufficient for a mature question bank. For a time-unit question, distractors should be comparable units such as minute, hour, or day under a clearly stated SI-base-unit question, not three paragraphs about reversed relationships. For an experimental design item, rival options should each fix some limitations while failing the decisive one.
+Each distractor must have a declared misconception ID and a one-sentence explanation of why that error produces this specific alternative. Generic “always,” “ignore the evidence,” or obviously unrelated text is insufficient for a mature question bank. For a time-unit question, distractors should be comparable units such as minute, hour, or day under a clearly stated SI-base-unit question, not three paragraphs about reversed relationships. For an experimental design item, rival options should each fix some limitations while failing the decisive one.
 
 Correct options must not be identifiable by consistently being longer, more qualified, grammatically compatible, more technical, or the only option containing numbers. These properties are lint warnings for editorial review, not a reason to distort naturally necessary wording. The release record must document any exception.
 
@@ -1106,15 +1166,17 @@ Store `editorialBand` and `demandVector` independently from `empiricalDifficulty
 
 A fully accepted authoritative response must have `isCorrect=true` and `credit=1`. An accepted equivalent is not partial knowledge. A partial response must have `isCorrect=false`, a declared partial-credit basis, and component results explaining the missing or contradictory parts. An incorrect response has `isCorrect=false` and credit zero unless the declared rubric deliberately awards component credit. A skipped, unsubmitted, invalid-item, ungradable, or self-reported response must not be encoded as an objective incorrect/correct binary.
 
-Introduce a versioned outcome distinction equivalent to `correct`, `partial`, `incorrect`, `needsClarification`, `selfReported`, `skipped`, and `invalidItem`. The state chapter owns the persistence representation. Existing boolean/credit fields may be adapter outputs, but they cannot erase the distinction from new records. `needsClarification` means the submitted notation cannot be interpreted safely; it is not a euphemism for a confidently wrong answer.
+Introduce versioned outcome distinctions equivalent to `correct`, `partial`, `incorrect`, `needsClarification`, `pendingGrade`, `needsReview`, `selfReported`, `skipped`, and `invalidItem`, with an independent evaluator-kind field such as exact, AI rubric or combined. An accepted AI rubric grade may be correct/partial/incorrect and contribute to normal learning progression; it is not a self-report. Its evaluation method must remain inspectable and must not be represented as mathematical proof or externally validated assessment accuracy. The state chapter owns the persistence representation. Existing boolean/credit fields may be adapter outputs, but they cannot erase the distinction from new records. `needsClarification` means the submitted notation or a material part of its meaning cannot be interpreted reliably; it is not a euphemism for a confidently wrong answer.
 
 <a id="sco-002"></a>
 
 ### SCO-002 — Scoring must produce an inspectable component result
 
-For each component store the submitted value, parsed value when applicable, applicable rule version, outcome, awarded/max credit, misconception code if supported, and a learner-safe explanation. Preserve the original response alongside normalized interpretation. Feedback must not claim a specific misconception solely because an arbitrary wrong number matches no known case; use “Recheck the conversion” unless there is diagnostic evidence for a direction or scale error.
+For each component store the submitted value, parsed interpretation when applicable, criterion/rule version, evaluator kind, outcome, awarded/max credit, cited response evidence, source support where relevant, misconception code if supported, and a learner-safe explanation. Preserve the original response alongside normalized interpretation. Feedback must not claim a specific misconception solely because an arbitrary wrong number matches no known case; use “Recheck the conversion” unless there is diagnostic evidence for a direction or scale error.
 
-Scoring must be deterministic and side-effect free for a given contract revision and response. It must not change with device locale, network/model availability, option order, app theme, or elapsed time. A time-based statistic is separately derived from a valid timing contract. A post-answer diagnostic retry never overwrites the original attempt.
+Exact evaluation must be deterministic and side-effect free for a given contract revision and response, independent of theme, option order, connectivity and irrelevant locale presentation. AI rubric evaluation can use a capable local or cloud model and is not required to be mathematically deterministic. Its output must be checked against the response/criterion identities, required result fields, credit bounds, reference support and declared grading policy before acceptance. A combined task preserves each component's evaluator; AI cannot silently overwrite a computable component's verified value.
+
+Freeze and save an accepted AI grade with the exact submitted response, question/rubric versions, source context or references needed for review, evaluation configuration and model/route identity where available. Reopening history, reconnecting or changing a provider displays the saved result, not a newly inferred grade. Retrying an unfinished request cannot create a second completed attempt; a requested reevaluation creates a linked grade revision with a reason. An accepted reviewed revision may update effective learning progress under the correction policy while preserving the original record. AI wait time is excluded from answer-solving time; elapsed time is never an undeclared grading criterion.
 
 <a id="sco-003"></a>
 
@@ -1122,7 +1184,7 @@ Scoring must be deterministic and side-effect free for a given contract revision
 
 Replace a single universal text normalizer with explicit domains: natural-language phrases, exact numbers, fixed-unit quantities, unrestricted-unit quantities within an allowed dimensional family, identifiers, symbolic expressions, coordinate tuples, ordered labels, and booleans. Case folding is acceptable for ordinary English prose and some reviewed textual aliases. It is not generally safe for variables, named functions, units, chemical symbols, or source-code identifiers.
 
-Parsing stages are lexical normalization, syntactic parsing, domain validation, semantic equivalence, and rubric evaluation. Reject unsupported syntax before equivalence. Do not execute user text. Do not silently drop operators, exponents, grouping, signs, decimal points, primes, or unit prefixes. Preserve the complete parse and interpretation for feedback when notation could be surprising.
+For exact domains, parsing stages are lexical normalization, syntactic parsing, domain validation, semantic equivalence, and rubric evaluation. Reject unsupported exact syntax before claiming equivalence. Natural-language responses use semantic AI rubric interpretation where appropriate; ordinary paraphrase is not a parser failure merely because it is outside a local synonym list. Do not execute user text. Do not silently drop operators, exponents, grouping, signs, decimal points, primes, or unit prefixes. Preserve the complete parse and interpretation for feedback when notation could be surprising.
 
 <a id="sco-004"></a>
 
@@ -1136,7 +1198,7 @@ The following rules cover the existing `numeric`, `singleChoice`, `multipleChoic
 | Single choice | EX-C02: select the unique option representing a 90° counterclockwise rotation of `(10,10)`, namely `(-10,10)` | An equivalent duplicate option is a content error, never a learner error | Options validated semantically before ID-based selection scoring. |
 | Multiple choice | EX-C03: when A and C are the two safeguards, select exactly A and C | Selecting A, C, and “remove inconvenient outcomes” is not fully correct | Exact set for full credit; explicit optional partial rule. |
 | Ordered steps | EX-C04: a proof follows all declared dependency edges; two independent preparation steps may be swapped | A conclusion preceding a required derivation violates its edge | All valid topological orders accepted when order is partial. |
-| Short text | EX-C05: “Sum all observations then divide by their count” for arithmetic mean; `4x` for derivative of `2x²` | “Divide the count by the sum”; `f(b)-f(a)` when F is the required antiderivative | Prose and symbolic subcontracts use separate authority. |
+| Short text | EX-C05: “Sum all observations then divide by their count” for arithmetic mean; `4x` for derivative of `2x²` | “Divide the count by the sum”; `f(b)-f(a)` when F is the required antiderivative | AI semantic rubric for explanations; exact symbolic evaluation where supported; combined criteria when the task asks for both. |
 | Self-check | EX-C06: learner recalls, reveals, then records “partly matched” with a specific omitted condition | Clicking “matched” is not independently verified objective correctness | Self-reported reflection and exposure only. |
 | Claim/evidence | EX-C07: attach group means to an observed-difference claim and assignment information to a causal-limit claim | A larger observed mean alone supporting “treatment caused every increase” | Satisfy declared support constraints without unsupported edges. |
 | Logic/state | EX-C08: final typed state `count=9`, `ready=true`, violated invariant `readyMatchesCount` | `count=9`, `ready=false`; an accepted alias yielding partial credit | Per-field domain parsing and full credit for accepted equivalent states. |
@@ -1175,11 +1237,15 @@ If partial credit is permitted, score the fraction of required dependency edges 
 
 <a id="sco-009"></a>
 
-### SCO-009 — Short text must declare its supported interpretation
+### SCO-009 — Short responses use the evaluator suited to their meaning
 
-Use exact normalized aliases for constrained labels such as “independent variable,” explicit identifier parsing for code names, typed mathematical parsing for formulas, and reviewed concept criteria for short explanations. A 280-character limit may remain for concise responses, but it is a UI limit and cannot justify truncating input silently. Validate the length before commitment; preserve the complete original until the learner edits it.
+Use exact normalized aliases for genuinely constrained labels, explicit identifier parsing for code names, typed mathematical parsing for supported formulas, and AI semantic rubric grading for short explanations, free recall, teach-back, scientific reasoning and method justifications. A 280-character limit may remain for concise responses, but it is a UI limit and cannot justify truncating input silently. Validate the length before commitment; preserve the complete original until the learner edits it.
 
-For ordinary explanatory prose, explicitly approved paraphrases receive objective credit. A response outside the deterministic coverage must either be evaluated by a reviewed constrained rubric whose limitations are known or be marked “needs review/self-check,” without a false objective wrong score. Unbounded model-generated judgments may offer coaching, but cannot silently become authoritative scoring for protected evidence. The product must clearly separate a model suggestion from the local verified result.
+AI grading is a required normal path for explanatory prose. The task's saved rubric defines what counts as a correct, partial or incorrect answer; the model evaluates meaning, relationships, required conditions, omissions and contradictions rather than surface wording. Valid paraphrases and equivalent explanations receive full credit without requiring a pre-enumerated alias. Brevity, spelling variation and writing style must not reduce subject-knowledge credit unless they are stated assessment criteria.
+
+Accepted AI grades can inform topic progress, adaptive practice, review scheduling and targeted coaching under the core learning policy. They are separate from learner self-ratings and from exact computational proof. Protected assessments may use AI-graded components when their particular evaluation method has met that assessment's quality requirements; the presence of a model is not by itself a blanket ban, and ordinary AI learning must not wait for protected-assessment validation.
+
+If required evidence is absent, the answer is materially ambiguous or the evaluator cannot produce a supported grade, preserve the response as needs clarification/review or pending grading. Offer a specific clarification, Retry, an available capable local/cloud evaluator, or learner-selected self-check. Do not force every natural-language answer into self-check because the exact parser cannot handle it. A model timeout or unsupported device is never evidence that the learner was wrong.
 
 <a id="sco-010"></a>
 
@@ -1189,7 +1255,7 @@ Initially support rational coefficients, declared variables, addition, subtracti
 
 The contract must provide a symbol table. For EX-C05b, `F` is a named antiderivative function and `f` is the integrand; they are distinct. Function application `F(b)` is not multiplication `F*b`. Prime notation must refer to a declared derivative relation and cannot be stripped as punctuation. Coordinate labels and dummy variables may be renamed only when the contract declares an alpha-equivalence rule; never infer that all letters differing only in case are synonyms.
 
-Use canonical exact polynomial normalization when applicable. For rational functions, compare only within declared domain restrictions and preserve exclusions: `(x²−1)/(x−1)` is not an unrestricted replacement for `x+1` when the original domain excludes x=1. Cross-multiplication alone must not accept an expression where denominators introduce or erase forbidden values. If the parser cannot prove equivalence within the supported domain, request clarification or self-check rather than guessing from a few sampled numerical points.
+Use canonical exact polynomial normalization when applicable. For rational functions, compare only within declared domain restrictions and preserve exclusions: `(x²−1)/(x−1)` is not an unrestricted replacement for `x+1` when the original domain excludes x=1. Cross-multiplication alone must not accept an expression where denominators introduce or erase forbidden values. If the parser cannot prove equivalence within the supported domain, use an appropriate supported tool or clearly identified AI rubric review for ordinary practice, request clarification, or offer self-check. Do not claim exact symbolic proof from a few sampled numerical points or an unsupported model assertion. A new reviewed domain module can extend exact coverage independently.
 
 <a id="sco-011"></a>
 
@@ -1197,7 +1263,7 @@ Use canonical exact polynomial normalization when applicable. For rational funct
 
 Proposed initial implementation limits: 256 lexical tokens, nesting depth 32, at most 16 declared symbols, integer exponents from −12 through 12, and a maximum of 2,048 expanded polynomial terms. These are resource limits for a local parser and must be configurable/versioned; they are not learner difficulty parameters. Stop safely at a limit and explain the supported notation without recording an incorrect conceptual answer. Never evaluate arbitrary Swift, JavaScript, Python, shell commands, or imported code.
 
-Trigonometric identities, arbitrary derivatives, matrix algebra, chemical formulas, and proof equivalence require separate reviewed domain modules. Do not advertise universal algebra equivalence based on the initial polynomial parser. Unit symbols have their own registry and case rules: metre `m` and a prefix/unit symbol `M` cannot be case-folded into the same token.
+Exact proof of trigonometric identities, arbitrary derivatives, matrix algebra, chemical formulas and proof equivalence requires appropriate supported tools or separate reviewed domain modules. AI may teach these topics and assess bounded explanation criteria with its method identified; it must not claim that the initial local parser verifies mathematics outside its scope. Do not advertise universal algebra equivalence based on the initial polynomial parser. Unit symbols have their own registry and case rules: metre `m` and a prefix/unit symbol `M` cannot be case-folded into the same token.
 
 <a id="sco-012"></a>
 
@@ -1205,7 +1271,11 @@ Trigonometric identities, arbitrary derivatives, matrix algebra, chemical formul
 
 For the arithmetic-mean objective, accepted concept coverage requires an additive total of the relevant observations and division by their count. “Sum observations / number of observations” passes. “Divide the count by the total” fails because direction is reversed. “Do not divide by the count” fails despite containing every keyword. “Add all values and divide by how many values there are; this works because each observation contributes once” passes. A response that includes the correct method and then asserts its negation cannot receive full credit.
 
-A constrained rubric must define required concepts, accepted relation paraphrases, mandatory qualifiers, explicit contradictions, and examples just outside its coverage. Keyword presence alone is insufficient. When robust deterministic relation interpretation is unavailable for an objective, use constrained structured answers or honest self-check rather than pretending a small synonym list covers unrestricted language. Allow the learner to report a grading issue without forcing them to label their valid answer wrong.
+A semantic AI rubric must define required concepts, relation direction, mandatory qualifiers, component weights, material contradictions and representative full/partial/incorrect examples. Examples calibrate the intended meaning; they are not an exhaustive accepted-string list. The grader must tie each credited or missed criterion to the learner's actual words and the task evidence. Keyword presence alone is insufficient, and a contradiction must affect the relevant criterion even if every expected keyword appears.
+
+Evaluate the grading policy on held-out human-reviewed responses containing valid new paraphrases, terse and verbose answers, alternative correct reasoning, omissions, negations, changed quantifiers, mixed languages where supported and plausible unsupported claims. Check unsupported confidence, irrelevant fluency/style penalties and systematic disagreement. Compare capable local and cloud routes for the supported objectives and languages; an incapable local route must not grade simply because it is available. Route to a stronger evaluator, clarification or pending review when the policy requires it.
+
+Provide **Review grade** for overlooked meaning or an apparently wrong criterion. The learner can request an explanation or reevaluation without changing their original response or confessing an error. The reviewed result records the contested criterion and reason for any change. Feedback from review informs rubric quality evaluation; it does not automatically endorse every requested score change. Treat instructions embedded inside an answer as answer content, not permission to alter the rubric or award points.
 
 <a id="sco-013"></a>
 
@@ -1215,17 +1285,19 @@ The 800 computed retrieval instances should stop using exact prose strings as th
 
 <a id="sco-014"></a>
 
-### SCO-014 — Self-check must be honest about its authority
+### SCO-014 — Self-check remains an explicit alternative to AI grading
 
-The learner must attempt recall before revealing the reference. The app then shows a checklist tied to that target, not generic criteria such as “names the central idea” for every question. EX-C06 on the median must distinguish ordering, odd count, and averaging the two central observations for an even count. “Matched,” “partly matched,” and “not yet” are self-reports; do not encode “matched” as an objectively correct response or include it in verified accuracy.
+For supported short-response and recall tasks, offer AI rubric grading as the normal evaluation route. Self-check is available when the learner wants manual comparison or when suitable AI is unavailable; selecting it must be explicit. The learner must attempt recall before revealing the reference. The app then shows a checklist tied to that target, not generic criteria such as “names the central idea” for every question. EX-C06 on the median must distinguish ordering, odd count, and averaging the two central observations for an even count. “Matched,” “partly matched,” and “not yet” are self-reports; do not encode “matched” as an objectively correct response or include it in verified accuracy.
 
-Store reveal time, whether a pre-reveal attempt occurred, checklist selections, the self-rating, and optional reflection. Do not require lengthy reflection on every successful recall. A closed-reference retry can be offered as a new linked attempt. It cannot overwrite the first response or convert an assisted attempt into unaided success. A rating made without attempting recall is a review exposure, not recall evidence.
+Store reveal time, whether a pre-reveal attempt occurred, checklist selections, the self-rating, and optional reflection. Do not require lengthy reflection on every successful recall. A closed-reference retry can be offered as a new linked attempt. It cannot overwrite the first response or convert an assisted attempt into unaided success. A rating made without attempting recall is a review exposure, not recall evidence. A later AI evaluation may inspect the original pre-reveal response as a separately linked grade; retain the actual assistance and timing sequence, and never rewrite a self-rating into an AI result. An unavailable grade may remain pending while the learner studies other material.
 
 <a id="sco-015"></a>
 
 ### SCO-015 — Composite and state answers must grade typed components
 
 Stop grading estimate/plausibility/exact tasks as opaque dictionaries of literal strings. Each response field has its own domain, accepted equivalents, mandatory/optional status, and weight. A whole accepted equivalent state receives full credit regardless of whether it matches the canonical spelling. A state task can use integer, rational, Boolean, enum, and declared identifier fields. Boolean text aliases such as `true` and `True` may be accepted under an explicit Boolean parser; source-code identifiers remain case-sensitive.
+
+A composite answer may combine exact components with AI-rubric explanation components. Declare each component's evaluator and weights before response; an uncertain AI component remains pending/reviewable without discarding a valid exact subresult or presenting an incomplete whole answer as fully correct.
 
 For EX-C08, starting at count 10 and ready false, execute `count -= 3`, set ready from `count <= 7`, then `count += 2` without recomputation. The final state is count 9, ready true; the invariant “ready equals count<=7” is violated. In a practice rubric assigning state 0.8 and invariant 0.2, both state fields correct plus the right invariant earns 1; both fields correct plus a wrong invariant earns 0.8. If state component weights differ, declare them. An accepted Boolean alias must not lower credit.
 
@@ -1251,9 +1323,9 @@ Full credit requires every claim's support condition and no prohibited unsupport
 
 ### SCO-018 — Feedback and replay must preserve the original result
 
-The first feedback sentence must say what happened in ordinary language: “Correct — 46×19 is 874,” “Your estimate is reasonable; recheck the exact multiplication,” or “I could not interpret that formula; use `*` for multiplication.” It must not call every correct answer “Supported” or every mistake “Revisit the decisive step.” The next sentence explains the shortest useful reason. Expandable detail may show alternatives and a worked solution.
+The first feedback sentence must say what happened in ordinary language: “Correct — 46×19 is 874,” “Your estimate is reasonable; recheck the exact multiplication,” or “I could not interpret that formula; use `*` for multiplication.” It must not call every correct answer “Supported” or every mistake “Revisit the decisive step.” The next sentence explains the shortest useful reason. AI feedback should refer to the actual reasoning that earned or missed a criterion and offer a practical next step. Expandable detail may show alternatives, source citations and a worked solution; a contextual tutor lets the learner ask follow-up questions or request a different example. Generated feedback must remain consistent with exact component results and source evidence.
 
-A diagnostic trace, second attempt, or appeal can add a linked result. It cannot mutate the original answer or scoring version. Correcting a bad question at release time requires a separately governed historical correction decision; the UI must not silently revise yesterday's evidence. The application/state chapter specifies the migration and correction records.
+A diagnostic trace, second attempt or grade review adds a linked result. It cannot mutate the original answer or scoring version. A reviewed AI grade may become the effective result for subsequent learning under the correction policy, with the original result, revised result and change reason still inspectable. Correcting a bad question at release time requires a separately governed historical correction decision; the UI must not silently revise yesterday's evidence. The application/state chapter specifies the migration and correction records.
 
 ## 5. Content identity, versioning, and editorial governance
 
@@ -1281,13 +1353,13 @@ A corrected typo must not erase exposure history or present a familiar item as n
 
 The current offline bank explicitly leaves signed inventory coverage unset. The replacement release must include the admitted item identities/fingerprints, knowledge-target records, family/structure quotas, response-contract versions, generator version, and content assets in the signed inventory or a reviewed signed exception with an explicit expiry/next-release obligation. A code-signed application alone does not satisfy a separately required content-manifest audit.
 
-Validation must verify that every reserved item resolves inside the installed approved edition and that no changed bank mapping reuses the same edition identity. Missing signature coverage cannot be “fixed” by setting a Boolean or bypassing a gate. The content release process must follow the repository's [ContentSigning.md](../ContentSigning.md), with signing authority outside ordinary runtime generation. Deployment and signing are separate authorized release actions, not part of writing this specification.
+For the standardized bundled-bank lane, validation must verify that every reserved item resolves inside the installed approved edition and that no changed bank mapping reuses the same edition identity. Missing signature coverage cannot be “fixed” by setting a Boolean or bypassing a gate. The content release process must follow the repository's [ContentSigning.md](../ContentSigning.md), with signing authority outside ordinary runtime generation. Deployment and signing are separate authorized release actions, not part of writing this specification. This manifest requirement covers the declared standardized shipped inventory; it is not a gate that prevents ordinary runtime AI-generated or personal-source practice. Those tasks retain accepted question/rubric artifacts and evaluation provenance under CON-001/002 and SCO-002.
 
 <a id="con-023"></a>
 
 ### CON-023 — Every family needs an editorial record and an independent reviewer
 
-The record must include the primary objective, prerequisites, approved domains/fields, four band definitions, generator parameter partitions, invalid regions, independent oracle, alternate forms, assistance policy, misconception taxonomy, accepted and rejected examples, sources where factual support matters, and locale/asset support. The reviewer must inspect sampled rendered items as a learner would see them and inspect all critical boundary cases. A reviewer cannot approve a family solely by reading the generator comments or running self-consistency tests.
+The record must include the primary objective, prerequisites, approved domains/fields, four band definitions, generator parameter partitions, invalid regions, independent oracle, alternate forms, assistance policy, misconception taxonomy, accepted and rejected examples, sources where factual support matters, and locale/asset support. For standardized families, the reviewer must inspect sampled rendered items as a learner would see them and inspect all critical boundary cases. For dynamic AI question creation, review the generation and grading policies, representative rendered outputs and held-out response evaluations; do not require a human to individually approve every learner-requested question before normal practice can begin. A reviewer cannot approve a family solely by reading the generator comments or running self-consistency tests.
 
 Factual source records must support the particular claim made, not merely share the topic. Elementary mathematical identities may be independently proved in the review record. Domain-specific facts need an appropriate textbook, primary source, standard, or official reference. Record limitations and assumptions. Avoid questions whose correctness depends on unannounced jurisdiction, rapidly changing product behavior, or personal medical/financial advice in the default general bank.
 
@@ -1301,9 +1373,9 @@ English and Japanese releases require equivalent task demands and accepted respo
 
 <a id="con-025"></a>
 
-### CON-025 — Feedback must be authored as a learning sequence
+### CON-025 — Authored and AI feedback must form a useful learning sequence
 
-For each misconception, provide an immediate explanation, one smallest corrective action, and an optional worked solution. Follow-up practice should vary the essential feature that caused the error while keeping unrelated demands manageable. After correcting a unit-direction error, a second item may reverse the conversion direction rather than merely replace 1,250 with 2,500. After a counterexample error, ask the learner to check premise and conclusion independently, then provide a different universal statement.
+For each supported misconception or missed criterion, provide an explanation, one smallest corrective action and an optional worked solution. AI should tailor these to the actual response, offer an alternative explanation when the first one does not help, and generate a follow-up question that addresses the missed idea. Use available exact tools and source context to substantiate the explanation; an AI inference about the learner's mistake remains tentative when the response does not establish it. Follow-up practice should vary the essential feature that caused the error while keeping unrelated demands manageable. After correcting a unit-direction error, a second item may reverse the conversion direction rather than merely replace 1,250 with 2,500. After a counterexample error, ask the learner to check premise and conclusion independently, then provide a different universal statement.
 
 A replay or explanation must be optional when the learner was confidently correct and the objective is fluency. Do not require repeated generic “what went wrong?” reflections for correct answers. A wrong response should not trigger a long conceptual lecture unrelated to the actual mistake. Explanations must not claim evidence of a misconception when the response is ambiguous or the parser could not interpret it.
 
@@ -1317,7 +1389,7 @@ Retrieval Cycle Builder and Confidence Calibration teach learning procedures and
 
 ### CON-027 — Content incidents need a reproducible correction path
 
-A learner can report “my answer should be accepted,” “more than one option is correct,” “question unclear,” “fact seems wrong,” or “something else.” Attach edition, semantic ID, contract revision, response/scoring version, locale, and seed. Include private source material only through a separate explicit inclusion choice in the UI. Triage must distinguish input parsing, answer equivalence, key error, ambiguity, missing prerequisite, and feature mismatch.
+A learner can report “my answer should be accepted,” “more than one option is correct,” “question unclear,” “fact seems wrong,” or “something else.” Attach edition, semantic ID, contract revision, response/scoring version, locale, and seed. The report preview states which question, response, source context and grading details will accompany the report according to the configured reporting workflow. Grade review should already have the saved response and rubric available; ordinary in-app reevaluation must not require a separate privacy workflow for each criterion. Triage must distinguish input parsing, answer equivalence, key error, ambiguity, missing prerequisite, and feature mismatch.
 
 Confirmed wrong-key or duplicate-answer incidents quarantine the affected contract or parameter region. Review the learner impact and corrected evidence through the state chapter's correction policy. The chapter does not authorize silently deleting past attempts or automatically awarding learning mastery. A quality dashboard must show incident rate with exposure denominator and item revision; raw report count alone overweights popular questions.
 
@@ -1327,7 +1399,7 @@ Confirmed wrong-key or duplicate-answer incidents quarantine the affected contra
 
 ### CON-014 — Balanced admission must precede balanced delivery
 
-The current first-1,000-unique scan must be replaced by release-time inventory admission with explicit family/structure quotas. At least 1,000 eligible semantic contracts per lab remains the planned offline floor. The system must prove that the inventory can meet the quotas before advertising balanced mixed practice. Reserving many unique numeric variants of one family cannot substitute for creating missing families.
+The current first-1,000-unique scan must be replaced by release-time inventory admission with explicit family/structure quotas. At least 1,000 eligible semantic contracts per lab remains the planned offline-bank floor. This inventory provides a dependable offline baseline; it is not the ceiling of the AI learning experience or a prerequisite for releasing useful AI tutoring, grading and generated practice. The system must prove that the inventory can meet the quotas before advertising balanced mixed practice. Reserving many unique numeric variants of one family cannot substitute for creating missing families.
 
 The following are proposed **editorial targets for a new 1,000-item edition**, not statements about current inventory and not psychometrically validated optimal proportions. The exact values are chosen to prevent the observed 98–99% concentration while retaining every catalog family. The quotas must be versioned and inspectable.
 
@@ -1377,7 +1449,7 @@ Short-block balance is a **soft** target subject to prerequisites, requested ban
 
 ### CON-018 — Exhaustion fallback must preserve the guarantee it actually has
 
-When a selected narrow activity runs out of unseen valid items, provide an explicit continuation: end the activity, continue with a named related activity, or deliberately review previous items. Do not silently broaden “Cube-Net Puzzle” into coordinate rotation while keeping the original activity title. A review continuation starts a clearly labeled review lane and does not claim unseen items. Its exposure relationship stays linked to the original identities.
+When a selected narrow activity runs out of unseen valid items, provide an explicit continuation: generate further practice with AI when a capable route is available, end the activity, continue with a named related activity, or deliberately review previous items. AI continuation saves new accepted contracts and retains prior exposure relationships; it does not pretend to add signed inventory to the exhausted standardized-bank epoch. Do not silently broaden “Cube-Net Puzzle” into coordinate rotation while keeping the original activity title. A review continuation starts a clearly labeled review lane and does not claim unseen items. Its exposure relationship stays linked to the original identities.
 
 For mixed practice, if a preferred family is exhausted but other eligible unseen items remain, select those and record the reason. If all remaining items fail prerequisites, offer the prerequisite route or a review; do not label advanced ineligible material as suitable. If the whole eligible bank is exhausted, show that the set is complete before beginning a new epoch. A new epoch may repeat identities after the boundary policy, but never within a single reserved quiz.
 
@@ -1447,17 +1519,19 @@ Accept reviewed Boolean aliases without changing score. After a wrong `ready=fal
 
 **Family:** `retrieval.precision-recall` or `retrieval.teach-back`, depending on the explicit response mode. **Objective:** retrieve the ordered-data median rule including the even-count case. **Band:** B2 Developing. Prompt: “How do you find the median of an ordered list when the number of values is odd, and when it is even?” Reference: “For an odd count, take the middle value. For an even count, average the two middle values.”
 
-For a constrained structured precision response, use two fields with reviewed concepts: odd-count rule and even-count rule. Accept “middle observation” and “mean of the two central observations.” Reject “take the middle value in both cases.” For unrestricted teach-back prose, collect an attempted explanation and then self-check against the two explicit criteria; do not award objective accuracy from a keyword matcher. If a deterministic grader cannot safely recognize “For odd n take the central observation; for even n average the middle pair,” it should route to honest comparison rather than mark it wrong.
+For a constrained structured precision response, use two fields with reviewed concepts: odd-count rule and even-count rule. Accept “middle observation” and “mean of the two central observations.” Reject “take the middle value in both cases.” For free-text teach-back, capture the response and use an AI rubric with two equal-weight criteria: the odd-count central observation and the even-count arithmetic mean of the two central observations. “For odd n take the central observation; for even n average the middle pair” receives full credit even if it is absent from every stored alias. “Take the central observation” earns 0.5 when it correctly covers only the odd case; “take the middle value in both cases” earns the odd-case component but misses the even case. A contradiction about the even-case averaging rule cannot receive that component's credit.
+
+Feedback for the partial answer says: “You have the odd case. With an even count, average the two middle values; for [2,4,7,9], that is (4+7)/2 = 5.5.” The learner can ask why averaging is used, review a missed criterion, or answer a new example. The numeric follow-up uses an exact evaluator; the explanation uses the saved AI rubric. If suitable AI is unavailable, save the original response for later grading or let the learner explicitly compare it with the reference and record a self-rating. The model's unavailability does not make the response incorrect.
 
 The same target can later be revisited using a concrete ordered list such as `[2,4,7,9]`, whose median is 5.5, but that item records its relationship to the same rule. Recognition options, if used, contain plausible competing methods: central pair mean, lower central value, higher central value, mean of all observations. A new rendering alone is not a new target. B3 mixes ordering and parity decisions; B4 asks which transformation preserves or changes a median with a counterexample. Those are different demand contracts tied to the relationship, not mere rephrasing.
 
-**Verification:** odd/even finite datasets; correct paraphrases and negations; self-check authority; recall before reference reveal; target identity retained across forms. Maps to SCO-009, SCO-012, SCO-014, CON-016, QA-F44.
+**Verification:** odd/even finite datasets; AI acceptance of unseen correct paraphrases; partial components, reversed operations and contradictions; grade review and immutable replay; local/cloud/pending fallback; self-check distinction; recall before reference reveal; target identity retained across forms. Maps to SCO-009, SCO-012, SCO-014, CON-016, QA-F44.
 
 ### EX-C107 — Transfer Lab: identify where a familiar rate rule stops working
 
 **Family:** `transfer.saturation` with a linked `transfer.rate` foundation. **Objective:** map accumulation structure and recheck a capacity constraint. **Band:** B3 Challenging. Source example: a printer produces 12 labels per minute for 5 minutes, giving 60 labels. Target: a reservoir begins empty, water enters at 12 litres per minute for 5 minutes, the reservoir holds 40 litres, and overflow is not retained. Prompt: “How much water is retained after 5 minutes, and which source assumption must change?”
 
-**Key:** 40 litres retained; unconstrained accumulation/absence of a capacity limit does not hold. The inflow total is 60 litres and overflow is 20 litres. The deliverable is retained volume, not delivered volume. A two-component practice rubric can award the quantity and constraint explanation separately; full credit requires both. Accept equivalent unit quantities only under the declared representation policy. Reject 60 litres retained and the explanation “the rate is different” because the supplied rate is unchanged.
+**Key:** 40 litres retained; unconstrained accumulation/absence of a capacity limit does not hold. The inflow total is 60 litres and overflow is 20 litres. The deliverable is retained volume, not delivered volume. A two-component practice rubric grades the quantity with the exact evaluator and the constraint explanation semantically with AI; full credit requires both. Accept equivalent unit quantities only under the declared representation policy. Reject 60 litres retained and the explanation “the rate is different” because the supplied rate is unchanged.
 
 The source and target are shown as paired structures with quantities and units. A practice slider can vary duration and capacity after the first answer, illustrating `retained=min(rate×time,capacity)` for this explicitly constant-rate, initially empty, overflow-discarded model. B1 maps rate and time with no capacity; B2 changes units; B3 introduces capacity; B4 includes a nonzero initial amount or piecewise rate with all assumptions stated. Successful practice is not automatically near-transfer evidence; the adaptation/assessment chapter decides eligibility from prior exposure and origin metadata.
 
@@ -1471,7 +1545,7 @@ The source and target are shown as paired structures with quantities and units. 
 
 The following 58 rows are the activities in the current [NFDefaultContentCatalog.swift](../../Sources/TrainingEngine/NFDefaultContentCatalog.swift), in catalog order. Activity IDs are stable migration keys. `v0` etc. identify the **current fallback variant selector**, not a count of unique questions, a difficulty level, or a newly specified generator. Current mechanism descriptions refer to [NFFallbackExerciseGenerator.swift](../../Sources/TrainingEngine/NFFallbackExerciseGenerator.swift). Proposed B1–B4 demands describe work that must be authored and implemented.
 
-Every row is governed by CON-001 through CON-027 and the relevant response rules. `QA-Fnn` is a mandatory family acceptance suite. The tests listed are minimum substantive cases, in addition to schema, localization, accessibility, identity, assistance, and general scoring tests. A catalog activity must remain unavailable at a band until its contract, assets, oracle, and review record exist. The UI must not advertise B4 content by relabeling a B1 seed.
+Every row is governed by CON-001 through CON-027 and the relevant response rules. In addition to the concrete mechanics below, each family should use contextual AI teaching and targeted follow-up where useful. Explanations and justifications use semantic rubric grading, while exact mathematical, geometric and interpreter results retain their appropriate evaluators. `QA-Fnn` is a mandatory family acceptance suite. The tests listed are minimum substantive cases, in addition to schema, localization, accessibility, identity, assistance, and general scoring tests. A standardized catalog activity must remain unavailable at a band until its contract, assets, suitable evaluator and review record exist. Dynamic AI practice may provide further goal- or source-specific work through its evaluated creation policy, with actual demand and origin recorded; it must not impersonate an admitted standardized form. The UI must not advertise B4 content by relabeling a B1 seed.
 
 <a id="con-029"></a>
 
@@ -1543,7 +1617,7 @@ The new quota for a narrow family must not be filled using semantic aliases. For
 | QA-F34 — `logic.state-trace`, State Trace (v0) | Many numbers in one stale-derived-state program. | Assignment; Boolean conditions; invariants. | B1: two assignments. B2: EX-C105 stale state. B3: conditional updates with different branch outcomes. B4: find a smallest counterexample or compare invariant-preserving updates across a finite state space. | Independent AST execution; invariant timing; branches cover both paths; typed aliases full credit; display skins no new semantics; actual program structures required for quota. |
 | QA-F35 — `logic.conditions`, Necessary or Sufficient? (v1) | Divisibility by 4 versus evenness, with explanation before answer. | Implication; converse; counterexample. | B1: supplied small truth/set examples. B2: classify necessary/sufficient/both/neither. B3: compound predicates with explicit domains. B4: construct a minimal counterexample to one direction or derive a weakest sufficient condition in a bounded domain. | All four relation categories represented; vacuous truth/domain restrictions reviewed; no answer in context; truth-table/set oracle; alternative valid counterexamples. |
 | QA-F36 — `logic.counterexample`, Counterexample Quest (v2) | Fixed even-product claim and visible 2×3=6 solution. | Premise; conclusion; universal quantifier. | B1: select a premise-true/conclusion-false case. B2: construct one in a bounded domain. B3: distinguish counterexample from a case outside domain. B4: find a minimal counterexample under an explicit order or repair the quantifier/condition. | Premise true and conclusion false independently checked; zero/negative domain cases; minimality oracle; no visible keyed example; multiple correct constructions accepted. |
-| QA-F37 — `logic.proof-builder`, Proof Builder (v3) | One four-step parity proof. | Definitions; algebra; dependency. | B1: strict short proof chain. B2: alternate independent derivation branches. B3: supply a missing justified step. B4: choose sufficient lemmas and assemble a dependency-valid proof with an explicit target and domain. | DAG all topological orders; no cyclic proof; each inference locally valid; irrelevant lemma penalties declared; prose proof outside supported verifier becomes self-check. |
+| QA-F37 — `logic.proof-builder`, Proof Builder (v3) | One four-step parity proof. | Definitions; algebra; dependency. | B1: strict short proof chain. B2: alternate independent derivation branches. B3: supply a missing justified step. B4: choose sufficient lemmas and assemble a dependency-valid proof with an explicit target and domain. | DAG all topological orders; no cyclic proof; each inference locally valid; irrelevant lemma penalties declared; prose reasoning can receive AI criterion feedback and grading; unsupported proof is not labeled formally verified; explicit self-check remains an alternative. |
 | QA-F38 — `logic.invalid-step`, First Invalid Step (v4) | Division-by-zero fallacy with divisor-zero cue. | Algebra operation preconditions. | B1: explicit single invalid operation. B2: locate first invalid line in a trace. B3: distinguish valid cancellation from domain loss. B4: compare two purported proofs with conditional validity and repair the earliest unsupported step. | Nonzero and zero branches; prior lines verified; first versus any invalid step differentiated; domain preservation; solution removed from independent preamble. |
 | QA-F39 — `logic.boundary-bug`, Boundary Bug Hunt (v5) | One loop always misses last element. | Index ranges; empty/singleton cases. | B1: trace singleton boundary. B2: choose minimal failing input. B3: bugs dependent on value as well as size. B4: shrink a counterexample across a finite structured input domain under a declared minimization order. | Empty/singleton/typical input execution; expected output defined, including zero-valued elements; minimality criterion; no test input outside declared domain; interpreter bounds. |
 | QA-F40 — `logic.complexity`, Complexity Duel (v6) | Linear scan versus ordered pair enumeration. | Input size; operation counts. | B1: count concrete loop iterations. B2: infer linear/quadratic growth. B3: triangular, logarithmic, or composed loops with stated primitive costs. B4: compare asymptotic growth with finite-size constants and an explicit workload. | Correct dominant term; loop bounds inclusive/exclusive; early exits and input assumptions; output-size misconception; do not equate asymptotic class with fastest at every n. |
@@ -1554,10 +1628,10 @@ The new quota for a narrow family must not be filled using semantic aliases. For
 
 | QA / current activity ID and title | Current mechanism | Prerequisites | Proposed real B1 → B2 → B3 → B4 demands | Required family tests |
 |---|---|---|---|---|
-| QA-F43 — `retrieval.free-recall`, Free Recall (v0) | Self-check with three generic criteria. | Prior exposure to a specific target. | B1: recall a short fact after learning. B2: recall a relationship and condition. B3: recall several linked elements without source cues. B4: reconstruct a bounded explanation including a limitation; still self-reported unless objectively constrained. | Attempt-before-reveal; target-specific checklist; no 100% accuracy from “matched”; source/target identity; assistance/exposure provenance; unsupported prose never asserted objectively wrong. |
-| QA-F44 — `retrieval.precision-recall`, Precision Recall (v1) | Exact-string short answer for any fact/computation. | Relevant target knowledge; supported answer notation. | B1: constrained name/value. B2: EX-C106 odd/even relationship fields. B3: a formula/application with conditions. B4: distinguish closely related definitions using a required qualifier and a reviewed constrained response. | Arithmetic-mean paraphrase; `2*x`/`4x`; case-sensitive F/f; label versus formula domain; unit-fixed numeric answers; unknown prose coverage routes honestly. |
+| QA-F43 — `retrieval.free-recall`, Free Recall (v0) | Self-check with three generic criteria. | Prior exposure to a specific target. | B1: recall a short fact after learning. B2: recall a relationship and condition. B3: recall several linked elements without source cues. B4: reconstruct an explanation including a limitation, assessed by a source-supported AI rubric. | Attempt-before-reveal; semantic concept/condition/contradiction grading; unseen paraphrase acceptance; local/cloud/pending paths; target-specific self-check alternative; no 100% accuracy from “matched”; source/target identity and assistance provenance. |
+| QA-F44 — `retrieval.precision-recall`, Precision Recall (v1) | Exact-string short answer for any fact/computation. | Relevant target knowledge; supported answer notation. | B1: constrained name/value. B2: EX-C106 odd/even relationship fields. B3: a formula/application with conditions. B4: distinguish closely related definitions using a required qualifier and a reviewed constrained response. | Arithmetic-mean paraphrase; `2*x`/`4x`; case-sensitive F/f; label versus formula domain; unit-fixed numeric answers; AI grades explanatory prose beyond aliases; unavailable or uncertain grading remains pending/reviewable. |
 | QA-F45 — `retrieval.cloze`, Relationship Cloze (v2) | Full question prefixed “Cloze reconstruction.” | Learned relationship; context comprehension. | B1: one meaningful blank. B2: choose the omitted relation or condition. B3: multiple linked slots with unambiguous scope. B4: reconstruct a omitted causal/mathematical dependency from a bounded source excerpt. | Actual omission; no multiple unconstrained completions; slot grammar/units; answer not elsewhere in excerpt; changed rendering retains target identity. |
-| QA-F46 — `retrieval.teach-back`, Teach It Back (v3) | Self-check explanation with generic criteria. | Learned entities, relationship, conditions. | B1: explain one relation simply. B2: include a necessary condition. B3: use a concrete example and counterexample. B4: explain the boundary of applicability to a peer in a bounded scenario. | Unconstrained prose self-check only; explicit checklist; unsupported added scope flagged in reference; no enforced essay length; original attempt preserved after reveal. |
+| QA-F46 — `retrieval.teach-back`, Teach It Back (v3) | Self-check explanation with generic criteria. | Learned entities, relationship, conditions. | B1: explain one relation simply. B2: include a necessary condition. B3: use a concrete example and counterexample. B4: explain the boundary of applicability to a peer in a bounded scenario. | AI rubric evaluates concepts, relations, examples and boundaries; valid alternative explanations accepted; unsupported added scope affects its criterion; no arbitrary essay-length penalty; grade review and explicit self-check alternative; original response and feedback preserved. |
 | QA-F47 — `retrieval.recognition`, Recognition Audit (v4) | One canonical answer versus generic relationship statements. | Target familiarity or source reading. | B1: distinguish plausible neighboring concepts. B2: choose correct direction/condition. B3: discriminate near-miss statements differing in one qualifier. B4: select a supported reconstruction from a bounded source with misleading but plausible alternatives. | Comparable option grammar/length; target-specific misconception distractors; unique supported interpretation; no recognition-as-free-recall claim; source shown only when mode permits. |
 | QA-F48 — `retrieval.repair-cycle`, Retrieval Cycle Builder (v5) | Fixed workflow order unrelated to each target. | Attempt/review distinction; target knowledge if assessed. | B1: learn the explicit recall-review cycle as metacognitive practice. B2: locate a specific mismatch in a supplied attempt. B3: choose a targeted repair and make a closed-reference retry. B4: distinguish incomplete recall from an invalid source claim and plan the relevant follow-up. | Generic workflow cannot count as target knowledge; actual discrepancy exists; retry is new linked attempt; valid workflow orders encoded; reference hidden again before retry. |
 | QA-F49 — `retrieval.equation`, Equation Reconstruction (v6) | Generic E_source+C_stated→blank plus exact prose answer. | Specific formula and symbol meanings. | B1: fill one term/coefficient. B2: reconstruct one side with units. B3: restore missing dependency/condition. B4: rebuild a reviewed derivation fragment while preserving domain and variable roles. | Real target equation; F/f and function/multiplication distinction; restricted equivalence; domain exclusions; missing required asset disables form rather than generating generic equation. |
@@ -1588,7 +1662,7 @@ Every authoritative answer needs tests that mutate one meaningful feature at a t
 |---|---|---|---|
 | QA-S01 | Spatial seed 11; enumerate all generated option semantic values; symmetry/axis/origin partitions | Exactly one semantic correct choice and no equivalent distractor; any shipped invalid old contract is handled as an item error | QA-C01; CON-006; SCO-006 |
 | QA-S02 | Entire bounded uncertainty parameter domain; original science seed; touching/disjoint/overlap fixtures; individual versus difference intervals | Stimulus/narrative agree; every key follows the declared estimand and procedure; overlap flag does not determine inferential significance | QA-C02; CON-007; EX-C104 |
-| QA-S03 | Arithmetic-mean paraphrase; `2*x` for x² derivative; `4x` for 2x² derivative; relation reversal and negation | Equivalent answers receive 1; reversed/contradictory answers do not; uncovered prose routes to self-check without false objective rejection | QA-C03; SCO-009–SCO-013 |
+| QA-S03 | Arithmetic-mean paraphrase; `2*x` for x² derivative; `4x` for 2x² derivative; relation reversal and negation | Equivalent answers receive 1; reversed/contradictory answers do not; unseen valid prose is graded by the semantic AI rubric; uncertainty/service failure is not a wrong answer | QA-C03; SCO-009–SCO-013 |
 | QA-S04 | F(b)−F(a), f(b)−f(a), F*b−F*a, swapped endpoint order, valid grouping variants under F′=f | Only domain-valid antiderivative expression/equivalents receive full credit; roles/case retained | QA-C04; SCO-010–SCO-011 |
 | QA-S05 | Canonical estimate/state; every declared equivalent spelling; combinations of field alternatives; one wrong field | Every fully accepted equivalent yields correct/1; partial states have declared component scores and false correctness | QA-C05; SCO-001; SCO-015 |
 | QA-S06 | Every family and protected purpose; inspect visual/accessibility pre-answer role graph | Only essential givens are exposed; no keyed counterexample, zero-divisor conclusion, or best-experiment solution before response | QA-C08; CON-004; CON-008 |
@@ -1596,8 +1670,12 @@ Every authoritative answer needs tests that mutate one meaningful feature at a t
 | QA-S08 | Multiple-choice and claim/evidence correct sets, missing edge, extraneous edge, select-all, alternate sufficient bundles | Full correctness only for complete valid support/set; selecting everything cannot exploit partial credit | SCO-007; SCO-017 |
 | QA-S09 | Ordering DAG with independent steps; missing/repeated node; reversed edge; authored cycle | All valid complete topological orders accepted; invalid order rejected; cyclic authored contract blocked | SCO-008 |
 | QA-S10 | Free recall with/without pre-reveal attempt; all three self-ratings; closed-reference retry | Self-reported outcome distinct from verified accuracy; retry linked and original intact | SCO-014; CON-026 |
-| QA-S11 | Same contract/response across option order, display skin, theme, offline/online state, supported locale representations | Same authoritative outcome and credit; localized parser policy explicit; no model-dependent score | SCO-002; SCO-003 |
+| QA-S11 | Same contract/response across option order, display skin, theme, offline/online state, supported locale representations | Exact evaluator outcome is invariant; accepted AI grade replays unchanged without rerunning the model; explicit reevaluation is a linked grade revision; localized interpretation policy remains explicit | SCO-002; SCO-003 |
 | QA-S12 | Unsupported symbolic grammar, resource limits, overflow, malformed tuple, stale option/evidence ID | Finite safe response with explanatory invalid/clarification outcome; no crash, code execution, or false conceptual score | SCO-003; SCO-011 |
+| QA-S13 | Held-out human-reviewed short responses: new paraphrases, omissions, negations, contradictions, valid alternative reasoning, terse/verbose English and Japanese | AI criterion results match the reviewed rubric to a declared and evaluated quality threshold; disagreement is inspected; style alone does not change subject credit | SCO-009; SCO-012; CON-024 |
+| QA-S14 | Local/cloud AI routes, timeout, offline response, cancellation, late reply, interrupted save, relaunch, duplicate retry | Original response and pending grade survive; only the intended response receives one accepted result; no unavailable-service wrong score; saved feedback remains available offline | SCO-001–002; SCO-014; SCO-018 |
+| QA-S15 | Challenge an overlooked criterion, request reevaluation, then complete a new retry | Original response and grade remain readable; reviewed change has a reason and one effective result; new retry is linked; downstream ordinary learning uses the qualified effective grade | SCO-002; SCO-012; SCO-018 |
+| QA-S16 | Generate from a goal and selected source; inspect cited support, rubric, exact subresults and targeted follow-up | Coherent task and rubric are saved before response; citations support claimed source facts; AI explanation agrees with exact subresults; follow-up addresses the actual learning need | CON-001–005; CON-025 |
 
 <a id="con-030"></a>
 
@@ -1619,7 +1697,7 @@ Every authoritative answer needs tests that mutate one meaningful feature at a t
 
 ### CON-031 — Release review must inspect representative learner sessions
 
-For the complete proposed four-band release, after automated contract checks reviewers must complete at least one Foundation, Developing, Challenging, and Advanced session in each lab using the actual renderer and response controls. This is 28 editorial sample sessions, chosen for band and family coverage rather than a claim of statistical validation. An interim corrective release reviews every advertised lab/band combination; it must not advertise unimplemented bands merely to satisfy a 28-session count. Include a keyboard-only and accessible reading pass for every response/representation type. The interaction chapter defines device sizes and assistive-technology coverage.
+For the complete proposed four-band release, after automated contract checks reviewers must complete at least one Foundation, Developing, Challenging, and Advanced session in each lab using the actual renderer and response controls. This is 28 editorial sample sessions, chosen for band and family coverage rather than a claim of statistical validation. An interim corrective release reviews every advertised lab/band combination; it must not advertise unimplemented bands merely to satisfy a 28-session count. Include a keyboard-only and accessible reading pass for every response/representation type. Also complete AI-created general and source-driven sessions with short-response grading, contextual tutor questions, grade review, a supported local route and interrupted cloud/offline fallback. Human review must assess the usefulness and correctness of actual AI outputs, not merely the existence of a prompt template. The interaction chapter defines device sizes and assistive-technology coverage.
 
 For each sample, reviewers answer: can a learner identify the deliverable; are prerequisites and assumptions sufficient; is the task materially different at its band; can ordinary valid notation be entered; does a correct answer receive full credit; do wrong alternatives expose real misconceptions; can the explanation be followed; does the session feel varied without becoming incoherent? Record any content wording that requires reading implementation terminology. A nontechnical/editorial reviewer must inspect at least the instructions and feedback, not only an engineer familiar with internal schemas.
 
@@ -1627,9 +1705,9 @@ For each sample, reviewers answer: can a learner identify the deliverable; are p
 
 ### CON-032 — Instrument quality without inventing a psychometric model
 
-Collect, subject to the app's existing privacy choices, counts of presented/answered/skipped items, parse clarifications, disagreement reports, selected distractors, hints, objective outcomes, self-check outcomes, and qualified timing. Aggregate by edition/revision, objective, family, structure, response form, band, assistance, and language. The adaptation chapter determines which events are eligible for learner estimation. This chapter requires the underlying distinctions so an easy recognition item is not merged blindly with an uncued explanation.
+Record counts of presented/answered/skipped items, parse clarifications, grading disagreements, selected distractors, hints and tutor assistance, exact and AI-rubric outcomes, pending/failed evaluations, reviewed grade changes, self-check outcomes, and qualified timing. Include capability route, supported language/objective, completion latency and fallback success in AI quality evaluation; report observed performance rather than claiming all models grade equally well. Aggregate by edition/revision, objective, family, structure, response form, band, assistance, and language. The adaptation chapter determines which events are eligible for learner estimation. This chapter requires the underlying distinctions so an easy recognition item is not merged blindly with an uncued explanation.
 
-Use low participation in a distractor, unusually high abandonment, or repeated parser clarification as review signals, not automatic proof of bad content. Compare rates only with denominators and relevant uncertainty; do not set unsupported universal pass-rate targets. The release should retain enough raw structured provenance to reproduce a questionable score without collecting more personal text than necessary.
+Use low participation in a distractor, unusually high abandonment, or repeated parser clarification as review signals, not automatic proof of bad content. Compare rates only with denominators and relevant uncertainty; do not set unsupported universal pass-rate targets. The study record must retain the original response, rubric, supporting context, accepted grade and reviewed revisions needed to understand a questionable result. Diagnostic summaries can reference that record without copying entire sources; offline replay must not require an external grading service.
 
 <a id="con-033"></a>
 
@@ -1638,21 +1716,21 @@ Use low participation in a distractor, unusually high abandonment, or repeated p
 | Work package | Concrete deliverable | Depends on | Completion condition |
 |---|---|---|---|
 | C-A: trust repairs | Duplicate-option guard; coherent interval authority; accepted-state full-credit fix; independent-mode scaffold roles | Existing generator/scorer adapters | QA-S01, S02, S05, S06 pass on corrected behavior; known defective regions quarantined or replaced with version mapping. |
-| C-B: response authority | Domain-specific parsing; numeric/unit policies; bounded symbolic parser; constrained prose/self-check routing; explicit outcome types | Shared state/outcome contract from application chapter | QA-S03, S04, S07–S12 pass; UI displays the actual authority and clarification states. |
+| C-B: AI grading and exact evaluation | Semantic short-response AI rubric grading; domain-specific exact parsing; combined criteria; grade review; pending/retry/offline outcomes; explicit self-check alternative | Shared state/outcome and AI service contracts | QA-S03, S04, S07–S15 pass; valid paraphrases receive useful grades; accepted AI results support normal learning and durable replay. |
 | C-C: editorial schema | Objective/family/structure identities; four-band demand records; reviewer/oracle records; compatible-rendering assets | C-A and shared adaptation fields | All 58 matrix rows have reviewed B1/B2 coverage; unsupported B3/B4 availability remains explicit, never relabeled. |
-| C-D: genuine family expansion | New scenario/program/geometry/target structures needed by quota deficit reports | C-C | Finite candidate pools satisfy approved edition quotas after semantic canonicalization; all QA-F01–F58 suites for admitted bands pass. |
+| C-D: AI creation and genuine family expansion | Goal- and source-driven question creation, contextual tutoring and targeted follow-ups; new scenario/program/geometry/target structures for the offline bank | C-B; evaluated generation policies; C-C for standardized inventory | QA-S16 and AI quality/journey checks pass; separately, finite candidate pools satisfy approved edition quotas and QA-F01–F58 for admitted bands. |
 | C-E: bank admission and rotation | Deterministic capacity assignment; approved balanced inventory; whole-epoch permutation; exhaustion fallback | C-C, C-D, atomic reservation integration | QA-B01–B09 pass; current first-unique concentration cannot recur unnoticed. |
 | C-F: release and evaluation | Signed edition inventory, incident workflow, 28 editorial sample sessions, quality metrics | C-A through C-E, external release authority | Manifest covers delivered content; all admitted contracts reproducible; outcomes match rendering; unresolved content limitations documented. |
 
-C-A can ship as a corrective edition before the entire expanded bank is ready, provided its identity corrections and honest inventory limitations are preserved. It must not claim all planned bands or balanced quotas have been delivered. C-D cannot be replaced by widening integer ranges to hit a count. C-F is not complete when a checklist exists; it requires execution evidence.
+C-A can ship as a corrective edition before the entire expanded bank is ready, provided its identity corrections and honest inventory limitations are preserved. It must not claim all planned bands or balanced quotas have been delivered. The AI features in C-B/C-D are central release work and can be delivered before the full standardized-bank expansion, with capability and quality scope stated accurately. The offline-inventory portion of C-D cannot be replaced by widening integer ranges to hit a count. C-F is not complete when a checklist exists; it requires execution evidence.
 
 <a id="con-034"></a>
 
 ### CON-034 — The chapter is complete only when quality and honesty agree
 
-The intended content release is accepted when every delivered item has a valid authoritative contract, every fully accepted equivalent receives full credit, no protected item reveals its solution beforehand, all advertised forms and bands have real assets/demands, the declared bank quotas are feasible and satisfied, no-replacement behavior is preserved across realistic failures, and ordinary learner feedback is accurate about the type of evidence obtained. Release notes must distinguish repaired grading from new content and new content from demonstrated learning outcomes.
+The intended content release is accepted when AI generation, contextual teaching and short-response grading work as normal learning features; qualified AI grades support progression; grade review and offline/pending recovery preserve saved work; every delivered item has a valid contract and appropriate evaluator; every fully accepted equivalent receives full credit; no protected item reveals its solution beforehand; all advertised forms and bands have real assets/demands; declared bank quotas are feasible and satisfied; no-replacement behavior is preserved across realistic failures; and ordinary learner feedback accurately describes the work assessed. Release notes must distinguish repaired grading from new content and new content from demonstrated learning outcomes.
 
-Unresolved expert review, unavailable advanced families, parser scope limits, and source-specific ungraded prose are legitimate product boundaries when stated clearly and routed appropriately. They are not reasons to invent correct answers, fake variety, conceal a scorer limitation, or label the same basic task harder.
+Unresolved expert review, unavailable advanced families, exact-parser scope limits and specific AI capability/quality gaps must be stated clearly and routed to useful alternatives. These are concrete limitations to evaluate and improve, not a blanket policy that all open responses stay ungraded or all AI output is merely a suggestion. They are not reasons to invent correct answers, fake variety, conceal a scorer limitation, or label the same basic task harder.
 
 ## 11. Source and implementation reference map
 
@@ -1661,7 +1739,7 @@ Unresolved expert review, unavailable advanced families, parser scope limits, an
 | [NFDefaultContentCatalog.swift](../../Sources/TrainingEngine/NFDefaultContentCatalog.swift) | 58 activities, stable IDs, fallback selectors, summaries, initial difficulty metadata | CON-028/029 and QA-F01–F58 inventory. |
 | [NFFallbackExerciseGenerator.swift](../../Sources/TrainingEngine/NFFallbackExerciseGenerator.swift) | Actual seven-lab question drafts, parameters, strategies, renderings, answer schemas | CON-001–013 and the worked fixtures. |
 | [NFExerciseModels.swift](../../Sources/TrainingEngine/NFExerciseModels.swift) | Eight interaction cases and current exercise/scoring-related metadata | CON-001, SCO-001–018 migration adapters. |
-| [NFExerciseScoringEngine.swift](../../Sources/TrainingEngine/NFExerciseScoringEngine.swift) | Schema validation, input validation, response grading, feedback | SCO-001–019 and QA-S01–S12. |
+| [NFExerciseScoringEngine.swift](../../Sources/TrainingEngine/NFExerciseScoringEngine.swift) | Schema validation, input validation, response grading, feedback | SCO-001–019 and QA-S01–S16, including the new AI grading service integration. |
 | [NFBundledRetrievalCatalog.swift](../../Sources/TrainingEngine/NFBundledRetrievalCatalog.swift) | 200 editorial targets, 800 computed instances, exact-string aliases/normalizer | SCO-009–014, CON-010/016/026, QA-F43–F51. |
 | [NFEstimateExactContract.swift](../../Sources/TrainingEngine/NFEstimateExactContract.swift) | Estimate/plausibility/exact fields encoded as logic state | SCO-015/016 and QA-S05/S07. |
 | [NFQuestionFingerprint.swift](../../Sources/TrainingEngine/NFQuestionFingerprint.swift) | Existing novelty canonicalization, retrieval target identity | CON-020/021, QA-B05/B07. |
@@ -1679,9 +1757,9 @@ The one external statistical reference in section 3 supports the specific warnin
 
 # 03 — Adaptive learning, evidence and scheduling
 
-This chapter specifies the behavior that replaces nominal difficulty labels with real question demands, keeps learning records faithful, and turns practice into a coherent sequence of challenge, help, correction and later review. It is an implementation specification, not a claim that the proposed thresholds are scientifically validated.
+This chapter specifies an AI-centered learning experience: AI evaluates short responses and explanations, identifies gaps, teaches through conversation and worked examples, and selects useful practice and later review. It replaces nominal difficulty labels with real question demands and keeps accepted results faithful. Local processing exists to make that learning experience work reasonably well offline; privacy or a blanket boundary around model capabilities is not the product premise. Local and online AI may both perform substantive learning work. It is an implementation specification, not a claim that the proposed thresholds are scientifically validated.
 
-The numerical thresholds, band boundaries, scheduling intervals and decision rules below are **proposed product defaults pending editorial validation and learner pilots**. They must be versioned together. They are not normative scores, clinically meaningful cutoffs, an established forgetting curve, or proof of generalized cognitive improvement. Ship one authoritative policy implementation, `EditorialBandEvidenceV1`, rather than retaining separate incompatible online and history reducers.
+The numerical thresholds, band boundaries, scheduling intervals and decision rules below are **proposed product defaults pending editorial validation and learner pilots**. They must be versioned together. They are not normative scores, clinically meaningful cutoffs, an established forgetting curve, or proof of generalized cognitive improvement. Use one authoritative evidence projection, initially `EditorialBandEvidenceV1`, for accepted deterministic, AI and hybrid rubric results. AI planning and grading are first-class inputs to this system; the shared projection preserves consistent history rather than restricting learning to deterministic-only features.
 
 Related audit findings: [QA-06, QA-07, QA-09, QA-10, QA-15 and QA-16](../QA_2026-09-04/README.md). QA-06 demonstrated that difficulty 0.2 and 0.9 currently produce the same scientific-notation problem; QA-07 demonstrated concentration in a few mechanics; QA-09 concerns resumed timing and assistance; QA-10 concerns answer leakage; QA-15 concerns timing and challenge being coupled; QA-16 concerns durable estimates ignoring difficulty.
 
@@ -1703,13 +1781,13 @@ Separate these five concepts in models and UI:
 | Evidence coverage | Quantity, breadth, recency and conditions of usable observations | Precision of a psychometrically calibrated latent ability estimate |
 | Practice XP and participation | Participation rewards and completed activity | Ability, learning improvement or extra weight in any skill reducer |
 
-The word “standard” in an internal evidence eligibility flag means eligible for the app's built-in skill records. It does not mean that an assessment has been standardized against a representative population. Normal UI should prefer “skill evidence,” “practice result,” “starting check” and specific descriptions of the demonstrated task.
+The word “standard” in an internal evidence eligibility flag means eligible for the app's skill records under a declared content, objective and evaluator contract. It does not mean deterministic-only, built-in-only, or standardized against a representative population. Normal UI should prefer “skill evidence,” “practice result,” “starting check” and specific descriptions of the demonstrated task. AI grading is grading, not learner assistance: an independently written answer remains independent when a capable AI evaluates it after submission.
 
 <a id="adp-002"></a>
 
 ### ADP-002 — Use a shared, explicit item contract
 
-Every generated or authored item admitted to adaptive built-in practice must carry the following immutable fields or equivalent typed fields. The content chapter owns authoring and validation; this chapter owns selection and evidence use.
+Every generated or authored item admitted to banded adaptive practice, including AI-generated and personal-source items, must carry the following immutable fields or equivalent typed fields. The content chapter owns authoring and validation; this chapter owns selection and evidence use. Source practice without a supported band contract can still have rubric grades, objective progress and adaptive review under EVD-010; an unknown band is not a reason to reduce it to self-check.
 
 | Field | Required meaning |
 |---|---|
@@ -1726,9 +1804,13 @@ Every generated or authored item admitted to adaptive built-in practice must car
 | `protectedEligible` | Additionally approved for the protected pool, including leakage, exposure and form checks |
 | `assistancePolicy` | Which tools are permitted, which presentations count as assistance, and what changes evidence eligibility |
 | `answerContractVersion` | Authoritative grading/rubric version, separate from presentation version |
+| `evaluationContract` | Deterministic, AI or hybrid evaluation route; supported response/task/language scope; rubric, evaluator/model and grading-instruction versions; applicable quality validation and abstention policy |
+| `evidenceScope` | Objectives and learning context the result can support, including source/set identity and any validated mapping to a shared skill objective |
 | `expectedDurationRange` | Reviewed starting duration estimate, with documented scope and sample basis |
 | `representationIDs` | Actual stimulus and response representations, not only a renderer name |
 | `prerequisiteObjectiveIDs` | Prerequisites needed for the item to be meaningful |
+
+For ordinary practice, reviewed/validated contracts may be implemented by an evaluated AI authoring and grading pipeline with task-specific checks. They do not require a human to approve each newly generated question before a learner can use it. The content chapter defines the quality checks and stronger assessment admission requirements. A generated item and rubric must be concrete and accepted before its response is graded; the evaluator cannot invent new scoring criteria after seeing the learner's answer.
 
 An item must not acquire a different band merely because the session requested one. A request selects a permitted band-specific contract; the generator returns the band it actually fulfilled. If it cannot fulfill it, selection handles an unavailable band explicitly. The final record preserves both `requestedBand` and `deliveredBand` plus a reason for any approved fallback.
 
@@ -1860,7 +1942,7 @@ A one-line optional explanation accompanies an automatic change, without a modal
 - “You chose a harder question. Your recorded level has not changed yet.”
 - “This activity has no reviewed Advanced questions yet. Continue at Challenging or choose another activity.”
 
-The explanation must identify the actual delivered change. A generic “AI personalized this” message is forbidden for deterministic policy decisions. Expose the underlying event and policy version in technical details, not the primary learning flow.
+The explanation must identify the actual delivered change and its learning purpose. An AI coach should connect the learner's response to the next step, for example “Your explanation identifies the correlation; this question asks what would establish causation.” Keep the explanation grounded in the accepted grade, response or stated goal. Do not claim AI made a decision that came only from a fixed rule. Expose the underlying event, evaluator and policy versions in technical details, not the primary learning flow.
 
 ## 3. Authoritative practice state and update policy
 
@@ -1884,13 +1966,15 @@ LearnerEvidenceState
 
 A correct transfer attempt can support its declared source objective only according to the reviewed transfer contract. It cannot mint a second full-weight independent observation in a broad Transfer score and in each source skill. Maintain one observation ID with explicit attribution; all derived views must reveal that shared origin. There is no combined cognition score.
 
-The minimum reducer input includes the frozen item contract, original response, deterministic score and rubric parts, validity disposition, assistance/exposure events, response lock and confidence timing, attempt/session identity, event sequence, active time chunks, conditions, and semantic identity. See the persistence chapter for physical storage and correction records. This chapter requires those inputs; it does not prescribe competing migration records.
+The minimum reducer input includes the frozen item contract, original response, accepted score and rubric parts, evaluation receipt, validity disposition, assistance/exposure events, response lock and confidence timing, attempt/session identity, event sequence, active time chunks, conditions, and semantic identity. An evaluation receipt identifies the exact response/rubric, deterministic/AI/hybrid evaluator and versions, criterion judgments with concise supporting evidence, evaluation status and accepted result identity. Store the result needed to explain and replay the decision; this does not require hidden model reasoning. See the persistence chapter for physical storage and correction records. This chapter requires those inputs; it does not prescribe competing migration records.
+
+An accepted AI rubric result enters the same ordinary-practice reduction as a comparable deterministic result. Pending, unavailable, abstained or disputed grades have explicit states and do not manufacture a zero, an independent success or a band change. A dispute itself assigns no replacement credit; the correction policy determines whether the prior accepted result remains effective or is provisionally excluded. A later accepted grade contributes once using the original response's conditions, academic sequence and a recorded acceptance event; it must not replace the learner's current question, count an earlier-band answer as a new current-band response, or rewind an already accepted path. An AI coaching hypothesis can recommend a diagnostic question before there is sufficient graded evidence for a demonstrated-band claim.
 
 <a id="evd-002"></a>
 
 ### EVD-002 — Use `EditorialBandEvidenceV1` for both live and replayed results
 
-The first implementation uses finite recent evidence grouped by the actual editorial band. It does **not** use a latent IRT theta or turn editorial bands into interval-scale numbers. Live session decisions and Progress read the same reducer output and policy version.
+The first implementation uses finite recent evidence grouped by the actual editorial band. It does **not** use a latent IRT theta or turn editorial bands into interval-scale numbers. Live session decisions and Progress read the same reducer output and policy version. The score source may be deterministic, AI or hybrid; evaluator suitability and comparability determine its use, not whether inference ran locally or online.
 
 For a specified objective/family/band/channel, form the independent evidence window by applying eligibility, deduplication and condition rules, then selecting the last 20 eligible observations in the preceding 60 local days. Use durable decision time, not the machine's current time when replaying a historic decision.
 
@@ -1930,7 +2014,7 @@ A compatible independent-accuracy group is an explicit tuple:
  toolConditionID, localeComparabilityID, pacingConditionID)
 ```
 
-The catalog supplies reviewed comparability IDs. If absent, use exact answer-contract version, exact stimulus/response format, exact assistance/tool policy, exact content locale and exact timing mode as separate groups; do not assume equivalence. A reviewed stimulus comparability group may contain the different substantive formats required by a family without claiming that arbitrary renderers are equivalent. Equivalent accessibility presentations use that reviewed group with their accommodation facts retained. Input modality is not, by itself, an ability penalty; it becomes an additional grouping key for clean speed. Changes to a comparability mapping require a versioned content/evidence disposition, never an unlogged merge of old buckets.
+The content/evaluation contract supplies reviewed comparability IDs. Scoring comparability must cover the rubric and evaluator's demonstrated performance for the response type, language and task scope. Validated local and online evaluators may share a group; an unvalidated change of model, grading instructions or rubric must not silently pool incompatible scores. If absent, use exact answer-contract and evaluation-contract versions, exact stimulus/response format, exact assistance/tool policy, exact content locale and exact timing mode as separate groups; do not assume equivalence. A reviewed stimulus comparability group may contain the different substantive formats required by a family without claiming that arbitrary renderers are equivalent. Equivalent accessibility presentations use that reviewed group with their accommodation facts retained. Input modality is not, by itself, an ability penalty; it becomes an additional grouping key for clean speed. Changes to a comparability mapping require a versioned content/evidence disposition, never an unlogged merge of old buckets.
 
 The clean-speed grouping extends this tuple with input modality, device class, input-editor version, latency-calibration version, timer visibility and timed-fluency target policy. Confidence grouping extends it with confidence-mapping version, binary-outcome definition and collection policy (`requiredProtected`, `requiredCalibration`, or `optionalPractice`). Required and optional confidence samples are not silently pooled. Missing compatibility metadata yields a separate unknown group with no cross-condition improvement claim.
 
@@ -1940,16 +2024,18 @@ The clean-speed grouping extends this tuple with input modality, device class, i
 
 A response may enter the independent practice window only when all conditions hold:
 
-1. Its built-in content and answer contract are valid and approved for independent use at the time of the effective validity projection.
-2. A scorable response was committed once, with a stable observation identity and an authoritative rubric result.
+1. Its content, answer contract and evaluator are valid and approved for the declared objective and independent use at the time of the effective validity projection, whether authored, AI-generated or source-backed.
+2. A scorable response was committed once, with a stable observation identity and an accepted deterministic, AI or hybrid rubric result.
 3. No answer, worked step, or hint was used before that response lock. Essential givens and accessibility-equivalent presentations do not count as hints.
 4. The response was not a retry of the same semantic problem after seeing its answer or feedback.
 5. It was not skipped, abandoned, replaced, self-rated, or merely marked understood.
-6. It is not a personal-source or arbitrary generated/self-check item being promoted into standard skill evidence.
+6. Its objective mapping and evidence scope support the claim being reduced. Source-backed and AI-generated practice can contribute under EVD-010; unsupported generalization and self-rating cannot substitute for graded evidence.
 7. Its condition group is compatible with the view being reduced.
 8. It passes the repeat controls below.
 
 A learner may use a scratchpad where the item contract permits it without invalidating untimed reasoning accuracy. Calculator, external search, revealing manipulators and worked examples must follow the item's explicit tool contract. When a tool condition is not known, preserve the result as practice history and exclude it from claims requiring independent conditions. Do not infer cheating from a fast response or a user-selected aid.
+
+AI evaluation after response lock does not count as assistance. AI hints, suggested answer text or worked steps shown before lock do count according to the same assistance contract as authored help. Evaluator self-reported confidence alone is not proof of grading quality; acceptance requires the task-specific quality and abstention policy defined with the content/scoring contract.
 
 Repeat controls:
 
@@ -1972,6 +2058,8 @@ Assisted work remains valuable and visible. Store `assistedCredit`, the furthest
 |---|---|---|---|---|
 | Correct without help | Eligible under EVD-003 | Supports upward exploration | May schedule delayed review | Normal policy |
 | Incorrect without help | Eligible credit, including zero | Supports repair/lower target under ADP-011 | Add misconception/repair entry | Normal policy |
+| AI-graded short response without prior help | Accepted rubric credit eligible under EVD-003 | Supports the same target changes and criterion repair as other accepted grades | Schedule graded source/objective review where appropriate | Normal policy |
+| Grade pending or evaluator abstains | No graded observation yet; response retained | Continue compatible practice or offer clarification/retry | Preserve existing result and queue; no failure or demotion | Retain completed-work participation under the normal policy |
 | Correct after a hint | Excluded from independent window | Indicates useful scaffold; offer fresh repair item | Keep objective pending until independent check | Normal participation, never bonus ability |
 | Worked solution revealed before response | Excluded | Offer a smaller worked step or fresh sibling | Schedule an independent follow-up | Reveal alone earns no answer XP; retain DATA-013 participation rules for separately completed eligible work |
 | Self-rating “understood” | Excluded | Preference only | Personal reminder only | Never changes skill evidence |
@@ -2008,6 +2096,8 @@ This is selection state. A change in `currentTargetBand` does not alter a demons
 ### ADP-011 — Apply a bounded practice staircase
 
 Initial defaults for ordinary Adaptive practice:
+
+These rules are the initial band-control baseline, not a limit on AI's role in teaching or planning. The AI coach should choose focused practice, explanations, diagnostic follow-ups and relevant contexts from the learner's actual responses and goals. It can recommend challenge or plan changes, with accepted decisions recorded under SCH-003/SCH-010. A later evaluated AI planning policy may replace the baseline staircase through a versioned policy change while preserving fixed-band choices, declared time/scope constraints and the distinction between a recommended target and demonstrated evidence. Network availability alone is never a downward-learning signal.
 
 - At most one automatic upward move per activity session.
 - At most two automatic band changes of any direction per activity session.
@@ -2095,9 +2185,10 @@ Confidence does not increase credit, promote ability, accelerate retention inter
 | Explicit calibration activity | Required inline before commit; protocol defines whether the later outcome is binary or graded |
 | Ordinary scored practice | Optional inline; a deterministic one-in-five invitation expands the control; declining/ignoring never blocks submission |
 | Timed Rapid Recall/fluency | Suppressed; neither pre-answer nor retrospective confidence is collected by default |
-| Personal source/self-check | Optional study reflection; never standard calibration or proficiency evidence |
+| AI-graded or otherwise independently graded source practice | Optional pre-feedback confidence for its compatible source/objective calibration group; graded outcomes can support scoped practice evidence |
+| Personal self-check without an accepted external grade | Optional study reflection; never substitute self-rating for calibration outcomes or proficiency evidence |
 
-Choose exactly one invitation slot in each consecutive group of five ordinary-practice presentations, rather than using five independent random trials. With zero-based presentation ordinal `i`, let `g = floor(i / 5)` and `slot = H(sessionID, policyVersion, g, "confidence-invitation") mod 5`; expand the invitation when `i mod 5 == slot`. Use an independently salted stable hash. Determine the schedule before observing responses. Do not invite confidence only after difficult-looking questions or mistakes, because that would bias the recorded sample. Persist the invitation decision across pause/relaunch; repeatedly reopening must not reroll it. A short final group may contain no invitation. Ineligible timed-fluency/personal-study presentations do not consume ordinary-practice invitation ordinals.
+Choose exactly one invitation slot in each consecutive group of five ordinary-practice presentations, rather than using five independent random trials. With zero-based presentation ordinal `i`, let `g = floor(i / 5)` and `slot = H(sessionID, policyVersion, g, "confidence-invitation") mod 5`; expand the invitation when `i mod 5 == slot`. Use an independently salted stable hash. Determine the schedule before observing responses. Do not invite confidence only after difficult-looking questions or mistakes, because that would bias the recorded sample. Persist the invitation decision across pause/relaunch; repeatedly reopening must not reroll it. A short final group may contain no invitation. Ineligible timed-fluency and ungraded self-check presentations do not consume scored-practice invitation ordinals; graded source practice keeps its declared compatible-group sequence.
 
 Only a confidence value locked before any outcome/answer reveal enters calibration. The initial compatibility mapping is versioned as `confidenceCategoricalV1`: Guessing = 0.25, Uncertain = 0.45, Fairly confident = 0.72 and Certain = 0.92, matching current stored semantics. These are approximate categorical proxies, not measurements of an exact subjective probability. Numeric calibration diagnostics must disclose the mapping; ordinary copy must not imply certainty or precision from those numeric values. A later UI vocabulary/probability change receives a new mapping version and cannot be silently pooled with old samples. Post-outcome confidence, edited retrospective confidence and self-ratings remain reflections. In ordinary practice, display the current problem and answer while choosing confidence; do not replace the whole problem with a new screen.
 
@@ -2109,13 +2200,17 @@ For partial-credit tasks, confidence wording must match what is predicted. Defau
 
 ### EVD-006 — Treat partial credit according to the rubric, not the renderer
 
-Every partial-credit schema must expose scored criteria with stable IDs, maximum credit and the deterministically earned amount. The aggregate `q` is the normalized weighted rubric result; absence of a required field is validation/incomplete state until the learner intentionally submits a permitted partial answer.
+Every partial-credit schema must expose scored criteria with stable IDs, maximum credit and the accepted earned amount. The aggregate `q` is the normalized weighted rubric result; absence of a required field is validation/incomplete state until the learner intentionally submits a permitted partial answer.
+
+AI grading must be a normal supported path for short responses, explanations, reasoning steps and source-grounded answers where exact matching misses valid meaning. The grader applies the frozen rubric to the submitted response and relevant task/source context, recognizes valid paraphrases and alternative reasoning, assigns criterion-level full/partial/no credit, and explains the judgment with concise references to the answer and rubric. Deterministic checks should assist where useful, such as arithmetic, units or required constraints; they are not a prerequisite for every semantic criterion. Before acceptance, validate result shape, criterion IDs, credit bounds and consistency of aggregate/full/zero indicators. Unsupported or ambiguous judgments use the declared clarification, retry or abstention path rather than an invented failing grade.
 
 The reducer uses `q` for the same-band descriptive mean and staircase thresholds. It uses the full-credit indicator for full-correct counts. A 0.5 response contributes 0.5 once, not one full success, not an automatic zero, and not two observations because two criteria were scored.
 
-A rubric can use criterion-level errors to choose a repair item. It must not infer an unobserved strategy from an answer's correctness. If strategy choice was never asked or logged, the state says `strategyUnknown`. The existing practice of inferring valid strategy use from a template name or any positive credit must not support a strategy-flexibility claim.
+A rubric can use criterion-level errors to choose a repair item. AI may evaluate a strategy expressed in the learner's explanation, identify a likely misconception, and generate a diagnostic or repair task. Distinguish response-supported rubric findings from a hypothesis that needs another question. Do not infer an unobserved strategy from answer correctness alone: if neither a strategy interaction nor the response supplies evidence, the state says `strategyUnknown`. The existing practice of inferring valid strategy use from a template name or any positive credit must not support a strategy-flexibility claim.
 
 If the answer contract recognizes multiple mathematically or logically equivalent valid responses, those responses must receive the same criterion credit and lead to the same adaptive action. Content corrections that change credit enter through EVD-008; they never rewrite the raw response.
+
+Grader evaluation must include valid paraphrases, different writing styles, partially correct answers, plausible but incorrect explanations, contradictory statements and source-unsupported assertions for each supported task/language scope. Measure agreement with reviewed criterion judgments and appropriate abstention, rather than requiring a fresh stochastic call to return identical prose. Retain the accepted grade so retries, restore and history replay do not become repeated grading draws. A learner can dispute a grade and obtain a recorded re-evaluation; an amended result supersedes the previous result through the correction path and contributes once.
 
 <a id="evd-007"></a>
 
@@ -2139,7 +2234,7 @@ Coverage must expose counts by family, structure, format and condition. Twenty r
 
 ### EVD-008 — Make invalid content exclusions affect every derived view
 
-A validity projection supplied by the correction subsystem identifies whether an item/semantic contract/version is valid, quarantined, superseded, retired, or invalid for a specified evidence use. The reducer and selector consume the same projection.
+A validity projection supplied by the correction subsystem identifies whether an item/semantic contract/version or evaluator result/version is valid, quarantined, superseded, retired, or invalid for a specified evidence use. The reducer and selector consume the same projection. AI misgrading and deterministic scoring defects use the same explainable correction mechanism; an evaluator update does not silently regrade all historical work.
 
 Required hooks:
 
@@ -2174,13 +2269,15 @@ The acceptance fixture is 20 active seconds before save plus 5 after resume: rec
 
 <a id="evd-010"></a>
 
-### EVD-010 — Keep personal study separate from built-in skill evidence
+### EVD-010 — Give personal study graded progress at its supported scope
 
-Imported sources, user-authored sets, arbitrary external-model questions and self-check ratings always enter `personalStudy`. They can have deterministic task credit and useful spaced reminders without affecting built-in proficiency, protected checks, calibration norms, promotion gates or generalized claims.
+Imported sources, user-authored sets and AI-generated questions must support useful AI grading, objective progress, adaptive challenge, misconception repair and spaced review. Preserve `personalStudy` as source/set context and attribution, not a permanent unscored lane. An accepted deterministic, AI or hybrid rubric grade may update the relevant source objectives, review intervals and practice target. Where the item has the required band/demand contract and a supported mapping to a shared skill objective, it may also support that objective's ordinary practice evidence under EVD-003. Keep one observation identity across contextual views so the same answer does not count twice.
 
-A source-backed answer is not automatically academically reliable merely because it has a citation. A future reviewed content-promotion process may admit a new contract into the built-in catalog, but old personal-source attempts do not retroactively become standard observations. The promoted contract receives explicit review, new eligibility metadata and a defined version boundary.
+A source-backed answer is not automatically reliable merely because it has a citation. The grading contract must distinguish fidelity to the supplied source from factual or reasoning correctness, identify the relevant source version/passages, and handle incomplete or conflicting material honestly. Grade the supported task: for example, explaining the argument in a supplied article can establish progress on that article's learning objectives without claiming that every assertion in the article is true. AI can propose objectives, rubrics, band demands and mappings; validate them under the content chapter's ordinary-practice quality contract before using them for the corresponding evidence. Useful source practice must not wait for full protected-bank certification.
 
-Personal study may adapt local reminders from the learner's self-rating. The UI must call that “your review rating” rather than measured recall or skill improvement. No reducer should treat `.matched` self-check as the equivalent of an independently graded correct answer.
+Source provenance alone neither qualifies nor disqualifies a result for protected or comparable assessment. Those uses additionally require the same validated evaluator, controlled exposure, form and protocol comparability as any other content. A new objective mapping or changed rubric applies at a recorded version boundary; it does not silently convert unknown legacy attempts into graded evidence. A supported historical re-evaluation may add a new traceable grade while preserving the original response and result.
+
+Personal study may also offer self-rating when useful or when no suitable evaluator is available. Call that “your review rating” rather than measured recall or a rubric grade. No reducer should treat `.matched` self-check as the equivalent of an independently graded correct answer. Model unavailability must not force all source learning into this fallback when a capable local evaluator or retained accepted result is available.
 
 <a id="evd-011"></a>
 
@@ -2199,6 +2296,8 @@ A formal improvement badge requires a separately specified comparison protocol w
 ### ADP-013 — Protect an assessment contract rather than a nominal seed namespace
 
 A protected item must pass independent correctness, ambiguity, accessibility-equivalence and answer-leakage review. Pool separation uses semantic/structural exposure rules, not only different IDs or seeds. A practice problem that reveals the exact protected solution renders its protected sibling exposed under the content contract even if its namespace differs.
+
+AI or hybrid grading is permitted in protected checks when the evaluator has been validated for the actual rubric, response type, language and assessment protocol. Freeze evaluator versions or use a validated comparability mapping, retain accepted criterion results, and provide a protocol-defined resolution for abstention or grading disputes. AI may help construct and validate candidate forms, but ordinary generation alone does not establish a comparable assessment. The rule is consistent, evaluated measurement; there is no categorical model prohibition.
 
 Essential givens must remain visible. Solution-bearing context, decisive-step labels, answer-revealing alternative text, highlighted correct diagrams, prefilled correct order, and worked examples do not belong in the protected stimulus. Audit visible text, accessibility text, image labels, option IDs surfaced through accessibility, diagram legends and all representations. QA-10 is a release gate, not a cosmetic cleanup.
 
@@ -2262,7 +2361,7 @@ An unfinished form that remains undisclosed can resume. A form whose answers wer
 
 The selector must apply constraints in this order:
 
-1. Valid content/version and appropriate independent/protected/personal evidence channel.
+1. Valid content/evaluator versions and an appropriate declared evidence scope for the practice or assessment use.
 2. Accessibility and supported language/representation equivalence.
 3. Objective, prerequisites, requested activity scope and supported delivered band.
 4. Semantic exposure and protected-family separation.
@@ -2289,7 +2388,9 @@ Within feasible hard constraints, rank lexicographically:
 5. Goal relevance and recent observed weak criterion for that objective.
 6. Stable tie-break key.
 
-Lexicographic ranking prevents a large numerical parameter pool from drowning out a smaller scientifically meaningful family. If weighted ranking is later introduced, its exact weights and feasibility tests must be versioned; the initial implementation must not rely on arbitrary raw pool order.
+AI planning is a normal input to goal relevance, criterion repair, prerequisite diagnosis and choice of examples. It should use accepted results, the learner's own explanations and declared goals to identify the most useful next task. Retain the structured recommendation, relevant input identities, model/policy version and concise reason; the selector checks feasibility and commits the accepted decision. A hypothesis such as “the denominator may be confusing” can motivate a diagnostic probe without being stored as a confirmed error or lowering a demonstrated band.
+
+The ordering above is the baseline when AI planning is unavailable and the initial constraint hierarchy for AI recommendations. Lexicographic ranking prevents a large numerical parameter pool from drowning out a smaller scientifically meaningful family. A versioned AI ranking policy may refine feasible candidate priorities while respecting required coverage, review commitments, declared scope/band and time limits. Record its accepted priority result rather than expecting a fresh model call to reproduce the ranking. If weighted ranking is introduced, its weights and feasibility tests must be versioned; no implementation may rely on arbitrary raw pool order.
 
 <a id="sch-004"></a>
 
@@ -2297,21 +2398,21 @@ Lexicographic ranking prevents a large numerical parameter pool from drowning ou
 
 When the requested band or mechanic has no eligible novel content, use this ordered response:
 
-1. Try another reviewed structure in the same family, objective and band with compatible conditions.
+1. Try another validated structure in the same family, objective and band with compatible conditions. For ordinary practice, use available local or online AI generation to create suitable fresh content under the ordinary-practice validation contract; substantive AI generation is not restricted to a pre-existing deterministic inventory. Freeze the generated item and rubric before delivery, with a bounded generation/validation wait.
 2. For a mixed session only, try another eligible family serving the same intended slot and explain the actual activity.
-3. Offer a same-band reviewed repeat explicitly labelled “Review a familiar problem”; it receives the repeat evidence treatment and cannot be presented as an unseen independent probe.
+3. Offer a same-band validated repeat explicitly labelled “Review a familiar problem”; it receives the repeat evidence treatment and cannot be presented as an unseen independent probe.
 4. Offer the adjacent lower supported band as an explicit learner choice, with delivered-band metadata preserved.
-5. End the block early with “You've completed the available reviewed questions for this activity,” retain earned work and offer another activity.
+5. End the block early with “No more suitable questions are available for this activity right now,” retain earned work and offer another activity.
 
 Do not silently broaden a selected confound-identification drill into interval interpretation while retaining the original activity title. Do not count a repeated item as fresh merely because a new seed creates a new ID. Do not fabricate a harder band or generate unreviewed protected content to meet a session length target.
 
-If three unseen candidates are unavailable for upward exploration, remain at the current target and state that the next band is not available yet. This is a catalog limitation, not evidence of learner failure. Report shortage counts by objective/family/band to the content team through local QA diagnostics; no external analytics is implied.
+If three validated unseen candidates are unavailable for upward exploration after feasible generation, remain at the current target and state that the next band is not available yet. This is a content-availability limitation, not evidence of learner failure. Keep shortage counts by objective/family/band in the content coverage diagnostics so missing pools and ineffective generation can be improved.
 
 <a id="sch-005"></a>
 
-### SCH-005 — Use deterministic tie-breaking and persist the actual path
+### SCH-005 — Persist accepted AI selections and use stable fallback tie-breaking
 
-All selected candidates have stable IDs. Sort the feasible candidate list by the ranking above, then break exact ties using a stable hash:
+All selected candidates have stable IDs. When using the baseline selector, sort the feasible candidate list by the ranking above, then break exact ties using a stable hash. When AI contributes a ranking or selects a feasible candidate under its versioned policy, retain that accepted result and apply the same reservation and no-repeat rules. Stable replay restores the committed selection; it does not rerun AI to choose again. The baseline tie key is:
 
 ```
 tieKey = H(
@@ -2354,7 +2455,7 @@ The full selected path, including skipped, replaced and assisted exposures, is a
 
 ### SCH-006 — Keep review objectives separate from literal question repetition
 
-A built-in retention entry is keyed by objective, family, band and reviewed relation/structure scope, not only a template's ever-changing item ID. It records the last independent observation, delay since previous exposure, assistance, exact/sibling exposure history, current interval rung and validity projection.
+A retention entry is keyed by objective, family, supported band and relation/structure scope, with source/set context where applicable, not only a template's ever-changing item ID. It records the last accepted independent observation, delay since previous exposure, assistance, exact/sibling exposure history, current interval rung and validity projection. AI-graded short responses and source learning participate in this loop under their supported contract; personal-source review without a validated band keeps a scoped objective queue rather than inventing one.
 
 A retention check normally uses an unseen reviewed sibling that tests the same objective at a compatible band. An exact repeated question can be useful recall practice but is labelled familiar-item recall and does not establish unseen transfer. A change from numeric entry to multiple choice may reduce retrieval demand; record that change and do not compare it as equivalent retention without a reviewed contract.
 
@@ -2365,6 +2466,8 @@ Do not infer retention growth from confidence, streak length, XP, source self-ra
 ### SCH-007 — Use a bounded, explainable initial interval ladder
 
 Initial built-in interval ladder: 1, 3, 7, 14 and 30 local days. These are scheduling defaults pending pilot data, not scientifically optimal intervals.
+
+Use the same default ladder for independently graded source objectives when its applicability is declared, retaining source context and any unknown-band status. AI may prioritize due work, generate useful sibling checks, explain the review purpose and recommend a different schedule. A schedule change uses a versioned policy/recorded decision and learner time constraints; a model's unsupported probability estimate is not evidence of retained knowledge. Grading origin alone does not change the interval rule.
 
 | Effective review outcome | Queue action |
 |---|---|
@@ -2385,7 +2488,7 @@ An interval restart is tied to the next independent repair success, not the mome
 
 ### SCH-008 — Make the mistake queue actionable and criterion-specific
 
-A mistake entry links to the immutable original attempt and a reviewed error category. It includes the objective, family, band, actual missing criterion, available explanation, valid fresh sibling candidates and the current status:
+A mistake entry links to the immutable original attempt, accepted rubric judgment and a supported error category. AI should turn short-response grading into a specific explanation, conversational follow-up and targeted repair item. It includes the objective, family, band when supported, source context where relevant, actual missing criterion, available explanation, valid fresh sibling candidates and the current status:
 
 ```
 needsExplanation -> readyForRepair -> repairedInSession -> dueForDelayedCheck -> retained
@@ -2401,7 +2504,7 @@ needsExplanation -> readyForRepair -> repairedInSession -> dueForDelayedCheck ->
 
 An immediate repair is evidence of current task performance, not delayed retention. Marking an explanation helpful, choosing an error reflection, or correcting the original answer after viewing the solution does not close the learning loop by itself.
 
-Rank pending mistake entries by unresolved conceptual criterion, due date, objective relevance and recent repetition, with stable ties. Do not put every arithmetic slip ahead of a major conceptual misunderstanding simply because it occurred more recently. The error taxonomy must come from observed scored criteria; where the system cannot distinguish misconception from typo, use neutral “Check this step” copy and allow the learner to annotate it.
+Rank pending mistake entries by unresolved conceptual criterion, due date, objective relevance and recent repetition, with stable ties or a retained accepted AI ranking under SCH-003. Do not put every arithmetic slip ahead of a major conceptual misunderstanding simply because it occurred more recently. Confirmed error categories must come from response-supported scored criteria. AI may suggest a likely misconception and ask a diagnostic follow-up; where it cannot distinguish misconception from typo, use neutral “Check this step” copy and allow the learner to annotate or dispute it.
 
 <a id="sch-009"></a>
 
@@ -2419,9 +2522,9 @@ When there are more due items than fit, select the highest-priority compatible e
 
 A committed daily plan freezes its day identity, profile/configuration snapshot, ordered blocks, declared objectives/evidence modes, minute budget, block identity, content/policy versions and replacement history. New answers must not silently rewrite completed or in-progress block identities.
 
-Within an uncompleted practice block, the selector may choose a different actual band or structure according to ADP-011. That is a **question selection decision inside the block**, not a new daily plan. Persist the decision and a short reason. Completion counts continue to reference the original block identity.
+The AI coach should create and refine useful daily plans from goals, available time, accepted grades, learner explanations, review needs and interests. Within an uncompleted practice block, it may recommend or select a different actual band, structure, teaching example or diagnostic task under the active ADP-011/SCH-003 policy. That is a **question selection decision inside the block**, not a new daily plan. Persist the accepted decision and a short reason. Completion counts continue to reference the original block identity.
 
-Changes that alter block scope, add/remove a block, replace a lab, switch evidence mode, change a protected protocol or materially change the remaining time allocation require an explicit plan amendment/override event under the existing canonical-plan history model. The original plan remains inspectable. Do not invent a second “current plan” with the same identity but different block contents.
+Changes that alter block scope, add/remove a block, replace a lab, switch evidence mode, change a protected protocol or materially change the remaining time allocation require an explicit plan amendment/override event under the existing canonical-plan history model. AI may propose and apply future-work amendments within the learner's declared adaptive-plan preferences and budget; record what changed and why, with normal user controls to adjust it. Ask for a choice when crossing a fixed user constraint or expanding a promised time budget, not for every routine AI recommendation. The original plan remains inspectable. Do not invent a second “current plan” with the same identity but different block contents.
 
 If the learner lowers energy before a block begins, offer untimed work, a shorter remaining block, or a different valid activity. Lower energy alone does not lower demonstrated proficiency or rewrite previously recorded challenge. If the plan is already underway, apply changes to future unstarted work with an explanation; current drafts and completed blocks remain intact.
 
@@ -2433,7 +2536,9 @@ Remove the blanket `max(3, minutes / 2)` behavior. A one-minute block must not r
 
 Each candidate has a reviewed expected response duration range and expected interaction overhead by mode. Use the learner's recent same-family/same-band compatible median duration after at least eight usable observations as an optional pacing estimate, bounded to the reviewed range; do not use it as an ability estimate. Use at most the last 20 complete durations in the same 60-day window. Exclude paused/background intervals and incomplete/corrupted durations; do not infer idleness from a learner thinking without touching the screen.
 
-V1 initial overhead defaults, in seconds per item, are: ordinary practice/repair/retention 8; protected check 6; timed fluency 1; personal reference/self-check 15; explicit calibration 10; and dedicated reflection 3 beyond its authored reflection task duration. These are proposed planning allowances, not measured cognitive or interaction norms. Store them in the same versioned policy configuration. Replace an allowance only with a reviewed policy change or a compatible measured phase-duration median after at least eight complete observations (last 20/60 days); do not modify an in-progress promised budget retroactively. If a required authored duration range is missing, the item is unavailable for an automatic time-budgeted selection until its contract is completed; an explicitly chosen count-based study item may retain an honest unavailable-time estimate.
+V1 initial overhead defaults, in seconds per item, are: ordinary practice/repair/retention 8; protected check 6; timed fluency 1; source study/self-check 15; explicit calibration 10; and dedicated reflection 3 beyond its authored reflection task duration. These are proposed planning allowances, not measured cognitive or interaction norms. Store them in the same versioned policy configuration. Replace an allowance only with a reviewed policy change or a compatible measured phase-duration median after at least eight complete observations (last 20/60 days); do not modify an in-progress promised budget retroactively. If a required authored duration range is missing, the item is unavailable for an automatic time-budgeted selection until its contract is completed; an explicitly chosen count-based study item may retain an honest unavailable-time estimate.
+
+Track generation/grading service wait separately from learner response time and learning-work overhead. Include realistic availability and latency when promising a session's wall-time experience, and allow saved pending grades or compatible next work so an online delay does not consume the learner's answer budget or appear as slower thinking. Source and short-response practice must not be forced into fast closed-form questions solely to avoid AI latency.
 
 Initial planning estimate:
 
@@ -2468,7 +2573,11 @@ A practice block can end because its planned workload is finished, the learner c
 
 Use the existing canonical local-day/travel policy as the source of day identity. Active-day counts for coverage and interval rungs use recorded local-day keys with policy versions, not a reinterpretation of old timestamps using today's time zone.
 
-Offline selection must use verified locally available pools and the same deterministic policy. Network/model availability does not change the standard evidence boundary. A temporary absence of a model must not demote the learner or convert a protected check into unreviewed generated content.
+Local processing serves offline availability. Offline selection must use available validated local content, cached accepted items/results, capable on-device AI and deterministic evaluation where appropriate. Online AI is part of normal learning when available, including direct model integrations for richer grading, explanation, generation and planning; it is not restricted to an optional external handoff or postponed until every offline bank is complete. Select routes by task capability, device resources and availability, while keeping their evaluated rubric/quality scope explicit.
+
+If a suitable local evaluator exists, continue grading short/source responses and updating practice offline. If it does not, preserve the submitted response and original conditions with a visible pending-grade state, allow compatible useful practice, and grade later through the accepted-result transaction. Offer a reference/self-check as an optional fallback, not a claim of evaluated correctness. A transient outage, insufficient device capacity or evaluator abstention must not generate failure credit, lower a band, erase participation or make the learner redo a submitted answer. Automatic retry must not replace an already accepted grade with a fresh model opinion.
+
+Protected checks can use a validated local or online evaluator under their frozen protocol. If the required evaluator is unavailable and no validated equivalent exists, save the form and explain the pending portion; continue an unaffected portion only when the protocol permits. Do not silently substitute an incompatible evaluator or unreviewed form to make a completed assessment claim.
 
 If a catalog update invalidates an in-progress item, the correction protocol decides whether to withdraw it or preserve it as non-scoring history. If it merely adds new valid items, the current frozen item remains unchanged; future selections can use the new catalog only at a recorded boundary. A form bound to an older protected catalog continues only if that catalog remains valid and available.
 
@@ -2476,7 +2585,7 @@ If a catalog update invalidates an in-progress item, the correction protocol dec
 
 <a id="evd-013"></a>
 
-### EVD-013 — Guarantee deterministic equivalence
+### EVD-013 — Replay accepted grades and decisions faithfully
 
 The system must satisfy:
 
@@ -2487,6 +2596,8 @@ reduce(initialState, committedEvents, itemSnapshotVersions, validityRevision, po
 
 Compare the complete state: eligibility, per-band counts/credit, demonstrated-band support, practice targets where reconstructed from decision events, queue statuses/due days, calibration samples and speed eligibility. A superficial equality of one percentage is insufficient.
 
+Deterministic equivalence concerns the retained accepted events. It does not require fresh calls to a stochastic model to return identical grades, wording, teaching content or selections. Persist accepted AI criterion results, content snapshots and planning/selection receipts before dependent progress is published. Replay, restore, duplicate delivery and UI refresh must consume those records without calling the model to re-decide them. A requested re-evaluation or newly generated recommendation is a new versioned event, with explicit supersession where appropriate.
+
 Use a stable total ordering from the persistence model. Within a session, committed session ordinal governs academic sequence. Cross-session order uses the canonical effective event order and stable identity tie-breaks defined by the persistence chapter. Duplicate events are idempotent. Invalid transitions fail closed with recoverable diagnostics, not a silently regenerated new path.
 
 Decision receipts freeze their historical inputs and rationale. A later validity correction yields a new effective projection and corrected future recommendations; it does not rewrite the fact that an earlier decision was made with the then-available evidence. Progress can show the current corrected summary with a link to what changed.
@@ -2495,7 +2606,7 @@ Decision receipts freeze their historical inputs and rationale. A later validity
 
 ### EVD-014 — Make policy versions deployable without silent reinterpretation
 
-Version together the eligibility predicates, independence controls, band demonstration thresholds, staircase, intervals, ranking/tie-break algorithm and confidence invitation schedule. The item band/answer contracts remain separately versioned. Record the combination used for every decision.
+Version together the eligibility predicates, independence controls, band demonstration thresholds, staircase, intervals, ranking/tie-break algorithm and confidence invitation schedule. The item band/answer contracts, evaluator/model/grading-instruction versions and AI planning policy remain separately versioned with their compatibility mapping. Record the combination used for every decision. A model upgrade may improve future evaluation without erasing accepted history; a historical regrade requires a recorded correction or re-evaluation decision.
 
 The migration/correction chapter owns how old records are retained, superseded or excluded. Required integration behavior is:
 
@@ -2511,23 +2622,26 @@ The migration/correction chapter owns how old records are retained, superseded o
 
 | Current component | Required responsibility after the change |
 |---|---|
-| `NFFallbackExerciseGenerator` | Generate actual permitted band/demand contracts; fail explicitly when unsupported; stop overwriting only the difficulty number |
-| `NFDeterministicSessionExerciseFactory` | Select/restore concrete frozen items; preserve semantic exposure and no-repeat path; return explicit shortage outcomes |
-| `NFUniversalSessionRuntime` | Continuous question interaction; durable assistance/timing; apply selection decisions at safe boundaries; no independent shadow proficiency reducer |
+| `NFFallbackExerciseGenerator` and AI generation adapters | Generate actual permitted band/demand contracts and useful task/rubric content; validate and freeze accepted items; report unsupported demands honestly |
+| `NFDeterministicSessionExerciseFactory` and AI selection policy | Select/restore concrete frozen items and accepted rankings; preserve semantic exposure and no-repeat path; return explicit shortage outcomes |
+| `NFUniversalSessionRuntime` | Continuous question interaction, AI tutoring and short-response grading; durable pending/accepted evaluation state, assistance/timing and safe selection decisions; no independent shadow proficiency reducer |
+| Deterministic, on-device AI and online AI evaluators | Apply the task rubric within evaluated capability scope; return criterion results, concise justification and explicit abstention; persist accepted result identity and support traceable re-evaluation |
 | `AdaptiveEngine.reduce` | Delegate to the shared evidence projection or become a compatibility view; do not maintain a different difficulty-blind theta |
 | `NFAssessmentEngine` | Protected protocol and coverage selection using valid band contracts; separate sitting budgets; shared evidence model |
-| `NFDailyScheduler` | Canonical block prescription, scope/variety/time constraints and explicit amendment history |
-| `NFRetentionScheduler` | Versioned due-date/rung policy based on valid delayed outcomes; no unsupported memory-probability presentation |
+| `NFDailyScheduler` and AI coach/planner | Goal-driven plans and criterion-focused recommendations; canonical block prescription, scope/variety/time constraints and explicit amendment history |
+| `NFRetentionScheduler` | Versioned due-date/rung policy based on valid delayed deterministic/AI/hybrid outcomes, including source objectives; useful AI-generated repair/review tasks and no unsupported memory-probability presentation |
 | `NFMentalMathProgressAdapter` | Consume explicitly observed strategy/unit/estimate/timing criteria; stop manufacturing strategy evidence from positive credit/template names |
 | `NFSpeedEvidenceEngine` | Clean speed predicate including relaunch/assistance/compatible band and complete active time |
 | `NFImprovementClaimEngine` | Suppress unsupported comparisons; consume comparable condition/band/form contracts and correction projections |
-| Progress and history views | Show actual band, independent/assisted status, sample coverage and readable explanations; separate XP and personal study |
+| Progress and history views | Show actual band when supported, accepted/pending/disputed grades, independent/assisted status, source/objective scope, sample coverage and useful AI explanations; keep participation distinct from graded evidence |
 
 This is a responsibility map, not permission to duplicate the model across these files. Prefer small pure policy modules with explicit inputs, and keep UI selection controls from mutating evidence fields directly.
 
 ## 10. Executable simulation specification
 
 These fixtures are mandatory policy tests in addition to UI QA. Use a virtual monotonic clock, fixed local calendar/day boundary, fixed profile/session IDs, a small explicit catalog and stable event IDs. No fixture may depend on wall-clock sleeps or random UUID iteration order. Fixtures should assert the chosen item's actual demand vector and semantic identity, not only `requestedBand`.
+
+For AI cases, use explicit retained evaluator/planner responses in policy fixtures and separately evaluate real model grading quality against reviewed rubric examples. Policy replay must not depend on a live model returning the same output twice. Include accepted, partial, abstained, pending, disputed, corrected and unavailable-evaluator variants within the fixture IDs below.
 
 ### Shared fixture catalog and conventions
 
@@ -2554,9 +2668,9 @@ Create `QA.Catalog.v1` with an arithmetic objective `O.mul`, a reasoning objecti
 | ADP-F13 — Foundation floor | B1 Z,Z,Z | Stay B1; offer prerequisite/worked example; no B0, negative level or forced restart |
 | ADP-F14 — Assisted sequence | B2 H,H,F | H results excluded from independent decision window; no evidence-based demotion; offer help/easier choice from support pattern |
 | ADP-F15 — Skip sequence | B2 S,S,F | No zeros manufactured; no band change from skips; exposures recorded and replacement items remain distinct |
-| ADP-F16 — Sparse next band | B1 F×4, B2 has only two unseen valid candidates | Stay B1; no unsupported upward move; show limited available challenge and record shortage |
-| ADP-F17 — Empty selected activity | Explicit family has no fresh compatible items; other families exist | No silent relabelled substitution; offer familiar review/other activity/stop with accurate scope |
-| ADP-F18 — Tie order | Two exact-ranked candidates supplied in reversed array/dictionary order | Same selected candidate and tie receipt with fixed IDs/policy/catalog/session/ordinal |
+| ADP-F16 — Sparse next band | B1 F×4, B2 has only two unseen valid candidates and no further candidate is available from validated generation | Stay B1; no unsupported upward move; show limited available challenge and record shortage |
+| ADP-F17 — Empty selected activity | Explicit family has no fresh compatible items; variants with capable validated AI generation and unavailable generation while other families exist | A validated newly generated same-scope item may continue practice with a frozen item/rubric; otherwise no silent relabelled substitution, and offer familiar review/other activity/stop with accurate scope |
+| ADP-F18 — Tie order | Two exact-ranked candidates supplied in reversed array/dictionary order; separate accepted AI ranking supplied with model unavailable at restore | Baseline gives the same selected candidate and tie receipt with fixed IDs/policy/catalog/session/ordinal; AI case restores the retained accepted selection, respects fixed-band/scope constraints and does not rerun the model |
 | ADP-F19 — Resume path | Second question required a dedup fallback; save/relaunch | Restore exact selected second item and subsequent path; first item never reappears as an unseen replacement |
 | ADP-F20 — User override | Adaptive B2, user Harder then changes timer visibility | Next eligible question B3; timer visibility has no additional band effect; no demonstrated-band change |
 
@@ -2572,24 +2686,24 @@ Create `QA.Catalog.v1` with an arithmetic objective `O.mul`, a reasoning objecti
 | EVD-F06 — Invitation replay | Same session/ordinal reopened five times | Identical one-in-five invitation decision; absent practice confidence never blocks submission |
 | EVD-F07 — Retrospective confidence | Confidence supplied after answer outcome reveal; separate 11-versus-12 eligible pre-feedback observations across two sessions | Post-outcome value is reflection only. Eleven eligible predictions show sample count without a calibration summary; twelve show the compatible-group descriptive summary. Required and optional samples remain separate; only the last 50 in 60 days qualify |
 | EVD-F08 — Partial confidence | Whole-answer confidence 0.72 under confidenceCategoricalV1, rubric q=0.5 | Ability descriptive q=0.5 once; calibration binary full-correct outcome y=0, not 0.5 |
-| EVD-F09 — Equivalent answer | Two accepted algebraic/logical equivalents to one contract | Same criterion credit, independence and adaptive action |
+| EVD-F09 — Equivalent answer | Accepted algebraic/logical equivalents and AI-graded valid short-response paraphrases under one contract; partial answer and evaluator-abstention variants | Equivalent accepted meanings receive the same criterion credit, independence and adaptive action; partial credit remains partial; abstention preserves the response without zero credit or demotion. Grading after lock does not mark the answer assisted |
 | EVD-F10 — Resume timing | 20 active seconds, hint/pause, save/relaunch, 5 active seconds then answer | Approximately 25 known active seconds; prior hint/interrupt retained; resumed flag true; independent/clean-speed exclusion consistent with aid use |
 | EVD-F11 — Resume without help | 20 seconds, save/relaunch, 5 seconds, correct unassisted response | Accuracy may be independent; clean speed excluded solely because interrupted/resumed; no zero duration reset |
 | EVD-F12 — Clock change | Wall clock moves back 2 hours between monotonic chunks | Nonnegative correct active chunk sum; no 2-hour speed artifact; local-day policy handles day identity separately |
-| EVD-F13 — Duplicate commit | Same observation received twice locally and once via sync | One scored observation, one queue transition, no duplicate XP or exposure count |
+| EVD-F13 — Duplicate commit | Same observation received twice locally and once via sync, including duplicate/delayed AI grade delivery and a retry after an accepted result | One accepted scored observation and queue transition, no duplicate XP or exposure count, no fresh model result replacing the committed grade; pending-to-accepted delivery preserves original response conditions |
 | EVD-F14 — Quarantine trigger | Four F cause B1→B2; validity projection later excludes one triggering item | Current valid item preserved; effective evidence becomes three F; next decision uses corrected state; historical decision marked affected, not erased |
 | EVD-F15 — Faulty sibling family | One answer-generation rule invalidates multiple semantic siblings | All affected eligible observations excluded and new candidates filtered; unrelated families unchanged |
-| EVD-F16 — Reinstatement | Quarantined item receives valid reinstatement disposition | Replay restores its single effective observation exactly once; original answer/history unchanged |
-| EVD-F17 — Personal source | Twenty deterministic source answers or self-rated matched responses | Personal-study state/reminders update; zero standard practice/protected/promotion/calibration observations |
+| EVD-F16 — Reinstatement | Quarantined item receives valid reinstatement disposition; separately, a disputed AI grade receives a justified revised rubric result | Replay restores or supersedes its single effective observation exactly once; original answer and prior result remain inspectable; affected practice, review and claim views recompute consistently |
+| EVD-F17 — Personal source | Independently AI-graded short source answers with valid objective/rubric contracts; variants with supported shared-band mapping, unknown band, factual/source conflict and self-rated matched responses | Accepted grades update scoped objective progress, adaptive practice and review; supported mappings may contribute one ordinary practice observation and compatible calibration sample. Unknown band does not block useful scoped grading or invent a band. Source conflict follows the declared rubric/abstention policy. Self-ratings remain reminders, and protected/comparable claims require their additional protocol validation |
 | EVD-F18 — Legacy metadata | Old attempt has difficulty 0.9 but no valid band contract | Legacy history only; no automatic B4 or IRT calibration; unknown assistance remains unknown |
-| EVD-F19 — Online/replay | Execute a mixed event script, destroy derived cache, rebuild | Complete state equality including eligibility, chosen-path receipts, support, queues, calibration and speed exclusions |
-| EVD-F20 — Unobserved strategy | Correct numeric response with no strategy interaction | Strategy evidence remains unknown; no flexibility/strategy-success claim |
+| EVD-F19 — Online/replay | Execute mixed deterministic, AI and hybrid accepted grades plus AI planning decisions; destroy derived cache, disconnect the model and rebuild | Complete state equality including eligibility, accepted criterion grades, chosen-path receipts, support, queues, calibration and speed exclusions; zero model calls during replay and no requirement for identical fresh stochastic output |
+| EVD-F20 — Unobserved strategy | Correct numeric response with no strategy interaction; separate AI-evaluated explanation that supplies explicit strategy evidence | Numeric-only strategy evidence remains unknown; response-supported explanation may support its rubric criterion. An AI misconception hypothesis can suggest a diagnostic task without becoming a confirmed failure or clinical/personality claim |
 
 ### Protected, retention and plan fixtures
 
 | Fixture | Input sequence/state | Required result |
 |---|---|---|
-| SCH-F01 — Protected leakage | Candidate has solution-bearing context, accessible label or supplied counterexample | Admission/selection rejects protected eligibility; no protected observation is created |
+| SCH-F01 — Protected leakage | Candidate has solution-bearing context, accessible label or supplied counterexample; clean short-response variants use validated and unvalidated AI evaluator protocols | Leaking item is ineligible. Clean item may produce protected evidence with a validated consistent AI grading protocol; an incompatible/unvalidated evaluator cannot produce the comparable claim merely because a grade was returned |
 | SCH-F02 — Protected time slice | Five-minute sitting ends after three scored observations | Form remains incomplete/resumable with same identity, remaining coverage and exposure path; no forced fresh-seed restart |
 | SCH-F03 — Slow current item | Current item exceeds sitting budget while draft remains | No auto-wrong/auto-submit; finish/save/skip choices; complete draft preserved |
 | SCH-F04 — Protected skip | S then valid scored answers; separate case with seven scored and nine skipped presentations | Skipped item exposed, no credit/coverage; next replacement fresh. At 16 presented slots with only seven eligible answers, stop coverageIncomplete; no automatic new form. Explicit linked supplement preserves seven valid same-protocol observations and needs the missing coverage, not eight replacement answers |
@@ -2599,16 +2713,16 @@ Create `QA.Catalog.v1` with an arithmetic objective `O.mul`, a reasoning objecti
 | SCH-F08 — Interval advance | New independent F; due day-1 sibling F | First due day +1, then next interval +3 local days; one-rung advance only |
 | SCH-F09 — Early repeat | Day-1 review scheduled, learner repeats the original same day | Practice history retained; no retention-rung advance and no fresh independent semantic observation |
 | SCH-F10 — Failed retention | Due independent Z, then assisted correction | Add repair; rung does not advance; next delayed check anchored to later independent repair success |
-| SCH-F11 — Successful repair | Incorrect item → explanation → independent fresh sibling F → next-day independent sibling F | needsExplanation → readyForRepair → repairedInSession/dueForDelayedCheck → retained; immediate repair not labelled delayed retention |
+| SCH-F11 — Successful repair | Incorrect item → explanation → independent fresh sibling F → next-day independent sibling F, with deterministic and AI-graded source-response variants | needsExplanation → readyForRepair → repairedInSession/dueForDelayedCheck → retained at the supported objective scope; AI grading is not assistance and immediate repair is not labelled delayed retention |
 | SCH-F12 — Backlog | 40 due entries, five-minute session | Select only items fitting at most 30%/five-item cap; remaining queue preserved; normal practice available |
 | SCH-F13 — One-minute reflection | Dedicated reflection block with budget 60 seconds | One brief reflection/calibration task; never three ordinary near-transfer questions |
 | SCH-F14 — Mixed family balance | Feasible 10-item mixed pool with four+ families | At least four families, no run above two, correct actual item scope; stable choices under input-order permutation |
 | SCH-F15 — Dominant bank family | One family has 990 items, eight others have reviewed candidates | Mixed quota/ranking still distributes selected families; raw pool size does not dictate concentration |
-| SCH-F16 — Canonical plan | New performance evidence arrives after one daily block completes | Original block IDs/order/completion remain; next-item band may adapt within the current practice block with a decision receipt |
+| SCH-F16 — Canonical plan | New AI-graded performance evidence and an AI plan recommendation arrive after one daily block completes | Completed/current identities and drafts remain; next-item teaching/selection may adapt with a receipt. Future-work amendment can apply within declared adaptive-plan preferences, while fixed constraints and extra time require learner choice; accepted recommendation restores without another model call |
 | SCH-F17 — Lower energy mid-plan | Two blocks complete, learner shortens remaining session | Explicit future-work amendment/override; completed work preserved; no retroactive band/difficulty downgrade |
 | SCH-F18 — Save failure | Attempt saved, dependent completion checkpoint fails | No false durable block completion/automatic next block; retryable stage and stable attempt ID |
 | SCH-F19 — Time zone change | Travel changes local wall date during incomplete form/session | Same in-progress identity/draft; no duplicate due rung or automatic fresh daily plan that discards work |
-| SCH-F20 — Catalog update | Valid new catalog arrives during unanswered question | Frozen question remains identical; future catalog change only at recorded boundary; invalidation uses correction path |
+| SCH-F20 — Catalog update | Valid new catalog or generated candidate arrives during unanswered question; evaluator switches online/offline with capable-local, no-local and protected-protocol variants | Frozen question remains identical; future content change only at recorded boundary; invalidation uses correction path. Capable local evaluator continues scoped grading; absent capability retains a pending response and offers useful work without failure/demotion. Protected work waits when no validated equivalent exists; accepted grades are not rerun |
 
 ## 11. Pilot validation and release gates
 
@@ -2618,7 +2732,7 @@ Create `QA.Catalog.v1` with an arithmetic objective `O.mul`, a reasoning objecti
 
 Before calling bands empirically calibrated, run a consented pilot with novice, intermediate and experienced learners who match the intended subject prerequisites. Use an explicit research plan and data minimization; this specification does not authorize external telemetry or contact with participants.
 
-The pilot must inspect actual delivered questions and record observed independent success, partial-credit distribution, assistance use, completion time, skip reasons, disputed grading, explanation usefulness and perceived challenge by objective/family/band. A small observed success-rate table can support `pilotObserved`; it cannot by itself establish a calibrated item-response scale.
+The pilot must inspect actual delivered questions and record observed independent success, partial-credit distribution, assistance use, completion time, skip reasons, disputed grading, explanation usefulness and perceived challenge by objective/family/band. Include short-response and source-learning journeys with actual AI grading, local/online availability changes, conversational repair and AI planning. Evaluate whether the grades recognize valid meaning, feedback identifies actionable gaps and recommendations fit the learner's goals and time. A small observed success-rate table can support `pilotObserved`; it cannot by itself establish a calibrated item-response scale.
 
 Initial product targets for review are roughly 70–85% independent full success in sustained ordinary practice, enough recoverable errors to make explanation useful, and few repeated failures without support. These are design targets to test, not guarantees for every learner or every band. Do not force the algorithm to achieve the target by relabeling questions or excluding legitimate errors. If a family shows no meaningful separation between bands, repair its demand contracts before changing scoring rhetoric.
 
@@ -2634,12 +2748,13 @@ Release gates for this chapter:
 2. QA-15 timing-isolation tests pass at configuration, runtime and resume boundaries.
 3. QA-09 active-time/help/interruption preservation passes across every save stage, relaunch and checkpoint-recovery path.
 4. QA-10 protected leakage review covers visible, visual and accessibility representations, and reusable protected keys stay undisclosed.
-5. QA-16 live/replay equivalence and repeat-gaming fixtures pass using the single versioned reducer.
+5. QA-16 live/replay equivalence and repeat-gaming fixtures pass using the single versioned reducer with retained deterministic, AI and hybrid grades and accepted AI planning decisions; replay makes no model calls.
 6. QA-07 catalog and runtime distributions pass under feasible mixed quotas; shortages produce explicit outcomes.
-7. All source/self-rating fixtures prove zero standard skill contribution.
+7. Source/short-response fixtures prove that suitable AI grades drive scoped progress, practice selection and review, while self-ratings, pending/abstained results and unsupported mappings do not fabricate graded evidence. Comparable protected use depends on evaluator/protocol validation rather than model or source exclusion.
 8. Quarantine/correction fixtures rebuild every affected derived channel without changing raw historical answers.
 9. Novice/experienced trajectory simulations select different actual demands and remain finite under sparse pools.
 10. Human pilot feedback supports the intended challenge and clarity; stronger calibration or improvement claims remain disabled until separately justified.
+11. Real evaluator-quality checks cover the supported task/rubric/language scopes, equivalent expressions, partial credit, unsupported claims and abstention; changed evaluators are pooled only when comparability is supported. Online/offline route, delayed grade, dispute, retry and correction scenarios preserve accepted work without learning penalties.
 
 A green deterministic test suite establishes that the policy implements the specified rules. It does not establish educational validity, appropriate difficulty for every person, long-term retention, broad transfer, or generalized cognitive improvement. Those conclusions require the corresponding learner and outcome evidence, reported at its actual scope.
 
@@ -2649,13 +2764,13 @@ A green deterministic test suite establishes that the policy implements the spec
 
 # Runtime, persistence, navigation and migration
 
-Status: proposed implementation contract, version 1.0, 4 September 2026. This chapter defines the target behavior; it does not claim the implementation already exists. Read the [master specification](README.md) for scope and precedence and the [audit](../QA_2026-09-04/README.md) for observed evidence.
+Status: proposed implementation contract, version 1.1, revised 5 September 2026. This chapter defines the target behavior; it does not claim the implementation already exists. Read the [master specification](README.md) for scope and precedence and the [audit](../QA_2026-09-04/README.md) for observed evidence.
 
 ## 1. Architectural boundary
 
 <a id="core-001"></a>
 
-**CORE-001 — One learning runtime.** Every built-in practice launch, daily-plan block, protected check, review task and deterministic authored activity shall pass through one session coordinator. Source recall and reference/self-check use the same lifecycle primitives but a different scoring authority and evidence eligibility. A feature must not implement its own Submit→save→Next sequence. The existing `NFUniversalSessionRuntime` is the migration starting point, not a requirement to keep all logic in its current large view file.
+**CORE-001 — One learning runtime.** Every built-in practice launch, daily-plan block, protected check, review task, AI-authored activity and source-based activity shall pass through one session coordinator. Deterministic grading, rubric-based AI grading, composite/hybrid evaluation and reference/self-check use shared lifecycle primitives with explicitly declared evaluation authority and evidence eligibility. AI is a central teaching and assessment capability; local processing provides practical offline use and responsive operations when suitable. A feature must not implement its own Submit→save→Next sequence. The existing `NFUniversalSessionRuntime` is the migration starting point, not a requirement to keep all logic in its current large view file.
 
 <a id="core-002"></a>
 
@@ -2667,7 +2782,9 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This ch
 | `QuestionSelector` | Feasible candidate selection, protected exposure rules, versioned deterministic ordering | Score mutation, prose authoring at scoring time |
 | `ExerciseFactory` | A reviewed concrete item from a descriptor/demand vector | Relabeling fixed tasks as harder, evidence reduction |
 | `ResponseValidator` | Structural validity and actionable entry errors | Inferring semantic correctness from formatting alone |
-| `ExerciseEvaluator` | Versioned deterministic scoring contract | Network/model evaluation of protected/scored answers |
+| `ExerciseEvaluator` | Execute pinned deterministic, rubric-AI or composite component protocols; validate results and apply the declared aggregate rubric | Silently changing authority, rubric or model for an accepted response; publishing an unvalidated grade |
+| `AICapabilityRouter` / provider adapters | Match task, language, context size, connectivity, service configuration, cost and latency budget to an available local or cloud capability | Reinterpreting saved grades, bypassing spend limits, treating source/answer instructions as application commands |
+| `EvaluationJobRepository` | Durable AI request identity, dispatch/retry state, result receipt and reconciliation | Claiming a remote request was cancelled or never charged without provider evidence |
 | `AttemptRepository` | Append/idempotent commit, immutable original records, conflict detection | Silently replacing old responses or scoring versions |
 | `SessionRepository` | Run envelope, reservation, checkpoint, commit journal | Regenerating a different question into an old draft |
 | `EvidenceProjector` | Deterministic reduction of eligible records and corrections | Writing a new answer score, awarding XP by side effect |
@@ -2677,15 +2794,15 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This ch
 
 <a id="core-003"></a>
 
-**CORE-003 — Pure boundaries.** Question generation, response validation, scoring, evidence reduction and next-item selection shall accept explicit value inputs and policy versions. They shall not read `Date()`, the global locale, `UserDefaults`, a network response or random state internally. The coordinator supplies the clock, saved locale, seed and policy. This is necessary for replay and independent tests.
+**CORE-003 — Explicit inputs and replay boundaries.** Deterministic generation, structural validation, result validation, evidence reduction and next-item selection accept explicit value inputs and policy versions. The coordinator supplies clock, saved locale, seed and configuration. AI generation, teaching and grading run through explicit asynchronous provider adapters supplied with immutable request context and a pinned protocol. Network/model output is an external result to validate and persist, not hidden global state in a pure function. A seed or temperature setting does not make a model reproducible: replay a saved accepted result without calling the provider again. Contract tests may substitute an adapter; live-provider quality and latency require separate evidence.
 
 <a id="core-004"></a>
 
-**CORE-004 — Concurrency.** UI state stays on MainActor. Bounded expensive catalog construction, content decoding and bulk evidence projection execute away from the UI actor using immutable snapshots. Persistent models are accessed through their owning context/actor, not sent between actors. Returned view projections are immutable `Sendable` values. Cancellation cancels disposable computation; it does not interrupt a transaction halfway through an acknowledged save.
+**CORE-004 — Concurrency.** UI state stays on MainActor. Bounded expensive catalog construction, content decoding and bulk evidence projection execute away from the UI actor using immutable snapshots. Persistent models are accessed through their owning context/actor, not sent between actors. Returned view projections are immutable `Sendable` values. Provider calls, encoding, validation and durable file operations run away from the UI actor; no live persistence model crosses actors. Cancellation cancels disposable computation; it does not interrupt a transaction halfway through an acknowledged save. Every returned result is checked against the captured run, slot, response revision, writer generation and job identity before publication. Once committed, adopt its receipt even if the waiting UI task was cancelled; a later UI owner can render it safely.
 
 <a id="core-005"></a>
 
-**CORE-005 — Versioned interfaces.** Codable runtime payloads declare their own schema version. Store schema version, content version, scorer version, selection policy version and presentation version are separate fields. Increasing one must not silently imply the others changed. Unsupported future payloads produce a recoverable unavailable state, never a best-guess decoder.
+**CORE-005 — Versioned interfaces.** Codable runtime payloads declare their own schema version. Store schema version, content version, evaluator protocol/scorer version, rubric version, provider/model identity, selection policy version and presentation version are separate fields. Increasing one must not silently imply the others changed. Unsupported future payloads produce a recoverable unavailable state, never a best-guess decoder.
 
 ## 2. Session identity and launch contract
 
@@ -2714,7 +2831,9 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This ch
 | `challengePolicy` | adaptive or explicit editorial band plus override scope |
 | `timingPolicy` | untimed, elapsedOnly or eligible timedFluency target; independent of challenge |
 | `confidencePolicy` | requiredInline, optionalInline, suppressed |
-| `assistancePolicy` | permitted hint stages, solution reveal policy and effect on eligibility |
+| `assistancePolicy` | permitted authored/AI hint stages, solution reveal policy and effect on eligibility |
+| `evaluationPolicy` | deterministic, rubricAI, composite or selfCheck; contract/rubric versions, evidence eligibility and protected protocol. Composite pins component IDs/authorities, dependencies, weights, required resolution and aggregate rule |
+| `capabilityPolicy` | configured service/local capabilities, permitted fallback protocols, bounded latency/retry/spend policy; exact executed route retained per job |
 | `requestedBudget` | Time estimate or explicit count, plus actual stop policy |
 | `planID`, `blockID`, `missionID`, `assessmentFormID` | Optional stable links; only valid combinations allowed |
 | `sourceSetID`, `sourceVersionRefs` | Optional local references; not copied into ordinary analytics |
@@ -2751,11 +2870,13 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This ch
 |---|---|---|---|
 | `preparing` | Short progress indication; cancel available | Cancel disposable work, queue safe close | No item may be answered until its identity is committed; retain any previous acknowledged checkpoint |
 | `answering` | Problem, givens, response editor, allowed hints, inline confidence | Edit, requestHint, submit, skip, revealForLearning, pause | Debounced draft + immediate lifecycle checkpoints |
-| `submitting` | Same problem; response locked; “Saving answer…” only if perceptible delay | Queue safe close; no second submit/Next | Durable commit intent and idempotent attempt write; close reconciles or retains a durable recoverable intent |
+| `submitting` | Same problem; response locked; short saving indication | Queue safe close; no second submit/Next | Freeze response and evaluation intent durably before dispatch or attempt write |
+| `evaluating` | Original response plus “Evaluating your answer…”; component status where useful | Cancel pending evaluation, pause/saveAndClose; no duplicate dispatch | Component jobs identify exact input, contract/provider/model/rubric; accepted subresults retained while others wait; no final aggregate/evidence yet; waiting excluded from solving time |
+| `awaitingEvaluation(reason)` | Saved answer with unresolved components identified; no invented final score | Retry unresolved components, use approved fallback, saveAndClose; choose self-check only where allowed | Preserve exact accepted subresults, pending jobs and remote identities; unknown outcome is explicit; no regrading completed components on retry |
 | `feedback` | Original question/answer plus concise correction/explanation | Next, deeperExplanation, reflect, retrySimilar, bookmark, pause | Attempt already durable; ancillary actions save independently |
 | `protectedAcknowledgement` | Original response plus “Answer saved”; no correctness | Next, report, pause | Protected attempt durable; exact key remains unavailable |
 | `referenceComparison` | Original response locked; reference revealed; self-rating controls | Rate, saveSelfCheck, pause | Reveal persisted; independent status cannot be restored by closing |
-| `savingSelfCheck` | Comparison retained while committing | Queue safe close | Separate rating record; no deterministic correctness synthesized |
+| `savingSelfCheck` | Comparison retained while committing | Queue safe close | Separate rating record; no evaluated correctness synthesized |
 | `optionalReflection` | Inline editable reflection below feedback | Save, dismiss, edit reason, pause | Independent supplemental record; score immutable |
 | `explicitReflection` | Metacognition task with purpose and original answer context | Save, “Not sure yet”, pause, saveAndClose | Allowed only under explicit task policy; never blocks safe exit |
 | `paused(previous)` | Resume, Save & close, optional End session | Resume, saveAndClose, end | Clock stopped; interruption reasons recorded |
@@ -2765,7 +2886,13 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This ch
 
 <a id="run-008"></a>
 
-**RUN-008 — Ordinary deterministic answer.** Submit validates supported syntax, required fields and required confidence; freezes the exact response; evaluates against the pinned contract; writes an authoritative attempt only for a scoreable result; then reveals inline feedback. The problem does not disappear. Empty, unparseable or unsupported notation stays editable with clarification and creates no objective attempt. A well-formed wrong quantity/unit or requested-representation error is judged by the declared semantic rubric; it is not automatically a free validation retry. A zero-credit valid answer is a legitimate committed attempt. An evaluator's `needsClarification` stays in the answer phase without a score; uncovered explanatory prose may enter a clearly labeled self-check path under its declared authority, never an invented objective zero. A second click while submitting is ignored by command identity, not merely button disabling.
+**RUN-008 — Answer evaluation.** Submit validates structural requirements and confidence, freezes the exact response, then executes its declared deterministic, rubric-based AI or composite contract. Use deterministic evaluation for suitable exact tasks and semantic AI grading for short responses, explanations and source-grounded answers with a validated rubric. Correct paraphrases need not appear in a fixed alias list. A reference answer alone is not a complete rubric: the protocol specifies criteria, acceptable alternatives, partial credit, contradictions, evidence requirements and when judgment is insufficient. Only a validated result becomes a committed grade and inline feedback; the problem and original answer remain visible.
+
+A composite/hybrid item can combine an exact numeric/interpreter/selection component with an AI-graded explanation. Before response, pin each component’s ID, evaluator/contract, input dependencies, weight, required/optional status and outcome policy, plus an explicit versioned aggregate rule for credit, correctness and evidence eligibility. Do not force exact components through AI merely because another component needs semantic grading. Persist exact subresults independently while prose evaluation is pending. Ordinary UI may show an acknowledged component result with “Explanation evaluation pending” only when the item’s display policy allows it; it must not label the whole answer fully correct, zero-credit or complete. Protected component results remain hidden.
+
+No final aggregate grade, graded completion or proficiency/evidence contribution is published until every component required by the aggregate rule has a validated terminal result. A timeout/uncertain judgment is unresolved, not a zero or omitted denominator. Optional or self-reported components follow their declared role and cannot silently become evaluated credit. Once ready, compute the aggregate from the exact referenced component receipts and pinned rule, then commit it once through DATA-010.
+
+Empty or structurally malformed input stays editable with actionable guidance. A well-formed wrong answer, including a semantic unit error or reversed explanation, is graded under the rubric rather than granted unlimited free validation retries. Clarification means insufficient input to apply the rubric, not provider failure or low confidence in a difficult judgment. Provider timeout, unsupported language/context or invalid output preserves the locked answer in awaiting evaluation without a zero score. Offer an approved equivalent local/cloud evaluator, later retry, or an explicit self-check choice where appropriate. A second Submit is deduplicated by command/job identity, not only button disabling. A learner may request a grade review after feedback; the review appends a disposition and never edits the original answer or grade.
 
 <a id="run-009"></a>
 
@@ -2777,19 +2904,19 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This ch
 
 <a id="run-011"></a>
 
-**RUN-011 — Protected feedback.** During protected checks, show no per-item correctness, score, decisive hint, key, solution-bearing chart summary or error diagnosis. On completion, show dimension summaries and concept guidance. Reusable protected exact keys remain hidden in ordinary history. Practice this skill launches a separate instructional variant. Exact feedback may be exposed only for a separately designated retired/disclosed form, with a durable exposure event that permanently excludes that form from future protected selection; this is not the default release flow.
+**RUN-011 — Protected evaluation and feedback.** Protected checks may use deterministic evaluation or a validated consistent AI evaluator protocol. Pin its rubric, model/provider configuration, language, scoring scale and uncertainty/review policy for the form; use only benchmarked compatible fallbacks. Provider/model drift or loss of capability pauses evaluation or records an ungraded outcome under the form policy, rather than silently changing measurement mid-form. AI evaluation can receive the relevant response, givens and restricted rubric through the configured service. Keep learner-facing feedback separate from evaluator context. During protected checks, show no per-item correctness, score, decisive hint, key, solution-bearing chart summary or error diagnosis. On completion, show dimension summaries and concept guidance. Reusable protected exact keys remain hidden in ordinary history. Practice this skill launches a separate instructional variant. Exact feedback may be exposed only for a separately designated retired/disclosed form, with a durable exposure event that permanently excludes that form from future protected selection; this is not the default release flow.
 
 <a id="run-012"></a>
 
-**RUN-012 — Reference/self-check.** Submit locks the recalled answer and persists the reveal state before showing a reference. The learner chooses Matched, Partly or Not yet. Display neither “Correct” nor “100%” for that self-rating. A supplied model reference does not become a factual scoring authority. A learner may pause after reveal and resume the same revealed state; reopening must never restore independent eligibility. Unrated revealed responses remain incomplete self-checks, not wrong answers.
+**RUN-012 — Reference/self-check.** Submit locks the recalled answer and persists the reveal state before showing a reference. The learner chooses Matched, Partly or Not yet. Display neither “Correct” nor “100%” for that self-rating. A supplied model reference does not by itself become a grading authority. Rubric-based AI grading is a separate supported route, clearly labeled as AI evaluated and validated under RUN-008; do not force source recall or explanatory answers into self-check merely because they are prose. A learner may pause after reveal and resume the same revealed state; reopening must never restore independent eligibility. Unrated revealed responses remain incomplete self-checks, not wrong answers.
 
 <a id="run-013"></a>
 
-**RUN-013 — Hint progression.** `nextHintIndex` starts at zero. Requesting a hint reveals that stage once and appends an assistance event with stage, clock offset and content version. Repeated taps while the disclosure is in flight do not reveal multiple stages accidentally. The next button says Next hint while stages remain. The final action is See worked solution, never a disabled dead end. Solution reveal creates a revealed/not-independently-scored outcome; it must not submit a fabricated answer. A fresh repair question is a new slot with its own evidence eligibility.
+**RUN-013 — Hint progression.** Authored and AI tutoring hints share the same durable assistance/exposure ledger. Save the exact accepted AI hint, its grounding references and provider/model/protocol receipt before showing it; retries/relaunch replay that hint rather than generating a different stage. Failed or cancelled requests do not count as help, while any revealed substantive hint does. `nextHintIndex` starts at zero. Requesting a hint reveals that stage once and appends an assistance event with stage, clock offset and content version. Repeated taps while the disclosure is in flight do not reveal multiple stages accidentally. The next button says Next hint while stages remain. The final action is See worked solution, never a disabled dead end. Solution reveal creates a revealed/not-independently-scored outcome; it must not submit a fabricated answer. A fresh repair question is a new slot with its own evidence eligibility.
 
 <a id="run-014"></a>
 
-**RUN-014 — Skip.** Skip creates a durable skipped outcome with reason optional. It has no deterministic credit denominator or proficiency weight. The selection/exposure ledger still records the displayed item. Three skips are not automatically three incorrect answers. Repeated skipping may offer an easier or different activity, but never imposes a hidden skill penalty.
+**RUN-014 — Skip.** Skip creates a durable skipped outcome with reason optional. It has no graded credit denominator or proficiency weight, whether the available evaluator is deterministic or AI. The selection/exposure ledger still records the displayed item. Three skips are not automatically three incorrect answers. Repeated skipping may offer an easier or different activity, but never imposes a hidden skill penalty.
 
 <a id="run-015"></a>
 
@@ -2797,7 +2924,7 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This ch
 
 <a id="run-016"></a>
 
-**RUN-016 — Ending.** End session is distinct from completing all planned work. Completed attempts stay; unanswered slots have no score. The summary says “Ended after 3 of 10 questions,” not Completed. Unused already committed mixed-bank reservations remain consumed under the no-replacement policy. End is not Delete. Ending an unfinished protected check saves its accumulated evidence and exposure; it never rerolls unseen difficulty simply because the learner closes it.
+**RUN-016 — Ending.** End session is distinct from completing all planned work. Completed attempts stay; unanswered slots have no score. The summary says “Ended after 3 of 10 questions,” not Completed. Unused already committed mixed-bank reservations remain consumed under the no-replacement policy. End is not Delete. Ending an unfinished protected check saves its accumulated evidence and exposure; it never rerolls unseen difficulty simply because the learner closes it. Submitted answers awaiting AI evaluation are listed separately from graded/completed work and retain their jobs/context. A later accepted grade attaches to the original ended run without silently changing its stop reason or planned count.
 
 ## 4. Item checkpoint contract
 
@@ -2807,7 +2934,11 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This ch
 
 <a id="data-002"></a>
 
-**DATA-002 — Evaluation identity.** Pin `evaluationContractID`, its digest and scorer version. A saved item is evaluated with that contract while valid. Updating the app must not silently score a displayed old question with a new key. If the old contract is known invalid, place the slot in unavailable/invalidated and preserve the draft; offer an unscored explanation and replacement according to mode. If the old valid evaluator cannot run, do not guess a score.
+**DATA-002 — Evaluation identity.** Pin `evaluationContractID`, contract digest, authority and scorer/protocol version. AI evaluation additionally pins rubric ID/version/digest, provider and model identifier/revision when exposed, request-template version, output schema, relevant generation settings, locale and source-context digests. Record unavailable model revision information honestly; never invent reproducibility from a marketing name. Retain the permitted exact context/rubric needed to explain the saved decision and the accepted structured criterion results, evidence references and learner-facing rationale. Do not require hidden model reasoning.
+
+For composite evaluation, retain a parent evaluation-plan digest and stable component IDs, each component’s authority/contract/input-dependency digests, accepted receipt or explicit pending state, and the aggregation rule/version. The aggregate receipt names the exact component result IDs/digests it used; a provider cannot replace an exact subresult or silently change the component weights.
+
+An already accepted result replays from its immutable receipt even if the provider is offline or retired. An unevaluated saved response uses its still-valid pinned protocol or an explicitly compatible, recorded fallback. A service configuration/model change cannot silently regrade history. Invalidated contracts preserve the original work and use a recorded correction, replacement or recovery policy. If no suitable evaluator is available, save the ungraded answer and explain the available next action.
 
 <a id="data-003"></a>
 
@@ -2816,7 +2947,7 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This ch
 | Field group | Required values |
 |---|---|
 | Identity | sessionID, slotID, stable attemptID, snapshotID/digest, reservation path index |
-| Phase | answering/feedback/comparison/reflection state, exact reveal flags, committedAttemptID |
+| Phase | answering/evaluating/awaitingEvaluation/feedback/comparison/reflection state, exact reveal flags, committedAttemptID |
 | Response | typed draft, original text, selected IDs, ordering/evidence map/trace state; response schema version |
 | Confidence | selection or absent, invitation policy, response semantic hash at selection, lock status |
 | Assistance | each revealed hint ID, solution/reference reveal, assistance stage index, interrupted assistance UI state |
@@ -2827,11 +2958,12 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This ch
 | Feedback | immutable result/reference and policy-permitted explanation snapshot, expansion state optional; protected checkpoints omit keys, decisive explanation and exportable per-item evaluator internals |
 | Reflection | trigger/inferred suggestion/learner reason/note/confirmation status/version |
 | Selection | consumed candidate IDs, semantic fingerprints, actual descriptor path, policy decisions and any fallback reason |
+| Evaluation | parent evaluation/job/command ID, frozen response/context digest; component IDs with input/contract digests, accepted receipts or queued/dispatch/pending state, remote request IDs, retry/deadline/spend state; aggregate-rule digest, required-component readiness and pending review scope |
 | Save | checkpoint revision, last acknowledged wall-clock date, commit-intent phase |
 
 <a id="data-004"></a>
 
-**DATA-004 — Time accounting.** Use a monotonic clock within a process. Add each active segment once; do not infer active duration from wall-clock time across a relaunch. Accumulated duration survives pause/close. Background, manual pause and ownership transfer stop active measurement. Returning to foreground starts a new answer-time segment only after explicit run resumption into an eligible visible answering state. Paused, feedback, comparison, reflection, loading and summary phases never accrue answer-solving time; separately labeled session-use time may include other active learning phases. Foregrounding does not reset earlier time. An unknown interval caused by termination is marked interrupted/unknown and excluded from clean speed evidence. The learning UI may show a measured lower bound if the last segment could not be recovered, with no false precision.
+**DATA-004 — Time accounting.** Use a monotonic clock within a process. Add each active segment once; do not infer active duration from wall-clock time across a relaunch. Accumulated duration survives pause/close. Background, manual pause and ownership transfer stop active measurement. Returning to foreground starts a new answer-time segment only after explicit run resumption into an eligible visible answering state. Paused, AI/provider evaluation wait, feedback, comparison, reflection, loading and summary phases never accrue answer-solving time; separately labeled session-use time may include other active learning phases. Foregrounding does not reset earlier time. An unknown interval caused by termination is marked interrupted/unknown and excluded from clean speed evidence. The learning UI may show a measured lower bound if the last segment could not be recovered, with no false precision.
 
 Persist confidence-control interaction intervals under EVD-009, union overlapping intervals and subtract them once from answer duration. Keep them in active sitting time for budget accounting. Do not claim that UI events measure private deliberation or pure thinking time. Timed fluency suppresses confidence; other conditions retain their explicit measurement scope.
 
@@ -2841,7 +2973,7 @@ Persist confidence-control interaction intervals under EVD-009, union overlappin
 
 <a id="data-006"></a>
 
-**DATA-006 — Save guarantees.** Autosave drafts after a proposed 500 ms idle debounce and immediately on explicit pause, background transition, save/close, navigation away or ownership transfer where the OS permits. “Saved” means an acknowledged durable write. A sudden crash can lose unacknowledged keystrokes; the interface must not claim otherwise. Explicit Save & close flushes the current draft and all pending commit work before dismissal. If that fails, keep the screen and input intact.
+**DATA-006 — Save guarantees.** Autosave drafts after a proposed 500 ms idle debounce and immediately on explicit pause, background transition, save/close, navigation away or ownership transfer where the OS permits. “Saved” means an acknowledged durable write. A sudden crash can lose unacknowledged keystrokes; the interface must not claim otherwise. Explicit Save & close flushes the current draft and local commit/job state before dismissal. It need not wait for an external AI result: a durably saved pending job uses the truthful waiting state in RUN-022. If that fails, keep the screen and input intact.
 
 <a id="data-007"></a>
 
@@ -2849,7 +2981,7 @@ Persist confidence-control interaction intervals under EVD-009, union overlappin
 
 <a id="data-008"></a>
 
-**DATA-008 — Resume algorithm.** Resolve the stored run, verify its schema and ownership, reconcile pending commits, verify the current snapshot digest, apply content invalidation records, restore exact slot/phase/draft/assistance/time, then enable controls. Do not regenerate the current item from only seed+index. A committed slot resumes its exact policy-permitted phase: ordinary feedback, protected acknowledgement, reference comparison, reflection or summary, unless the previously acknowledged transition activated the next slot. Apply the display/exposure policy before constructing any visible or accessibility output. An unanswered draft can never be attached to a different item because of a deduplication fallback.
+**DATA-008 — Resume algorithm.** Resolve the stored run, verify its schema and ownership, reconcile pending commits and evaluation jobs without blindly redispatching a remotely uncertain request, verify the current snapshot digest, apply content invalidation records, restore exact slot/phase/draft/assistance/time, then enable controls. Do not regenerate the current item from only seed+index. A committed slot resumes its exact policy-permitted phase: ordinary feedback, protected acknowledgement, reference comparison, reflection or summary, unless the previously acknowledged transition activated the next slot. Apply the display/exposure policy before constructing any visible or accessibility output. An unanswered draft can never be attached to a different item because of a deduplication fallback.
 
 <a id="data-009"></a>
 
@@ -2859,22 +2991,34 @@ Persist confidence-control interaction intervals under EVD-009, union overlappin
 
 <a id="data-010"></a>
 
-**DATA-010 — Idempotent commit protocol.** The coordinator executes this sequence for deterministic attempts:
+**DATA-010 — Idempotent evaluation and commit protocol.** Deterministic, AI and composite grading share the durable response→component results→aggregate attempt→feedback contract. A single-evaluator item is a one-component plan. Reference/self-check keeps its separately declared unscored lifecycle; self-rating is never synthesized into an evaluated component grade.
 
 ```text
 submit(commandID, ownershipGeneration):
   reject stale ownership or incompatible phase
-  validate response and required confidence
-  freeze response + timing + assistance + snapshot digest
-  result = evaluate(frozenResponse, pinnedContract)
-  if needsClarification: retain editable draft, show entry guidance, return
-  if invalidItem: retain original work, quarantine, enter unavailable, return
-  if selfReported/unsupportedProse:
-      if protected: preserve ungraded response, apply protected recovery policy, return
-      else: enter declared self-check path, return
-  receipt = makePolicySafeCommitPayload(result, assessmentProtection)
-  persist prepared CommitIntent(stableAttemptID, payloadDigest, receipt)
-  appendOrFindIdenticalAttempt(stableAttemptID, payloadDigest)
+  validate structural response requirements and required confidence
+  freeze response + timing + assistance + snapshot/context digests
+  persist evaluation intent(stableAttemptID, planDigest, componentBindings, aggregateRule)
+  for each unresolved graded component in declared dependency order:
+      preserve any previously accepted matching component receipt
+      if required dependency is unresolved: retain component pending; continue
+      if component.authority == rubricAI:
+          persist job/dispatch identity bound to component, input and pinned protocol
+          await eligible configured provider within component and parent budgets
+          on unavailable/timeout/unknown outcome: persist pending state; continue
+          validate output, criterion bounds, grounding and protocol binding
+          on insufficient judgment: preserve unresolved component; continue
+      else if component.authority == deterministic:
+          evaluate exact component input against its pinned contract
+          on clarification/invalid item: retain subresults; apply declared policy; continue
+      persist validated component receipt with input/contract/result digests
+  if any aggregate-required component lacks a validated terminal result:
+      persist awaitingEvaluation with accepted subresults + unresolved jobs
+      publish no final aggregate grade or graded evidence; return
+  aggregate = applyPinnedRule(exactComponentReceiptSet)
+  validate aggregate bounds, correctness and eligibility against declared rule
+  persist aggregate receipt + prepared CommitIntent(stableAttemptID, digest)
+  appendOrFindIdenticalAttempt(stableAttemptID, digest)
   persist checkpoint(phase = feedback or protectedAcknowledgement,
                      committedAttemptID = stableAttemptID)
   acknowledge intent
@@ -2882,15 +3026,27 @@ submit(commandID, ownershipGeneration):
   render the saved phase through its protected/self-check/practice display policy
 ```
 
-The journal and evidence records may be in different configured stores. Do not assume SwiftData offers an atomic transaction across disjoint stores. The durable intent, stable attempt ID and reconciliation procedure provide recoverability. Where all records share one store, one transaction may replace the two-phase persistence without changing the observable contract.
+Independent components may execute concurrently within the plan’s declared dependency and spend limits. Component durability is not final-attempt acknowledgement. A failed prose request does not discard, recompute or overwrite a valid exact subresult; retry only unresolved components and reuse the accepted receipts whose dependency digests still match. Aggregate computation is deterministic over accepted receipts and the pinned rule, even when some receipts came from AI. No partial-result renormalization, assumed missing-component zero or guessed full credit is allowed.
 
-The protected receipt stores the response, evaluator/contract reference, eligibility and the minimum versioned internal aggregate inputs needed for recovery. Solution-bearing `expectedAnswerSummary`, hidden canonical answers and worked explanations cannot be copied into generic checkpoint/journal/history payloads. Keep internal per-item outcome inputs behind the protected repository's access policy; user-facing exports use an opaque receipt/reference plus permitted aggregate results, not that internal object. Export/restore may require the verified local evaluator to rebuild restricted aggregates. This prevents accidental disclosure through nested Codable records; it does not claim cryptographic secrecy against an owner inspecting a fully offline executable.
+Each asynchronous stage uses immutable values and rechecks job identity, byte/revision CAS and writer generation at durable acceptance. A valid late result may be retained for its original frozen job after navigation/cancellation, but cannot overwrite a changed response or another slot. Cancellation applies to the selected pending jobs/components and leaves already accepted component receipts intact. Cancellation that wins before local result acceptance records a cancelled job; a later remote receipt stays unapplied unless that frozen job is explicitly resumed. If durable acceptance wins first, adopt its result despite cancellation. Switching to an allowed self-check path durably supersedes the grading job so a late callback cannot turn a revealed self-rating into independent evaluated evidence. No partial streamed output is a final grade. A rename accepted but not yet verified is retained for recovery; learner feedback waits for the required durable acknowledgement.
 
-A protected task whose response cannot be judged under its approved authority does not switch to reference/self-check in the middle of the form. Clarification may request supported notation without exposing a correct answer. If authority remains insufficient, preserve the authentic ungraded response, record no scored coverage, and use the form's preauthorized replacement/cap policy or an honest unavailable state. Do not create a zero score or reveal a reusable key to resolve evaluator uncertainty.
+Use provider idempotency keys and status/result lookup where supported. Persist request identity before dispatch. A timeout or process death can leave the remote outcome unknown: reconcile first; do not promise exactly-once external billing when the provider cannot guarantee it. Record every bounded retry under the same logical job, with backoff and a maximum attempt/spend budget. One locally accepted result wins per component job, and one aggregate commit wins per attempt; duplicate or conflicting callbacks are retained/rejected by those identities and cannot award again. A user-requested reevaluation is a separate linked review job, not a transport retry that hunts for a higher score.
+
+Clarification/invalid-input outcomes close the evaluation revision without an attempt or score. Further edits create a new response revision and job binding; stale callbacks remain attached to the old input. In a composite, preserve old receipts as history and reuse one for the new plan only when its full declared input/contract dependency digests are identical. Reevaluate changed components and their declared dependents, never silently rebind an accepted result to different input. When response/context is sufficient but judgment is uncertain, preserve it for compatible review rather than inviting answer changes under the same submitted identity.
+
+The job policy declares supported languages/context sizes, timeout, bounded retry count and cost/latency limits. Show the chosen service and useful waiting/retry state; enforce configured spend limits without an approval prompt for every normal request. If a limit or capability is unavailable, offer a suitable approved local/less costly route, save for later, or change the configured limit explicitly. Local processing enables reasonable offline practice; it does not imply every cloud model can run offline. Cancel stops queued work and attempts cancellation of in-flight requests. Explain any known request already sent or possible charge; retain the answer and any committed receipt. Never equate a UI cancellation with deletion of remote work.
+
+Requested AI grading/tutoring may send the relevant answer, source passages and rubric through the normally configured service. Credentials stay in the platform credential store; request logs omit secrets and unnecessary source/answer copies. Treat learner/source text and model output as data: delimit roles, constrain output schemas and lengths, reject unsupported references/actions, and never execute an instruction embedded in an answer or retrieved source. This protects grading integrity without forbidding useful source-grounded AI.
+
+The journal and evidence records may be in different configured stores. Do not assume SwiftData offers an atomic transaction across disjoint stores. Durable intents, stable IDs and reconciliation provide recoverability. Where records share one store, one transaction may replace the two-phase persistence without changing the observable contract.
+
+A protected receipt retains the response, evaluator/rubric/provider reference, eligibility and minimum versioned internal outcome inputs needed for recovery. Solution-bearing expected answers and worked explanations stay out of generic checkpoints, history and user-facing exports. Restricted evaluator context may be processed by the configured AI service under the form protocol; learner exports use an opaque receipt/reference plus permitted aggregate results. Apply protection before text, accessibility or export construction. This is a disclosure policy, not a claim of cryptographic secrecy against an owner inspecting a local executable.
+
+A protected response that cannot be judged under its validated authority remains authentic and ungraded; it does not switch to answer-revealing self-check mid-form. Clarification may request supported input without exposing a correct answer. Apply the form's compatible fallback, delayed evaluation, replacement/cap or unavailable policy without inventing a zero score.
 
 <a id="data-011"></a>
 
-**DATA-011 — Crash boundaries.** Before intent persistence, resume the last acknowledged draft. After intent but before attempt write, retry the same attempt ID. After attempt write but before checkpoint update, find the identical attempt and advance the checkpoint without evaluating/awarding again. After checkpoint update but before UI feedback, render the saved phase through its display policy: a protected commit produces acknowledgement, never ordinary answer feedback; self-check restores reveal/comparison/rating state. At no boundary may Next create a duplicate attempt or the same response appear as both scored and unscored without an explicit correction record.
+**DATA-011 — Crash boundaries.** Before intent persistence, resume the last acknowledged draft. After an AI job is durable but before dispatch, resume or cancel that job; after dispatch with unknown remote outcome, reconcile it before retrying. After a component result is saved, replay it without another evaluator call and resume only unresolved components. After all required components and the aggregate receipt are saved, finish committing that exact aggregate without regrading. Provider result receipt and local attempt acknowledgement are distinct boundaries. After intent but before attempt write, retry the same attempt ID. After attempt write but before checkpoint update, find the identical attempt and advance the checkpoint without evaluating/awarding again. After checkpoint update but before UI feedback, render the saved phase through its display policy: a protected commit produces acknowledgement, never ordinary answer feedback; self-check restores reveal/comparison/rating state. At no boundary may Next create a duplicate attempt or the same response appear as both scored and unscored without an explicit correction record.
 
 <a id="data-012"></a>
 
@@ -2910,7 +3066,7 @@ A protected task whose response cannot be judged under its approved authority do
 
 Commit the consumed position, chosen descriptor/snapshot, slot and decision record atomically within the local reservation store. The same decision ID must return the same chosen item after retries. Cancelling before durable acceptance consumes nothing; cancelling afterwards leaves the accepted identity consumed even if never displayed. Consumption and actual exposure are separate records. Advisory prewarming may prepare at most two unreserved candidates; it confers no lease and consumes nothing. An override may invalidate that advisory work. A presented or committed slot is immutable; an explicit Replace marks it replaced/consumed and reserves a distinct linked next slot. Already reserved unused fixed-block items remain consumed if replaced or abandoned. Protected adaptation follows a versioned preauthorized form policy, never an ad hoc easier item.
 
-Maintain run-wide semantic exclusions across epoch boundaries so a quiz cannot repeat itself. Check capacity and finite termination before accepting a fixed requested block; for adaptive delivery, validate current feasibility and disclose later eligibility/exhaustion limits without inventing a completed count. The selector returns explicit failures; the coordinator cannot relax truth, protected exposure, source privacy or exact no-repeat to make the screen continue. Failure to build a candidate never returns an already accepted identity to the front.
+Maintain run-wide semantic exclusions across epoch boundaries so a quiz cannot repeat itself. Check capacity and finite termination before accepting a fixed requested block; for adaptive delivery, validate current feasibility and disclose later eligibility/exhaustion limits without inventing a completed count. The selector returns explicit failures; the coordinator cannot relax truth, protected exposure, source access permissions or exact no-repeat to make the screen continue. Failure to build a candidate never returns an already accepted identity to the front.
 
 ## 6. Storage scopes and record additions
 
@@ -2926,33 +3082,38 @@ Maintain run-wide semantic exclusions across epoch boundaries so a quiz cannot r
 | `ExerciseSnapshotRecord` | snapshotID/content digest | Original learner-visible content and feedback; retained while referenced |
 | `ItemCheckpointEnvelope` | sessionID+slotID+revision | Current draft and timing/assistance state; latest acknowledged revision plus recovery predecessor |
 | `CommitIntentRecord` | stableAttemptID | Recoverable prepared/acknowledged write; compact acknowledged entries after reconciliation |
-| `AttemptEvidenceEnvelope` | attemptID+schemaVersion | Extends immutable attempt with band/demand/eligibility/context flags |
+| `EvaluationJobRecord` | parentEvaluationID + componentID + jobID/dispatch ordinal | Frozen component input/protocol/dependencies, pending state, remote identity and bounded retry/cost; retain accepted sibling receipts and compact redundant transport data after reconciliation |
+| `EvaluationResultReceipt` | resultID + parentEvaluationID/componentID | Accepted component grade, criterion rationale/evidence and evaluator/input/result digests; aggregate receipt references exact component results plus rule/version; retained with its attempt |
+| `GradeReviewRecord` | reviewID + originalAttemptID | Disputed component IDs/aggregate rule and concern, affected dependencies, linked reviewer/evaluator receipt and append-only resolution; no duplicate attempt or reward |
+| `AttemptEvidenceEnvelope` | attemptID+schemaVersion | Extends immutable attempt with band/demand/eligibility/context and evaluator-authority flags |
 | `EvidenceDispositionRecord` | dispositionID | Append-only include/exclude/correct/supersede event with a reason and version |
 | `ContentInvalidationRecord` | ruleID+contentVersion | Signed known-invalid item/family predicates; active until superseded |
 | `LearnerBandProjection` | objectiveID+modelVersion | Disposable reducer output; source evidence references and freshness |
 | `ReviewTaskRecord` | taskID | Due target, origin attempt, scheduling policy and task state |
-| `SavedStudySetRecord` | setID | Explicitly saved local question collection; no cache TTL |
+| `SavedStudySetRecord` | setID | Explicitly saved question collection in its declared storage scope; no cache TTL |
 | `SavedStudySetItemRecord` | setID+itemID | Pinned local question/reference snapshot and practice history link |
 | `LearnerBookmarkRecord` | bookmarkID | User’s private saved activity/question pointer and optional note |
 | `LocalNavigationState` | windowID | Valid per-destination paths for this app run; disposable |
 
 <a id="data-017"></a>
 
-**DATA-017 — Privacy partition.** Built-in attempt evidence retains the app’s existing explicit private-sync policy. New source/AI study snapshots, private reference answers, local citations, source excerpts, source-review drafts and saved study collections remain device-local in this release. Introduce local envelopes where necessary rather than inserting private blobs into a cloud-configured model by convenience. Session resume envelopes and ownership journals are device-local; shared durable history is committed via the recoverable protocol. Use stable ID references across stores, never an unsupported cross-store object relationship.
+**DATA-017 — Storage and AI processing scopes.** Separate local persistence, optional history/source sync, requested AI processing and diagnostic/research collection. They are different operations. A cloud AI feature may process relevant answers, source excerpts and rubric context using the learner’s configured service; no additional per-answer or per-run privacy approval is required for that ordinary requested operation. Offer clear service settings and an offline/local-only mode for availability or preference, with honest capability limits. Local processing exists to keep suitable learning tasks useful offline and responsive, not as a blanket prohibition on cloud intelligence.
+
+Keep resume ownership, transaction journals and credentials device-local. Persist instructional content/results in the declared collection/history scope; sync them only through the configured supported sync feature, never by accidentally adding a relationship to a cloud store. Cloud processing does not itself mean a collection is synced, and local storage does not mean its selected passages cannot be used by a requested AI feature. Use stable ID references across stores and recoverable commits; enforce account separation and platform file/credential protections.
 
 <a id="data-018"></a>
 
-**DATA-018 — Legacy scope.** Existing durable records keep their established policy and original bytes; this specification does not silently delete remote history or retroactively change cloud permissions. New model fields must not widen the content being uploaded. Migration inventories which legacy fields contain source-associated text and preserves their prior privacy treatment, with no new copying of local source indexes to durable/cloud records. New explicit local retention is not consent to sync or send a source to Question Writer.
+**DATA-018 — Legacy scope and service use.** Preserve existing durable records, original bytes and established sync behavior during migration. Inventory legacy source-associated fields and keep them readable; do not copy an entire source index to cloud storage as an implementation shortcut. Preserve existing explicit per-source Offline only/local-only restrictions during migration; generic service configuration does not erase them. Automatic applies to new or previously unset source policies. Ordinary use of a configured AI feature can transmit relevant retained context, including selected legacy answers/sources whose recorded policy permits that route. Recheck explicit source restrictions before dispatch. A restricted source can use a suitable local capability or remain pending until its source setting is explicitly changed; this is not a new per-run consent step. Explain this once in service configuration and accurately describe local, cloud and offline capabilities. Changing a sync setting is distinct from requesting AI processing; do not require a second consent ceremony for each supported feature action.
 
 <a id="data-019"></a>
 
-**DATA-019 — Content storage.** Public built-in snapshots may deduplicate by content digest. Source snapshots deduplicate only within the appropriate local privacy scope; do not leak equality across users/accounts or source-policy boundaries. Retain blobs while an attempt, unfinished run or saved collection references them. Cache eviction may remove only unreferenced disposable objects. Garbage collection uses a transactional reference scan and retryable tombstones, not file age alone.
+**DATA-019 — Content storage.** Public built-in snapshots may deduplicate by content digest. Source snapshots deduplicate only within the appropriate account/collection storage scope; do not leak equality across users/accounts or source-policy boundaries. Retain blobs while an attempt, unfinished run or saved collection references them. Cache eviction may remove only unreferenced disposable objects. Garbage collection uses a transactional reference scan and retryable tombstones, not file age alone.
 
-Temporary generated-set inventory expires for new launches after seven days. Explicit Save set creates a local durable collection retained until the learner deletes it. Expiry of temporary inventory does not delete a submitted attempt's permitted instructional snapshot or break an already accepted suspended run: that run pins the exact set members/assets required to finish its original contract. Continue remains available for that run, while New practice from the expired temporary set is unavailable unless it was explicitly saved. This pin does not make the set a permanent reusable collection. Once the run is ended/completed, retain only attempted-history, saved-collection and other genuine references; release unneeded unattempted inventory through garbage collection. Copy must distinguish “Temporary sets are available for new practice for 7 days” from retention of already saved answers/unfinished work. Explicit deletion still follows the linked-history/unfinished-work impact preview and user choice.
+Temporary generated-set inventory expires for new launches after seven days. Explicit Save set creates a durable collection in its declared storage scope, retained until the learner deletes it. Expiry of temporary inventory does not delete a submitted attempt's permitted instructional snapshot or break an already accepted suspended run: that run pins the exact set members/assets required to finish its original contract. Continue remains available for that run, while New practice from the expired temporary set is unavailable unless it was explicitly saved. This pin does not make the set a permanent reusable collection. Once the run is ended/completed, retain only attempted-history, saved-collection and other genuine references; release unneeded unattempted inventory through garbage collection. Copy must distinguish “Temporary sets are available for new practice for 7 days” from retention of already saved answers/unfinished work. Explicit deletion still follows the linked-history/unfinished-work impact preview and user choice.
 
 <a id="data-020"></a>
 
-**DATA-020 — Size and corrupt input.** Check sizes before decoding images, drawings, archives or generated payloads. Preserve existing source-import limits unless a separately tested change replaces them. A malformed snapshot reports one unavailable history item; it must not crash or block all history. Corrupt private media can be exported as original bytes for user recovery but is never executed. No arbitrary code from imported sources is run.
+**DATA-020 — Size and corrupt input.** Check sizes before decoding images, drawings, archives or generated payloads; bound AI request context, response bytes, nesting, criterion count and string lengths before parsing or rendering. Oversized or adversarial source/answer text must not change the grader’s instructions, execute code, expose credentials or silently truncate away decisive answer context. Use an explicit bounded context selection/chunking policy and retain its references; report insufficient context when faithful evaluation is impossible. Preserve existing source-import limits unless a separately tested change replaces them. A malformed snapshot reports one unavailable history item; it must not crash or block all history. Corrupt private media can be exported as original bytes for user recovery but is never executed. No arbitrary code from imported sources is run.
 
 ## 7. Readable history and correction policy
 
@@ -2962,11 +3123,11 @@ Temporary generated-set inventory expires for new launches after seven days. Exp
 
 <a id="data-022"></a>
 
-**DATA-022 — Complete review context.** Standard practice history shows original prompt, essential diagram/table/options, Your answer, Correct approach, Why, assistance used, and a fresh-practice action. Version/seed/scorer fields live behind Technical details. If original labels/representations are unavailable for a legacy record, explain the missing context and show whatever authentic content remains. Never hallucinate a diagram or label from an ID. Protected display restrictions apply before presentation and before accessibility text generation.
+**DATA-022 — Complete review context.** Standard practice history shows original prompt, essential diagram/table/options, Your answer, Correct approach, Why, assistance used, and a fresh-practice action. AI feedback clearly identifies AI evaluation and shows the rubric criteria, score and concise evidence-based explanation. Model/provider/rubric/version details live behind Technical details alongside version/seed/scorer fields. Replay the accepted result without a network call, and offer Request grade review with the original answer/context attached. If original labels/representations are unavailable for a legacy record, explain the missing context and show whatever authentic content remains. Never hallucinate a diagram or label from an ID. Protected display restrictions apply before presentation and before accessibility text generation.
 
 <a id="data-023"></a>
 
-**DATA-023 — Historical evidence correction.** Never update an original `AttemptRecord` response, timestamp, score, confidence or key in place as a content repair. Add `EvidenceDispositionRecord` with originalAttemptID, applicable defect rule/version, disposition, old result digest, optional corrected deterministic result, corrected scorer/contract version, rationale, createdAt and stable idempotency key. The effective view presents original and correction when relevant; aggregate calculations consume the effective projection. Corrections are not new learner attempts and earn no XP.
+**DATA-023 — Historical evidence correction.** Never update an original `AttemptRecord` response, timestamp, score, confidence or key in place as a content repair. Add `EvidenceDispositionRecord` with originalAttemptID, applicable defect rule/version, disposition, old result digest, optional corrected deterministic or validated AI result, corrected evaluator/rubric/provider receipt, rationale, createdAt and stable idempotency key. A learner-requested review freezes the original response and available question/source context, records the stated concern and uses an appropriate validated reviewer protocol. Show pending, confirmed, revised or unresolved status; no silent automatic replacement or repeated grading until a preferred score appears. For a composite review, identify the disputed components or aggregate rule. Reevaluate only affected components and declared dependents against the original frozen input; reuse unchanged accepted receipts without evaluator calls. Append revised component receipts and a disposition naming the new aggregate receipt, recomputed under the applicable recorded rule. A pending review does not partially overwrite the accepted aggregate; retain it or explicitly exclude it under the disposition policy until the replacement is complete. The effective view presents original and correction when relevant; aggregate calculations consume the effective projection. Corrections are not new learner attempts and earn no XP.
 
 <a id="data-024"></a>
 
@@ -2978,7 +3139,8 @@ Temporary generated-set inventory expires for new launches after seven days. Exp
 | Contradictory science interval prompt/key | Mark affected item invalid and exclude it from proficiency, accuracy denominators, speed and improvement claims. Do not infer what the learner would have answered to a corrected prompt. Preserve effort/participation history. |
 | Accepted equivalent state got partial credit | If the exact old accepted-equivalence contract confirms validity, append full-credit correction; preserve original raw response. |
 | `f`/`F` mathematical false acceptance | Correct only if exact original response and question roles are available under reviewed rules; mark prior result revised. No negative XP. |
-| Rigid prose matching rejected a reasonable answer | Do not bulk use a language model to invent authoritative corrected grades. Use reviewed explicit equivalence where decidable; otherwise withdraw disputed grading and offer self-check/new practice. |
+| Rigid prose matching rejected a reasonable answer | Reevaluate authentic retained responses with a validated semantic rubric and suitable AI or deterministic evaluator. Preserve the original result, attach model/rubric/provider provenance and append the justified correction. For batch repair, first validate representative disputed/unchanged controls and review uncertainty; missing question/source context produces unresolved/excluded evidence rather than an invented grade. |
+| Learner disputes an AI grade or a provider/rubric defect is discovered | Preserve the original accepted grade and request receipt; append a bounded review job and resolution. Use exact original input, disclose changed evaluator/rubric, and rebuild effective evidence once. Self-rating alone does not override evaluated correctness. |
 | Self-check was stored as objective correct/100% | Preserve original bytes and append a `selfReported` disposition when source/type provenance identifies the record; remove it from verified accuracy, proficiency and calibration. Retain effort, the original recall and the authentic learner rating. Unknown provenance remains unknown, not guessed from the displayed percentage. |
 | Difficulty was metadata-only | Preserve historical practice accuracy as historical where content is valid; mark demand provenance `legacyUncalibrated`. Exclude it from new band/proficiency claims that require actual reviewed demand. |
 | Resumed item lost timing/assistance | Mark timing provenance incomplete; exclude from clean speed and affected independent-evidence claims. Never reconstruct missing seconds or hints from guesses. |
@@ -3000,7 +3162,7 @@ Temporary generated-set inventory expires for new launches after seven days. Exp
 
 <a id="run-019"></a>
 
-**RUN-019 — Cold launch and recovery.** Ordinary cold launch opens Today root with Continue when a valid unfinished local session exists. Explicit validated deep links override that start location. Avoid automatically restoring a problematic deep path after a hang. Disposable navigation state includes a schema version and is pruned when referenced records no longer exist. No route string can force decoding arbitrary code or bypass source/privacy checks.
+**RUN-019 — Cold launch and recovery.** Ordinary cold launch opens Today root with Continue when a valid unfinished local session exists. Explicit validated deep links override that start location. Avoid automatically restoring a problematic deep path after a hang. Disposable navigation state includes a schema version and is pruned when referenced records no longer exist. No route string can force decoding arbitrary code, access another account’s sources or invoke an unconfigured service.
 
 <a id="run-020"></a>
 
@@ -3012,7 +3174,7 @@ Temporary generated-set inventory expires for new launches after seven days. Exp
 
 <a id="run-022"></a>
 
-**RUN-022 — Safe exit during work and failure.** Every visible phase accepts an exit intent. While disposable generation is running, cancel it and retain the previous acknowledged state; an accepted reservation remains consumed. During submit/self-check commit, queue close and reconcile the write. If a durable recovery intent exists but the destination store remains unavailable, permit close with a truthful “Answer waiting to finish saving” state and recover that exact intent on resume; do not show ordinary saved-success or erase the journal. Before any durable intent/checkpoint exists, retain the UI and offer Retry, Keep editing, Copy/Export recovery or explicitly Discard unsaved changes to the last acknowledged checkpoint. Discard never deletes committed attempts or a prepared intent. Explain exactly which unacknowledged text would be lost. These policies also govern dirty-work navigation and window closure; a convenience dismissal cannot bypass them.
+**RUN-022 — Safe exit during work and failure.** Every visible phase accepts an exit intent. While disposable generation is running, cancel it and retain the previous acknowledged state; an accepted reservation remains consumed. During submit/self-check commit, queue close and reconcile the write. During an AI evaluation wait, Save & close preserves the frozen answer/job and shows “Answer saved; evaluation pending.” Closing need not wait for a network response. Request cancellation is explicit and respects DATA-010’s possible remote completion/charge; a later result cannot navigate or replace the current screen. If a durable recovery intent exists but the destination store remains unavailable, permit close with a truthful “Answer waiting to finish saving” state and recover that exact intent on resume; do not show ordinary saved-success or erase the journal. Before any durable intent/checkpoint exists, retain the UI and offer Retry, Keep editing, Copy/Export recovery or explicitly Discard unsaved changes to the last acknowledged checkpoint. Discard never deletes committed attempts or a prepared intent. Explain exactly which unacknowledged text would be lost. These policies also govern dirty-work navigation and window closure; a convenience dismissal cannot bypass them.
 
 ## 9. Store and archive migration
 
@@ -3034,19 +3196,19 @@ Temporary generated-set inventory expires for new launches after seven days. Exp
 
 <a id="mig-005"></a>
 
-**MIG-005 — Archive version.** Current full archive version is 17 and current oldest restorable version is 14. Add a new archive version for the new records; do not reuse 17 with an incompatible payload. The provisional next value is 18, verified against the repository at implementation time. Round-trip tests must cover 14–17 into the new reader and new→empty-new installation. Do not promise new archives can be restored by an old app. Unknown future archives fail with a readable update-required message before mutating stores.
+**MIG-005 — Archive version.** The 4 September audit recorded full archive version 17 and oldest restorable version 14; verify the actual supported versions at implementation time. Add a new archive version for the new records; do not reuse 17 with an incompatible payload. The provisional next value is 18, verified against the repository at implementation time. Round-trip tests must cover 14–17 into the new reader and new→empty-new installation. Do not promise new archives can be restored by an old app. Unknown future archives fail with a readable update-required message before mutating stores.
 
 <a id="mig-006"></a>
 
-**MIG-006 — Export completeness and protection.** The full archive includes original attempts, disposition history, authentic review snapshots permitted by protection policy, saved local sets, notes/drawings, unfinished run envelopes and source links needed for honest reconstruction. User-facing exports never introduce reusable protected exact keys. A protected run can retain a verified evaluator reference; restoring without that evaluator yields unavailable/recovery rather than answer disclosure. Original source files follow the explicit export selection already supported; exports explain when only references/text are included. Record counts, stable identities and content hashes are independently validated.
+**MIG-006 — Export completeness and protection.** The full archive includes original attempts, disposition/grade-review history, accepted AI result receipts, recoverable pending jobs, authentic review snapshots permitted by protection policy, saved sets, notes/drawings, unfinished runs and source links needed for honest reconstruction. Credentials are excluded. User-facing exports never introduce reusable protected exact keys. A protected run retains its evaluator reference and policy-safe accepted receipt. Already accepted permitted summaries replay without contacting the provider; unevaluated protected work without a compatible evaluator stays unavailable/recoverable rather than disclosing an answer. Original source files follow the explicit export selection already supported; exports explain when only references/text are included. Record counts, stable identities and content hashes are independently validated.
 
 Apply protected per-field allowlists before export, migration fallback decoding and accessibility presentation, not just by hiding a final view. Import never relaxes a protection/exposure flag because a newer evaluator or presentation adapter is missing.
 
 <a id="mig-007"></a>
 
-**MIG-007 — Restore transaction.** Validate version, schema, sizes, hashes, references, privacy scope and conflicts into a temporary staging store. Present a preview with counts and conflicts. On commit, apply idempotent inserts/merges, preserve originals, then materialize files and verify references. If materialization fails, retain a recoverable transaction and do not announce complete restoration. A retry must not duplicate attempts, sets or correction notices. Restore into a nonempty store requires explicit, deterministic merge policy; no silent destructive replacement.
+**MIG-007 — Restore transaction.** Validate version, schema, sizes, hashes, references, account/storage scope, evaluation receipt bindings and conflicts into a temporary staging store. Present a preview with counts and conflicts. On commit, apply idempotent inserts/merges, preserve originals, then materialize files and verify references. If materialization fails, retain a recoverable transaction and do not announce complete restoration. A retry must not duplicate attempts, sets or correction notices. Restore into a nonempty store requires explicit, deterministic merge policy; no silent destructive replacement.
 
-Imported run envelopes enter suspended/read-only recovery first; they never acquire a writer merely by decoding. Exact writable continuation is permitted only when the original local owner identity can be verified and the installed ownership coordinator reconciles it with any existing run. A different-device or unverifiable-owner restore preserves original run/slot/provenance and draft for readable recovery, but offers a separate fresh practice run rather than mid-question continuation. It does not rebind a protected form into a second writable incarnation. Existing identical committed attempts deduplicate by identity/digest; conflicting run revisions are shown separately for recovery and never field-merged. The restore preview explicitly lists resumable versus read-only unfinished runs. This release deliberately does not add archive-based cross-device live handoff.
+Restored AI grades render their saved permitted receipts offline. Pending remote jobs require verified provider/account/request identity before lookup or redispatch; importing a backup cannot silently incur new model charges or regrade completed history. Imported run envelopes enter suspended/read-only recovery first; they never acquire a writer merely by decoding. Exact writable continuation is permitted only when the original local owner identity can be verified and the installed ownership coordinator reconciles it with any existing run. A different-device or unverifiable-owner restore preserves original run/slot/provenance and draft for readable recovery, but offers a separate fresh practice run rather than mid-question continuation. It does not rebind a protected form into a second writable incarnation. Existing identical committed attempts deduplicate by identity/digest; conflicting run revisions are shown separately for recovery and never field-merged. The restore preview explicitly lists resumable versus read-only unfinished runs. This release deliberately does not add archive-based cross-device live handoff.
 
 <a id="mig-008"></a>
 
@@ -3054,7 +3216,7 @@ Imported run envelopes enter suspended/read-only recovery first; they never acqu
 
 <a id="mig-009"></a>
 
-**MIG-009 — Cloud deployment.** Validate new durable metadata against a development container and then the production-equivalent schema before distributed sync testing. Additive local-only records must never appear in the durable configuration. Preserve existing entitlement/capability gates and explicit opt-in. Do not advertise cross-device feature readiness because an unsigned simulator build passes. No source excerpt or generated private payload enters CloudKit as an incidental consequence of a new relationship.
+**MIG-009 — Cloud deployment.** Validate new durable metadata against a development container and then the production-equivalent schema before distributed sync testing. Additive local-only records must never appear in the durable configuration. Preserve required platform entitlements, account controls and the configured sync choice. Do not advertise cross-device feature readiness because an unsigned simulator build passes. Source excerpts or generated content enter sync only through their declared supported storage scope. This sync rule does not prohibit transmission to the configured AI provider for a requested learning operation. Validate direct cloud and available on-device adapters independently of CloudKit; a Shortcut integration can supplement them but is not the sole AI architecture.
 
 <a id="mig-010"></a>
 
@@ -3079,8 +3241,14 @@ Imported run envelopes enter suspended/read-only recovery first; they never acqu
 | Corrected invalid interval item in history | Original response retained, invalid result excluded with reason, no negative XP or fake learner decline. |
 | iPad drawing opened/closed on Mac | Drawing payload hash unchanged. |
 | Export→empty restore→resume | Exact run/slot identity, phase and draft retained; writable resume requires verified original local ownership and content. Other-device/unverifiable-owner work is read-only recovery with separate fresh practice. |
-| Temporary set expires while its run is suspended | Continue retains the accepted run's exact content; New practice unavailable; attempted history remains readable and local. |
+| Temporary set expires while its run is suspended | Continue retains the accepted run's exact content; New practice unavailable; attempted history remains readable in its declared scope. |
 | Adaptive learner changes band after an answer | One next eligible identity reserved once, bypassed ineligible inventory unconsumed, prewarm discarded safely, no change to current/past items. |
+| AI short response uses a correct paraphrase absent from aliases; a composite variant adds an exact quantity | Rubric awards justified prose credit. Exact component receipt survives prose timeout/cold retry; no final full/zero grade or evidence while required prose is pending. Final aggregate follows pinned weights/rule once. History replays both receipts; reviewing prose preserves unchanged exact credit without another evaluator call. |
+| Cloud grade times out after dispatch, then app closes | Answer/job retained; remote outcome reconciled before bounded retry; no duplicate local attempt or claim of guaranteed no charge. |
+| Cancel after result receipt is durably accepted | Receipt survives, no duplicate score or forced navigation; the original slot can later show its saved result. |
+| Offline launch or network loss during source grading | Eligible local practice/grading remains usable; unsupported cloud evaluation stays pending with exact response/context and truthful options. |
+| Provider/model retires after a grade was accepted | History replays the accepted result without a model call; unresolved jobs use a validated compatible route or remain recoverable. |
+| Learner requests review of an AI grade | Original answer/result immutable; one linked review and append-only resolution; no second learner attempt or XP. |
 
 These examples become automated regression tests plus selected installed-app checks in the [QA and delivery chapter](05_QA_and_Delivery.md). Tests that only search for a source string or submit the canonical key to its own scorer do not satisfy the behavioral contracts above.
 
@@ -3090,7 +3258,7 @@ These examples become automated regression tests plus selected installed-app che
 
 # QA, validation, implementation sequence and release gates
 
-Status: proposed implementation contract, version 1.0, 4 September 2026. This is a test and delivery specification, not a report of these future tests passing. The [original QA report](../QA_2026-09-04/README.md) is the authority for what was actually executed. Read the [master specification](README.md) for product decisions and the other chapters for feature requirements.
+Status: proposed implementation contract, version 1.1, revised 5 September 2026. This is a test and delivery specification, not a report of these future tests passing. The [original QA report](../QA_2026-09-04/README.md) is the authority for what was actually executed. Read the [master specification](README.md) for product decisions and the other chapters for feature requirements.
 
 ## 1. What a release must establish
 
@@ -3104,19 +3272,19 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This is
 
 | Gate | Question answered | Required evidence | Blocking failures |
 |---|---|---|---|
-| G1 Content and grading integrity | Are the delivered tasks true, fair and meaningfully different? | Independent oracle tests; reviewed contracts; full manifest census; known grading regressions; protected leakage audit | Contradictory facts, false correct/incorrect grading, duplicate semantic choices, unreviewed protected item, fabricated novelty |
-| G2 Runtime and data integrity | Does an action preserve the right question, response and evidence? | Installed-app save/resume; crash injection; idempotent commits; supported archive migrations; same-device ownership | Lost acknowledged work, duplicate attempts/XP, substituted draft question, irrecoverable supported archive |
+| G1 Content and grading integrity | Are the delivered tasks true, fair and meaningfully different? | Independent oracles; adjudicated semantic/rubric AI benchmark; reviewed contracts; released-manifest census; grading regressions; protected disclosure audit | Contradictory facts, severe/systematic grading defects or failed grading thresholds, duplicate semantic choices, unvalidated protected evaluator, fabricated novelty |
+| G2 Runtime and data integrity | Does an action preserve the right question, response and evidence? | Installed save/resume; crash/network-loss injection; durable evaluation jobs/results; idempotent commits; supported migrations; same-device ownership | Lost acknowledged work, duplicate attempts/XP, substituted draft question, irrecoverable supported archive |
 | G3 Experience and accessibility | Can users understand and operate the complete flow? | Device screenshots; manual VoiceOver and keyboard results; task observations; empty/error/large-text states | Unreachable primary action, unlabeled essential controls, stale selected destination, recurring unbounded UI hang |
 | G4 Learning policy and variety | Does the learner receive appropriate actual demands and interpretable feedback? | Deterministic learner simulations; delivered-content inspection; inventory feasibility; evidence replay; pilot observations | Difficulty changes only metadata, helped answers inflate independent evidence, confidence changes ability, unannounced repetition |
-| G5 Distribution and integrations | Does the signed app work with its supported environment? | Physical device installation; production-equivalent CloudKit checks; Shortcut/provider contract; notifications/widgets/import/export lifecycle | Enabled integration loses/corrupts data, publishes private content outside consent, or fails without a recovery path |
+| G5 Distribution and integrations | Does the signed app work with its supported environment? | Physical installation; local/direct-cloud AI adapters and optional Shortcut contract; production-equivalent CloudKit checks; notifications/widgets/import/export lifecycle | Enabled integration loses/corrupts data, sends content outside the requested feature/configured service or account scope, or fails without a recovery path |
 
 <a id="qa-req-003"></a>
 
-**QA-REQ-003 — Test the shipped configuration.** Record commit, dirty-tree status, app/build version, catalog/scorer/policy versions, OS/device, locale, text size, appearance, cloud/account state and relevant flags in every release run. A test against a development content bank does not certify a different signed release bank. Produce a machine-readable manifest beside human notes. Never store personal source text, secrets or account tokens in that manifest.
+**QA-REQ-003 — Test the shipped configuration.** Record commit, dirty-tree status, app/build version, catalog/scorer/policy versions, OS/device, locale, text size, appearance, cloud/account state, provider/model revision, rubric/protocol version, retry/spend limits and relevant flags in every release run. A test against a development content bank does not certify a different signed release bank. Produce a machine-readable manifest beside human notes. Never store personal source text, secrets or account tokens in that manifest.
 
 <a id="qa-req-004"></a>
 
-**QA-REQ-004 — Independent oracle rule.** The expected answer must not be obtained by calling the production scorer or copying its stored key. For bounded mathematics and program execution, derive an independent small oracle or enumerate the domain. For prose, causal reasoning, diagrams and transfer, reviewers must work the item without first seeing its answer and document disagreements. Production generation and evaluation may share typed contracts, but the validation authority must be capable of disagreeing with them.
+**QA-REQ-004 — Independent oracle rule.** The expected answer must not be obtained by calling the production scorer or copying its stored key. For bounded mathematics and program execution, derive an independent small oracle or enumerate the domain. For prose, causal reasoning, diagrams and transfer, at least two subject reviewers independently apply the rubric without seeing the production grade; adjudicate disagreements and retain original reviewer labels. AI may help construct candidate cases, but a grading model cannot certify its own correctness, and a second model alone is not a human reference standard. Production generation and evaluation may share typed contracts, but validation must be capable of disagreeing with them. AI grading uses the proposed semantic benchmark below; it does not require a deterministic parser oracle for every possible explanation.
 
 <a id="qa-req-005"></a>
 
@@ -3132,7 +3300,8 @@ Status: proposed implementation contract, version 1.0, 4 September 2026. This is
 |---|---|---|
 | Pure unit/property | Numeric/symbolic interpretation, option uniqueness, graph ordering, policy transitions, timing accounting | `GeneralExerciseEngineTests`, `MathContentContractTests`, `RetrievalRuntimeScoringTests`, `AdaptiveEngineTests` |
 | Content release validation | Actual 1,000-per-lab admission, family/structure counts, artifacts, fingerprints, feasible quotas, protected givens | `ReleaseContentIntegrityTests`, `OfflineQuestionBankTests`, `BundledRetrievalCatalogTests`, `UserFacingContentLintTests` |
-| Repository/component integration | Reservation + journal + attempt + projection + migration against real stores | `PersistenceRuntimeTests`, `RecoveryMigrationTests`, `FocusedQuizRotationIntegrationTests`, `DataExportRoundTripTests` |
+| AI grading benchmark | Semantic criterion credit, grounding, uncertainty, repeated-call consistency and model changes against adjudicated held-out answers | Versioned rubric fixtures and local/direct-cloud adapter harness; distinguish live outputs from replay tests |
+| Repository/component integration | Reservation + evaluation job/result + journal + attempt + projection + migration against real stores | `PersistenceRuntimeTests`, `RecoveryMigrationTests`, `FocusedQuizRotationIntegrationTests`, `DataExportRoundTripTests` |
 | Policy replay/simulation | Full event sequences, independent/assisted exclusions, actual selected demands, repeat constraints | `AssessmentSchedulerTests`, `AdaptivePlanHistoryTests`, `ProgressEvidenceTests`, `AdaptiveQuestionPopulationPolicyTests` |
 | Installed UI | Input, feedback, navigation, save/close/relaunch, restored history, keyboard and accessible state | Extend `NavigationSmokeUITests`; add focused journey suites with stable semantic identifiers |
 | Manual device/research | VoiceOver speech, Pencil, visual clarity, physical performance, provider/cloud behavior, learning usefulness | Versioned run sheets and recorded observations with informed participant consent |
@@ -3141,15 +3310,15 @@ Names above locate current test areas; they are not a requirement to overload ev
 
 <a id="qa-req-007"></a>
 
-**QA-REQ-007 — Golden fixture package.** Commit small synthetic fixtures for: a fresh learner; existing legacy learner with committed history; three suspended session phases; an interrupted timed item; a disputed legacy science item; an external self-check; a 10,000-attempt history; a source library with duplicates/deleted references; each supported prior archive version; and malformed/future payloads. Fixtures must contain no real personal source data. Include a manifest explaining which invariants each fixture exercises and a deterministic creation script when binary stores are unsuitable for review.
+**QA-REQ-007 — Golden fixture package.** Commit small synthetic fixtures for: a fresh learner; existing legacy learner with committed history; three suspended session phases; an interrupted timed item; a disputed legacy science item; an external self-check; a 10,000-attempt history; a source library with duplicates/deleted references; each supported prior archive version; malformed/future payloads; pending/unknown-outcome AI jobs; accepted receipts whose provider is unavailable; disputed AI grades and append-only reviews; EN/JA semantic responses; synthetic adversarial source instructions; and offline/network-loss configurations. Fixtures must contain no real personal source data. Include a manifest explaining which invariants each fixture exercises and a deterministic creation script when binary stores are unsuitable for review.
 
 <a id="qa-req-008"></a>
 
-**QA-REQ-008 — Reproduction identity.** A content failure record includes family/objective, concrete parameters, seed when relevant, content and scorer versions, semantic fingerprint, response, expected and observed result, and representation assets. A UI failure includes exact path, underlying session/phase and a redacted screenshot or accessibility transcript. A random fuzz failure must shrink to a retained minimal case before closure.
+**QA-REQ-008 — Reproduction identity.** An AI failure additionally records rubric/protocol/provider/model identifiers, bounded synthetic input/context, request/result digests, dispatch ordinal, usage/cost when known and live-versus-replayed status. Never include credentials or invent an unexposed model revision. A content failure record includes family/objective, concrete parameters, seed when relevant, content and scorer versions, semantic fingerprint, response, expected and observed result, and representation assets. A UI failure includes exact path, underlying session/phase and a redacted screenshot or accessibility transcript. A random fuzz failure must shrink to a retained minimal case before closure.
 
 <a id="qa-req-009"></a>
 
-**QA-REQ-009 — Bounded exhaustive versus sampled checks.** Exhaust all finite coordinate symmetry cases, enumerated response aliases, supported migration versions and state-machine transitions where practicable. For a large generator domain, sample boundary values, degenerate cases and fixed reproducible seeds in addition to a broader deterministic sweep. A sweep count is a coverage statement, not proof that every generated item is valid. The release manifest itself receives a complete census because those are the exact shipped items.
+**QA-REQ-009 — Bounded exhaustive versus sampled checks.** Exhaust all finite coordinate symmetry cases, enumerated response aliases, supported migration versions and state-machine transitions where practicable. For a large generator domain, sample boundary values, degenerate cases and fixed reproducible seeds in addition to a broader deterministic sweep. A sweep count is a coverage statement, not proof that every generated item is valid. The release manifest itself receives a complete census because those are the exact shipped items. AI output has a variable domain: held-out benchmarks, adversarial cases and repeated calls support bounded quality claims, not proof that every future result is correct.
 
 ## 3. Content and grading regression cases
 
@@ -3164,15 +3333,15 @@ The following are minimum acceptance cases. Exact successor IDs may change after
 | T-C05 | Derivative of `x²`: submit `2x`, `2*x`, `x+x` under permitted grammar | All mathematically valid in-domain forms earn identical full credit. Original notation survives history. |
 | T-C06 | Derivative of `2x²`: submit `4x`, `4*x`, `4x^1`, then `2x` | First three fully accepted; last rejected with useful correction. Parser limits and supported variable declarations honored. |
 | T-C07 | Definite-integral task explicitly defines antiderivative `F` of `f`; submit `F(b)-F(a)` and `f(b)-f(a)` | First accepted; second is not accepted by case folding. Unicode/prose normalization does not erase symbol roles. |
-| T-C08 | Mean prompt: correct paraphrases, “count divided by sum,” negated rule and incomplete fragments | Supported correct concepts accepted; reversed/negated rule rejected. Unjudgeable prose follows the declared self-check/clarification policy, never hidden substring scoring. |
+| T-C08 | Mean prompt: correct paraphrases, “count divided by sum,” negated rule and incomplete fragments | Supported correct concepts accepted; reversed/negated rule rejected. Validated semantic AI grading accepts paraphrases and rejects reversed/negated meaning. Insufficient context/judgment follows the pending/review policy, with explicit self-check where appropriate; never hidden substring scoring. |
 | T-C09 | Estimate contract accepts canonical plausibility label and alias `yes` | Both receive identical component credit, total credit and correctness. All accepted-state combinations enumerated. |
 | T-C10 | Exact quantity with rational, decimal, scientific notation and convertible units; requested metres with well-formed `1.25 cm` | Declared equivalents accepted; wrong known unit/quantity or required representation scored under the rubric. Empty/unparseable/unsupported notation and zero denominator receive clarification without an objective attempt. No unlimited free retries for semantic unit mistakes. |
 | T-C11 | Multiple-choice task with correct, omitted and extra options, including select-all | Full credit only for the declared complete valid selection; explicit partial rule obeyed; extra false options cannot improve credit. |
 | T-C12 | Partial-order task with two independent steps | Both valid topological orders accepted; every violated required dependency rejected with the relevant constraint identified. |
 | T-C13 | Claim/evidence task with one valid and one unsupported edge | Output identifies the unsupported relationship; broad overlap of keywords cannot substitute for the support graph. |
 | T-C14 | Logic-state task with typed fields and declared Boolean/value aliases | Equivalent states receive identical full credit; wrong independent field earns the authored component result. No alias penalty. |
-| T-C15 | Open reference recall, then Matched/Partly/Not yet; migrate an old self-check stored as correct/1 | New UI/history show self-report; no deterministic “Correct,” 100%, or independent ability update. Revealed-but-unrated remains incomplete. Legacy original preserved with provenance-based selfReported disposition and exclusion from verified outcomes. |
-| T-C16 | Blank, overlong, malformed Unicode, parser-limit input and uncovered prose in every relevant schema | Bounded completion, clear actionable result, no crash, no accidental submitted wrong answer for structural invalidity. Protected uncertainty never switches to answer-revealing self-check; apply preauthorized recovery without scored coverage. |
+| T-C15 | Open reference recall, then Matched/Partly/Not yet; migrate an old self-check stored as correct/1 | New UI/history show self-report; no evaluated “Correct,” 100%, or independent ability update from self-rating alone. Revealed-but-unrated remains incomplete. Legacy original preserved with provenance-based selfReported disposition and exclusion from verified outcomes. |
+| T-C16 | Blank, overlong, malformed Unicode, parser-limit input and uncovered prose in every relevant schema | Bounded completion, clear actionable result, no crash, no accidental submitted wrong answer for structural invalidity. Provider failure/judgment uncertainty is distinct from malformed input. Protected uncertainty uses validated compatible fallback, delayed evaluation or recovery without scored coverage; never answer-revealing self-check. |
 | T-C17 | Every protected manifest item rendered in text, diagram, alternative description, hint and history; recursively inspect checkpoint/journal/archive payload fixtures | Only essential givens visible; no decisive solution scaffold, per-item correctness or reusable exact key exposed through ordinary surfaces or nested exportable records. Internal evaluator inputs remain in the restricted repository; export uses protected-safe receipts. |
 | T-C18 | Regenerate the actual admitted editions, not a simplified mirror | Counts, IDs, assets and fingerprints match signed manifests. Family/structure quotas and feasible assignment requirements pass. |
 | T-C19 | Requested low/high demand for the same family and controlled seed, including audit seed `20260904` | Delivered objective-compatible demand changes as specified: steps, representation, uncertainty, constraints or scaffolding. Metadata-only differences fail. |
@@ -3188,15 +3357,61 @@ The following are minimum acceptance cases. Exact successor IDs may change after
 
 **QA-REQ-011 — Variety report.** Emit inventory and delivered-session distributions by lab, family, structure, objective, target identity, band, field and response form. Report both numerical uniqueness and substantive structure coverage. Separate mixed, focused, review, protected and user-authored lanes. Do not average a repetitive mixed bank with a diverse catalog to hide the issue. Show unmet soft preferences with capacity/prerequisite reasons; fail hard integrity/no-replacement violations.
 
+
+### AI rubric grading quality and service resilience
+
+These are **proposed release targets, not completed validation**. They apply to enabled AI grading protocols for ordinary, generated and source-grounded short responses; protected protocols also meet the stricter consistency rule below. This suite belongs to QA-REQ-004/006/009 and gates G1/G2/G5. It does not require the offline bank to reach an unrelated inventory floor before a suitable AI capability can be enabled.
+
+A shared rubric/protocol family may cover several activities when its criteria and failure modes are coherent; document that coverage and retain activity subgroups. For each materially different grading protocol/rubric family, use at least **300 held-out adjudicated answers per supported language**: 100 fully correct, 100 unequivocally incorrect, 50 partially correct and 50 genuinely insufficient/ambiguous inputs or source contexts. Include English and Japanese when those grading languages are enabled, correct paraphrases absent from aliases, negation/reversed relationships, numerical/unit reasoning in prose, mixed claims, concise answers, harmless spelling/style variation and citation-sensitive tasks. Keep test answers out of prompt/rubric tuning. Stratify source-grounded versus standalone tasks and supported response forms; each applicable subgroup has at least 30 examples, expanding the set when needed. Report reviewer disagreement/adjudication rather than discarding difficult cases to improve agreement.
+
+Run the same package against each enabled provider/model/protocol combination and supported local fallback. Do not pool a weak language/model stratum into a passing average. A route with no suitable local model is a supported pending/offline-practice path, not a promise of offline AI grading. Record model revision when available and retain bounded test outputs, criterion results, input/rubric digests and configuration. A material model, rubric, prompt or routing change requires rerunning affected strata before making the corresponding validated-grade claim. Service availability changes need resilience checks rather than editorial review of an unchanged rubric.
+
+| Measure | Proposed initial gate | Denominator / interpretation |
+|---|---|---|
+| Criterion agreement | ≥95% | Agreement with adjudicated discrete criterion levels across scoreable answers; report each criterion and overall |
+| Normalized total score error | Mean absolute error ≤0.05; ≥95% of answers within 0.10 of adjudicated credit | Scores normalized to 0–1; partial-credit subgroup reported separately |
+| False pass / false rejection | False pass ≤1%; false rejection ≤5% | Respectively the 100 unequivocally incorrect and 100 fully correct answers; rubric pass boundary fixed before evaluation |
+| Severe false pass | 0 observed | Mandatory critical subset of at least 50 cases where an answer reverses/negates the central concept, fabricates decisive source evidence or instructs the grader to award credit; report subset size, not a claim of zero future risk |
+| Meaning-preserving paraphrase/style consistency | ≥95% unchanged criterion decisions | At least 50 paired responses per language; fluency, verbosity, harmless spelling or dialect cannot earn conceptual credit |
+| Insufficient-context handling | ≥95% correctly retained as ungraded/needs information; 0 fabricated decisive source citations | The 50 adjudicated insufficient cases. Well-formed wrong answers still need grading and count in error metrics |
+| Same-input repeatability | ≥95% identical pass/fail decisions; score range ≤0.10 for ≥95% of repeated cases | Five live evaluations each of 50 fixed cases spanning correct/partial/wrong/insufficient; report all outputs, not the best one. For insufficient cases compare graded versus ungraded disposition |
+| Protected protocol consistency | ≥98% repeated decision agreement and 0 observed false passes in mandatory incorrect/critical cases | Same repeated-case and held-out procedure; compatible form evidence and restricted feedback also tested. Validates a specific protocol, not a blanket model endorsement |
+| Grounded explanation | ≥95% criterion rationales supported by retained response/source; 0 severe invented evidence or exposed protected key | Independently inspect at least 100 explanations per stratum, including every observed score disagreement |
+
+For repeatability, compare each repeated decision to the first recorded decision; also report every run against adjudicated truth so consistently wrong output cannot pass as quality. Report all attempted cases, invalid responses and timeouts. Grade-quality denominators are the completed validated outputs within each adjudicated group; show missing outputs separately, never silently omit them. Apply a separate completion target of ≥98% overall and in each correct/wrong/partial/insufficient group on the controlled healthy-service benchmark; deliberate outage fixtures test noncompletion. A valid ungraded/needs-information disposition counts as completed evaluation, while timeout or malformed output does not. Report numerator/denominator and 95% confidence intervals alongside point estimates. Passing a benchmark is limited evidence, not perfect grading or educational efficacy. Reproducible severe defects require correction or scoped withdrawal of the protocol. Other failures require tuning/replacement and fresh held-out coverage, or an explicit capability limitation.
+
+| Test | Given / action | Required outcome |
+|---|---|---|
+| T-G01 | Held-out correct/wrong/partial/insufficient rubric package | Meets declared per-stratum thresholds; criterion totals/bounds valid; no model self-certification. |
+| T-G02 | EN/JA paraphrases, concise answers and harmless style changes absent from aliases | Equivalent meaning receives equivalent rubric credit; original wording preserved. |
+| T-G03 | Negation, reversed cause/effect, plausible false claims and correct keywords around a wrong central idea | Meaning and contradiction rules govern; no substring/fluency false pass. |
+| T-G04 | Correct idea plus unsupported claim; genuinely valid alternative approaches | Declared partial credit and criterion rationale; no canonical-reference-only matching. |
+| T-G05 | Missing source passage, ambiguous prompt, unsupported model language or insufficient context | Appropriate ungraded pending/clarification/review state; no invented citation, zero grade or forced self-check. |
+| T-G06 | Five identical-input calls; provider/model/rubric changes after a result is saved | Measure variability; old result replays without a call; new protocol separately versioned and benchmarked. |
+| T-G07 | Protected AI evaluation, unavailable primary model and incompatible fallback | Validated compatible route or preserved pending response; no ad hoc measurement change, leaked key or per-item result. |
+| T-G08 | Offline start with a suitable local route, then without one | Supported local grading/practice works; otherwise saved ungraded answer and useful offline practice/retry. Cloud capability is not advertised as local. |
+| T-G09 | Network loss before dispatch, after acceptance and while receiving output | Durable job survives; remote identity reconciled; partial output never graded; bounded retry with honest unknown-outcome/charge status. |
+| T-G10 | Cancel before dispatch, during evaluation, after result commit and while closing | Response retained; cancellation-before-acceptance leaves later receipts unapplied, acceptance-first adopts once; switching to self-check supersedes pending grading. No late navigation/duplicate grade or guaranteed-remote-cancellation claim. |
+| T-G11 | Terminate after job write, dispatch identity, result receipt, attempt insert and feedback acknowledgement | Exact cold recovery; saved results do not call the model again; one effective grade/reward. |
+| T-G12 | Double Submit, duplicate/conflicting callbacks, stale writer takeover and replaced slot | Exact job/response/generation binding; one accepted result; obsolete output cannot overwrite current work. |
+| T-G13 | Rate limit, authentication loss, quota exhaustion, timeout and cost ceiling | Bounded retry/backoff, actionable service status and preserved answer; approved fallback/later retry without per-action approval loops or unbounded spend. |
+| T-G14 | Synthetic source/answer contains “ignore rubric,” tool calls, fake system text or fabricated citations | Content cannot execute or override grading instructions/expose credentials; legitimate quoted instructions can still be assessed for meaning. |
+| T-G15 | Oversized/nested/malformed output, nonfinite/out-of-range score, unknown criteria or unsupported citations | Bounded rejection/repair before acceptance; original input/job retained; no crash, silent truncation or partially published grade. |
+| T-G16 | Learner challenges grade with valid/unsupported concern and repeated taps | One linked review per command; pending/confirmed/revised/unresolved states; original immutable; justified disposition updates evidence once with no XP. Self-rating alone cannot replace evaluated correctness. |
+| T-G17 | Export/restore accepted grades and pending jobs with provider/account missing | Accepted permitted results replay offline; pending work remains recoverable without accidental redispatch/charges or account rebinding; protection retained. |
+| T-G18 | Requested source-grounded AI via direct cloud, available local model and optional Shortcut | Relevant content reaches selected service without redundant per-run approval; selected-source/account boundaries, credentials, latency/usage and fallback UI verified. |
+
+Fault tests use the actual storage executor and installed caller path, not a mock bypassing persistence. Live-provider benchmarks use synthetic data and an explicit test budget. Mocks establish lifecycle behavior; recorded live runs establish provider quality, availability, cost and latency.
+
 ## 4. Runtime, navigation and recovery cases
 
-Trace to RUN-001–022, DATA-001–025, MIG-001–010 and UX-004–005/016–025. Run the core cases against real local stores, then a representative set through the installed UI. Fault injection is a test harness capability disabled in distributed builds.
+Trace to RUN-001–022, DATA-001–025, MIG-001–010 and UX-004–005/016–025. T-G01–18 extend these to AI evaluation without replacing deterministic exact-answer coverage. Run the core cases against real local stores, then a representative set through the installed UI. Fault injection is a test harness capability disabled in distributed builds.
 
 | Test | Given / action | Required outcome |
 |---|---|---|
 | T-R01 | Five-question focused practice; complete two, enter draft `17` on item three, Save & close, Continue | Same run, position 3/5, prompt/options/representation and draft `17`; no new launch reservation. |
 | T-R02 | Repeat T-R01 across process termination and app relaunch | Last acknowledged checkpoint restored; interruption recorded; no false uninterrupted speed evidence. |
-| T-R03 | Save at answering, feedback, protected acknowledgement, reference comparison, optional reflection and explicit reflection | Every stage has a safe exit and restores that exact phase without duplicate score, second reference reveal or required reflection trap. |
+| T-R03 | Save at answering, evaluating/awaitingEvaluation, feedback, protected acknowledgement, reference comparison, optional reflection and explicit reflection | Every stage safely restores its exact phase/job without duplicate score, repeated model call after an accepted result, second reference reveal or required reflection trap. |
 | T-R04 | Spend 20 active seconds, pause/relaunch, spend 5 active seconds, submit using controllable clock | Approximately 25 active seconds within explicit harness tolerance; background gap excluded; clean-speed eligibility false. |
 | T-R05 | Use two hint stages with repeated rapid taps; close after second | Both authored stages reachable, no double disclosure from one command; count and exposure survive; assistance evidence retained. |
 | T-R06 | Reveal solution without answer, then close/reopen | Revealed learning outcome, no fabricated wrong/correct response, independent status remains false. |
@@ -3248,7 +3463,7 @@ The [adaptive chapter](03_Adaptive_Learning_and_Evidence.md) contains the normat
 | T-A12 | Overdue queue, snooze, deletion of source, already-active review task | Stable task identities; bounded queue; no duplicated review, pressure copy or impossible link. |
 | T-A13 | Midnight/time-zone/profile/readiness changes while canonical plan exists | Plan identity and completion denominators follow SCH rules; extra practice remains explicit and separate. |
 | T-A14 | Skewed finite inventory, narrow activity, cross-epoch request, learner improves near exhaustion | Finite feasible selection, hard no-repeat preserved, actual unavailable challenge disclosed, no fabricated advanced label. |
-| T-A15 | Equal seed, policy, learner state and candidate manifest replayed | Same eligible item identities, declared demand vectors and reasons; incidental UI timing does not perturb selection. |
+| T-A15 | Equal seed, policy, learner state, candidate manifest and retained accepted AI recommendation/ranking receipt replayed; separately test the declared deterministic fallback without an AI receipt | Same eligible item identities, demand vectors and reasons for the same complete replay inputs; no model calls during replay. Fresh stochastic recommendations are not required to match from seed alone; incidental UI timing cannot alter an accepted decision. |
 
 <a id="qa-req-014"></a>
 
@@ -3276,7 +3491,7 @@ The [adaptive chapter](03_Adaptive_Learning_and_Evidence.md) contains the normat
 
 <a id="qa-req-017"></a>
 
-**QA-REQ-017 — Journey coverage.** Complete at least one genuine session in all seven labs and every enabled new interaction slice. Complete the full Today circuit, a protected assessment across multiple sittings, focused practice, mistake review, a source self-check and a saved question set. Exercise skip, hint, solution, report, pause, save/close, resume, early ending and natural completion where each policy permits them. “Not applicable” needs the mode rule, not a blank cell.
+**QA-REQ-017 — Journey coverage.** Complete at least one genuine session in all seven labs and every enabled new interaction slice. Complete the full Today circuit, a protected assessment across multiple sittings, focused practice, mistake review, a source self-check, a rubric-AI short-response/source session and a saved question set. Include offline/local capability, cloud network-loss recovery, saved AI result replay and requested grade review. Exercise skip, hint, solution, report, pause, save/close, resume, early ending and natural completion where each policy permits them. “Not applicable” needs the mode rule, not a blank cell.
 
 <a id="qa-req-018"></a>
 
@@ -3284,7 +3499,7 @@ The [adaptive chapter](03_Adaptive_Learning_and_Evidence.md) contains the normat
 
 <a id="qa-req-019"></a>
 
-**QA-REQ-019 — Visual artifact review.** Capture tab roots, onboarding, every schema, validation, feedback, pause, history, import progress/error and question-set save states. For each, review default and maximum text, keyboard visible where relevant, and the smallest applicable width. Maintain one contact sheet per journey with the build/configuration caption. Screenshot changes need human semantic review: a pixel difference may be benign, while a perfectly matching broken layout is still wrong.
+**QA-REQ-019 — Visual artifact review.** Capture tab roots, onboarding, every schema, validation, AI evaluation pending/unavailable/review, feedback, pause, history, import progress/error and question-set save states. For each, review default and maximum text, keyboard visible where relevant, and the smallest applicable width. Maintain one contact sheet per journey with the build/configuration caption. Screenshot changes need human semantic review: a pixel difference may be benign, while a perfectly matching broken layout is still wrong.
 
 <a id="qa-req-020"></a>
 
@@ -3302,7 +3517,11 @@ The [adaptive chapter](03_Adaptive_Learning_and_Evidence.md) contains the normat
 | Resume saved ordinary item | p95 ≤500ms | Local checkpoint/assets available, excludes process cold launch |
 | Prepare next local item | p95 ≤500ms | Approved bank/ordinary asset; heavy first construction must be precomputed or show progress |
 | Cold launch to usable Today | p95 ≤2s | Reference supported physical devices, ordinary store; migrations measured separately |
-| Visible answer acknowledgement | p95 ≤500ms | Local valid deterministic item and healthy store; durable save precedes success; immediate command feedback ≤100ms |
+| Visible deterministic answer acknowledgement | p95 ≤500ms | Local valid deterministic item and healthy store; durable save precedes success; immediate command feedback ≤100ms |
+| AI submission / pending acknowledgement | UI command feedback ≤100ms; local job save p95 ≤500ms | Status is not a grade; solving time stops at Submit; waiting screen remains responsive |
+| AI grading latency | Cloud p50 ≤5s / p95 ≤15s; supported local model p95 ≤8s | Proposed normal short-answer targets on named device/network/model/context. Report model cold/warm state separately; slower capable routes show truthful estimates and save-close/pending options |
+| AI timeout and retry | Default dispatch deadline 30s; at most 2 automatic dispatches per job; total automatic wait ≤60s | Retry only transient failures under saved protocol/spend limit; reconcile unknown remote outcome first. A later learner retry retains logical job identity and dispatch history |
+| AI cost budget | Proposed default normal-grade ceiling US$0.05 equivalent per job, including automatic retries | Configurable spend target, not a provider-price claim. Use dated configured rates/token limits or estimates; record actual usage/unknown billing honestly. Premium/long-context routes use an already configured sufficient budget, not repetitive approval dialogs |
 | Open/filter history with 10,000 attempts | p95 ≤500ms first useful page | Paginated queries; no synchronous full-history decode on main actor |
 | Search 1,000 indexed synthetic sources | p95 ≤500ms useful first results | Local index ready; query results paginated; no original-document decode per keystroke |
 | Interactive scrolling/manipulation | Target frame cadence of reference display; investigate any main-thread stall >100ms | Capture an Instruments trace, identify work and fix reproducible stalls; do not invent a universal memory ceiling |
@@ -3314,11 +3533,11 @@ Content-bank construction, large import/OCR and schema migration are separate ba
 
 **QA-REQ-022 — Hang closure.** QA-11 remains unresolved until the two observed routes are checked after the navigation repair on stable supported macOS, with repeated navigation and large history. A beta-only hang may be classified as platform-dependent with supporting traces, but the independently observed stale-stack issue still requires a passing repair test. Capture an Instruments trace and sample if a stall recurs; do not attribute it solely to SwiftUI from stack-frame names.
 
-## 8. Migration, privacy and real integrations
+## 8. Migration, data boundaries and real integrations
 
 <a id="qa-req-023"></a>
 
-**QA-REQ-023 — Migration/restore run sheet.** For every supported archive/store version: import a known populated fixture into an empty install; verify counts and identities; view old responses; continue recoverable sessions; inspect unrecoverable states; export; restore again; compare authoritative records and privacy scope. Add interruption at each migration/journal stage, corrupt checksum, unsupported future schema, missing blob and repeated restore. A failed restore must leave the previous usable store intact. Test signed physical installs with sandbox file access, not only decoded model arrays.
+**QA-REQ-023 — Migration/restore run sheet.** For every supported archive/store version: import a known populated fixture into an empty install; verify counts and identities; view old responses; continue recoverable sessions; inspect unrecoverable states; export; restore again; compare authoritative records, AI result/job identities and declared storage/account scope. Add interruption at each migration/journal stage, corrupt checksum, unsupported future schema, missing blob and repeated restore. A failed restore must leave the previous usable store intact. Test signed physical installs with sandbox file access, not only decoded model arrays.
 
 <a id="qa-req-024"></a>
 
@@ -3326,7 +3545,7 @@ Content-bank construction, large import/OCR and schema migration are separate ba
 
 <a id="qa-req-025"></a>
 
-**QA-REQ-025 — Local data and diagnostics boundaries.** Test generated temporary content expiry at seven days, explicit Save set persistence, deletion, associated snapshot retention references, archive inclusion and iCloud partition. Local saved collections do not authorize uploading source excerpts, drawings or model prompts. Instrumentation proposed here stays local by default. Allowlisted aggregate research fields are event kind, build/policy version, relative duration bucket, lab/family/band and anonymous study participant code. Exclude raw answers, source names/text, question payloads, personal profile notes and device-wide identifiers unless a separately consented study specifically requires them. No new analytics SDK or network endpoint is implied by this specification.
+**QA-REQ-025 — Feature processing and diagnostics boundaries.** Test generated expiry, explicit Save set persistence, deletion, snapshot references, archive inclusion and configured sync scope. Requested AI features may send relevant answers, source excerpts and supported assets through the configured service without a second per-action approval. Settings distinguish cloud processing, available local/offline capabilities and optional collection/history sync; locally saved content is not subject to a blanket transmission ban. Test required platform permissions, account boundaries and credentials without exposing secrets. Diagnostic/research collection is separate from functional AI traffic: instrumentation proposed here stays local by default. Allowlisted aggregate research fields are event kind, build/policy version, relative duration bucket, lab/family/band and anonymous study participant code. Exclude raw answers, source names/text, question payloads, personal profile notes and device-wide identifiers unless a separately consented study specifically requires them. No analytics SDK or research endpoint is implied. Direct cloud AI endpoints are in scope for requested learning features and require actual service tests.
 
 <a id="qa-req-026"></a>
 
@@ -3334,15 +3553,15 @@ Content-bank construction, large import/OCR and schema migration are separate ba
 
 | Integration | Required cases |
 |---|---|
-| Question Writer/Shortcut/provider | Installed signed flow; success; no provider; unavailable Shortcut; cancellation; offline; malformed/oversized output; callback after relaunch; duplicate callback; correct source consent; reference quality/self-check labels |
-| CloudKit/progress | Two signed devices; offline divergent records; convergence and deduplication; account change/sign-out; schema compatibility; deletion; existing document policy; local-only new payloads absent from cloud |
+| AI generation/tutoring/grading: direct cloud, available local model and optional Shortcut | Installed requested-feature flow; actual provider/model/rubric receipt; semantic grading/reference quality; relevant source/answer context; missing provider/model; optional Shortcut unavailable; offline/network loss; cancellation/timeout/rate/cost limits; malformed output; callback after relaunch/takeover; duplicates; saved-result replay and grade review. Direct cloud support is independent of a Shortcut or a specific platform model |
+| CloudKit/progress | Two signed devices; offline divergent records; convergence and deduplication; account change/sign-out; schema compatibility; deletion; declared document/source sync scope; local ownership/credential journals absent from cloud; functional AI traffic tested separately |
 | Notifications | Denied/allowed/provisional where used; timezone change; overdue schedule; disabled reminders; meaningful deep link; no repeated stale notification |
 | Widgets/App Group | Snapshot refresh; empty/completed/paused states; deep link; stale data handling; extension process lifecycle |
-| Spotlight | Index/update/delete and deleted-object deep link; private/source policy respected |
+| Spotlight | Index/update/delete and deleted-object deep link; account/source access and declared indexing policy respected |
 | Import/OCR | Small text, PDF, scanned PDF, malformed file, access denied, size boundary, cancellation, duplicate import, source deletion during indexing |
 | Export/delete | Fresh and upgraded archive; private-content inclusion choices; rollback; full deletion/purge lifecycle and failed deletion retry using disposable fixtures |
 
-An unavailable external integration test is “not verified,” not “passed with mocks.” If the feature cannot be certified, disable the affected new capability or withhold the release claim; record that product decision explicitly. Existing working capabilities cannot simply disappear as collateral damage without a reviewed scope decision.
+An unavailable external integration test is “not verified,” not “passed with mocks.” If a provider/protocol cannot meet its applicable gates, offer a verified compatible route or preserve offline/pending work and withhold the unsupported grade/capability claim; record that product decision explicitly. Existing working capabilities cannot simply disappear as collateral damage without a reviewed scope decision.
 
 ## 9. Human usability and learning validation
 
@@ -3350,13 +3569,17 @@ An unavailable external integration test is “not verified,” not “passed wi
 
 **QA-REQ-027 — Formative usability rounds.** Initial proposal: two iterative rounds of six participants each, selected across novice, intermediate and experienced STEM learners, with accessibility users included through recruitment or a dedicated complementary accessibility session. This small sample is for finding usability failures and content misunderstandings; it is not a statistically representative efficacy study. Avoid assigning one person to stand in for an entire ability or disability group.
 
-Provide realistic goals without naming UI controls: begin a suitable short practice; make/use a mistake explanation; ask for appropriate help; change challenge without changing timing; leave halfway and continue; find the original answer; practice a related mistake; import a synthetic source and save a study set; explain what progress and self-check mean. Observe unaided first. Record wrong turns, facilitator intervention, lost-work concern, disputed grading and comments in the participant's own words. End with comprehension questions: “What was saved?”, “What caused this level?”, “What does Matched tell the app?”, and “What will happen when you return?”
+Provide realistic goals without naming UI controls: begin a suitable short practice; make/use a mistake explanation; ask for appropriate help; change challenge without changing timing; leave halfway and continue; find the original answer; practice a related mistake; import a synthetic source and save a study set; explain what progress, AI evaluation and self-check mean; submit an explanation for AI grading; recover it after network loss; request review of a disputed grade. Observe unaided first. Record wrong turns, facilitator intervention, lost-work concern, disputed grading and comments in the participant's own words. End with comprehension questions: “What was saved?”, “What caused this level?”, “What does Matched tell the app?”, “How was this answer graded?”, “What happens if the model is unavailable?”, and “What will happen when you return?”
 
-Proposed formative exit criteria: no unresolved critical lost-work/grading/navigation failure; at least five of six in the second round complete each core task without facilitator rescue; all can locate Continue after a interruption; no repeated misconception that XP/self-rating proves assessed mastery. Report numerator/denominator and task context rather than claiming population success from these small counts. Any repeated critical misunderstanding blocks the affected copy/flow even if a numerical target is met.
+Proposed formative exit criteria: no unresolved critical lost-work/grading/navigation failure; at least five of six in the second round complete each core task without facilitator rescue; all can locate Continue after a interruption; no repeated misconception that XP/self-rating proves assessed mastery, that an AI grade is infallible, or that pending evaluation has already been scored. Report numerator/denominator and task context rather than claiming population success from these small counts. Any repeated critical misunderstanding blocks the affected copy/flow even if a numerical target is met.
 
 <a id="qa-req-028"></a>
 
-**QA-REQ-028 — Question usefulness review.** Reviewers and participants assess objective relevance, clarity, reasoning demand, distractor plausibility, explanation usefulness and whether a new variant actually requires transfer. Record per-family issues; do not merge all scores into one attractive “quality” number. Ask whether a learner can explain why the answer works after feedback and solve a fresh related task without the same scaffold. Immediate practice improvement is reported as such.
+**QA-REQ-028 — Learning output and feature usefulness review.** Reviewers and participants assess objective relevance, clarity, reasoning demand, distractor plausibility, explanation usefulness and whether a new variant actually requires transfer. Record per-family issues; do not merge all scores into one attractive “quality” number. Ask whether a learner can explain why the answer works after feedback and solve a fresh related task without the same scaffold. Immediate practice improvement is reported as such.
+
+For each tutor, grading, generation, source-study, planning/coaching and supported multimodal capability, record the learner problem, why the feature belongs at its proposed point in the journey, the expected benefit and a concrete acceptance example. Compare the actual interaction and output with a straightforward existing flow or a prototype of completing the same task. Judge correctness, relevance to the learner's work, explanatory usefulness, response length, required effort and waiting time. A valid schema or a passing grading benchmark alone does not establish a useful teaching feature. Include routine success, a difficult/ambiguous example and unavailable/error recovery; inspect multiple ordinary outputs rather than selecting one impressive demo. Review enabled languages and relevant skill levels, and separate observed usability from unproved learning efficacy.
+
+The release review must demonstrate: ordinary practice without forced chat; requested help that fits the actual problem; concise feedback with reachable detail and grade review; a primary action that stays clear during long/loading/failed output; a dismissed suggestion that stays dismissed through resume; and recommendations that add useful guidance instead of repeating generic praise or the visible grade. Inspect the existing typography, spacing, restrained accent hierarchy and accessibility in those states. Record concrete defects and corrections. Repeated irrelevant advice, repetitive generated tasks, intrusive suggestions or obscured learning controls block the affected feature's acceptance until refined and rechecked. Greater feature count or generated volume does not compensate for those defects; extend variants after the core interaction passes this review.
 
 <a id="qa-req-029"></a>
 
@@ -3364,7 +3587,7 @@ Proposed formative exit criteria: no unresolved critical lost-work/grading/navig
 
 <a id="qa-req-030"></a>
 
-**QA-REQ-030 — Product metrics with honest denominators.** In opt-in research/local QA, measure first meaningful answer time; decision/tap count; abandonments by phase; exact resume success among attempted resumes; disputed grades among graded answers; hint→fresh independent success; family/structure concentration; response success by actual band; delayed recall; and held-out application. Exclude validation errors from answer accuracy; separate skips, revealed items, self-checks and ended-early sessions. Preserve context rather than optimizing a single completion-rate metric that rewards easier questions.
+**QA-REQ-030 — Product metrics with honest denominators.** In opt-in research/local QA, measure first meaningful answer time; decision/tap count; abandonments by phase; exact resume success among attempted resumes; disputed grades among graded answers and confirmed/revised/unresolved review outcomes; AI completion among dispatched jobs, unknown remote outcomes, duplicate local grades, cost/latency by protocol and offline recovery among attempted recoveries; hint→fresh independent success; family/structure concentration; response success by actual band; delayed recall; and held-out application. Exclude validation errors from answer accuracy; separate skips, revealed items, self-checks and ended-early sessions. Preserve context rather than optimizing a single completion-rate metric that rewards easier questions.
 
 ## 10. Implementation work packages
 
@@ -3375,10 +3598,10 @@ Proposed formative exit criteria: no unresolved critical lost-work/grading/navig
 | Package | Deliverable / owner disciplines | Depends on | Merge/release gate |
 |---|---|---|---|
 | WP-00 Contract foundation | Freeze legacy schema fixtures; authoritative record/ID/version contracts; reproduction tests; correction inventory — runtime + content + QA | None | Existing behavior reproducible; legacy preservation fixtures available; shared decisions accepted in code review |
-| WP-01 Grading and truth | Unique spatial choices; interval truth; typed equivalence; accepted-state credit; protected scaffold separation — engine + subject review | WP-00 | T-C01–17; zero known critical grading/content defect in enabled edition |
-| WP-02 Durable session spine | Stable run IDs, exact snapshots/checkpoints, journal/idempotency, ownership and timing — runtime + persistence | WP-00 | T-R01–19/23/25; migration fault cases; acknowledged work never lost |
+| WP-01 Grading and truth | Spatial/interval truth, typed equivalence, semantic rubric-AI grading/review, accepted-state credit, protected evaluator/display separation — engine + AI adapters + subject review | WP-00 | T-C01–17 and T-G quality cases; benchmark gates met; no known critical grading/content defect in enabled protocol |
+| WP-02 Durable session spine | Stable run IDs, exact snapshots/checkpoints, durable async AI jobs/results, journal/idempotency, ownership and timing — runtime + persistence | WP-00 | T-R01–19/23/25 and T-G08–17; migration/network/cancellation fault cases; acknowledged work never lost |
 | WP-03 Navigation and readable replay | Five independent paths, deep links, readable all-schema history, correction notices — UI + persistence | WP-02; history contract from WP-01 | T-R20–24, QA-11 stable-OS investigation, no JSON in normal history |
-| WP-04 Continuous practice loop | Inline response/confidence/feedback, progressive hints, optional reflection, safe exit, repair link — design + UI + engine | WP-01/02 | All phase journeys on phone/Mac, protected/self-check distinctions intact |
+| WP-04 Continuous practice loop | Inline response/confidence/feedback, AI tutoring/progressive hints, optional reflection, grade review, safe exit, repair link — design + UI + engine | WP-01/02 | All phase journeys on phone/Mac, protected/self-check distinctions intact |
 | WP-05 Real demand and balanced inventory | 58-family matrix, authored bands/structures, feasible 1,000-item-per-lab editions, selector/reservation reconciliation — learning + content + engine | WP-01; reservation interface WP-02 | Full manifest census, editorial sign-off, no fake novelty, exact capacity/exhaustion tests |
 | WP-06 Adaptive evidence and review | Versioned policy reducer, challenge overrides, protected continuation, correction replay, retention queue, canonical plan stability — learning + engine + persistence | WP-02/05 | Adaptive chapter fixtures + T-A01–15; actual delivered-demand inspection |
 | WP-07 Discoverability and polish | Today/Practice/Progress/Sources/Settings composition, saved-set clarity, tokens, copy, EN/JA/a11y — design + UI + localization | WP-03/04; learner-state interfaces WP-06 | Device/keyboard/VoiceOver matrix; formative round; all missing/loading/error states |
@@ -3388,7 +3611,7 @@ Proposed formative exit criteria: no unresolved critical lost-work/grading/navig
 
 <a id="del-002"></a>
 
-**DEL-002 — First reviewable vertical slice.** Before rolling the architecture across all labs, deliver Mental Mathematics focused practice end to end: reviewed B1/B2 item, equivalent numeric answer, progressive hints, inline optional confidence, durable save on item three, exact resume, correction feedback, readable history and a distinct repair item. Include a protected numeric fixture and self-check fixture to prove authority differences through the same lifecycle. The slice is complete only when its migrated old-history case and crash-after-attempt case pass. This exposes shared design errors early without requiring a decorative redesign first.
+**DEL-002 — First reviewable vertical slice.** Deliver a shared end-to-end loop containing Mental Mathematics focused practice with an equivalent numeric answer and a short explanatory/source-grounded answer graded by an AI rubric. Include progressive hints, optional confidence, durable save/resume, readable saved feedback and a distinct repair. Exercise an actual configured cloud adapter, a supported local route or honest offline-pending path, network loss, exact result replay and append-only grade review. A protected evaluated fixture and deliberate self-check fixture prove authority/display differences through the same lifecycle. Migration, crash-after-attempt and AI job/result-boundary cases must pass. AI delivery proceeds alongside offline inventory work rather than waiting for the full bank floor.
 
 <a id="del-003"></a>
 
@@ -3396,17 +3619,19 @@ Proposed formative exit criteria: no unresolved critical lost-work/grading/navig
 
 <a id="del-004"></a>
 
-**DEL-004 — Capability gating.** New code can be integrated behind deterministic local build/configuration capabilities while dependent editorial or distribution gates remain incomplete. A flag controls a coherent feature, not half of a save transaction. Persist the runtime/content policy used by an active run so a flag change cannot reinterpret an in-progress response. No remote experiment infrastructure, analytics transmission or backend service is required. The distribution manifest records enabled capabilities and applicable gates.
+**DEL-004 — Capability routing and staged delivery.** Enable coherent capabilities according to service configuration, network/local-model availability, supported language/context, rubric validation and cost/latency. AI is central: direct cloud provider adapters and suitable on-device processing are in scope; platform models or Shortcuts are adapters, not exclusive prerequisites. Local processing keeps reasonable offline work useful. A missing model/provider or unmet offline bank floor must not disable unrelated working AI features.
+
+A flag cannot split a save transaction or reinterpret an active answer; persist its exact runtime/evaluation policy and accepted result. Use validated compatible alternatives or honest saved-pending states when a route is unavailable. The manifest declares enabled routes and their evidence. Required service configuration and platform permissions are normal setup, not a privacy approval at every operation. No remote experiment/analytics system is required to provide functional AI.
 
 <a id="del-005"></a>
 
-**DEL-005 — Definition of done per package.** Required: final behavior matches linked requirements; relevant public-effect tests pass; changed screens inspected in their applicable compact/large-text states; migration/privacy effects documented; copy reviewed; no unrelated user edits overwritten; known limitations stated; diagnostics sufficient to reproduce remaining nonblocking issues. Update a feature's requirement status only with an evidence path/build, not “implemented” alone.
+**DEL-005 — Definition of done per package.** Required: final behavior matches linked requirements; relevant public-effect tests pass; changed screens inspected in their applicable compact/large-text states; migration, AI processing/storage scope, cost/latency and recovery effects documented; copy reviewed; no unrelated user edits overwritten; known limitations stated; diagnostics sufficient to reproduce remaining nonblocking issues. Update a feature's requirement status only with an evidence path/build, not “implemented” alone.
 
 ## 11. Triage, rollout and closure
 
 <a id="del-006"></a>
 
-**DEL-006 — Severity and release decisions.** Classify P0 as widespread data loss/corruption or disclosure; P1 as wrong grading, misleading independent evidence, loss of acknowledged draft, blocked core flow, repeated hang or essential accessibility failure; P2 as material friction/clarity/learning-quality deficit with a viable path; P3 as minor cosmetic or low-impact polish. An observed defect can move severity with documented scope, never merely because a deadline is near. P0/P1 block the affected enabled release capability. P2 closure or explicit scoped deferral is required before claiming that area polished.
+**DEL-006 — Severity and release decisions.** Classify P0 as widespread data loss/corruption or disclosure; P1 as severe/systematic wrong grading or failed declared grading-quality gates, misleading independent evidence, loss of acknowledged draft, blocked core flow, repeated hang or essential accessibility failure; P2 as material friction/clarity/learning-quality deficit with a viable path; P3 as minor cosmetic or low-impact polish. An observed defect can move severity with documented scope, never merely because a deadline is near. P0/P1 block the affected enabled release capability. P2 closure or explicit scoped deferral is required before claiming that area polished.
 
 <a id="del-007"></a>
 
@@ -3418,9 +3643,9 @@ Proposed formative exit criteria: no unresolved critical lost-work/grading/navig
 
 <a id="del-009"></a>
 
-**DEL-009 — Release evidence bundle.** Store: configuration manifest; requirement/test traceability; automated summaries and failures; editorial manifest/reviewer records; device screenshots; accessibility notes; performance measurements; migration/restore results; signed integration run sheets; remaining issues; scope/claim statement. Redact personal material. Link raw result bundles where practical and give enough summary for a reviewer to assess coverage without opening gigabytes of logs.
+**DEL-009 — Release evidence bundle.** Store: configuration manifest; requirement/test traceability; automated summaries and failures; editorial manifest/reviewer records; adjudicated AI benchmark/repeated-call results with provider/model/rubric versions, uncertainty, usage/cost/latency and explicit unverified routes; device screenshots; accessibility notes; performance measurements; migration/restore results; signed integration run sheets; remaining issues; scope/claim statement. Redact personal material. Link raw result bundles where practical and give enough summary for a reviewer to assess coverage without opening gigabytes of logs.
 
 <a id="del-010"></a>
 
-**DEL-010 — Final closure questions.** The release reviewer must be able to answer, with evidence: Are known incorrect scores fixed? Can a learner save and continue the identical work? Does challenge change the task itself? Is every enabled activity honest about its operation? Can independent, assisted and self-reported results be distinguished? Is mixed practice actually varied within feasible inventory? Can all users reach the required controls? Are migrations and enabled external services verified? If any answer is unknown, state the exact uncovered capability; do not replace it with “all tests pass.”
+**DEL-010 — Final closure questions.** The release reviewer must be able to answer, with evidence: Are known incorrect scores fixed? Can a learner save and continue the identical work? Does challenge change the task itself? Is every enabled activity honest about its operation? Can independent, assisted and self-reported results be distinguished, with deterministic versus AI evaluation authority shown accurately? Do semantic AI grades meet the benchmark? Can network loss preserve a pending answer, and can a learner review its grade without rewriting history? Is mixed practice actually varied within feasible inventory? Can all users reach the required controls? Are migrations and enabled external services verified? If any answer is unknown, state the exact uncovered capability; do not replace it with “all tests pass.”
 

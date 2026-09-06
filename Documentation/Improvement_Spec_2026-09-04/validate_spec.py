@@ -87,7 +87,7 @@ for name in FILES:
 
 combined = [
     "# NeuroForge — Complete improvement specification", "",
-    "**4 September 2026 · Version 1.0 · Proposed implementation baseline**", "",
+    "**5 September 2026 · Version 1.1 · AI-centered product direction · Specification only**", "",
     "This generated reading copy combines the master and five chapters. "
     "Edit the source chapters, then run `validate_spec.py` to rebuild it. "
     "It specifies future behavior; it does not certify that the app implements it.", "",
@@ -133,8 +133,8 @@ if len(family_ids) != 58 or matrix_ids != family_ids:
     errors.append(f"Family matrix mismatch: catalog={len(family_ids)}, matrix={len(matrix_ids)}")
 
 simulation_ids = re.findall(r"^\| ((?:ADP|EVD|SCH)-F\d{2}) —", texts[FILES[3]], re.M)
-journey_ids = re.findall(r"^\| (T-[CRA]\d{2}) \|", texts[FILES[5]], re.M)
-for label, values, expected in [("simulation", simulation_ids, 60), ("acceptance", journey_ids, 62)]:
+journey_ids = re.findall(r"^\| (T-[CRAG]\d{2}) \|", texts[FILES[5]], re.M)
+for label, values, expected in [("simulation", simulation_ids, 60), ("acceptance", journey_ids, 80)]:
     if len(values) != expected or len(set(values)) != expected:
         errors.append(f"Unexpected {label} fixture count: {len(values)}/{len(set(values))}, expected {expected}")
 
@@ -145,6 +145,8 @@ errors.extend(f"Unmapped audit finding {value}" for value in missing_audit)
 source_word_count = sum(len(value.split()) for value in texts.values())
 report = {
     "scope": "Documentation validation only; no application acceptance tests run by this script.",
+    "specification_version": "1.1",
+    "revision_date": "2026-09-05",
     "source_word_count": source_word_count,
     "requirement_count": len(requirements),
     "requirements_by_source": dict(Counter(row["file"] for row in requirements)),
@@ -164,12 +166,13 @@ validation = [
     f"| Unique normative requirements | {len(requirements)} |",
     f"| Current catalog families mapped in exact source order | {len(matrix_ids)}/58 |",
     f"| Adaptive/evidence/scheduling simulation fixtures | {len(simulation_ids)} |",
-    f"| Cross-chapter content/runtime/adaptive acceptance cases | {len(journey_ids)} |",
+    f"| Cross-chapter content/runtime/adaptive/AI acceptance cases | {len(journey_ids)} |",
     f"| Audited priority findings traced to requirements/tests | {17-len(missing_audit)}/17 |",
     "",
     "The content chapter additionally defines per-family validation, scoring suites and bank suites. "
-    "Human review reconciled reservation granularity, confidence labels, safe exit, "
-    "protected-data envelopes, expiry versus resume, grading ambiguity and legacy dispositions.", "",
+    "This revision aligns AI tutoring and rubric grading, local/cloud availability, retained grade replay, "
+    "source learning and operational recovery. These document checks do not substitute for human "
+    "grading adjudication, usability research or actual model evaluations.", "",
     "Reproduce with `python3 Documentation/Improvement_Spec_2026-09-04/validate_spec.py` "
     "from the repository root. Generated artifacts are the requirement index, complete reading copy, "
     "this summary and `validation.json`.", "",

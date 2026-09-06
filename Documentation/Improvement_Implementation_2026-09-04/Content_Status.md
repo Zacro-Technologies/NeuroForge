@@ -1,5 +1,7 @@
 # Content and scoring implementation status — updated 5 September 2026
 
+> **v1.1 direction update:** this ledger retains prior implementation evidence. [AI-centered requirements](../Improvement_Spec_2026-09-04/README.md) supersede earlier AI/privacy restrictions; [changed contracts](AI_Direction_Revision_Status.md) are specified pending implementation reassessment. No new AI capability is established by this documentation change.
+
 Current retrieval asset update (5 September): all eight `RetrievalAssetContractTests` passed in the 89-test Mac scope on `ed785a62`. The real generator/scorer exercised 98 compatible renderings of 38 distinct existing targets, including numerical equations and native figures with equivalent retained tables, EN/JA cloze, corruption rejection and ordinary/generated cold/history preservation. This is a bounded unreviewed inventory. See `Retrieval_Assets_Status.md` and `Retrieval_Assets_Capacity.json`; 98 renderings do not count as 98 independent targets. Generator10/schema7 is opt-in and nil policies retain earlier recipes. Full-suite and native rendering acceptance remain separate.
 
 This is an **interim corrective implementation**, not completion of the complete specification or certification of an expanded four-band edition. Every one of this chapter's 53 normative requirements is tracked below. No requirement has been silently dropped or marked deferred by an invented scope decision.

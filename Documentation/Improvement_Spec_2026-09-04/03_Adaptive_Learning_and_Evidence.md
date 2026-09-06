@@ -1,8 +1,8 @@
 # 03 — Adaptive learning, evidence and scheduling
 
-This chapter specifies the behavior that replaces nominal difficulty labels with real question demands, keeps learning records faithful, and turns practice into a coherent sequence of challenge, help, correction and later review. It is an implementation specification, not a claim that the proposed thresholds are scientifically validated.
+This chapter specifies an AI-centered learning experience: AI evaluates short responses and explanations, identifies gaps, teaches through conversation and worked examples, and selects useful practice and later review. It replaces nominal difficulty labels with real question demands and keeps accepted results faithful. Local processing exists to make that learning experience work reasonably well offline; privacy or a blanket boundary around model capabilities is not the product premise. Local and online AI may both perform substantive learning work. It is an implementation specification, not a claim that the proposed thresholds are scientifically validated.
 
-The numerical thresholds, band boundaries, scheduling intervals and decision rules below are **proposed product defaults pending editorial validation and learner pilots**. They must be versioned together. They are not normative scores, clinically meaningful cutoffs, an established forgetting curve, or proof of generalized cognitive improvement. Ship one authoritative policy implementation, `EditorialBandEvidenceV1`, rather than retaining separate incompatible online and history reducers.
+The numerical thresholds, band boundaries, scheduling intervals and decision rules below are **proposed product defaults pending editorial validation and learner pilots**. They must be versioned together. They are not normative scores, clinically meaningful cutoffs, an established forgetting curve, or proof of generalized cognitive improvement. Use one authoritative evidence projection, initially `EditorialBandEvidenceV1`, for accepted deterministic, AI and hybrid rubric results. AI planning and grading are first-class inputs to this system; the shared projection preserves consistent history rather than restricting learning to deterministic-only features.
 
 Related audit findings: [QA-06, QA-07, QA-09, QA-10, QA-15 and QA-16](../QA_2026-09-04/README.md). QA-06 demonstrated that difficulty 0.2 and 0.9 currently produce the same scientific-notation problem; QA-07 demonstrated concentration in a few mechanics; QA-09 concerns resumed timing and assistance; QA-10 concerns answer leakage; QA-15 concerns timing and challenge being coupled; QA-16 concerns durable estimates ignoring difficulty.
 
@@ -24,13 +24,13 @@ Separate these five concepts in models and UI:
 | Evidence coverage | Quantity, breadth, recency and conditions of usable observations | Precision of a psychometrically calibrated latent ability estimate |
 | Practice XP and participation | Participation rewards and completed activity | Ability, learning improvement or extra weight in any skill reducer |
 
-The word “standard” in an internal evidence eligibility flag means eligible for the app's built-in skill records. It does not mean that an assessment has been standardized against a representative population. Normal UI should prefer “skill evidence,” “practice result,” “starting check” and specific descriptions of the demonstrated task.
+The word “standard” in an internal evidence eligibility flag means eligible for the app's skill records under a declared content, objective and evaluator contract. It does not mean deterministic-only, built-in-only, or standardized against a representative population. Normal UI should prefer “skill evidence,” “practice result,” “starting check” and specific descriptions of the demonstrated task. AI grading is grading, not learner assistance: an independently written answer remains independent when a capable AI evaluates it after submission.
 
 <a id="adp-002"></a>
 
 ### ADP-002 — Use a shared, explicit item contract
 
-Every generated or authored item admitted to adaptive built-in practice must carry the following immutable fields or equivalent typed fields. The content chapter owns authoring and validation; this chapter owns selection and evidence use.
+Every generated or authored item admitted to banded adaptive practice, including AI-generated and personal-source items, must carry the following immutable fields or equivalent typed fields. The content chapter owns authoring and validation; this chapter owns selection and evidence use. Source practice without a supported band contract can still have rubric grades, objective progress and adaptive review under EVD-010; an unknown band is not a reason to reduce it to self-check.
 
 | Field | Required meaning |
 |---|---|
@@ -47,9 +47,13 @@ Every generated or authored item admitted to adaptive built-in practice must car
 | `protectedEligible` | Additionally approved for the protected pool, including leakage, exposure and form checks |
 | `assistancePolicy` | Which tools are permitted, which presentations count as assistance, and what changes evidence eligibility |
 | `answerContractVersion` | Authoritative grading/rubric version, separate from presentation version |
+| `evaluationContract` | Deterministic, AI or hybrid evaluation route; supported response/task/language scope; rubric, evaluator/model and grading-instruction versions; applicable quality validation and abstention policy |
+| `evidenceScope` | Objectives and learning context the result can support, including source/set identity and any validated mapping to a shared skill objective |
 | `expectedDurationRange` | Reviewed starting duration estimate, with documented scope and sample basis |
 | `representationIDs` | Actual stimulus and response representations, not only a renderer name |
 | `prerequisiteObjectiveIDs` | Prerequisites needed for the item to be meaningful |
+
+For ordinary practice, reviewed/validated contracts may be implemented by an evaluated AI authoring and grading pipeline with task-specific checks. They do not require a human to approve each newly generated question before a learner can use it. The content chapter defines the quality checks and stronger assessment admission requirements. A generated item and rubric must be concrete and accepted before its response is graded; the evaluator cannot invent new scoring criteria after seeing the learner's answer.
 
 An item must not acquire a different band merely because the session requested one. A request selects a permitted band-specific contract; the generator returns the band it actually fulfilled. If it cannot fulfill it, selection handles an unavailable band explicitly. The final record preserves both `requestedBand` and `deliveredBand` plus a reason for any approved fallback.
 
@@ -181,7 +185,7 @@ A one-line optional explanation accompanies an automatic change, without a modal
 - “You chose a harder question. Your recorded level has not changed yet.”
 - “This activity has no reviewed Advanced questions yet. Continue at Challenging or choose another activity.”
 
-The explanation must identify the actual delivered change. A generic “AI personalized this” message is forbidden for deterministic policy decisions. Expose the underlying event and policy version in technical details, not the primary learning flow.
+The explanation must identify the actual delivered change and its learning purpose. An AI coach should connect the learner's response to the next step, for example “Your explanation identifies the correlation; this question asks what would establish causation.” Keep the explanation grounded in the accepted grade, response or stated goal. Do not claim AI made a decision that came only from a fixed rule. Expose the underlying event, evaluator and policy versions in technical details, not the primary learning flow.
 
 ## 3. Authoritative practice state and update policy
 
@@ -205,13 +209,15 @@ LearnerEvidenceState
 
 A correct transfer attempt can support its declared source objective only according to the reviewed transfer contract. It cannot mint a second full-weight independent observation in a broad Transfer score and in each source skill. Maintain one observation ID with explicit attribution; all derived views must reveal that shared origin. There is no combined cognition score.
 
-The minimum reducer input includes the frozen item contract, original response, deterministic score and rubric parts, validity disposition, assistance/exposure events, response lock and confidence timing, attempt/session identity, event sequence, active time chunks, conditions, and semantic identity. See the persistence chapter for physical storage and correction records. This chapter requires those inputs; it does not prescribe competing migration records.
+The minimum reducer input includes the frozen item contract, original response, accepted score and rubric parts, evaluation receipt, validity disposition, assistance/exposure events, response lock and confidence timing, attempt/session identity, event sequence, active time chunks, conditions, and semantic identity. An evaluation receipt identifies the exact response/rubric, deterministic/AI/hybrid evaluator and versions, criterion judgments with concise supporting evidence, evaluation status and accepted result identity. Store the result needed to explain and replay the decision; this does not require hidden model reasoning. See the persistence chapter for physical storage and correction records. This chapter requires those inputs; it does not prescribe competing migration records.
+
+An accepted AI rubric result enters the same ordinary-practice reduction as a comparable deterministic result. Pending, unavailable, abstained or disputed grades have explicit states and do not manufacture a zero, an independent success or a band change. A dispute itself assigns no replacement credit; the correction policy determines whether the prior accepted result remains effective or is provisionally excluded. A later accepted grade contributes once using the original response's conditions, academic sequence and a recorded acceptance event; it must not replace the learner's current question, count an earlier-band answer as a new current-band response, or rewind an already accepted path. An AI coaching hypothesis can recommend a diagnostic question before there is sufficient graded evidence for a demonstrated-band claim.
 
 <a id="evd-002"></a>
 
 ### EVD-002 — Use `EditorialBandEvidenceV1` for both live and replayed results
 
-The first implementation uses finite recent evidence grouped by the actual editorial band. It does **not** use a latent IRT theta or turn editorial bands into interval-scale numbers. Live session decisions and Progress read the same reducer output and policy version.
+The first implementation uses finite recent evidence grouped by the actual editorial band. It does **not** use a latent IRT theta or turn editorial bands into interval-scale numbers. Live session decisions and Progress read the same reducer output and policy version. The score source may be deterministic, AI or hybrid; evaluator suitability and comparability determine its use, not whether inference ran locally or online.
 
 For a specified objective/family/band/channel, form the independent evidence window by applying eligibility, deduplication and condition rules, then selecting the last 20 eligible observations in the preceding 60 local days. Use durable decision time, not the machine's current time when replaying a historic decision.
 
@@ -251,7 +257,7 @@ A compatible independent-accuracy group is an explicit tuple:
  toolConditionID, localeComparabilityID, pacingConditionID)
 ```
 
-The catalog supplies reviewed comparability IDs. If absent, use exact answer-contract version, exact stimulus/response format, exact assistance/tool policy, exact content locale and exact timing mode as separate groups; do not assume equivalence. A reviewed stimulus comparability group may contain the different substantive formats required by a family without claiming that arbitrary renderers are equivalent. Equivalent accessibility presentations use that reviewed group with their accommodation facts retained. Input modality is not, by itself, an ability penalty; it becomes an additional grouping key for clean speed. Changes to a comparability mapping require a versioned content/evidence disposition, never an unlogged merge of old buckets.
+The content/evaluation contract supplies reviewed comparability IDs. Scoring comparability must cover the rubric and evaluator's demonstrated performance for the response type, language and task scope. Validated local and online evaluators may share a group; an unvalidated change of model, grading instructions or rubric must not silently pool incompatible scores. If absent, use exact answer-contract and evaluation-contract versions, exact stimulus/response format, exact assistance/tool policy, exact content locale and exact timing mode as separate groups; do not assume equivalence. A reviewed stimulus comparability group may contain the different substantive formats required by a family without claiming that arbitrary renderers are equivalent. Equivalent accessibility presentations use that reviewed group with their accommodation facts retained. Input modality is not, by itself, an ability penalty; it becomes an additional grouping key for clean speed. Changes to a comparability mapping require a versioned content/evidence disposition, never an unlogged merge of old buckets.
 
 The clean-speed grouping extends this tuple with input modality, device class, input-editor version, latency-calibration version, timer visibility and timed-fluency target policy. Confidence grouping extends it with confidence-mapping version, binary-outcome definition and collection policy (`requiredProtected`, `requiredCalibration`, or `optionalPractice`). Required and optional confidence samples are not silently pooled. Missing compatibility metadata yields a separate unknown group with no cross-condition improvement claim.
 
@@ -261,16 +267,18 @@ The clean-speed grouping extends this tuple with input modality, device class, i
 
 A response may enter the independent practice window only when all conditions hold:
 
-1. Its built-in content and answer contract are valid and approved for independent use at the time of the effective validity projection.
-2. A scorable response was committed once, with a stable observation identity and an authoritative rubric result.
+1. Its content, answer contract and evaluator are valid and approved for the declared objective and independent use at the time of the effective validity projection, whether authored, AI-generated or source-backed.
+2. A scorable response was committed once, with a stable observation identity and an accepted deterministic, AI or hybrid rubric result.
 3. No answer, worked step, or hint was used before that response lock. Essential givens and accessibility-equivalent presentations do not count as hints.
 4. The response was not a retry of the same semantic problem after seeing its answer or feedback.
 5. It was not skipped, abandoned, replaced, self-rated, or merely marked understood.
-6. It is not a personal-source or arbitrary generated/self-check item being promoted into standard skill evidence.
+6. Its objective mapping and evidence scope support the claim being reduced. Source-backed and AI-generated practice can contribute under EVD-010; unsupported generalization and self-rating cannot substitute for graded evidence.
 7. Its condition group is compatible with the view being reduced.
 8. It passes the repeat controls below.
 
 A learner may use a scratchpad where the item contract permits it without invalidating untimed reasoning accuracy. Calculator, external search, revealing manipulators and worked examples must follow the item's explicit tool contract. When a tool condition is not known, preserve the result as practice history and exclude it from claims requiring independent conditions. Do not infer cheating from a fast response or a user-selected aid.
+
+AI evaluation after response lock does not count as assistance. AI hints, suggested answer text or worked steps shown before lock do count according to the same assistance contract as authored help. Evaluator self-reported confidence alone is not proof of grading quality; acceptance requires the task-specific quality and abstention policy defined with the content/scoring contract.
 
 Repeat controls:
 
@@ -293,6 +301,8 @@ Assisted work remains valuable and visible. Store `assistedCredit`, the furthest
 |---|---|---|---|---|
 | Correct without help | Eligible under EVD-003 | Supports upward exploration | May schedule delayed review | Normal policy |
 | Incorrect without help | Eligible credit, including zero | Supports repair/lower target under ADP-011 | Add misconception/repair entry | Normal policy |
+| AI-graded short response without prior help | Accepted rubric credit eligible under EVD-003 | Supports the same target changes and criterion repair as other accepted grades | Schedule graded source/objective review where appropriate | Normal policy |
+| Grade pending or evaluator abstains | No graded observation yet; response retained | Continue compatible practice or offer clarification/retry | Preserve existing result and queue; no failure or demotion | Retain completed-work participation under the normal policy |
 | Correct after a hint | Excluded from independent window | Indicates useful scaffold; offer fresh repair item | Keep objective pending until independent check | Normal participation, never bonus ability |
 | Worked solution revealed before response | Excluded | Offer a smaller worked step or fresh sibling | Schedule an independent follow-up | Reveal alone earns no answer XP; retain DATA-013 participation rules for separately completed eligible work |
 | Self-rating “understood” | Excluded | Preference only | Personal reminder only | Never changes skill evidence |
@@ -329,6 +339,8 @@ This is selection state. A change in `currentTargetBand` does not alter a demons
 ### ADP-011 — Apply a bounded practice staircase
 
 Initial defaults for ordinary Adaptive practice:
+
+These rules are the initial band-control baseline, not a limit on AI's role in teaching or planning. The AI coach should choose focused practice, explanations, diagnostic follow-ups and relevant contexts from the learner's actual responses and goals. It can recommend challenge or plan changes, with accepted decisions recorded under SCH-003/SCH-010. A later evaluated AI planning policy may replace the baseline staircase through a versioned policy change while preserving fixed-band choices, declared time/scope constraints and the distinction between a recommended target and demonstrated evidence. Network availability alone is never a downward-learning signal.
 
 - At most one automatic upward move per activity session.
 - At most two automatic band changes of any direction per activity session.
@@ -416,9 +428,10 @@ Confidence does not increase credit, promote ability, accelerate retention inter
 | Explicit calibration activity | Required inline before commit; protocol defines whether the later outcome is binary or graded |
 | Ordinary scored practice | Optional inline; a deterministic one-in-five invitation expands the control; declining/ignoring never blocks submission |
 | Timed Rapid Recall/fluency | Suppressed; neither pre-answer nor retrospective confidence is collected by default |
-| Personal source/self-check | Optional study reflection; never standard calibration or proficiency evidence |
+| AI-graded or otherwise independently graded source practice | Optional pre-feedback confidence for its compatible source/objective calibration group; graded outcomes can support scoped practice evidence |
+| Personal self-check without an accepted external grade | Optional study reflection; never substitute self-rating for calibration outcomes or proficiency evidence |
 
-Choose exactly one invitation slot in each consecutive group of five ordinary-practice presentations, rather than using five independent random trials. With zero-based presentation ordinal `i`, let `g = floor(i / 5)` and `slot = H(sessionID, policyVersion, g, "confidence-invitation") mod 5`; expand the invitation when `i mod 5 == slot`. Use an independently salted stable hash. Determine the schedule before observing responses. Do not invite confidence only after difficult-looking questions or mistakes, because that would bias the recorded sample. Persist the invitation decision across pause/relaunch; repeatedly reopening must not reroll it. A short final group may contain no invitation. Ineligible timed-fluency/personal-study presentations do not consume ordinary-practice invitation ordinals.
+Choose exactly one invitation slot in each consecutive group of five ordinary-practice presentations, rather than using five independent random trials. With zero-based presentation ordinal `i`, let `g = floor(i / 5)` and `slot = H(sessionID, policyVersion, g, "confidence-invitation") mod 5`; expand the invitation when `i mod 5 == slot`. Use an independently salted stable hash. Determine the schedule before observing responses. Do not invite confidence only after difficult-looking questions or mistakes, because that would bias the recorded sample. Persist the invitation decision across pause/relaunch; repeatedly reopening must not reroll it. A short final group may contain no invitation. Ineligible timed-fluency and ungraded self-check presentations do not consume scored-practice invitation ordinals; graded source practice keeps its declared compatible-group sequence.
 
 Only a confidence value locked before any outcome/answer reveal enters calibration. The initial compatibility mapping is versioned as `confidenceCategoricalV1`: Guessing = 0.25, Uncertain = 0.45, Fairly confident = 0.72 and Certain = 0.92, matching current stored semantics. These are approximate categorical proxies, not measurements of an exact subjective probability. Numeric calibration diagnostics must disclose the mapping; ordinary copy must not imply certainty or precision from those numeric values. A later UI vocabulary/probability change receives a new mapping version and cannot be silently pooled with old samples. Post-outcome confidence, edited retrospective confidence and self-ratings remain reflections. In ordinary practice, display the current problem and answer while choosing confidence; do not replace the whole problem with a new screen.
 
@@ -430,13 +443,17 @@ For partial-credit tasks, confidence wording must match what is predicted. Defau
 
 ### EVD-006 — Treat partial credit according to the rubric, not the renderer
 
-Every partial-credit schema must expose scored criteria with stable IDs, maximum credit and the deterministically earned amount. The aggregate `q` is the normalized weighted rubric result; absence of a required field is validation/incomplete state until the learner intentionally submits a permitted partial answer.
+Every partial-credit schema must expose scored criteria with stable IDs, maximum credit and the accepted earned amount. The aggregate `q` is the normalized weighted rubric result; absence of a required field is validation/incomplete state until the learner intentionally submits a permitted partial answer.
+
+AI grading must be a normal supported path for short responses, explanations, reasoning steps and source-grounded answers where exact matching misses valid meaning. The grader applies the frozen rubric to the submitted response and relevant task/source context, recognizes valid paraphrases and alternative reasoning, assigns criterion-level full/partial/no credit, and explains the judgment with concise references to the answer and rubric. Deterministic checks should assist where useful, such as arithmetic, units or required constraints; they are not a prerequisite for every semantic criterion. Before acceptance, validate result shape, criterion IDs, credit bounds and consistency of aggregate/full/zero indicators. Unsupported or ambiguous judgments use the declared clarification, retry or abstention path rather than an invented failing grade.
 
 The reducer uses `q` for the same-band descriptive mean and staircase thresholds. It uses the full-credit indicator for full-correct counts. A 0.5 response contributes 0.5 once, not one full success, not an automatic zero, and not two observations because two criteria were scored.
 
-A rubric can use criterion-level errors to choose a repair item. It must not infer an unobserved strategy from an answer's correctness. If strategy choice was never asked or logged, the state says `strategyUnknown`. The existing practice of inferring valid strategy use from a template name or any positive credit must not support a strategy-flexibility claim.
+A rubric can use criterion-level errors to choose a repair item. AI may evaluate a strategy expressed in the learner's explanation, identify a likely misconception, and generate a diagnostic or repair task. Distinguish response-supported rubric findings from a hypothesis that needs another question. Do not infer an unobserved strategy from answer correctness alone: if neither a strategy interaction nor the response supplies evidence, the state says `strategyUnknown`. The existing practice of inferring valid strategy use from a template name or any positive credit must not support a strategy-flexibility claim.
 
 If the answer contract recognizes multiple mathematically or logically equivalent valid responses, those responses must receive the same criterion credit and lead to the same adaptive action. Content corrections that change credit enter through EVD-008; they never rewrite the raw response.
+
+Grader evaluation must include valid paraphrases, different writing styles, partially correct answers, plausible but incorrect explanations, contradictory statements and source-unsupported assertions for each supported task/language scope. Measure agreement with reviewed criterion judgments and appropriate abstention, rather than requiring a fresh stochastic call to return identical prose. Retain the accepted grade so retries, restore and history replay do not become repeated grading draws. A learner can dispute a grade and obtain a recorded re-evaluation; an amended result supersedes the previous result through the correction path and contributes once.
 
 <a id="evd-007"></a>
 
@@ -460,7 +477,7 @@ Coverage must expose counts by family, structure, format and condition. Twenty r
 
 ### EVD-008 — Make invalid content exclusions affect every derived view
 
-A validity projection supplied by the correction subsystem identifies whether an item/semantic contract/version is valid, quarantined, superseded, retired, or invalid for a specified evidence use. The reducer and selector consume the same projection.
+A validity projection supplied by the correction subsystem identifies whether an item/semantic contract/version or evaluator result/version is valid, quarantined, superseded, retired, or invalid for a specified evidence use. The reducer and selector consume the same projection. AI misgrading and deterministic scoring defects use the same explainable correction mechanism; an evaluator update does not silently regrade all historical work.
 
 Required hooks:
 
@@ -495,13 +512,15 @@ The acceptance fixture is 20 active seconds before save plus 5 after resume: rec
 
 <a id="evd-010"></a>
 
-### EVD-010 — Keep personal study separate from built-in skill evidence
+### EVD-010 — Give personal study graded progress at its supported scope
 
-Imported sources, user-authored sets, arbitrary external-model questions and self-check ratings always enter `personalStudy`. They can have deterministic task credit and useful spaced reminders without affecting built-in proficiency, protected checks, calibration norms, promotion gates or generalized claims.
+Imported sources, user-authored sets and AI-generated questions must support useful AI grading, objective progress, adaptive challenge, misconception repair and spaced review. Preserve `personalStudy` as source/set context and attribution, not a permanent unscored lane. An accepted deterministic, AI or hybrid rubric grade may update the relevant source objectives, review intervals and practice target. Where the item has the required band/demand contract and a supported mapping to a shared skill objective, it may also support that objective's ordinary practice evidence under EVD-003. Keep one observation identity across contextual views so the same answer does not count twice.
 
-A source-backed answer is not automatically academically reliable merely because it has a citation. A future reviewed content-promotion process may admit a new contract into the built-in catalog, but old personal-source attempts do not retroactively become standard observations. The promoted contract receives explicit review, new eligibility metadata and a defined version boundary.
+A source-backed answer is not automatically reliable merely because it has a citation. The grading contract must distinguish fidelity to the supplied source from factual or reasoning correctness, identify the relevant source version/passages, and handle incomplete or conflicting material honestly. Grade the supported task: for example, explaining the argument in a supplied article can establish progress on that article's learning objectives without claiming that every assertion in the article is true. AI can propose objectives, rubrics, band demands and mappings; validate them under the content chapter's ordinary-practice quality contract before using them for the corresponding evidence. Useful source practice must not wait for full protected-bank certification.
 
-Personal study may adapt local reminders from the learner's self-rating. The UI must call that “your review rating” rather than measured recall or skill improvement. No reducer should treat `.matched` self-check as the equivalent of an independently graded correct answer.
+Source provenance alone neither qualifies nor disqualifies a result for protected or comparable assessment. Those uses additionally require the same validated evaluator, controlled exposure, form and protocol comparability as any other content. A new objective mapping or changed rubric applies at a recorded version boundary; it does not silently convert unknown legacy attempts into graded evidence. A supported historical re-evaluation may add a new traceable grade while preserving the original response and result.
+
+Personal study may also offer self-rating when useful or when no suitable evaluator is available. Call that “your review rating” rather than measured recall or a rubric grade. No reducer should treat `.matched` self-check as the equivalent of an independently graded correct answer. Model unavailability must not force all source learning into this fallback when a capable local evaluator or retained accepted result is available.
 
 <a id="evd-011"></a>
 
@@ -520,6 +539,8 @@ A formal improvement badge requires a separately specified comparison protocol w
 ### ADP-013 — Protect an assessment contract rather than a nominal seed namespace
 
 A protected item must pass independent correctness, ambiguity, accessibility-equivalence and answer-leakage review. Pool separation uses semantic/structural exposure rules, not only different IDs or seeds. A practice problem that reveals the exact protected solution renders its protected sibling exposed under the content contract even if its namespace differs.
+
+AI or hybrid grading is permitted in protected checks when the evaluator has been validated for the actual rubric, response type, language and assessment protocol. Freeze evaluator versions or use a validated comparability mapping, retain accepted criterion results, and provide a protocol-defined resolution for abstention or grading disputes. AI may help construct and validate candidate forms, but ordinary generation alone does not establish a comparable assessment. The rule is consistent, evaluated measurement; there is no categorical model prohibition.
 
 Essential givens must remain visible. Solution-bearing context, decisive-step labels, answer-revealing alternative text, highlighted correct diagrams, prefilled correct order, and worked examples do not belong in the protected stimulus. Audit visible text, accessibility text, image labels, option IDs surfaced through accessibility, diagram legends and all representations. QA-10 is a release gate, not a cosmetic cleanup.
 
@@ -583,7 +604,7 @@ An unfinished form that remains undisclosed can resume. A form whose answers wer
 
 The selector must apply constraints in this order:
 
-1. Valid content/version and appropriate independent/protected/personal evidence channel.
+1. Valid content/evaluator versions and an appropriate declared evidence scope for the practice or assessment use.
 2. Accessibility and supported language/representation equivalence.
 3. Objective, prerequisites, requested activity scope and supported delivered band.
 4. Semantic exposure and protected-family separation.
@@ -610,7 +631,9 @@ Within feasible hard constraints, rank lexicographically:
 5. Goal relevance and recent observed weak criterion for that objective.
 6. Stable tie-break key.
 
-Lexicographic ranking prevents a large numerical parameter pool from drowning out a smaller scientifically meaningful family. If weighted ranking is later introduced, its exact weights and feasibility tests must be versioned; the initial implementation must not rely on arbitrary raw pool order.
+AI planning is a normal input to goal relevance, criterion repair, prerequisite diagnosis and choice of examples. It should use accepted results, the learner's own explanations and declared goals to identify the most useful next task. Retain the structured recommendation, relevant input identities, model/policy version and concise reason; the selector checks feasibility and commits the accepted decision. A hypothesis such as “the denominator may be confusing” can motivate a diagnostic probe without being stored as a confirmed error or lowering a demonstrated band.
+
+The ordering above is the baseline when AI planning is unavailable and the initial constraint hierarchy for AI recommendations. Lexicographic ranking prevents a large numerical parameter pool from drowning out a smaller scientifically meaningful family. A versioned AI ranking policy may refine feasible candidate priorities while respecting required coverage, review commitments, declared scope/band and time limits. Record its accepted priority result rather than expecting a fresh model call to reproduce the ranking. If weighted ranking is introduced, its weights and feasibility tests must be versioned; no implementation may rely on arbitrary raw pool order.
 
 <a id="sch-004"></a>
 
@@ -618,21 +641,21 @@ Lexicographic ranking prevents a large numerical parameter pool from drowning ou
 
 When the requested band or mechanic has no eligible novel content, use this ordered response:
 
-1. Try another reviewed structure in the same family, objective and band with compatible conditions.
+1. Try another validated structure in the same family, objective and band with compatible conditions. For ordinary practice, use available local or online AI generation to create suitable fresh content under the ordinary-practice validation contract; substantive AI generation is not restricted to a pre-existing deterministic inventory. Freeze the generated item and rubric before delivery, with a bounded generation/validation wait.
 2. For a mixed session only, try another eligible family serving the same intended slot and explain the actual activity.
-3. Offer a same-band reviewed repeat explicitly labelled “Review a familiar problem”; it receives the repeat evidence treatment and cannot be presented as an unseen independent probe.
+3. Offer a same-band validated repeat explicitly labelled “Review a familiar problem”; it receives the repeat evidence treatment and cannot be presented as an unseen independent probe.
 4. Offer the adjacent lower supported band as an explicit learner choice, with delivered-band metadata preserved.
-5. End the block early with “You've completed the available reviewed questions for this activity,” retain earned work and offer another activity.
+5. End the block early with “No more suitable questions are available for this activity right now,” retain earned work and offer another activity.
 
 Do not silently broaden a selected confound-identification drill into interval interpretation while retaining the original activity title. Do not count a repeated item as fresh merely because a new seed creates a new ID. Do not fabricate a harder band or generate unreviewed protected content to meet a session length target.
 
-If three unseen candidates are unavailable for upward exploration, remain at the current target and state that the next band is not available yet. This is a catalog limitation, not evidence of learner failure. Report shortage counts by objective/family/band to the content team through local QA diagnostics; no external analytics is implied.
+If three validated unseen candidates are unavailable for upward exploration after feasible generation, remain at the current target and state that the next band is not available yet. This is a content-availability limitation, not evidence of learner failure. Keep shortage counts by objective/family/band in the content coverage diagnostics so missing pools and ineffective generation can be improved.
 
 <a id="sch-005"></a>
 
-### SCH-005 — Use deterministic tie-breaking and persist the actual path
+### SCH-005 — Persist accepted AI selections and use stable fallback tie-breaking
 
-All selected candidates have stable IDs. Sort the feasible candidate list by the ranking above, then break exact ties using a stable hash:
+All selected candidates have stable IDs. When using the baseline selector, sort the feasible candidate list by the ranking above, then break exact ties using a stable hash. When AI contributes a ranking or selects a feasible candidate under its versioned policy, retain that accepted result and apply the same reservation and no-repeat rules. Stable replay restores the committed selection; it does not rerun AI to choose again. The baseline tie key is:
 
 ```
 tieKey = H(
@@ -675,7 +698,7 @@ The full selected path, including skipped, replaced and assisted exposures, is a
 
 ### SCH-006 — Keep review objectives separate from literal question repetition
 
-A built-in retention entry is keyed by objective, family, band and reviewed relation/structure scope, not only a template's ever-changing item ID. It records the last independent observation, delay since previous exposure, assistance, exact/sibling exposure history, current interval rung and validity projection.
+A retention entry is keyed by objective, family, supported band and relation/structure scope, with source/set context where applicable, not only a template's ever-changing item ID. It records the last accepted independent observation, delay since previous exposure, assistance, exact/sibling exposure history, current interval rung and validity projection. AI-graded short responses and source learning participate in this loop under their supported contract; personal-source review without a validated band keeps a scoped objective queue rather than inventing one.
 
 A retention check normally uses an unseen reviewed sibling that tests the same objective at a compatible band. An exact repeated question can be useful recall practice but is labelled familiar-item recall and does not establish unseen transfer. A change from numeric entry to multiple choice may reduce retrieval demand; record that change and do not compare it as equivalent retention without a reviewed contract.
 
@@ -686,6 +709,8 @@ Do not infer retention growth from confidence, streak length, XP, source self-ra
 ### SCH-007 — Use a bounded, explainable initial interval ladder
 
 Initial built-in interval ladder: 1, 3, 7, 14 and 30 local days. These are scheduling defaults pending pilot data, not scientifically optimal intervals.
+
+Use the same default ladder for independently graded source objectives when its applicability is declared, retaining source context and any unknown-band status. AI may prioritize due work, generate useful sibling checks, explain the review purpose and recommend a different schedule. A schedule change uses a versioned policy/recorded decision and learner time constraints; a model's unsupported probability estimate is not evidence of retained knowledge. Grading origin alone does not change the interval rule.
 
 | Effective review outcome | Queue action |
 |---|---|
@@ -706,7 +731,7 @@ An interval restart is tied to the next independent repair success, not the mome
 
 ### SCH-008 — Make the mistake queue actionable and criterion-specific
 
-A mistake entry links to the immutable original attempt and a reviewed error category. It includes the objective, family, band, actual missing criterion, available explanation, valid fresh sibling candidates and the current status:
+A mistake entry links to the immutable original attempt, accepted rubric judgment and a supported error category. AI should turn short-response grading into a specific explanation, conversational follow-up and targeted repair item. It includes the objective, family, band when supported, source context where relevant, actual missing criterion, available explanation, valid fresh sibling candidates and the current status:
 
 ```
 needsExplanation -> readyForRepair -> repairedInSession -> dueForDelayedCheck -> retained
@@ -722,7 +747,7 @@ needsExplanation -> readyForRepair -> repairedInSession -> dueForDelayedCheck ->
 
 An immediate repair is evidence of current task performance, not delayed retention. Marking an explanation helpful, choosing an error reflection, or correcting the original answer after viewing the solution does not close the learning loop by itself.
 
-Rank pending mistake entries by unresolved conceptual criterion, due date, objective relevance and recent repetition, with stable ties. Do not put every arithmetic slip ahead of a major conceptual misunderstanding simply because it occurred more recently. The error taxonomy must come from observed scored criteria; where the system cannot distinguish misconception from typo, use neutral “Check this step” copy and allow the learner to annotate it.
+Rank pending mistake entries by unresolved conceptual criterion, due date, objective relevance and recent repetition, with stable ties or a retained accepted AI ranking under SCH-003. Do not put every arithmetic slip ahead of a major conceptual misunderstanding simply because it occurred more recently. Confirmed error categories must come from response-supported scored criteria. AI may suggest a likely misconception and ask a diagnostic follow-up; where it cannot distinguish misconception from typo, use neutral “Check this step” copy and allow the learner to annotate or dispute it.
 
 <a id="sch-009"></a>
 
@@ -740,9 +765,9 @@ When there are more due items than fit, select the highest-priority compatible e
 
 A committed daily plan freezes its day identity, profile/configuration snapshot, ordered blocks, declared objectives/evidence modes, minute budget, block identity, content/policy versions and replacement history. New answers must not silently rewrite completed or in-progress block identities.
 
-Within an uncompleted practice block, the selector may choose a different actual band or structure according to ADP-011. That is a **question selection decision inside the block**, not a new daily plan. Persist the decision and a short reason. Completion counts continue to reference the original block identity.
+The AI coach should create and refine useful daily plans from goals, available time, accepted grades, learner explanations, review needs and interests. Within an uncompleted practice block, it may recommend or select a different actual band, structure, teaching example or diagnostic task under the active ADP-011/SCH-003 policy. That is a **question selection decision inside the block**, not a new daily plan. Persist the accepted decision and a short reason. Completion counts continue to reference the original block identity.
 
-Changes that alter block scope, add/remove a block, replace a lab, switch evidence mode, change a protected protocol or materially change the remaining time allocation require an explicit plan amendment/override event under the existing canonical-plan history model. The original plan remains inspectable. Do not invent a second “current plan” with the same identity but different block contents.
+Changes that alter block scope, add/remove a block, replace a lab, switch evidence mode, change a protected protocol or materially change the remaining time allocation require an explicit plan amendment/override event under the existing canonical-plan history model. AI may propose and apply future-work amendments within the learner's declared adaptive-plan preferences and budget; record what changed and why, with normal user controls to adjust it. Ask for a choice when crossing a fixed user constraint or expanding a promised time budget, not for every routine AI recommendation. The original plan remains inspectable. Do not invent a second “current plan” with the same identity but different block contents.
 
 If the learner lowers energy before a block begins, offer untimed work, a shorter remaining block, or a different valid activity. Lower energy alone does not lower demonstrated proficiency or rewrite previously recorded challenge. If the plan is already underway, apply changes to future unstarted work with an explanation; current drafts and completed blocks remain intact.
 
@@ -754,7 +779,9 @@ Remove the blanket `max(3, minutes / 2)` behavior. A one-minute block must not r
 
 Each candidate has a reviewed expected response duration range and expected interaction overhead by mode. Use the learner's recent same-family/same-band compatible median duration after at least eight usable observations as an optional pacing estimate, bounded to the reviewed range; do not use it as an ability estimate. Use at most the last 20 complete durations in the same 60-day window. Exclude paused/background intervals and incomplete/corrupted durations; do not infer idleness from a learner thinking without touching the screen.
 
-V1 initial overhead defaults, in seconds per item, are: ordinary practice/repair/retention 8; protected check 6; timed fluency 1; personal reference/self-check 15; explicit calibration 10; and dedicated reflection 3 beyond its authored reflection task duration. These are proposed planning allowances, not measured cognitive or interaction norms. Store them in the same versioned policy configuration. Replace an allowance only with a reviewed policy change or a compatible measured phase-duration median after at least eight complete observations (last 20/60 days); do not modify an in-progress promised budget retroactively. If a required authored duration range is missing, the item is unavailable for an automatic time-budgeted selection until its contract is completed; an explicitly chosen count-based study item may retain an honest unavailable-time estimate.
+V1 initial overhead defaults, in seconds per item, are: ordinary practice/repair/retention 8; protected check 6; timed fluency 1; source study/self-check 15; explicit calibration 10; and dedicated reflection 3 beyond its authored reflection task duration. These are proposed planning allowances, not measured cognitive or interaction norms. Store them in the same versioned policy configuration. Replace an allowance only with a reviewed policy change or a compatible measured phase-duration median after at least eight complete observations (last 20/60 days); do not modify an in-progress promised budget retroactively. If a required authored duration range is missing, the item is unavailable for an automatic time-budgeted selection until its contract is completed; an explicitly chosen count-based study item may retain an honest unavailable-time estimate.
+
+Track generation/grading service wait separately from learner response time and learning-work overhead. Include realistic availability and latency when promising a session's wall-time experience, and allow saved pending grades or compatible next work so an online delay does not consume the learner's answer budget or appear as slower thinking. Source and short-response practice must not be forced into fast closed-form questions solely to avoid AI latency.
 
 Initial planning estimate:
 
@@ -789,7 +816,11 @@ A practice block can end because its planned workload is finished, the learner c
 
 Use the existing canonical local-day/travel policy as the source of day identity. Active-day counts for coverage and interval rungs use recorded local-day keys with policy versions, not a reinterpretation of old timestamps using today's time zone.
 
-Offline selection must use verified locally available pools and the same deterministic policy. Network/model availability does not change the standard evidence boundary. A temporary absence of a model must not demote the learner or convert a protected check into unreviewed generated content.
+Local processing serves offline availability. Offline selection must use available validated local content, cached accepted items/results, capable on-device AI and deterministic evaluation where appropriate. Online AI is part of normal learning when available, including direct model integrations for richer grading, explanation, generation and planning; it is not restricted to an optional external handoff or postponed until every offline bank is complete. Select routes by task capability, device resources and availability, while keeping their evaluated rubric/quality scope explicit.
+
+If a suitable local evaluator exists, continue grading short/source responses and updating practice offline. If it does not, preserve the submitted response and original conditions with a visible pending-grade state, allow compatible useful practice, and grade later through the accepted-result transaction. Offer a reference/self-check as an optional fallback, not a claim of evaluated correctness. A transient outage, insufficient device capacity or evaluator abstention must not generate failure credit, lower a band, erase participation or make the learner redo a submitted answer. Automatic retry must not replace an already accepted grade with a fresh model opinion.
+
+Protected checks can use a validated local or online evaluator under their frozen protocol. If the required evaluator is unavailable and no validated equivalent exists, save the form and explain the pending portion; continue an unaffected portion only when the protocol permits. Do not silently substitute an incompatible evaluator or unreviewed form to make a completed assessment claim.
 
 If a catalog update invalidates an in-progress item, the correction protocol decides whether to withdraw it or preserve it as non-scoring history. If it merely adds new valid items, the current frozen item remains unchanged; future selections can use the new catalog only at a recorded boundary. A form bound to an older protected catalog continues only if that catalog remains valid and available.
 
@@ -797,7 +828,7 @@ If a catalog update invalidates an in-progress item, the correction protocol dec
 
 <a id="evd-013"></a>
 
-### EVD-013 — Guarantee deterministic equivalence
+### EVD-013 — Replay accepted grades and decisions faithfully
 
 The system must satisfy:
 
@@ -808,6 +839,8 @@ reduce(initialState, committedEvents, itemSnapshotVersions, validityRevision, po
 
 Compare the complete state: eligibility, per-band counts/credit, demonstrated-band support, practice targets where reconstructed from decision events, queue statuses/due days, calibration samples and speed eligibility. A superficial equality of one percentage is insufficient.
 
+Deterministic equivalence concerns the retained accepted events. It does not require fresh calls to a stochastic model to return identical grades, wording, teaching content or selections. Persist accepted AI criterion results, content snapshots and planning/selection receipts before dependent progress is published. Replay, restore, duplicate delivery and UI refresh must consume those records without calling the model to re-decide them. A requested re-evaluation or newly generated recommendation is a new versioned event, with explicit supersession where appropriate.
+
 Use a stable total ordering from the persistence model. Within a session, committed session ordinal governs academic sequence. Cross-session order uses the canonical effective event order and stable identity tie-breaks defined by the persistence chapter. Duplicate events are idempotent. Invalid transitions fail closed with recoverable diagnostics, not a silently regenerated new path.
 
 Decision receipts freeze their historical inputs and rationale. A later validity correction yields a new effective projection and corrected future recommendations; it does not rewrite the fact that an earlier decision was made with the then-available evidence. Progress can show the current corrected summary with a link to what changed.
@@ -816,7 +849,7 @@ Decision receipts freeze their historical inputs and rationale. A later validity
 
 ### EVD-014 — Make policy versions deployable without silent reinterpretation
 
-Version together the eligibility predicates, independence controls, band demonstration thresholds, staircase, intervals, ranking/tie-break algorithm and confidence invitation schedule. The item band/answer contracts remain separately versioned. Record the combination used for every decision.
+Version together the eligibility predicates, independence controls, band demonstration thresholds, staircase, intervals, ranking/tie-break algorithm and confidence invitation schedule. The item band/answer contracts, evaluator/model/grading-instruction versions and AI planning policy remain separately versioned with their compatibility mapping. Record the combination used for every decision. A model upgrade may improve future evaluation without erasing accepted history; a historical regrade requires a recorded correction or re-evaluation decision.
 
 The migration/correction chapter owns how old records are retained, superseded or excluded. Required integration behavior is:
 
@@ -832,23 +865,26 @@ The migration/correction chapter owns how old records are retained, superseded o
 
 | Current component | Required responsibility after the change |
 |---|---|
-| `NFFallbackExerciseGenerator` | Generate actual permitted band/demand contracts; fail explicitly when unsupported; stop overwriting only the difficulty number |
-| `NFDeterministicSessionExerciseFactory` | Select/restore concrete frozen items; preserve semantic exposure and no-repeat path; return explicit shortage outcomes |
-| `NFUniversalSessionRuntime` | Continuous question interaction; durable assistance/timing; apply selection decisions at safe boundaries; no independent shadow proficiency reducer |
+| `NFFallbackExerciseGenerator` and AI generation adapters | Generate actual permitted band/demand contracts and useful task/rubric content; validate and freeze accepted items; report unsupported demands honestly |
+| `NFDeterministicSessionExerciseFactory` and AI selection policy | Select/restore concrete frozen items and accepted rankings; preserve semantic exposure and no-repeat path; return explicit shortage outcomes |
+| `NFUniversalSessionRuntime` | Continuous question interaction, AI tutoring and short-response grading; durable pending/accepted evaluation state, assistance/timing and safe selection decisions; no independent shadow proficiency reducer |
+| Deterministic, on-device AI and online AI evaluators | Apply the task rubric within evaluated capability scope; return criterion results, concise justification and explicit abstention; persist accepted result identity and support traceable re-evaluation |
 | `AdaptiveEngine.reduce` | Delegate to the shared evidence projection or become a compatibility view; do not maintain a different difficulty-blind theta |
 | `NFAssessmentEngine` | Protected protocol and coverage selection using valid band contracts; separate sitting budgets; shared evidence model |
-| `NFDailyScheduler` | Canonical block prescription, scope/variety/time constraints and explicit amendment history |
-| `NFRetentionScheduler` | Versioned due-date/rung policy based on valid delayed outcomes; no unsupported memory-probability presentation |
+| `NFDailyScheduler` and AI coach/planner | Goal-driven plans and criterion-focused recommendations; canonical block prescription, scope/variety/time constraints and explicit amendment history |
+| `NFRetentionScheduler` | Versioned due-date/rung policy based on valid delayed deterministic/AI/hybrid outcomes, including source objectives; useful AI-generated repair/review tasks and no unsupported memory-probability presentation |
 | `NFMentalMathProgressAdapter` | Consume explicitly observed strategy/unit/estimate/timing criteria; stop manufacturing strategy evidence from positive credit/template names |
 | `NFSpeedEvidenceEngine` | Clean speed predicate including relaunch/assistance/compatible band and complete active time |
 | `NFImprovementClaimEngine` | Suppress unsupported comparisons; consume comparable condition/band/form contracts and correction projections |
-| Progress and history views | Show actual band, independent/assisted status, sample coverage and readable explanations; separate XP and personal study |
+| Progress and history views | Show actual band when supported, accepted/pending/disputed grades, independent/assisted status, source/objective scope, sample coverage and useful AI explanations; keep participation distinct from graded evidence |
 
 This is a responsibility map, not permission to duplicate the model across these files. Prefer small pure policy modules with explicit inputs, and keep UI selection controls from mutating evidence fields directly.
 
 ## 10. Executable simulation specification
 
 These fixtures are mandatory policy tests in addition to UI QA. Use a virtual monotonic clock, fixed local calendar/day boundary, fixed profile/session IDs, a small explicit catalog and stable event IDs. No fixture may depend on wall-clock sleeps or random UUID iteration order. Fixtures should assert the chosen item's actual demand vector and semantic identity, not only `requestedBand`.
+
+For AI cases, use explicit retained evaluator/planner responses in policy fixtures and separately evaluate real model grading quality against reviewed rubric examples. Policy replay must not depend on a live model returning the same output twice. Include accepted, partial, abstained, pending, disputed, corrected and unavailable-evaluator variants within the fixture IDs below.
 
 ### Shared fixture catalog and conventions
 
@@ -875,9 +911,9 @@ Create `QA.Catalog.v1` with an arithmetic objective `O.mul`, a reasoning objecti
 | ADP-F13 — Foundation floor | B1 Z,Z,Z | Stay B1; offer prerequisite/worked example; no B0, negative level or forced restart |
 | ADP-F14 — Assisted sequence | B2 H,H,F | H results excluded from independent decision window; no evidence-based demotion; offer help/easier choice from support pattern |
 | ADP-F15 — Skip sequence | B2 S,S,F | No zeros manufactured; no band change from skips; exposures recorded and replacement items remain distinct |
-| ADP-F16 — Sparse next band | B1 F×4, B2 has only two unseen valid candidates | Stay B1; no unsupported upward move; show limited available challenge and record shortage |
-| ADP-F17 — Empty selected activity | Explicit family has no fresh compatible items; other families exist | No silent relabelled substitution; offer familiar review/other activity/stop with accurate scope |
-| ADP-F18 — Tie order | Two exact-ranked candidates supplied in reversed array/dictionary order | Same selected candidate and tie receipt with fixed IDs/policy/catalog/session/ordinal |
+| ADP-F16 — Sparse next band | B1 F×4, B2 has only two unseen valid candidates and no further candidate is available from validated generation | Stay B1; no unsupported upward move; show limited available challenge and record shortage |
+| ADP-F17 — Empty selected activity | Explicit family has no fresh compatible items; variants with capable validated AI generation and unavailable generation while other families exist | A validated newly generated same-scope item may continue practice with a frozen item/rubric; otherwise no silent relabelled substitution, and offer familiar review/other activity/stop with accurate scope |
+| ADP-F18 — Tie order | Two exact-ranked candidates supplied in reversed array/dictionary order; separate accepted AI ranking supplied with model unavailable at restore | Baseline gives the same selected candidate and tie receipt with fixed IDs/policy/catalog/session/ordinal; AI case restores the retained accepted selection, respects fixed-band/scope constraints and does not rerun the model |
 | ADP-F19 — Resume path | Second question required a dedup fallback; save/relaunch | Restore exact selected second item and subsequent path; first item never reappears as an unseen replacement |
 | ADP-F20 — User override | Adaptive B2, user Harder then changes timer visibility | Next eligible question B3; timer visibility has no additional band effect; no demonstrated-band change |
 
@@ -893,24 +929,24 @@ Create `QA.Catalog.v1` with an arithmetic objective `O.mul`, a reasoning objecti
 | EVD-F06 — Invitation replay | Same session/ordinal reopened five times | Identical one-in-five invitation decision; absent practice confidence never blocks submission |
 | EVD-F07 — Retrospective confidence | Confidence supplied after answer outcome reveal; separate 11-versus-12 eligible pre-feedback observations across two sessions | Post-outcome value is reflection only. Eleven eligible predictions show sample count without a calibration summary; twelve show the compatible-group descriptive summary. Required and optional samples remain separate; only the last 50 in 60 days qualify |
 | EVD-F08 — Partial confidence | Whole-answer confidence 0.72 under confidenceCategoricalV1, rubric q=0.5 | Ability descriptive q=0.5 once; calibration binary full-correct outcome y=0, not 0.5 |
-| EVD-F09 — Equivalent answer | Two accepted algebraic/logical equivalents to one contract | Same criterion credit, independence and adaptive action |
+| EVD-F09 — Equivalent answer | Accepted algebraic/logical equivalents and AI-graded valid short-response paraphrases under one contract; partial answer and evaluator-abstention variants | Equivalent accepted meanings receive the same criterion credit, independence and adaptive action; partial credit remains partial; abstention preserves the response without zero credit or demotion. Grading after lock does not mark the answer assisted |
 | EVD-F10 — Resume timing | 20 active seconds, hint/pause, save/relaunch, 5 active seconds then answer | Approximately 25 known active seconds; prior hint/interrupt retained; resumed flag true; independent/clean-speed exclusion consistent with aid use |
 | EVD-F11 — Resume without help | 20 seconds, save/relaunch, 5 seconds, correct unassisted response | Accuracy may be independent; clean speed excluded solely because interrupted/resumed; no zero duration reset |
 | EVD-F12 — Clock change | Wall clock moves back 2 hours between monotonic chunks | Nonnegative correct active chunk sum; no 2-hour speed artifact; local-day policy handles day identity separately |
-| EVD-F13 — Duplicate commit | Same observation received twice locally and once via sync | One scored observation, one queue transition, no duplicate XP or exposure count |
+| EVD-F13 — Duplicate commit | Same observation received twice locally and once via sync, including duplicate/delayed AI grade delivery and a retry after an accepted result | One accepted scored observation and queue transition, no duplicate XP or exposure count, no fresh model result replacing the committed grade; pending-to-accepted delivery preserves original response conditions |
 | EVD-F14 — Quarantine trigger | Four F cause B1→B2; validity projection later excludes one triggering item | Current valid item preserved; effective evidence becomes three F; next decision uses corrected state; historical decision marked affected, not erased |
 | EVD-F15 — Faulty sibling family | One answer-generation rule invalidates multiple semantic siblings | All affected eligible observations excluded and new candidates filtered; unrelated families unchanged |
-| EVD-F16 — Reinstatement | Quarantined item receives valid reinstatement disposition | Replay restores its single effective observation exactly once; original answer/history unchanged |
-| EVD-F17 — Personal source | Twenty deterministic source answers or self-rated matched responses | Personal-study state/reminders update; zero standard practice/protected/promotion/calibration observations |
+| EVD-F16 — Reinstatement | Quarantined item receives valid reinstatement disposition; separately, a disputed AI grade receives a justified revised rubric result | Replay restores or supersedes its single effective observation exactly once; original answer and prior result remain inspectable; affected practice, review and claim views recompute consistently |
+| EVD-F17 — Personal source | Independently AI-graded short source answers with valid objective/rubric contracts; variants with supported shared-band mapping, unknown band, factual/source conflict and self-rated matched responses | Accepted grades update scoped objective progress, adaptive practice and review; supported mappings may contribute one ordinary practice observation and compatible calibration sample. Unknown band does not block useful scoped grading or invent a band. Source conflict follows the declared rubric/abstention policy. Self-ratings remain reminders, and protected/comparable claims require their additional protocol validation |
 | EVD-F18 — Legacy metadata | Old attempt has difficulty 0.9 but no valid band contract | Legacy history only; no automatic B4 or IRT calibration; unknown assistance remains unknown |
-| EVD-F19 — Online/replay | Execute a mixed event script, destroy derived cache, rebuild | Complete state equality including eligibility, chosen-path receipts, support, queues, calibration and speed exclusions |
-| EVD-F20 — Unobserved strategy | Correct numeric response with no strategy interaction | Strategy evidence remains unknown; no flexibility/strategy-success claim |
+| EVD-F19 — Online/replay | Execute mixed deterministic, AI and hybrid accepted grades plus AI planning decisions; destroy derived cache, disconnect the model and rebuild | Complete state equality including eligibility, accepted criterion grades, chosen-path receipts, support, queues, calibration and speed exclusions; zero model calls during replay and no requirement for identical fresh stochastic output |
+| EVD-F20 — Unobserved strategy | Correct numeric response with no strategy interaction; separate AI-evaluated explanation that supplies explicit strategy evidence | Numeric-only strategy evidence remains unknown; response-supported explanation may support its rubric criterion. An AI misconception hypothesis can suggest a diagnostic task without becoming a confirmed failure or clinical/personality claim |
 
 ### Protected, retention and plan fixtures
 
 | Fixture | Input sequence/state | Required result |
 |---|---|---|
-| SCH-F01 — Protected leakage | Candidate has solution-bearing context, accessible label or supplied counterexample | Admission/selection rejects protected eligibility; no protected observation is created |
+| SCH-F01 — Protected leakage | Candidate has solution-bearing context, accessible label or supplied counterexample; clean short-response variants use validated and unvalidated AI evaluator protocols | Leaking item is ineligible. Clean item may produce protected evidence with a validated consistent AI grading protocol; an incompatible/unvalidated evaluator cannot produce the comparable claim merely because a grade was returned |
 | SCH-F02 — Protected time slice | Five-minute sitting ends after three scored observations | Form remains incomplete/resumable with same identity, remaining coverage and exposure path; no forced fresh-seed restart |
 | SCH-F03 — Slow current item | Current item exceeds sitting budget while draft remains | No auto-wrong/auto-submit; finish/save/skip choices; complete draft preserved |
 | SCH-F04 — Protected skip | S then valid scored answers; separate case with seven scored and nine skipped presentations | Skipped item exposed, no credit/coverage; next replacement fresh. At 16 presented slots with only seven eligible answers, stop coverageIncomplete; no automatic new form. Explicit linked supplement preserves seven valid same-protocol observations and needs the missing coverage, not eight replacement answers |
@@ -920,16 +956,16 @@ Create `QA.Catalog.v1` with an arithmetic objective `O.mul`, a reasoning objecti
 | SCH-F08 — Interval advance | New independent F; due day-1 sibling F | First due day +1, then next interval +3 local days; one-rung advance only |
 | SCH-F09 — Early repeat | Day-1 review scheduled, learner repeats the original same day | Practice history retained; no retention-rung advance and no fresh independent semantic observation |
 | SCH-F10 — Failed retention | Due independent Z, then assisted correction | Add repair; rung does not advance; next delayed check anchored to later independent repair success |
-| SCH-F11 — Successful repair | Incorrect item → explanation → independent fresh sibling F → next-day independent sibling F | needsExplanation → readyForRepair → repairedInSession/dueForDelayedCheck → retained; immediate repair not labelled delayed retention |
+| SCH-F11 — Successful repair | Incorrect item → explanation → independent fresh sibling F → next-day independent sibling F, with deterministic and AI-graded source-response variants | needsExplanation → readyForRepair → repairedInSession/dueForDelayedCheck → retained at the supported objective scope; AI grading is not assistance and immediate repair is not labelled delayed retention |
 | SCH-F12 — Backlog | 40 due entries, five-minute session | Select only items fitting at most 30%/five-item cap; remaining queue preserved; normal practice available |
 | SCH-F13 — One-minute reflection | Dedicated reflection block with budget 60 seconds | One brief reflection/calibration task; never three ordinary near-transfer questions |
 | SCH-F14 — Mixed family balance | Feasible 10-item mixed pool with four+ families | At least four families, no run above two, correct actual item scope; stable choices under input-order permutation |
 | SCH-F15 — Dominant bank family | One family has 990 items, eight others have reviewed candidates | Mixed quota/ranking still distributes selected families; raw pool size does not dictate concentration |
-| SCH-F16 — Canonical plan | New performance evidence arrives after one daily block completes | Original block IDs/order/completion remain; next-item band may adapt within the current practice block with a decision receipt |
+| SCH-F16 — Canonical plan | New AI-graded performance evidence and an AI plan recommendation arrive after one daily block completes | Completed/current identities and drafts remain; next-item teaching/selection may adapt with a receipt. Future-work amendment can apply within declared adaptive-plan preferences, while fixed constraints and extra time require learner choice; accepted recommendation restores without another model call |
 | SCH-F17 — Lower energy mid-plan | Two blocks complete, learner shortens remaining session | Explicit future-work amendment/override; completed work preserved; no retroactive band/difficulty downgrade |
 | SCH-F18 — Save failure | Attempt saved, dependent completion checkpoint fails | No false durable block completion/automatic next block; retryable stage and stable attempt ID |
 | SCH-F19 — Time zone change | Travel changes local wall date during incomplete form/session | Same in-progress identity/draft; no duplicate due rung or automatic fresh daily plan that discards work |
-| SCH-F20 — Catalog update | Valid new catalog arrives during unanswered question | Frozen question remains identical; future catalog change only at recorded boundary; invalidation uses correction path |
+| SCH-F20 — Catalog update | Valid new catalog or generated candidate arrives during unanswered question; evaluator switches online/offline with capable-local, no-local and protected-protocol variants | Frozen question remains identical; future content change only at recorded boundary; invalidation uses correction path. Capable local evaluator continues scoped grading; absent capability retains a pending response and offers useful work without failure/demotion. Protected work waits when no validated equivalent exists; accepted grades are not rerun |
 
 ## 11. Pilot validation and release gates
 
@@ -939,7 +975,7 @@ Create `QA.Catalog.v1` with an arithmetic objective `O.mul`, a reasoning objecti
 
 Before calling bands empirically calibrated, run a consented pilot with novice, intermediate and experienced learners who match the intended subject prerequisites. Use an explicit research plan and data minimization; this specification does not authorize external telemetry or contact with participants.
 
-The pilot must inspect actual delivered questions and record observed independent success, partial-credit distribution, assistance use, completion time, skip reasons, disputed grading, explanation usefulness and perceived challenge by objective/family/band. A small observed success-rate table can support `pilotObserved`; it cannot by itself establish a calibrated item-response scale.
+The pilot must inspect actual delivered questions and record observed independent success, partial-credit distribution, assistance use, completion time, skip reasons, disputed grading, explanation usefulness and perceived challenge by objective/family/band. Include short-response and source-learning journeys with actual AI grading, local/online availability changes, conversational repair and AI planning. Evaluate whether the grades recognize valid meaning, feedback identifies actionable gaps and recommendations fit the learner's goals and time. A small observed success-rate table can support `pilotObserved`; it cannot by itself establish a calibrated item-response scale.
 
 Initial product targets for review are roughly 70–85% independent full success in sustained ordinary practice, enough recoverable errors to make explanation useful, and few repeated failures without support. These are design targets to test, not guarantees for every learner or every band. Do not force the algorithm to achieve the target by relabeling questions or excluding legitimate errors. If a family shows no meaningful separation between bands, repair its demand contracts before changing scoring rhetoric.
 
@@ -955,11 +991,12 @@ Release gates for this chapter:
 2. QA-15 timing-isolation tests pass at configuration, runtime and resume boundaries.
 3. QA-09 active-time/help/interruption preservation passes across every save stage, relaunch and checkpoint-recovery path.
 4. QA-10 protected leakage review covers visible, visual and accessibility representations, and reusable protected keys stay undisclosed.
-5. QA-16 live/replay equivalence and repeat-gaming fixtures pass using the single versioned reducer.
+5. QA-16 live/replay equivalence and repeat-gaming fixtures pass using the single versioned reducer with retained deterministic, AI and hybrid grades and accepted AI planning decisions; replay makes no model calls.
 6. QA-07 catalog and runtime distributions pass under feasible mixed quotas; shortages produce explicit outcomes.
-7. All source/self-rating fixtures prove zero standard skill contribution.
+7. Source/short-response fixtures prove that suitable AI grades drive scoped progress, practice selection and review, while self-ratings, pending/abstained results and unsupported mappings do not fabricate graded evidence. Comparable protected use depends on evaluator/protocol validation rather than model or source exclusion.
 8. Quarantine/correction fixtures rebuild every affected derived channel without changing raw historical answers.
 9. Novice/experienced trajectory simulations select different actual demands and remain finite under sparse pools.
 10. Human pilot feedback supports the intended challenge and clarity; stronger calibration or improvement claims remain disabled until separately justified.
+11. Real evaluator-quality checks cover the supported task/rubric/language scopes, equivalent expressions, partial credit, unsupported claims and abstention; changed evaluators are pooled only when comparability is supported. Online/offline route, delayed grade, dispute, retry and correction scenarios preserve accepted work without learning penalties.
 
 A green deterministic test suite establishes that the policy implements the specified rules. It does not establish educational validity, appropriate difficulty for every person, long-term retention, broad transfer, or generalized cognitive improvement. Those conclusions require the corresponding learner and outcome evidence, reported at its actual scope.

@@ -1,8 +1,7 @@
 import Foundation
 
-/// Builds the immutable, machine-checkable exercise contract carried by every
-/// AI Practice Studio question. The optional model layer never receives a way
-/// to replace this value; it can only attach presentation metadata beside it.
+/// Builds immutable exercise contracts. Exact evaluators and saved AI rubrics
+/// retain their own scoring authority when a question is presented or restored.
 enum NFAuthoredExerciseAuthority {
     static let generatorVersion = 12
 
@@ -221,11 +220,16 @@ enum NFAuthoredExerciseAuthority {
               exercise.evidenceClass == .documentPractice,
               exercise.purpose == .documentPractice,
               !exercise.assessmentProtected,
-              exercise.provenance.contentTier != .freeFormAI,
+              (exercise.provenance.contentTier != .freeFormAI || exercise.aiRubric != nil),
               exercise.provenance.sourceChunkIDs == question.citationChunkIDs,
               choices(in: exercise.interaction) == question.choices,
               expectedAnswers(in: exercise.interaction).contains(question.correctAnswer) else {
             return false
+        }
+        if let rubric = exercise.aiRubric {
+            guard question.style == .shortAnswer,
+                  rubric.referenceAnswer == question.correctAnswer,
+                  rubric.criteria == exercise.rubric.criteria else { return false }
         }
         return (try? NFExerciseSchemaValidator.validate(exercise)) != nil
     }

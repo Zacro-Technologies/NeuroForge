@@ -1,5 +1,7 @@
 # QA and delivery ledger — 4 September 2026
 
+> **v1.1 direction update:** this ledger retains prior implementation evidence. [AI-centered requirements](../Improvement_Spec_2026-09-04/README.md) supersede earlier AI/privacy restrictions; [changed contracts](AI_Direction_Revision_Status.md) are specified pending implementation reassessment. No new AI capability is established by this documentation change.
+
 Each requirement is accounted for below. A blocked human/device/content gate is not treated as a passing automated check. This working tree is an internal implementation candidate.
 
 | Requirement | Status | Evidence and remaining acceptance |

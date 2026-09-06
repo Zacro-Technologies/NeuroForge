@@ -172,6 +172,7 @@ enum NFDataArchiveRestoreError: Error, Equatable, LocalizedError {
     case activeSession
     case persistenceFailed
     case ambiguousDestinationRecords
+    case requiresStagedRestore
 
     var errorDescription: String? {
         switch self {
@@ -210,6 +211,11 @@ enum NFDataArchiveRestoreError: Error, Equatable, LocalizedError {
                 "The restore could not be verified. Keep the original backup and review your saved records before trying again.",
                 locale: NFAppLocalization.preferredLocale,
                 comment: "Unverified archive restore; no cross-store rollback guarantee is claimed."
+            )
+        case .requiresStagedRestore:
+            NFAILearningCopy.text(
+                "Restore this backup from Settings so saved AI explanations and evaluations are included in the verified restart transaction.",
+                "保存したAIの解説と評価を再起動時に検証して復元するため、設定からこのバックアップを復元してください。"
             )
         }
     }
@@ -353,6 +359,10 @@ enum NFDataArchiveRestoreService {
         try store.localSessions.requireArchiveWriteAvailability()
         guard store.activeSessionRequest == nil else { throw NFDataArchiveRestoreError.activeSession }
         let archive = prepared.archive
+        guard (archive.aiLearningArtifacts ?? []).isEmpty,
+              try NFAILearningArtifactArchive.capture(at: store.localSessions.aiArtifactDirectoryURL).isEmpty else {
+            throw NFDataArchiveRestoreError.requiresStagedRestore
+        }
         let census = try NFDataArchiveDestinationCensus(context: store.context)
         try validate(archive, existingStore: store, census: census, policy: policy)
         let preview = makePreview(archive, store: store, census: census)
@@ -804,6 +814,9 @@ enum NFDataArchiveRestoreService {
                   generation.questions.allSatisfy(\.hasValidResponseSchema) else {
                 throw NFDataArchiveRestoreError.invalidArchive("a generated set has invalid provenance or response schema")
             }
+            if isNativeGenerationEnvelope(generation), !generation.questions.isEmpty {
+                _ = try makeGeneration(generation)
+            }
         }
         let incomingGenerationIDs = Set(archive.aiGenerations.map(\.id))
         guard census.aiGenerations
@@ -1189,6 +1202,13 @@ enum NFDataArchiveRestoreService {
                 comment: "Validation note attached to a legacy generated set restored from an archive."
             )]
         )
+        if isNativeGenerationEnvelope(p), !p.questions.isEmpty {
+            guard NFAILearningAuthoringService.isCompatibleResult(result),
+                  p.questionCount == p.questions.count,
+                  p.payloadExpiresAt == .distantFuture else {
+                throw NFDataArchiveRestoreError.invalidArchive("a native question set has an incompatible saved rubric, provenance, or retention contract")
+            }
+        }
         let request = NFAuthoringRequest(
             id: p.id,
             capability: NFAICapability(rawValue: p.capability) ?? .contextualize,
@@ -1213,6 +1233,14 @@ enum NFDataArchiveRestoreService {
         record.payloadExpiresAt = p.payloadExpiresAt
         if p.questions.isEmpty { record.resultPayload = Data() }
         return record
+    }
+
+    private static func isNativeGenerationEnvelope(_ payload: NFDataExportService.Generation) -> Bool {
+        payload.route == NFAIRoute.directCloud.rawValue
+            || payload.validationStatus?.level == .rubricModelOutput
+            || payload.cacheKey.hasPrefix("native-rubric|")
+            || payload.questions.contains { $0.authoritativeExercise.aiRubric != nil
+                || $0.authoritativeExercise.provenance.generatorID == "neuroforge.native-rubric-author" }
     }
 
     private static func makeCheckpoint(_ p: NFDataExportService.Checkpoint) -> SessionCheckpointRecord {
@@ -2180,7 +2208,7 @@ enum NFRestoreJournalError: Error, Equatable, LocalizedError {
 /// Paths are relative to a coordinator-supplied, allowlisted domain root. This
 /// building block never resolves these paths or writes their live destinations.
 struct NFRestoreJournalFileOperation: Codable, Equatable, Sendable {
-    enum Domain: String, Codable, Sendable { case localLearning, adaptiveHistory, sourceFile }
+    enum Domain: String, Codable, Sendable { case localLearning, adaptiveHistory, sourceFile, aiTutor, aiGrading }
     let id: String
     let domain: Domain
     let relativePath: String
@@ -2312,7 +2340,7 @@ enum NFRestoreJournalCodec {
         guard !plan.namespace.isEmpty, plan.namespace.utf8.count <= 256,
               isDigest(plan.sourceDigest), isDigest(plan.permittedPayloadDigest),
               NFDataArchiveRestorePolicy(rawValue: plan.acceptedPolicyRaw) != nil,
-              plan.files.count <= 256,
+              plan.files.count <= NFAILearningArtifactArchive.maximumFiles * 2 + 2,
               Set(plan.files.map(\.id)).count == plan.files.count,
               Set(plan.files.map { $0.domain.rawValue + ":" + $0.relativePath }).count == plan.files.count else {
             throw NFRestoreJournalError.malformed
@@ -2334,6 +2362,8 @@ enum NFRestoreJournalCodec {
             guard !file.id.isEmpty, file.id.utf8.count <= 256,
                   isSafeRelativePath(file.relativePath) else { throw NFRestoreJournalError.unsafePath }
         }
+        _ = try NFAILearningArtifactArchive.files(from: plan.files, before: true)
+        _ = try NFAILearningArtifactArchive.files(from: plan.files, before: false)
         _ = try plan.raw.disposition(current: plan.raw.before)
     }
     static func isSafeRelativePath(_ path: String) -> Bool {
@@ -2837,10 +2867,13 @@ struct NFRestoreDestinationSnapshot: Codable, Sendable {
     let raw: NFDataArchiveRawSnapshot
     let localLearningBytes: Data?
     let adaptiveHistoryBytes: Data?
+    let aiLearningArtifacts: [NFAILearningArtifactFile]?
 
-    init(raw: NFDataArchiveRawSnapshot, localLearningBytes: Data?, adaptiveHistoryBytes: Data?) {
+    init(raw: NFDataArchiveRawSnapshot, localLearningBytes: Data?, adaptiveHistoryBytes: Data?,
+         aiLearningArtifacts: [NFAILearningArtifactFile] = []) {
         version = 1; self.raw = raw
         self.localLearningBytes = localLearningBytes; self.adaptiveHistoryBytes = adaptiveHistoryBytes
+        self.aiLearningArtifacts = aiLearningArtifacts.isEmpty ? nil : aiLearningArtifacts.sorted { $0.relativePath < $1.relativePath }
     }
 
     var reviewDigest: String {
@@ -2850,10 +2883,12 @@ struct NFRestoreDestinationSnapshot: Codable, Sendable {
                 let rawDigest: String
                 let localLearningBytes: Data?
                 let adaptiveHistoryBytes: Data?
+                let aiLearningArtifacts: [NFAILearningArtifactFile]?
             }
             return NFRestoreJournalCodec.digest(try NFDataArchiveRawSnapshot.canonicalEncode(
                 Identity(version: version, rawDigest: raw.contentDigest(),
-                    localLearningBytes: localLearningBytes, adaptiveHistoryBytes: adaptiveHistoryBytes)))
+                    localLearningBytes: localLearningBytes, adaptiveHistoryBytes: adaptiveHistoryBytes,
+                    aiLearningArtifacts: aiLearningArtifacts)))
         }
     }
 }
@@ -2864,7 +2899,7 @@ struct NFRestoreCompiledCounts: Equatable, Sendable {
     static var supportedKeys: Set<String> {
         let categories = NFDataArchiveCategory.allCases.map(\.rawValue) + [
             "local.sessions", "local.snapshots", "local.savedSets", "local.privateStudyRuns",
-            "local.evidenceDispositions", "local.contentCorrections", "local.attemptConflicts", "local.unavailableHistorySnapshots"
+            "local.evidenceDispositions", "local.contentCorrections", "local.attemptConflicts", "local.unavailableHistorySnapshots", "local.aiArtifacts"
         ]
         return Set(categories.flatMap { ["restored." + $0, "skipped." + $0] })
     }
@@ -2893,12 +2928,14 @@ enum NFRestorePlanCompiler {
     static let adaptiveHistoryFilename = "AdaptivePlanHistory-v1.json"
 
     static func captureDestination(context: ModelContext, localLearningBytes: Data?,
-                                   adaptiveHistoryBytes: Data?) throws -> NFRestoreDestinationSnapshot {
+                                   adaptiveHistoryBytes: Data?, aiLearningArtifacts: [NFAILearningArtifactFile] = []) throws -> NFRestoreDestinationSnapshot {
         for bytes in [localLearningBytes, adaptiveHistoryBytes].compactMap({ $0 }) {
             guard bytes.count <= maximumBytes else { throw NFRestoreJournalError.oversized }
         }
+        try NFAILearningArtifactArchive.validate(aiLearningArtifacts)
         return .init(raw: try NFDataArchiveRawCapture.capture(context: context),
-            localLearningBytes: localLearningBytes, adaptiveHistoryBytes: adaptiveHistoryBytes)
+            localLearningBytes: localLearningBytes, adaptiveHistoryBytes: adaptiveHistoryBytes,
+            aiLearningArtifacts: aiLearningArtifacts)
     }
 
     nonisolated static func permittedPayload(prepared: NFPreparedDataArchive) throws -> Data {
@@ -3003,6 +3040,15 @@ enum NFRestorePlanCompiler {
         count("contentCorrections", old: (prior.contentCorrections ?? []).map(\.id), new: (incoming.contentCorrections ?? []).map(\.id))
         count("attemptConflicts", old: (prior.attemptConflicts ?? []).map(\.id), new: (incoming.attemptConflicts ?? []).map(\.id))
         count("unavailableHistorySnapshots", old: (prior.unavailableHistorySnapshots ?? []).map(\.attemptID), new: (incoming.unavailableHistorySnapshots ?? []).map(\.attemptID))
+        let oldArtifacts = destination.aiLearningArtifacts ?? []
+        let newArtifacts = frozen.archive.aiLearningArtifacts ?? []
+        try NFAILearningArtifactArchive.validate(oldArtifacts)
+        try NFAILearningArtifactArchive.validate(newArtifacts)
+        result.localIncoming["aiArtifacts"] = newArtifacts.count
+        let oldFiles = Dictionary(uniqueKeysWithValues: oldArtifacts.map { ($0.relativePath, $0) })
+        result.localConflicts["aiArtifacts"] = newArtifacts.filter { incoming in
+            oldFiles[incoming.relativePath].map { $0.digest != incoming.digest } == true
+        }.count
         return result
     }
 
@@ -3031,10 +3077,14 @@ enum NFRestorePlanCompiler {
         let local = try compileLocalLearning(before: destination.localLearningBytes,
             incoming: frozen.archive.localLearning, ownerDeviceID: ownerDeviceID,
             after: compiled.after, incomingCore: frozen.archive, policy: policy, priorRaw: destination.raw)
+        let artifacts = try NFAILearningArtifactArchive.operations(existing: destination.aiLearningArtifacts ?? [],
+            incoming: frozen.archive.aiLearningArtifacts ?? [], policy: policy)
         var counts = compiled.counts
         counts.merge(local.counts) { _, new in new }
         counts["restored.adaptiveHistory"] = history.restored
         counts["skipped.adaptiveHistory"] = history.skipped
+        counts["restored.local.aiArtifacts"] = artifacts.restored
+        counts["skipped.local.aiArtifacts"] = artifacts.skipped
         let plan = NFRestoreJournalPlan(transactionID: transactionID, namespace: namespace,
             installationOwnerID: ownerDeviceID, sourceDigest: frozen.sourceDigest,
             permittedPayload: payload, policy: policy, acceptedCounts: counts,
@@ -3043,7 +3093,7 @@ enum NFRestorePlanCompiler {
                     before: destination.localLearningBytes, after: local.bytes),
                 .init(id: "adaptive-history", domain: .adaptiveHistory, relativePath: adaptiveHistoryFilename,
                     before: destination.adaptiveHistoryBytes, after: history.bytes)
-            ], resultCountsVersion: 1)
+            ] + artifacts.operations, resultCountsVersion: 1)
         try NFRestoreJournalCodec.validate(plan)
         try plan.validateSupportedRawContract()
         _ = try NFRestoreCompiledCounts(plan: plan)
@@ -3389,8 +3439,8 @@ enum NFRestoreDomainApplier {
 }
 
 /// Side-file publication runs off the UI actor and retains the same application
-/// lease for its lifetime. Only the two named existing side files are supported;
-/// a supplied source-file/path operation is unavailable, not arbitrary I/O.
+/// lease for its lifetime. Existing side files and validated AI artifact names
+/// are supported; a supplied source-file/path operation remains unavailable.
 actor NFRestoreFileApplier {
     enum Boundary: Equatable, Sendable { case beforeTemporaryWrite, afterTemporaryWrite, beforePublish, afterPublish, afterReadback }
     typealias Fault = @Sendable (Boundary) throws -> Void
@@ -3404,7 +3454,7 @@ actor NFRestoreFileApplier {
         self.roots = roots; self.lease = lease; self.maximumBytes = maximumBytes; self.fault = fault
     }
 
-    func captureFiles() throws -> [String: Data?] {
+    func captureFiles(operations: [NFRestoreJournalFileOperation]? = nil) throws -> [String: Data?] {
         var values: [String: Data?] = [:]
         for (domain, id, name) in [(NFRestoreJournalFileOperation.Domain.localLearning, "local-learning", "sessions-v1.json"),
                                   (.adaptiveHistory, "adaptive-history", "AdaptivePlanHistory-v1.json")] {
@@ -3413,7 +3463,31 @@ actor NFRestoreFileApplier {
             defer { Darwin.close(fd) }
             values[id] = .some(try read(name, directory: fd))
         }
+        if let operations {
+            let expectedIDs = Set(operations.map(\.id))
+            let artifacts = try captureAIArtifacts()
+            for file in artifacts {
+                let location = try NFAILearningArtifactArchive.location(for: file.relativePath)
+                guard expectedIDs.contains(location.operationID) else { throw NFRestoreJournalError.recoveryConflict }
+                values[location.operationID] = .some(file.bytes)
+            }
+            for operation in operations where operation.domain == .aiTutor || operation.domain == .aiGrading {
+                if !values.keys.contains(operation.id) { values[operation.id] = .some(nil) }
+            }
+            values = values.filter { expectedIDs.contains($0.key) }
+        }
         return values
+    }
+
+    func captureAIArtifacts() throws -> [NFAILearningArtifactFile] {
+        var values: [NFAILearningArtifactFile] = []
+        for (domain, folder) in [(NFRestoreJournalFileOperation.Domain.aiTutor, "Tutor"), (.aiGrading, "Grading")] {
+            if let root = roots[domain] {
+                values += try NFAILearningArtifactArchive.captureDirectory(root, folder: folder)
+            }
+        }
+        try NFAILearningArtifactArchive.validate(values)
+        return values.sorted { $0.relativePath < $1.relativePath }
     }
 
     @discardableResult
@@ -3423,6 +3497,14 @@ actor NFRestoreFileApplier {
         case .localLearning: expected = ("local-learning", "sessions-v1.json")
         case .adaptiveHistory: expected = ("adaptive-history", "AdaptivePlanHistory-v1.json")
         case .sourceFile: throw NFRestoreJournalError.unsupportedVersion
+        case .aiTutor, .aiGrading:
+            let folder = operation.domain == .aiTutor ? "Tutor" : "Grading"
+            let path = folder + "/" + operation.relativePath
+            let location = try NFAILearningArtifactArchive.location(for: path)
+            expected = (location.operationID, location.filename)
+            for bytes in [operation.before, operation.after].compactMap({ $0 }) {
+                try NFAILearningArtifactArchive.validate(.init(relativePath: path, bytes: bytes))
+            }
         }
         guard operation.id == expected.0, operation.relativePath == expected.1,
               let root = roots[operation.domain] else { throw NFRestoreJournalError.unsafePath }

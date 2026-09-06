@@ -1,5 +1,7 @@
 # Product requirement ledger
 
+> **v1.1 direction update:** this ledger retains prior implementation evidence. [AI-centered requirements](../Improvement_Spec_2026-09-04/README.md) supersede earlier AI/privacy restrictions; [changed contracts](AI_Direction_Revision_Status.md) are specified pending implementation reassessment. No new AI capability is established by this documentation change.
+
 | Requirement | Status | Evidence and remaining acceptance |
 |---|---|---|
 | PRD-001 | partial | Scoring and authority fixes are implemented; all-family independent review remains. |

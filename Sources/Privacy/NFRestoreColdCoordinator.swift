@@ -17,7 +17,9 @@ enum NFRestoreColdCoordinator {
 
     static func sideFileRoots(applicationSupportURL: URL, namespace: String) -> [NFRestoreJournalFileOperation.Domain: URL] {
         [.localLearning: applicationSupportURL.appending(path: "NeuroForge/LocalLearning/\(namespace)", directoryHint: .isDirectory),
-         .adaptiveHistory: applicationSupportURL.appending(path: "NeuroForge", directoryHint: .isDirectory)]
+         .adaptiveHistory: applicationSupportURL.appending(path: "NeuroForge", directoryHint: .isDirectory),
+         .aiTutor: applicationSupportURL.appending(path: "NeuroForge/LocalLearning/\(namespace)/AILearning/Tutor", directoryHint: .isDirectory),
+         .aiGrading: applicationSupportURL.appending(path: "NeuroForge/LocalLearning/\(namespace)/AILearning/Grading", directoryHint: .isDirectory)]
     }
 
     static func prepareSideFileRoots(applicationSupportURL: URL, namespace: String) throws -> [NFRestoreJournalFileOperation.Domain: URL] {
@@ -28,13 +30,20 @@ enum NFRestoreColdCoordinator {
         var parent = base
         var opened: [Int32] = []
         defer { for fd in opened { Darwin.close(fd) } }
-        for component in ["NeuroForge", "LocalLearning", namespace] {
+        for component in ["NeuroForge", "LocalLearning", namespace, "AILearning"] {
             guard mkdirat(parent, component, 0o700) == 0 || errno == EEXIST else { throw NFRestoreJournalError.ioFailure }
             let child = openat(parent, component, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_NONBLOCK)
             guard child >= 0 else { throw NFRestoreJournalError.unsafePath }
             opened.append(child)
             guard fchmod(child, 0o700) == 0, fsync(parent) == 0 else { throw NFRestoreJournalError.ioFailure }
             parent = child
+        }
+        for component in ["Tutor", "Grading"] {
+            guard mkdirat(parent, component, 0o700) == 0 || errno == EEXIST else { throw NFRestoreJournalError.ioFailure }
+            let child = openat(parent, component, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_NONBLOCK)
+            guard child >= 0 else { throw NFRestoreJournalError.unsafePath }
+            defer { Darwin.close(child) }
+            guard fchmod(child, 0o700) == 0, fsync(parent) == 0 else { throw NFRestoreJournalError.ioFailure }
         }
         return sideFileRoots(applicationSupportURL: applicationSupportURL, namespace: namespace)
     }
@@ -131,9 +140,10 @@ enum NFRestoreColdCoordinator {
         if loaded == nil {
             guard let request, let policy = NFDataArchiveRestorePolicy(rawValue: request.policyRaw) else { throw Failure.unresolvedArtifacts }
             let files = try await fileApplier.captureFiles()
+            let aiArtifacts = try await fileApplier.captureAIArtifacts()
             let context = ModelContext(container); context.autosaveEnabled = false
             let destination = try NFRestorePlanCompiler.captureDestination(context: context,
-                localLearningBytes: files["local-learning"]!, adaptiveHistoryBytes: files["adaptive-history"]!)
+                localLearningBytes: files["local-learning"]!, adaptiveHistoryBytes: files["adaptive-history"]!, aiLearningArtifacts: aiArtifacts)
             guard try destination.reviewDigest == request.reviewedDestinationDigest else { throw Failure.renewedReviewRequired }
             let plan: NFRestoreJournalPlan
             if let candidate = try await journal.loadUnacceptedCandidate(transactionID: transactionID, namespace: namespace,
@@ -141,7 +151,8 @@ enum NFRestoreColdCoordinator {
                 try validateBinding(request, plan: candidate)
                 let candidateBefore = NFRestoreDestinationSnapshot(raw: candidate.raw.before,
                     localLearningBytes: candidate.files.first { $0.id == "local-learning" }?.before,
-                    adaptiveHistoryBytes: candidate.files.first { $0.id == "adaptive-history" }?.before)
+                    adaptiveHistoryBytes: candidate.files.first { $0.id == "adaptive-history" }?.before,
+                    aiLearningArtifacts: try NFAILearningArtifactArchive.files(from: candidate.files, before: true))
                 guard try candidateBefore.reviewDigest == request.reviewedDestinationDigest else { throw Failure.renewedReviewRequired }
                 plan = candidate
             } else {
@@ -165,7 +176,7 @@ enum NFRestoreColdCoordinator {
         }
         guard isCurrentLaunch() else { throw Failure.fullRestartRequired }
         do {
-            let beforeFiles = try await fileApplier.captureFiles()
+            let beforeFiles = try await fileApplier.captureFiles(operations: accepted.plan.files)
             let fresh = ModelContext(container); fresh.autosaveEnabled = false
             let before = try NFDataArchiveRawCapture.capture(context: fresh)
             let status = try NFRestoreJournalCodec.reconcile(accepted, current: before, files: beforeFiles)
@@ -181,7 +192,7 @@ enum NFRestoreColdCoordinator {
             guard isCurrentLaunch() else { throw Failure.fullRestartRequired }
             let finalContext = ModelContext(container); finalContext.autosaveEnabled = false
             let actual = try NFDataArchiveRawCapture.capture(context: finalContext)
-            let actualFiles = try await fileApplier.captureFiles()
+            let actualFiles = try await fileApplier.captureFiles(operations: accepted.plan.files)
             let current = try await journal.load(transactionID: transactionID, namespace: namespace, installationOwnerID: installationOwnerID)
             _ = try await journal.verifyComplete(transactionID: transactionID, namespace: namespace,
                 installationOwnerID: installationOwnerID, expectedRevision: current.progress.revision, current: actual, files: actualFiles)

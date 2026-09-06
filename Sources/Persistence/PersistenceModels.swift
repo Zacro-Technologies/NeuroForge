@@ -627,6 +627,9 @@ final class SourceDocumentRecord {
         self.typeIdentifier = typeIdentifier
         self.sizeBytes = sizeBytes
         self.localPath = localPath
+        // New imports use Automatic AI. Keep the stored schema's legacy
+        // default and every decoded explicit source policy unchanged.
+        self.aiPolicyRaw = DocumentAIPolicy.privateCloudAllowed.rawValue
     }
 
     var csvSelectedColumnIDs: [String] {
@@ -701,6 +704,7 @@ final class AIGenerationRecord {
     static let defaultPayloadTTL: TimeInterval = 7 * 24 * 60 * 60
     static let maximumPersistedPayloadCount = 64
     static let maximumPersistedPayloadBytes: Int64 = 32 * 1_024 * 1_024
+    static let maximumNativePayloadBytes: Int64 = 8 * 1_024 * 1_024
 
     var id: UUID = UUID()
     var createdAt: Date = Date()
@@ -745,7 +749,13 @@ final class AIGenerationRecord {
         isFallback = result.provenance.isFallback
         questionCount = result.questions.count
         resultPayload = try JSONEncoder().encode(result)
-        payloadExpiresAt = result.provenance.generatedAt.addingTimeInterval(max(0, payloadTTL))
+        payloadExpiresAt = NFAILearningAuthoringService.isCompatibleResult(result)
+            ? .distantFuture : result.provenance.generatedAt.addingTimeInterval(max(0, payloadTTL))
+    }
+
+    var isNativeLearningSet: Bool {
+        guard let result = try? JSONDecoder().decode(NFAuthoringResult.self, from: resultPayload) else { return false }
+        return NFAILearningAuthoringService.isCompatibleResult(result)
     }
 
     func recoverableResult(at date: Date = Date()) -> NFAuthoringResult? {
@@ -754,12 +764,13 @@ final class AIGenerationRecord {
               result.provenance.requestID == id,
               result.provenance.cacheKey == cacheKey,
               result.provenance.promptVersion == promptVersion,
-              promptVersion == NFAuthoringRequest.promptVersion,
               result.provenance.validationVersion == validationVersion,
-              validationVersion == NFAuthoringEngine.validationVersion,
-              (result.provenance.route != .onDevice
-                  || (result.validationStatus.level == .deterministicKeyWithModelContext
-                      && result.questions.allSatisfy(\.hasValidBoundedPresentationLayer))),
+              (NFAILearningAuthoringService.isCompatibleResult(result)
+                  || (promptVersion == NFAuthoringRequest.promptVersion
+                      && validationVersion == NFAuthoringEngine.validationVersion
+                      && (result.provenance.route != .onDevice
+                          || (result.validationStatus.level == .deterministicKeyWithModelContext
+                              && result.questions.allSatisfy(\.hasValidBoundedPresentationLayer))))),
               result.questions.count == questionCount,
               result.questions.allSatisfy({ question in
                   let provenanceCitations = Set(result.provenance.sourceChunkIDs)
@@ -3532,7 +3543,7 @@ final class AppStore {
         if let snapshot = prepared.snapshot {
             try localSessions.retainSnapshot(attemptID: snapshot.attemptID, exercise: snapshot.exercise,
                 editorialCapture: snapshot.editorialCapture, mathWork: snapshot.mathWork, traceInspection: snapshot.traceInspection,
-                dataInspection: snapshot.dataInspection, scienceStudy: snapshot.scienceStudy, transferRelationship: snapshot.transferRelationship)
+                dataInspection: snapshot.dataInspection, scienceStudy: snapshot.scienceStudy, transferRelationship: snapshot.transferRelationship, aiGrade: snapshot.aiGrade)
         }
         try insertAttempt(prepared.record)
     }
@@ -3568,6 +3579,10 @@ final class AppStore {
         transferRelationship: NFTransferRelationshipDraft? = nil
     ) throws -> NFPreparedExerciseAttempt {
         try localSessions.requireArchiveWriteAvailability()
+        if exercise.aiRubric != nil || result.aiGrade != nil {
+            guard NFAIGradeValidator.validatesScore(result, exercise: exercise,
+                response: response, attemptID: attemptID) else { throw LocalDataError.verificationFailed }
+        }
         guard traceInspection.map({ $0.isValid(for: exercise) }) ?? true,
               traceInspection == nil || hintCount > 0 else { throw NFLocalSessionRepository.RepositoryError.corruptSnapshot }
         guard NFTransferRelationshipDraft.permits(transferRelationship, exercise: exercise, response: response, committing: true),
@@ -3703,7 +3718,7 @@ final class AppStore {
         let savedMathWork = retained?.mathWork ?? (retained == nil ? mathWork : nil)
         let snapshot = exercise.assessmentProtected ? nil : NFLocalAttemptSnapshot(attemptID: attemptID,
             exercise: exercise, editorialCapture: editorialCapture, mathWork: savedMathWork, traceInspection: traceInspection,
-            dataInspection: savedInspection, scienceStudy: savedScience, transferRelationship: savedTransfer)
+            dataInspection: savedInspection, scienceStudy: savedScience, transferRelationship: savedTransfer, aiGrade: result.aiGrade)
         return NFPreparedExerciseAttempt(record: record, snapshot: snapshot, conflictingOriginal: nil, conflictRecoveryOnly: false)
     }
 
@@ -4021,6 +4036,12 @@ final class AppStore {
         guard record.recoverableResult(at: result.provenance.generatedAt) != nil else {
             throw NFAIError.invalidOutput(["The generated set could not be recovered from its saved response contract."])
         }
+        if record.isNativeLearningSet {
+            let retainedBytes = aiGenerations.filter(\.isNativeLearningSet).reduce(Int64(0)) { $0 + Int64($1.resultPayload.count) }
+            guard Int64(record.resultPayload.count) <= AIGenerationRecord.maximumNativePayloadBytes - retainedBytes else {
+                throw NFAIGenerationStorageError.capacity
+            }
+        }
         context.insert(record)
         _ = enforceAIGenerationPayloadBounds(on: [record] + aiGenerations)
         do {
@@ -4141,7 +4162,7 @@ final class AppStore {
         var retainedCount = 0
         var retainedBytes: Int64 = 0
         var discardedCount = 0
-        for record in newestFirst where !record.resultPayload.isEmpty {
+        for record in newestFirst where !record.resultPayload.isEmpty && !record.isNativeLearningSet {
             let byteCount = Int64(record.resultPayload.count)
             let fitsCount = retainedCount < AIGenerationRecord.maximumPersistedPayloadCount
             let fitsBytes = byteCount <= AIGenerationRecord.maximumPersistedPayloadBytes - retainedBytes
@@ -6219,7 +6240,10 @@ extension AppStore {
         let exercise = question.authoritativeExercise
         guard NFAuthoredExerciseAuthority.validatesBinding(question),
               exercise.evidenceClass == .documentPractice,
-              score == NFExerciseScoringEngine.score(response, for: exercise),
+              (exercise.aiRubric == nil
+                ? score.aiGrade == nil && score == NFExerciseScoringEngine.score(response, for: exercise)
+                : NFAIGradeValidator.validatesScore(score, exercise: exercise, response: response, attemptID: attemptID)
+                    && score.aiGrade?.request.runID == runID),
               Set(exercise.provenance.sourceDocumentIDs) == Set(sourceDocumentIDs.map(\.uuidString))
                 || exercise.provenance.sourceDocumentIDs == ["legacy-personal-document"] else {
             throw LocalDataError.verificationFailed

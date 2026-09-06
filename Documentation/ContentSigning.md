@@ -1,5 +1,7 @@
 # Release content signing
 
+> **Scope of this guide:** this describes the existing implementation/deployment. The [revised product direction](AI_Product_Direction_2026-09-05.md) permits integrated local/cloud AI tutoring, grading and generation. Existing Shortcut consent mechanics and bundled-inventory signing requirements are not general admission gates for the new AI features. This documentation revision changes no deployed behavior.
+
 NeuroForge treats the Swift release inventory as the canonical content source. `NFReleaseContentManifestTool` emits a canonical JSON manifest containing every collection count and SHA-256 digest, signs that exact byte sequence with P-256 ECDSA, and verifies it against an offline public key. Runtime generation remains unavailable if the signature, version, inventory, or concrete runtime-bank bridge fails.
 
 ## Release procedure

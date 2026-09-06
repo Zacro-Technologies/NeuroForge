@@ -26,6 +26,7 @@ struct NFDataArchiveRoundTripSnapshot: Equatable, Sendable {
     let reassessmentState: NFReassessmentState?
     let adaptivePlanChangeIDs: Set<UUID>
     let quarantinedReportIDs: Set<UUID>
+    let aiLearningArtifactPaths: Set<String>
 }
 
 enum NFDataExportRoundTripValidator {
@@ -35,6 +36,12 @@ enum NFDataExportRoundTripValidator {
 
     static func decodeArchive(data original: Data) throws -> NFDataArchiveRoundTripSnapshot {
         let data = try NFDataArchiveMigration.normalizedData(from: original)
+        if let object = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            try NFAILearningArtifactArchive.validateArchiveVersion(object)
+            if let artifacts = object["aiLearningArtifacts"], !(artifacts is NSNull) {
+                _ = try NFAILearningArtifactArchive.decodeEntries(artifacts)
+            }
+        }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let archive = try decoder.decode(ArchiveEnvelope.self, from: data)
@@ -42,6 +49,10 @@ enum NFDataExportRoundTripValidator {
             .contains(archive.archiveVersion) else {
             throw NFDataArchiveValidationError.unsupportedArchiveVersion(archive.archiveVersion)
         }
+        if !(archive.aiLearningArtifacts ?? []).isEmpty, archive.archiveVersion < 19 {
+            throw NFDataArchiveValidationError.unsupportedArchiveVersion(archive.archiveVersion)
+        }
+        try NFAILearningArtifactArchive.validate(archive.aiLearningArtifacts ?? [])
 
         return NFDataArchiveRoundTripSnapshot(
             archiveVersion: archive.archiveVersion,
@@ -62,7 +73,8 @@ enum NFDataExportRoundTripValidator {
                 (archive.adaptivePlanHistory ?? []).map(\.id),
                 category: "adaptivePlanHistory"
             ),
-            quarantinedReportIDs: try unique(archive.quarantinedReports.map(\.id), category: "quarantinedReports")
+            quarantinedReportIDs: try unique(archive.quarantinedReports.map(\.id), category: "quarantinedReports"),
+            aiLearningArtifactPaths: Set((archive.aiLearningArtifacts ?? []).map(\.relativePath))
         )
     }
 
@@ -94,6 +106,7 @@ enum NFDataExportRoundTripValidator {
         let reassessmentState: NFReassessmentState?
         let adaptivePlanHistory: [NFAdaptivePlanChangeRecord]?
         let quarantinedReports: [UUIDEntity]
+        let aiLearningArtifacts: [NFAILearningArtifactFile]?
     }
 
     private struct UUIDEntity: Decodable { let id: UUID }

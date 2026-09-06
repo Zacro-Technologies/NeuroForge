@@ -34,6 +34,7 @@ enum NFAIRoute: String, Codable, Sendable {
     /// which model a learner selected after installing or editing it.
     case externalShortcut = "external_shortcut"
     case onDevice = "on_device"
+    case directCloud = "direct_cloud"
     case deterministicFallback = "deterministic_fallback"
 }
 
@@ -78,6 +79,7 @@ enum NFAuthoringValidationLevel: String, Codable, Equatable, Sendable {
     case independentlyCheckedModelKey = "independently_checked_model_key"
     case sourceLinkedModelOutput = "source_linked_model_output"
     case schemaCheckedModelOutput = "schema_checked_model_output"
+    case rubricModelOutput = "rubric_model_output"
 }
 
 struct NFAuthoringValidationStatus: Codable, Equatable, Sendable {
@@ -92,6 +94,7 @@ struct NFAuthoringValidationStatus: Codable, Equatable, Sendable {
         case .independentlyCheckedModelKey: NFAppLocalization.localized("Independently checked model key", locale: NFAppLocalization.preferredLocale, comment: "Authoring-validation status; model output passed a separate exact-restatement check.")
         case .sourceLinkedModelOutput: NFAppLocalization.localized("Source-linked model output", locale: NFAppLocalization.preferredLocale, comment: "Authoring-validation status; linkage does not establish factual truth.")
         case .schemaCheckedModelOutput: NFAppLocalization.localized("Schema-checked model output", locale: NFAppLocalization.preferredLocale, comment: "Authoring-validation status; schema validation does not establish factual truth.")
+        case .rubricModelOutput: NFAppLocalization.localized("AI practice with a saved rubric", locale: NFAppLocalization.preferredLocale, comment: "AI-authored practice has a fixed rubric for later semantic grading.")
         }
     }
 
@@ -119,6 +122,8 @@ struct NFAuthoringValidationStatus: Codable, Equatable, Sendable {
             NFAppLocalization.localized("Structure, citation IDs, and lexical overlap with cited excerpts passed automated checks. This does not prove the proposed answer or reasoning is factually correct.", locale: NFAppLocalization.preferredLocale, comment: "Disclosure explaining the limits of source-linked model output.")
         case .schemaCheckedModelOutput:
             NFAppLocalization.localized("Structure passed automated checks. The proposed answer and explanation are model-generated and were not factually verified.", locale: NFAppLocalization.preferredLocale, comment: "Disclosure explaining the limits of schema-checked model output.")
+        case .rubricModelOutput:
+            NFAppLocalization.localized("The question, reference answer and rubric are saved together. Response structure and source references were checked; these checks do not certify factual accuracy or grading quality.", locale: NFAppLocalization.preferredLocale, comment: "Details of structural checks for an AI-authored question and fixed rubric.")
         }
     }
 
@@ -132,6 +137,7 @@ struct NFAuthoringValidationStatus: Codable, Equatable, Sendable {
             || level == .independentlyCheckedModelKey
             || level == .sourceLinkedModelOutput
             || level == .schemaCheckedModelOutput
+            || level == .rubricModelOutput
     }
 
     var hasDeterministicAnswerAuthority: Bool {

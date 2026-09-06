@@ -1,16 +1,19 @@
 {
-  "specificationVersion": "1.0",
-  "requirementCount": 256,
+  "specificationVersion": "1.1",
+  "requirementCount": 258,
   "distributionCertified": false,
-  "statusMeaning": "Implemented means source present, not all acceptance gates passed. Executed validation is recorded separately.",
+  "statusMeaning": "Implemented means source present for its recorded scope, not all acceptance gates passed. Changed v1.1 contracts require reassessment; this documentation revision implements no app behavior.",
+  "previousStatusLedger": "Previous_Requirement_Traceability_v1_0.json",
   "requirements": [
     {
       "id": "PRD-001",
       "title": "Trustworthy attempts",
       "specification": "../Improvement_Spec_2026-09-04/README.md#prd-001",
-      "status": "partial",
-      "implementation_ledger": "Product_Status.md",
-      "evidence_and_remaining_work": "Scoring and authority fixes are implemented; all-family independent review remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "PRD-002",
@@ -24,17 +27,21 @@
       "id": "PRD-003",
       "title": "A complete learning loop",
       "specification": "../Improvement_Spec_2026-09-04/README.md#prd-003",
-      "status": "partial",
-      "implementation_ledger": "Product_Status.md",
-      "evidence_and_remaining_work": "All seven labs have bounded interactive work with durable ordinary/generated response and history paths. Quantitative, spatial transform, linked science, trace and transfer simulator slices passed on separately recorded source revisions. All-family content progression, full device/editor matrix and release gates remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "PRD-004",
       "title": "Meaningful personalization",
       "specification": "../Improvement_Spec_2026-09-04/README.md#prd-004",
-      "status": "partial",
-      "implementation_ledger": "Product_Status.md",
-      "evidence_and_remaining_work": "Shared policy exists; real reviewed demand catalog and complete durable adaptive delivery remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "PRD-005",
@@ -62,11 +69,13 @@
     },
     {
       "id": "PRD-008",
-      "title": "Historical honesty and privacy",
+      "title": "Authentic learning history",
       "specification": "../Improvement_Spec_2026-09-04/README.md#prd-008",
-      "status": "partial",
-      "implementation_ledger": "Product_Status.md",
-      "evidence_and_remaining_work": "Original history preserved with local snapshots/dispositions and protected-safe export; full migration/account partition proof remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "PRD-009",
@@ -80,17 +89,41 @@
       "id": "PRD-010",
       "title": "Scope stays coherent",
       "specification": "../Improvement_Spec_2026-09-04/README.md#prd-010",
-      "status": "partial",
-      "implementation_ledger": "Product_Status.md",
-      "evidence_and_remaining_work": "No backend/analytics or cross-device edit claims introduced; user changes preserved."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
+    },
+    {
+      "id": "PRD-011",
+      "title": "AI throughout the learning experience",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-011",
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "New AI-centered product requirement; no implementation or acceptance is claimed by this documentation revision.",
+      "previous_specification_status": null,
+      "reassessment_version": "1.1"
+    },
+    {
+      "id": "PRD-012",
+      "title": "Useful offline availability",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-012",
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "New AI-centered product requirement; no implementation or acceptance is claimed by this documentation revision.",
+      "previous_specification_status": null,
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-001",
       "title": "Five stable destinations",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-001",
-      "status": "implemented",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Today/Practice/Progress/Sources/Settings labels; explicit Progress Overview/Review/History. Root destination enum renamed Today. Typed root routes and source context returns retained."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-002",
@@ -104,9 +137,11 @@
       "id": "UX-003",
       "title": "Learning and evidence policies belong to the core model",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-003",
-      "status": "in progress",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Root ordinary/protected policies consumed by session; generated confidence optional and self-check explicit. Reviewed-band delivery depends on content/adaptive integration, not UI relabeling."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-004",
@@ -120,17 +155,21 @@
       "id": "UX-005",
       "title": "Unsaved work and reversible navigation",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-005",
-      "status": "in progress",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Generated/source drafts save at safe close; generated pending attempt survives store failure; prepared response locked; background checkpoints. Root handles ordinary/protected transaction failures. Future-metadata refusal and quarantine/pin-release tests pass. Manual injected failures and window-close recovery remain required."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-006",
       "title": "Sample-first onboarding",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-006",
-      "status": "implemented",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Fresh welcome primary Try a sample; untimed authored math strategy sample with feedback and no ability evidence; secondary setup and Restore a backup. Sample-completion Try another skill switches to an authored data-interpretation sample, preserving the same untimed answer/feedback loop. Installed sample choice, visible Correct explanation and completion-to-setup passed in the finalized 23:10:37 bundle."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-007",
@@ -152,17 +191,19 @@
       "id": "UX-009",
       "title": "Today screen composition and defaults",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-009",
-      "status": "implemented",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Date, exact saved work or daily task, due-review route, daily sections, optional activities; rewards and extra panels disclosed."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-010",
       "title": "Readiness and adjustment",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-010",
-      "status": "partial",
+      "status": "in progress",
       "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Energy preview/cancel/cold journey passed earlier. Exact replacement title/time/evidence preview, five reasons, saved-original/proposal CAS and current-day/started-run fences pass7storetests in170scope. Installed05fdef passes125.319s: allreasons, cancel/cold, exactApply/ack/cold andoneused. Full adjustment/device matrix remains."
+      "evidence_and_remaining_work": "Energy choice stages a pure preview from the displayed immutable plan, with fixed work and honest pacing consequences. Apply alone saves. The installed Cancel/cold-relaunch journey passed in subsequent23 runs; the latest SE capture is reviewed. The full Adjust/replacement pre-apply preview remains a separate obligation."
     },
     {
       "id": "UX-011",
@@ -176,41 +217,49 @@
       "id": "UX-012",
       "title": "Exact activity discovery",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-012",
-      "status": "implemented",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Activity text/translated title/summary/keywords match exact selectable result; direct route to preselected activity; root path preserves search and browsing state. Catalog supports complete current families. Favorite control on exact activity details and Recent/Favorite sections use local metadata; recents are recorded only after an accepted launch."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-013",
       "title": "Activity detail and setup",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-013",
-      "status": "partial",
+      "status": "implemented; broader QA pending",
       "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Activity setup preserves explicit unavailable family/band choices and explains genuine quarantine, exhaustion, prerequisites, timing and unreviewed bands. Actual catalog tests pass on c0c4. All58 authored EN/JA task-structure examples, safe admitted demand/duration aggregates and per-family mixed starting targets are integrated; the complete1315/1315 Mac run passes on6485. These are unscored examples and editorial planning estimates, not reviewed low/high calibration or measured learner timing. Released reviewed admission remains empty; native preview and full accessibility acceptance remain."
+      "evidence_and_remaining_work": "Typed Untimed / Elapsed only / Timed fluency are separate from practice/Transfer focus. Reviewed-family readiness gates speed pressure, global Untimed remains respected, and matched request policy is persisted. Integrated unit coverage exists; the full timing setup/device matrix remains unexecuted."
     },
     {
       "id": "UX-014",
       "title": "Question creation as a guided task",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-014",
-      "status": "in progress",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Searchable paginated source chooser, selected-only filter, exact source eligibility/recovery and compact selected summary are implemented. Search preserves selected IDs; source chooser fixture passes in full1092. Complete external authoring/installed recovery matrix remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-015",
       "title": "Saved versus temporary sets and collections",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-015",
-      "status": "in progress",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Save set uses local durable repository; saved result recovery precedes temporary cache; accepted generated run pins exact result/request; expired in-memory new starts disabled without saved or unfinished run. Sources has Saved and collections, optional named/described collections, source/set membership, explicit membership-only deletion, supported JSON export and learning links. Remove saved copy describes temporary expiry, unfinished runs and retained history; root separately fixes full reusable-inventory deletion. Local metadata/export roundtrip and unsupported-schema no-overwrite tests pass. Root explicitly rejects conflicting imported metadata so original import bytes remain recoverable; automatic conflict merging is not claimed. Clock-boundary integration tests pending."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-016",
       "title": "Keep the problem present through the answer loop",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-016",
-      "status": "partial",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Continuous ordinary/source/generated prompt-response-feedback implemented with immutable outcomes. Generated run lifecycle plus terminal compaction20tests pass in170/170. New native generated journey remains under debugging; full large-text/VoiceOver/keyboard matrix not certified."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-017",
@@ -224,65 +273,79 @@
       "id": "UX-018",
       "title": "Feedback that teaches",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-018",
-      "status": "implemented",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Typed saved answer rendering; generated self-check neutral match label without numeric credit; history protected item neutral result, no key or scoring color; actual snapshot explanation used. Root session handles immediate teaching correction and protected acknowledgement."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-019",
       "title": "Graduated help and repair",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-019",
-      "status": "in progress",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Ordinary staged help/repair and generated staged hints plus skip/reveal unscored receipt paths are implemented. Generated11 fixtures passed in full1116 run with one unrelated older capability test failure. All-family authored ladder/repair validity and native fault matrix remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-020",
       "title": "Reflection is useful and never a trap",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-020",
-      "status": "in progress",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Root optional reflection after correction, no preselected learner diagnosis; old source/generated mandatory confidence removed. Required-reflection save/failure device evidence still required."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-021",
       "title": "Session exit, pause and completion",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-021",
-      "status": "in progress",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Root timing/exit/checkpoint lifecycle; generated monotonic active segment excludes reference/feedback/pause and resumes explicitly; summary after attempt write. Exact generated draft/owner test passes; installed English/Japanese ordinary Q3 draft and saved-feedback cold relaunch pass. Same-device concurrent-window UI evidence still required."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-022",
       "title": "Scratchpad with visible context",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-022",
-      "status": "implemented",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Scratchpad accepts pinned expandable question prompt; Undo clear; macOS note edits preserve opaque iPad drawing data. Root call sites pass prompt. Wide split-pane and native PencilKit undo/redo device verification remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-023",
       "title": "Progress overview leads with useful interpretation",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-023",
-      "status": "implemented",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Visible Overview/Review/History, approachable empty interpretation, accessible history entry. Legacy practice projection is separate and append-only correction notice links affected originals with acknowledgement. Chart/manual sample-size interpretation review remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-024",
       "title": "Review is a learning queue",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-024",
-      "status": "in progress",
+      "status": "in progress; implementation integrated",
       "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Shared effective review queue, anchored durable deferral to captured local next-day boundary, canonical Today and notification-date projection, bounded standalone review, protected/quarantine exclusions and bookmark removal are implemented. All11 ReviewDeferralTests pass in full1092; installed deferral and real notification delivery remain."
+      "evidence_and_remaining_work": "Local deferral pins exact memory/anchor/return instant, filters only eligible reminders/new starts, preserves accepted runs and separates bookmarks from due practice. Queues are paginated; lifecycle/review tests are integrated. Installed defer/expiry/review-return acceptance remains separate."
     },
     {
       "id": "UX-025",
       "title": "History is directly readable, searchable and replayable",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-025",
-      "status": "implemented",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "`NFResponsePresentation` covers all eight schemas; preserved raw payload stays compatibility-only; label lookup uses exact saved item; missing legacy labels honestly marked; history search uses typed display; protected key withheld. Actual Mac run passed the first five experience tests, including all schema types and absent-label redaction. Separate local notes/bookmarks, shared report/quarantine flow and Practice this skill action added; original attempt stays immutable. Imported metadata conflicts require explicit merge preservation."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-026",
@@ -296,81 +359,91 @@
       "id": "UX-027",
       "title": "Source detail and studying",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-027",
-      "status": "implemented",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Source learning actions lead metadata; Read source / Review from memory / Create question set; optional confidence before reference; Matched/Partly/Not yet stored as typed self-report with exact recall and stable attempt ID. Original privacy and separate sync controls preserved."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-028",
       "title": "Searchable Settings categories",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-028",
-      "status": "implemented",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Searchable six categories with English/Japanese synonyms; category matches reveal controls; export deep route opens Data and sync; grouped underlying editors and destructive flows preserved. No-match explanation, Clear search, and matched-category highlighting implemented; installed focus→filter→Done→root return with query→no-match→Done→Clear search passed."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "INT-001",
       "title": "Mental math: estimate, decompose, solve, repair",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-001",
-      "status": "partial",
+      "status": "in progress; bounded workflow integrated",
       "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Durable estimate-before-exact and supported compensation steps now retain original raw work in ordinary/generated checkpoints and history; math9 tests passed including failed local/legacy mirror writes and cold continuation. Independent content review and complete native interaction matrix remain."
+      "evidence_and_remaining_work": "Fresh math sidecars save the estimate before exact/judgment, capture optional calculation working and first-divergence feedback, record durable compensation support and preserve family repair. Eight MentalMathWorkflowTests passed in Restore_Data_Trace_Math_Typed_Run.log. Installed staged-math/working layout and broader math families remain unverified."
     },
     {
       "id": "INT-002",
       "title": "Spatial reasoning: controlled transformations with reset",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-002",
-      "status": "partial",
+      "status": "in progress",
       "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Coordinate12 exact multi-step transforms, labeled cube11 proper rotations, section13 plane/solid intersections and net14 anchored printed-face geometry have retained original givens plus post-commit worked copies. Native09b coordinate, labeled cube and section journeys pass with actual44pt utility controls, camera/reset separation and static mode. All9 net14 contract tests pass on c0c4; new net installed journey is being authored. Inverse/unknown-transform and scored orientation work, full accessibility/VoiceOver review and nonvisual validity remain; no broad arbitrary-solid authority is claimed."
+      "evidence_and_remaining_work": "Native 3D/static 2D preserved; Reset/authored/front/side/top camera controls added, no scored-state mutation, no automatic motion. Fold/unfold/object-transform practice and actual nonvisual equivalence remain content/UI scope."
     },
     {
       "id": "INT-003",
       "title": "Quantitative reasoning: predict, inspect and compare data",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-003",
-      "status": "partial",
+      "status": "in progress; bounded workflow integrated",
       "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Observed-proportion chart/table/outcome menu, saved prediction/support, number/unit and Correct feedback/Next passed installed174.338s on58324687. Separate authentic graph construction schema4/gen7 has exact grid/table/pointer/numeric controls,8oracle/runtime tests; installed zero-distance drag intercepted scroll, now hold-before-drag under rerun. Other graph/data families remain."
+      "evidence_and_remaining_work": "Authentic observed-proportion counts share chart/table/inspection and verified visible numeric values. Latest installed quantitative journey passed84.370s. A subsequent typed data sidecar durably captures prediction before denominator support, saves inspection state and records assistance; six focused tests passed. New overlay/prediction installed acceptance and broader construction families remain."
     },
     {
       "id": "INT-004",
       "title": "Scientific reasoning: claim, evidence and experimental choice",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-004",
-      "status": "partial",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Linked evidence mapping then experimental design with frozen first-stage/support and changed-context repair integrated;9focused fixtures passed and installed linked-science journey passed221s onad199 source. Full science families/source-driven studies/generated native parity/physical accessibility remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "INT-005",
       "title": "Logic and debugging: visible state trace",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-005",
-      "status": "partial",
+      "status": "in progress; bounded workflow integrated",
       "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Restricted AST drives trace rendering, saved predictions, step/reset/undo and durable assistance;12runtime/native fixtures passed and installed trace journey122s onac428 source. Broader interpreter skins and full assistive-device matrix remain."
+      "evidence_and_remaining_work": "Ordinary/generated exact typed trace renderer now uses the retained restricted AST/program, captures prediction before durable reference support, preserves step/reset/undo predictions and recorded assistance, and replays original history. Ten CodeTraceInteractionTests passed. New500-character bounds/recovery and first-save/mirror-failure guards are integrated pending their combined run. Native/installed trace interaction and all code skins still require acceptance."
     },
     {
       "id": "INT-006",
-      "title": "Retrieval: recall, reference and honest self-check",
+      "title": "Retrieval: recall, AI grading and targeted follow-up",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-006",
-      "status": "partial",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Recall-before-reference, explicit honest self-check and retained citations remain; insufficient-excerpt report option added for cited ordinary/generated content using existing local report flow. Full source/spacing/physical acceptance remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "INT-007",
       "title": "Transfer: choose the useful structure in a new context",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-007",
-      "status": "partial",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Typed rate-product relationship selection then total with frozen first-stage,20/80credit and changed printer-to-liquid contexts integrated. Eight oracle/runtime tests pass; installed136.183s on536f verifies clear/undo/cold stage2 and one final receipt. Other transfer structures and reviewed evidence contracts remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "INT-008",
       "title": "Ordering, touch and keyboard conventions",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-008",
-      "status": "partial",
+      "status": "in progress; shared editor integrated",
       "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Ordered-step native private-UTI destination, movement threshold, cancellation/forged-payload checks, exact reorder, focus and undo are integrated; controller12, destination3 and grip2 tests pass. Native accepted drop path/visible Undo observed; keyboard Undo/Redo observed in a later isolated copy. One-gesture drag and complete accessibility matrix remain."
+      "evidence_and_remaining_work": "Ordinary/generated ordering uses shared stable-ID/permutation controller, preview-only private typed drag, explicit/native Undo/Redo,44pt moves, focus-local arrows and position announcements. Installed ordered Undo journey and actual native arrow/Undo pass. Native destination/controller regressions pass, but actual grip drag entered the destination and required Escape without a drop. The conventional mouseDragged-start lifecycle patch is ready; actual drag/VoiceOver acceptance remains open."
     },
     {
       "id": "A11Y-001",
@@ -402,7 +475,7 @@
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#a11y-004",
       "status": "in progress",
       "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Typed path actions preserve ownership, source/generated Save and close; optional confidence avoids hidden default commit; root keyboard policy retained. Hardware-only journey and focus movement still unexecuted."
+      "evidence_and_remaining_work": "Ordinary/generated/shared-source UI now focuses actual prompt/result/reference headings after acknowledged transitions and visible clarification after semantic errors. This does not move keyboard focus during draft editing. Existing commands remain. Parsing passes; full hardware-keyboard journeys and integrated accessibility-focus verification remain."
     },
     {
       "id": "A11Y-005",
@@ -410,7 +483,7 @@
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#a11y-005",
       "status": "in progress",
       "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Scratchpad notes/Your answer from memory/Confidence names; typed labels hide IDs from default VoiceOver; table inspection labels. Actual accessibility tree and live announcements need device review."
+      "evidence_and_remaining_work": "Explicit ordinary short-text/recall/reflection labels and generated recall names added; acknowledged heading focus announces only visible policy-safe content. Typed history hides internal IDs. Actual VoiceOver operation, table/selection/reorder announcements and complete first-session acceptance remain unverified."
     },
     {
       "id": "A11Y-006",
@@ -424,17 +497,21 @@
       "id": "COPY-001",
       "title": "Vocabulary contract",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#copy-001",
-      "status": "in progress",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Primary vocabulary Today/Practice/Sources, source actions, Question Writer, local saved labels. Existing deeper legacy terminology being normalized; methodology may retain precise technical terms."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "COPY-002",
       "title": "Standard action and state catalog",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#copy-002",
-      "status": "implemented",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Main check/continue/save/pause/recovery/self-check/expiry strings introduced consistently; local reports preserve existing actual quarantine copy."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "COPY-003",
@@ -448,41 +525,51 @@
       "id": "UX-029",
       "title": "Package order",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-029",
-      "status": "in progress",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "Work followed correctness/navigation → answer loop → discovery → durable resources → interactions. Scope does not remove existing useful capabilities."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "UX-030",
       "title": "Release evidence required for this appendix",
       "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-030",
-      "status": "in progress",
-      "implementation_ledger": "Experience_Status.md",
-      "evidence_and_remaining_work": "This trace ledger and `Tests/ExperienceImprovementTests.swift` added. Root owns app/test logs. Manual widths/locales/VoiceOver/keyboard and independent usability sessions are still unexecuted; no certification claimed."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-001",
       "title": "One contract must drive generation, rendering, validation, and explanation",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-001",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Optional versioned NFExerciseContractMetadata now serializes semantic/objective/family/structure identity, revisions, roles, canonical seed and explicit unreviewed status. ; Full typed stimulus/provenance/reviewer/oracle/canonical-parameter records and editorial demand adoption for every family remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-002",
-      "title": "Parameters must be generated before prose",
+      "title": "Generation must produce a coherent task, reference and rubric",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-002",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Existing exact arithmetic, restricted interpreter and cube-fold engine retained. Corrected science derives numeric geometry before prose; spatial duplicate guard runs before scoring. ; Full-domain independent family oracles and generator rejection reproduction for every admitted contract remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-003",
       "title": "Generation failure must remain a content failure",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-003",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Invalid authored options/DAG/support contracts return invalidItem and no objective correctness; never a learner incorrect result. ; Atomic replacement reservation, diagnostic seed/revision receipt and session family quarantine need complete runtime acceptance."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-004",
@@ -496,9 +583,11 @@
       "id": "CON-005",
       "title": "An item must state what is being judged",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-005",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Nearest-power-of-ten deliverable is explicit, including protected single-choice mode; state task explicitly asks end-state violation; boundary bug positive-input domain explicit. ; All 58 wording-versus-assessed-deliverable audits, including generic workflows, remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-006",
@@ -529,8 +618,10 @@
       "title": "Distractors must express plausible errors",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-009",
       "status": "specified",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Existing distractor IDs/error explanations retained; corrected coordinate alternative has origin-reflection misconception ID. ; Every distractor needs authored derivation, comparable grammar/length and independent review; generic recognition distractors remain a blocker."
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "specified",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-010",
@@ -538,7 +629,7 @@
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-010",
       "status": "specified",
       "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Target-specific rendering declarations now authorize genuine cloze, numerical equation slots and native figure/data assets for38 existing targets/98 compatible pairs; missing assets preserve same-target short recall in mixed practice or fail explicit focused launch. All8 asset tests pass in89 scope. Other forms/families and richer equation/figure structures remain engineering work."
+      "evidence_and_remaining_work": "Draft family matrix explicitly records real asset/operation requirements. Admission rejects missing required assets/locales rather than synthesizing them. ; Current generic cloze/equation/figure/paper/workflow families still need substantive authored assets and accurate feature availability; no claim of full slice completion."
     },
     {
       "id": "CON-011",
@@ -568,33 +659,41 @@
       "id": "SCO-001",
       "title": "Correctness and credit must be consistent",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-001",
-      "status": "implemented",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "NFScoringOutcome correct/partial/incorrect/needsClarification/selfReported/skipped/invalidItem; optional objectiveCorrectness; accepted aliases earn1; partial never correct; self-report0/nil; legacy decode supported. ; End-to-end new-record disposition/evidence verification owned by runtime/adaptive; skipped emitted by lifecycle, not invented by scorer."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCO-002",
       "title": "Scoring must produce an inspectable component result",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-002",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Versioned component results preserve submitted/parsed text, credit, outcome and codes; logic fields+invariant separated; deterministic side-effect-free scorer. ; Multiple-choice/ordering/evidence still have aggregate component record rather than every diagnostic relationship; stronger parser AST provenance remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCO-003",
       "title": "Parsing policy must follow the answer domain",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-003",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Typed symbolic, exact-quantity, identifier, reviewed-prose and state Boolean/numeric/identifier/label authorities; case-sensitive unit symbols. ; Every legacy short-text/numeric/tuple/sequence/chemical/code family needs reviewed typed adoption; no universal normalizer completeness claimed."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCO-004",
       "title": "The eight response types remain the stable surface contract",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-004",
-      "status": "implemented",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "All eight interaction enum cases preserved; optional typed authority and graph/set fields added compatibly. ; Full UI/history journeys across all schemas are runtime/experience acceptance."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCO-005",
@@ -630,35 +729,43 @@
     },
     {
       "id": "SCO-009",
-      "title": "Short text must declare its supported interpretation",
+      "title": "Short responses use the evaluator suited to their meaning",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-009",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Explicit constrained prose/identifier/symbolic/quantity domains; length validated before score; uncovered reviewed prose produces needsClarification rather than false wrong. ; Every legacy explanation needs migrated authority and explicit compare/report UI; full constrained-rubric coverage is not claimed."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCO-010",
       "title": "Restricted symbolic equivalence must preserve symbol roles",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-010",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Exact polynomial normalization with declared variables/functions, rational coefficients, implicit/explicit/glyph multiplication, sums/grouping/powers; F/f/application roles distinct. ; Variable-denominator rational functions, domain exclusions, alpha-equivalence, derivative primes and advanced domains deliberately unsupported and clarified."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCO-011",
       "title": "Symbolic processing must have bounded complexity",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-011",
-      "status": "implemented",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Local nonexecuting parser bounds 256 tokens, 32 depth, 16 symbols, exponents ±12, 2,048 terms; expanded monomial degree/work and arithmetic overflow bounded; unsupported syntax clarifies. ; Limits are version1 engineering policy; configurable runtime policy/review adoption remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "implemented",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCO-012",
       "title": "Prose grading must preserve direction, conditions, and negation",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-012",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Arithmetic-mean reviewed paraphrases accepted; explicit reversals/negated/add-then-deny claims rejected; unknown text clarifies. No added keyword-only acceptance. ; Other legacy requiredTerms/constrainedConcepts rubrics need relation-safe reviewed migration; broad prose understanding not claimed."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCO-013",
@@ -666,23 +773,27 @@
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-013",
       "status": "in progress",
       "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Typed exact numerical/radix/matrix authorities and real computational asset contracts preserve target identity.9 retrieval authority and8 actual asset tests pass in89 scope, including same-target renderings, finite wrong/equivalent answer checks and cold/history preservation. Full800 computed-target coverage and further structured results remain."
+      "evidence_and_remaining_work": "Bundled derivative, pure scalar and supported fixed-unit short-text computations gain typed authority; canonical reviewed aliases preserved. ; All800 computation families need full tuple/sequence/binary/unit/formula modules and format-specific coverage."
     },
     {
       "id": "SCO-014",
-      "title": "Self-check must be honest about its authority",
+      "title": "Self-check remains an explicit alternative to AI grading",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-014",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Every self-check score is selfReported with no objective correctness/credit; target-aware checklist adapter; optional fallback reflection. AI runtime uses attempt→reveal→rating; actual self-check comparison checkpoint export/restore passed in the golden runtime test. ; Complete linked closed-reference retries and all lifecycle/device acceptance remain; all target-specific criteria remain editorial work."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCO-015",
       "title": "Composite and state answers must grade typed components",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-015",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Accepted whole-state aliases give full 1; partial score uses best accepted state; explicit Boolean/integer domains and per-field results; malformed typed states clarify, invalid typed keys block; invariant80/20 retained. ; Per-field authored arbitrary weights, enum domains, full schema validation and all composite policy adoption remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCO-016",
@@ -704,9 +815,11 @@
       "id": "SCO-018",
       "title": "Feedback and replay must preserve the original result",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-018",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Ordinary feedback titles Correct/Check the answer; clarification is separately checkpointed editable guidance with no scored attempt; self-report distinct; protected feedback never reveals per-item keys even explicit legacy reveal argument. ; Family-specific first feedback sentence and original-result linked replay validation remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-020",
@@ -729,16 +842,20 @@
       "title": "The release manifest must cover the actual delivered bank",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-022",
       "status": "specified",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Existing signed descriptor inventory/public key/gate unchanged; adaptive floor remains fail-closed because offline inventory coverage is nil. New release-gate JSON explicitly unsigned. ; Authorized independent content review, manifest contentVersion update and offline release signature are required. No production signature generated or bypassed."
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "specified",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-023",
       "title": "Every family needs an editorial record and an independent reviewer",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-023",
       "status": "specified",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "All 58 draft matrix preserves prerequisites, demanded progression and family acceptance suites. ; Independent named reviewers, dates, primary references, rendered samples and boundary/oracle review records remain external release requirements."
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "specified",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-024",
@@ -750,11 +867,13 @@
     },
     {
       "id": "CON-025",
-      "title": "Feedback must be authored as a learning sequence",
+      "title": "Authored and AI feedback must form a useful learning sequence",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-025",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Scorer distinguishes clarification from conceptual error, exposes component results; existing hint/error explanations retained and protected solution leakage reduced. ; Misconception-specific smallest corrective actions and fresh linked repair content for every family remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-026",
@@ -768,17 +887,21 @@
       "id": "CON-027",
       "title": "Content incidents need a reproducible correction path",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-027",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "NFContentCorrectionPolicy now audits original evidence for duplicate choices, intervals, accepted state aliases, bounded F/f and prose, self-report, workflow, solution leakage, legacy demand and resume provenance; recommendations carry stable digests, rule revisions and exclusion scopes. See Historical_Content_Correction_Status.md. ; Append-only corrections and effective history presentation are integrated and covered by 18 passing historical tests. Complete incident triage, exposure denominator reporting and per-contract editorial decisions remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-014",
       "title": "Balanced admission must precede balanced delivery",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-014",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Seven-lab listed quotas encoded exactly; retrieval’s listed900 versus required1000 contradiction fails closed; other lab totals are1000. Policies are in NFContentAdmission.proposedEditionPolicy, preserving 1000/lab floor; existing bank versioned v3. ; Existing first-unique numerical bank is not a balanced new edition. Genuine family/structure production and approved admission are still required."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-015",
@@ -808,41 +931,51 @@
       "id": "CON-018",
       "title": "Exhaustion fallback must preserve the guarantee it actually has",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-018",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Explicit unavailable-item state and focused-family tests prevent silent family switching on exhaustion; release-gate manifest names unavailable reviewed bands and quotas. ; Full related/review alternatives and reviewed family-specific capacity acceptance remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-019",
       "title": "Epoch boundaries must solve capacity before reserving",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-019",
       "status": "specified",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Existing no-replacement machinery retained without weakening capacity or signing gates. ; Full cross-epoch eligibility, exact shorter-session alternatives, abandonment and concurrent windows acceptance still required."
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "specified",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-028",
       "title": "The matrix is the migration inventory, not a new count claim",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-028",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Content_Family_Matrix_Draft.json contains exactly 58 stable family IDs and every QA-F01–58 requirement verbatim, with reviewedBands=[] and concrete missing work. ; Complete reviewed supported-band contracts/assets and learner-facing unavailable-band enforcement remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-029",
       "title": "Family expansion must preserve a coherent operation",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-029",
       "status": "specified",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "No numerical-range widening, label changes or cube symmetry aliases were counted as substantive advanced capacity. ; Coherent new substructures and exact geometric/target canonical finite capacity for all expanded families remain."
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "specified",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCO-019",
       "title": "The score test corpus must contain both meaning-preserving and meaning-changing edits",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-019",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "ContentImprovementRegressionTests cover meaning-preserving/meaning-changing derivatives,F/f,mean direction/negation,numeric spellings/units,aliases,sets,DAGs,intervals,duplicates,self-report and limits. ; Full every-authoritative-answer adversarial corpus and signed-manifest census remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-030",
@@ -857,48 +990,60 @@
       "title": "Release review must inspect representative learner sessions",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-031",
       "status": "specified",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Automated fixtures exist; no human review sessions claimed. ; 28 four-band editorial sessions (or every actually advertised interim combination), keyboard-only and accessible reading plus nontechnical reviewer remain external."
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "specified",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-032",
       "title": "Instrument quality without inventing a psychometric model",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-032",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Outcome/component/identity/role/version distinctions are serializable and available for structured local provenance. ; Complete event counts, review signal denominator reporting and local quality dashboard remain; no new analytics transmission added."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-033",
       "title": "Implement in a dependency order that cannot hide unresolved defects",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-033",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "C-A trust corrections and C-B bounded authority have executable changes; C-C identity scaffold and C-E admission foundation added. ; C-D substantive family expansion and C-F actual editorial/signing/release evidence remain; dependency completion is not claimed."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CON-034",
       "title": "The chapter is complete only when quality and honesty agree",
       "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-034",
-      "status": "in progress",
-      "implementation_ledger": "Content_Status.md",
-      "evidence_and_remaining_work": "Release and status artifacts separate repaired scoring from unimplemented content, review and signing. ; Full intended edition is not accepted: family expansion, approved bands, feasible reviewed quotas, human review and integrated runtime/release gates remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "ADP-001",
       "title": "Make the delivered question, the explanation and the record agree",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-001",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Typed requested/delivered bands and receipt; independent target versus evidence summaries ; Reviewed production demand contracts and integrated controls"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "ADP-002",
       "title": "Use a shared, explicit item contract",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-002",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "`NFEditorialDemandRecord`, compatibility IDs, optional reviewed durations; no float mapping ; Catalog admission supplies truthful signed records"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "ADP-003",
@@ -928,9 +1073,9 @@
       "id": "ADP-006",
       "title": "Start from low-stakes evidence without demanding a long baseline",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-006",
-      "status": "partial",
+      "status": "in progress",
       "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Live/mixed controllerV2 persists highest compatible demonstrated target, then recent independent target, explicit choice or coldB1, with30-day same-band refresh and authentic ordered evidence IDs. Real history, cold replay, shortages, future-policy preservation and quarantine tests pass on c0c4. New automatic scope construction includes admitted higher-only families and mixed preview exposes each actual initial target while retaining unavailable coldB1;all three new mixed fixtures pass in the complete1315/1315 Mac run. Optional starting-check route, authentic reviewed content admission and remaining complete policy/acceptance gates remain."
+      "evidence_and_remaining_work": "`initialControl`; explicit reasons, B1 default, refresh probe ; Live optional starting-check route and compatible recent/protected suggestion selection"
     },
     {
       "id": "ADP-007",
@@ -944,65 +1089,77 @@
       "id": "ADP-008",
       "title": "Apply overrides at a safe boundary",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-008",
-      "status": "partial",
+      "status": "in progress",
       "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Live immutable next-choice commands and explicitReplace retain previouswork, keepmanual/automatic allowances separate and atomicallyaccept onefuture slot. Actual51controller/mixed tests pass1158full and writer188/189scope. Full reviewedcatalog/nativefield/setting matrix remains."
+      "evidence_and_remaining_work": "Explicit override policy; ordinary mixed Replace now atomically retains original draft and accepts new identity at the same question index ; Reviewed Easier/Harder next-demand control and fixed-block amendment remain; new Replace integration tests pending"
     },
     {
       "id": "ADP-009",
       "title": "Explain the change in learner language",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-009",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Typed selection reasons and rule-credit receipts ; Localized actual-demand explanation from approved content"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "EVD-001",
       "title": "Reduce durable events into separate evidence channels",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-001",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Typed lanes, single IDs and attributed objective; raw observation plus pure derived state ; Store observation provenance and decision/queue events in local durable envelope"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "EVD-002",
       "title": "Use `EditorialBandEvidenceV1` for both live and replayed results",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-002",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Last 20 in 60 stored canonical days; exact 0/1 flags, finite payload validation, descriptive planning score ; Catalog/version support registry and effective day passed by runtime"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "EVD-003",
       "title": "Define an independent observation before counting it",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-003",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Independent predicate, assistance/unknown/source exclusions, 30-day semantic dedup, structure cap ; Global local exposure/correction input integration"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "EVD-004",
       "title": "Assistance produces a learning outcome, not an unassisted success",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-004",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Assisted events excluded from independent means; support window and pending repair ; Durable hint/worked-step sequence and observed explanations in UI"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "ADP-010",
       "title": "Maintain a practice control state distinct from evidence",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-010",
-      "status": "partial",
+      "status": "in progress",
       "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Live versioned controller, next-choice/Replace, fixed-block separateactivity and per-family mixedcoordination are integrated;51actualcontroller/mixed tests pass1158full and writer188/189scope. Prelaunch activity-scoped choices are integrated with focused failures being resolved; releasedregistry empty and realreviewedcontent stillrequired."
+      "evidence_and_remaining_work": "Codable `NFEditorialPracticeControl`, counters, selected path and support window ; Persist this state atomically with each accepted item"
     },
     {
       "id": "ADP-011",
       "title": "Apply a bounded practice staircase",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-011",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Exact up/down thresholds, authoritative flags, adjacent probes, cooldown and caps ; Live reviewed pool integration"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "ADP-012",
@@ -1016,17 +1173,21 @@
       "id": "EVD-005",
       "title": "Collect confidence only under a defined purpose",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-005",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Salted one-in-five invitations; pre-outcome only; categorical version; 12 samples/two sessions; required/optional split ; UI lock/invitation provenance, complete optional-decline history"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "EVD-006",
       "title": "Treat partial credit according to the rubric, not the renderer",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-006",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Fractional score retained once; exact authoritative full/zero flags; no inferred strategy ; Content criterion IDs and scorer correctness contract"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "EVD-007",
@@ -1040,9 +1201,11 @@
       "id": "EVD-008",
       "title": "Make invalid content exclusions affect every derived view",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-008",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Observation/semantic/family validity projection, derived corrected score, affected decision receipts ; Append-only authorized dispositions and atomic publication of rebuilt summaries"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "EVD-009",
@@ -1054,11 +1217,13 @@
     },
     {
       "id": "EVD-010",
-      "title": "Keep personal study separate from built-in skill evidence",
+      "title": "Give personal study graded progress at its supported scope",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-010",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Personal/source lane cannot populate practice/protected/calibration/retention skill observations ; Local personal-study reminders and source UI"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "EVD-011",
@@ -1072,9 +1237,11 @@
       "id": "ADP-013",
       "title": "Protect an assessment contract rather than a nominal seed namespace",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-013",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Leakage/exposure/accessibility predicates fail closed ; Visual/alt-text/editorial review of every protected contract"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "ADP-014",
@@ -1104,57 +1271,71 @@
       "id": "SCH-002",
       "title": "Filter hard constraints before ranking candidates",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-002",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Validity, accessibility/language, scope/prerequisite, exposure/ownership, review and duration predicates ; Runtime supplies durable ownership/reservation ledger and frozen snapshot"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCH-003",
       "title": "Balance at the experience level, not only at bank construction",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-003",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Coverage/due/family/structure/goal/stable ranking; dominant-pool fixture ; Rolling-100 real presentation telemetry stored locally; infeasible quota UI"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCH-004",
       "title": "Handle content shortage visibly and safely",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-004",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Explicit no-content result and familiar/lower/other/end options; upward requires three semantics ; UI choice and reviewed alternative inventory"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCH-005",
-      "title": "Use deterministic tie-breaking and persist the actual path",
+      "title": "Persist accepted AI selections and use stable fallback tie-breaking",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-005",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Deterministic salted tie plus candidate secondary key and Codable path receipt ; Atomic adaptiveItem/fixedBlock reservations, <=2 advisory prewarms, concurrent owners"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCH-006",
       "title": "Keep review objectives separate from literal question repetition",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-006",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Review keyed objective/family/band/relation/comparability; familiar item not a novel observation ; Reviewed sibling inventory and exposure contract"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCH-007",
       "title": "Use a bounded, explainable initial interval ladder",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-007",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Exact 1/3/7/14/30 ladder, due-only one rung, help/no-response handling, reset after repair ; Persist queues and personal reminder policy separately"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCH-008",
       "title": "Make the mistake queue actionable and criterion-specific",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-008",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Criterion-linked mistake status and explanation/repair/delayed progression policy ; Durable explanation events and fresh sibling affordance in UI"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCH-009",
@@ -1168,17 +1349,21 @@
       "id": "SCH-010",
       "title": "Preserve the canonical daily plan while allowing real adaptation inside it",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-010",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Existing canonical-plan model retained; no evidence reducer rewrites blocks ; Runtime amendment/save tests for underway plans"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCH-011",
       "title": "Derive workload from item durations and interaction overhead",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-011",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Reviewed duration range and >=8 compatible median; mode overhead; one reflection ; Runtime replaces blanket count generation and records phase medians"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCH-012",
@@ -1192,89 +1377,111 @@
       "id": "SCH-013",
       "title": "Respect travel, offline use and changes in available content",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-013",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Stored canonical ordinals, no wall-clock elapsed reinterpretation; frozen selected path ; Travel/offline/catalog update integration fixtures"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "EVD-013",
-      "title": "Guarantee deterministic equivalence",
+      "title": "Replay accepted grades and decisions faithfully",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-013",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Full pure evidence state Codable replay equality tested; stable event IDs ; Durable decisions/exposure/queue side effects replay alongside reducer"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "EVD-014",
       "title": "Make policy versions deployable without silent reinterpretation",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-014",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "One `EditorialBandEvidenceV1` version; unknown old band/conditions fail closed ; Deployment version registry, migration and correction publication boundary"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "SCH-014",
       "title": "Map the implementation to current components",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-014",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Existing adapters and policy modules changed as above ; Reviewed catalog/runtime/UI connect the shared projection everywhere"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "ADP-015",
       "title": "Validate the proposed bands with representative learners",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-015",
       "status": "specified",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Stronger claims remain disabled ; Consented representative-learner pilot; no contact/telemetry authorized or conducted"
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "specified",
+      "reassessment_version": "1.1"
     },
     {
       "id": "EVD-015",
       "title": "Require evidence integrity before stronger product claims",
       "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-015",
-      "status": "in progress",
-      "implementation_ledger": "Adaptive_Status.md",
-      "evidence_and_remaining_work": "Deterministic tests added; stronger claims disabled ; All ten chapter release gates, especially production content and human pilot"
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "in progress",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CORE-001",
       "title": "One learning runtime",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#core-001",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Universal runtime is the built-in coordinator; generated/source lifecycles reuse local durability but still have separate controllers. Full coordinator consolidation remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CORE-002",
       "title": "Separate responsibilities",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#core-002",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Pure authorities, selection/evidence/workload policies, local repository, typed presentation and navigation are separated. View/runtime extraction and single command interface remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CORE-003",
-      "title": "Pure boundaries",
+      "title": "Explicit inputs and replay boundaries",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#core-003",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Seed/locale/clock are explicit on new paths; a complete audit eliminating global time/locale from every legacy reducer and generator remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CORE-004",
       "title": "Concurrency",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#core-004",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Immutable startup decoding, factory generation, backup/diagnostic projections and ordinary/modern/legacy generated debounce archive saves use workers. Archive validation frames are split without dropping checks after actual iOS source/cold/autosave stack crashes; installed09b source/coordinate/section/cube pass and all6 real typed cold-read/autosave worker tests pass on iOS6485. Ordinary/source/protected explicit Submit is migrated through awaited preparation/snapshot/feedback writes and verified publication;all14 regressions pass in the complete1315/1315 Mac run on6485. Generated explicit Submit, remaining launch/transition/admin writes, bulk controller/progress projections, owning-context model migration and Release performance budgets remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "CORE-005",
       "title": "Versioned interfaces",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#core-005",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Local envelope/checkpoint schema1, scorer8, archive18 and named editorial policy are separate. Complete presentation/selection version registry remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "RUN-001",
@@ -1296,9 +1503,11 @@
       "id": "RUN-003",
       "title": "Persist the complete launch contract",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-003",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Sharedlifecycle saves immutable next/summary beforepublication ordinary/source/protected/generated. Protected8pass1158full;generated20terminalcasespass170scope. Generation-bearingruntime/storagecommands and capturedackrevisionCAS integrated:12newtests pass in188/189scope, no obsoletewriter feedback afterdurablereceipt. Asyncoff-mainwrite/projectionarchitecture andphysicalcrashmatrix remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "RUN-004",
@@ -1328,17 +1537,21 @@
       "id": "RUN-007",
       "title": "Lifecycle states",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-007",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Codable phases and prepared intents exist. Paused/save-error remain orthogonal state and require exhaustive illegal-transition modeling."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "RUN-008",
-      "title": "Ordinary deterministic answer",
+      "title": "Answer evaluation",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-008",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Inline scoring, separate clarification guidance without an attempt or save-error alert, stable immutable prepared answer and idempotent attempt insertion. Clarification/draft survives cold reconstruction in unit fixture; installed alert failure is under investigation."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "RUN-009",
@@ -1346,7 +1559,7 @@
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-009",
       "status": "partial",
       "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "One shared deterministic confidence invitation; nil defaults, inline protected requirement, timed suppression, semantic edit invalidation. Focus interval telemetry remains."
+      "evidence_and_remaining_work": "Shared deterministic invitation and semantic response identity; nil defaults, inline protected requirement, timed suppression, material-edit invalidation, equivalent numeric formatting and dictionary-order retention. Generated confidence uses the same policy and survives exact cold draft restore. Full durable focus-interval telemetry remains."
     },
     {
       "id": "RUN-010",
@@ -1354,39 +1567,47 @@
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-010",
       "status": "partial",
       "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Feedback precedes optional reflection, no diagnosis preselection and not-sure permitted. Later edits append local revisions linked to the immutable first reflection; history exposes current and first interpretations. Revisions survive backup and deletion scopes; new execution pending."
+      "evidence_and_remaining_work": "Feedback precedes optional reflection, no diagnosis preselection and not-sure permitted. Later edits append local revisions linked to the immutable first reflection; history exposes current and first interpretations. Six reflection tests passed in the742-test run, including revisions, retry, backup, deletion and unsupported metadata. The missing-original-anchor guard prevents reviving an old diagnosis or reattaching imported supplements and passed the784-test integrated run."
     },
     {
       "id": "RUN-011",
-      "title": "Protected feedback",
+      "title": "Protected evaluation and feedback",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-011",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Neutral protected UI, local receipt and portable redaction; original keys withheld. Reviewed dimensional completion and retired-form disclosure protocol remain gated."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "RUN-012",
       "title": "Reference/self-check",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-012",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Self-check reference reveal checkpoints before display, explicit rating, zero objective authority. Shared generated/source controller consolidation remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "RUN-013",
       "title": "Hint progression",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-013",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Progressive authored hints and worked-solution reveal persist with stage, active offset and generator version. Repeated solution reveal is idempotent; failed solution checkpoint does not disclose. Revealed outcomes retain draft separately from skips and carry no objective weight. Full hint-flight fault matrix remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "RUN-014",
       "title": "Skip",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-014",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Stable pending skip journal, no evidence denominator, recovery and duplicate protection. Explicit reason and skip-support recommendation remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "RUN-015",
@@ -1400,9 +1621,11 @@
       "id": "RUN-016",
       "title": "Ending",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-016",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Explicit ended-early status/summary preserves attempts; fixed-count completion is distinct from sufficient scored evidence. Protected duration stop continues the same form in a later sitting."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-001",
@@ -1416,25 +1639,31 @@
       "id": "DATA-002",
       "title": "Evaluation identity",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-002",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Scorer version plus snapshot digest pinned; unavailable on unsupported uncommitted evaluator. Signed invalidation predicates and compatible old scorer dispatch remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-003",
       "title": "Current-item fields",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-003",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Exact typed draft, phase, stable IDs, assistance events, confidence, time, reflection, snapshot, selection receipts and exclusions. Complete clock-chunk sequence remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-004",
       "title": "Time accounting",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-004",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Injected monotonic answer time begins on acknowledged presentation; sitting time separate; resume excludes unknown gaps. Tests plus installed lifecycle verification required."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-005",
@@ -1448,9 +1677,11 @@
       "id": "DATA-006",
       "title": "Save guarantees",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-006",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "500ms draft debounce and explicit pause/close/background/takeover flush; failed saves retain UI. Sudden unacknowledged keystrokes are not promised durable."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-007",
@@ -1464,9 +1695,11 @@
       "id": "DATA-008",
       "title": "Resume algorithm",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-008",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Digest/version/owner validation and pending answer/skip replay before writable continuation. Signed content invalidation/restricted evaluator history migration remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-009",
@@ -1478,19 +1711,23 @@
     },
     {
       "id": "DATA-010",
-      "title": "Idempotent commit protocol",
+      "title": "Idempotent evaluation and commit protocol",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-010",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Prepared checkpoint precedes immutable attempt and acknowledged feedback; same-ID typed retries compare parsed response identity while retaining original raw bytes and reject changed key/result/session. Full fixed launch is now atomic with captured-slot and presentation ledgers. Durable dual-payload conflict journal remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-011",
       "title": "Crash boundaries",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-011",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Before/after attempt crash fixtures and exact saved feedback cover recovery. Every phase/platform crash matrix remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-012",
@@ -1498,7 +1735,7 @@
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-012",
       "status": "partial",
       "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Same-ID conflict journaling retains both raw records/contracts without extra score or XP. Physical cloud duplicate rows are now censused before display winner selection; entire conflicting identity is excluded by shared DTO, diagnostic/metric and historical summary paths. Actual store/cold/remove-duplicate tests pass in full1083 on536f. Peer conflict resolution UI and physical sync matrix remain."
+      "evidence_and_remaining_work": "Same-ID conflicting responses/results are refused before snapshot attachment. A local append-only journal retains both raw records/contracts with digests, stable retries and evidence exclusion; protected journal details are withheld from portable exports. Private archive merge conflicts reject before replacement. Five integrated conflict/retry/failure/deletion tests passed in the784-test run; peer-conflict resolution UI remains."
     },
     {
       "id": "DATA-013",
@@ -1520,49 +1757,61 @@
       "id": "DATA-015",
       "title": "Reservation atomicity and adaptive delivery",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-015",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Generated terminal runs now atomically drop unseen future questions and unrelated source excerpts while retaining exact current/answered prefix, typed work and original count/digests. CAS accepts only deterministic predecessor transform; inactive old terminal maintenance preserves source closure and skips unknown/owned states. Nine new fixtures pass170scope. Wider private/background/cloud retention and full deletion matrix remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-016",
       "title": "Proposed schema additions",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-016",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Atomic local archive combines runs/checkpoints/snapshots, sets/private metadata, immutable reflection revisions, dispositions, selection decisions, exposure/outcomes and fixed launch/migration receipts. Durable review tasks and signed invalidation records remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-017",
-      "title": "Privacy partition",
+      "title": "Storage and AI processing scopes",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-017",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "New snapshots, sets, private drafts and collections are local-only, outside SwiftData/CloudKit schema; source draft checkpoint avoids legacy cloud upsert."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-018",
-      "title": "Legacy scope",
+      "title": "Legacy scope and service use",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-018",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Original SwiftData record fields/partition policy unchanged. Existing private text scope is not widened by new local blobs; complete inventory/account checks remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-019",
       "title": "Content storage",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-019",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Saved sets persist without TTL; accepted draft pins the exact set. Explicit removal retains unfinished pins. Shared snapshot garbage collection respects retained run references and revokes only deleted writers; full content-addressed asset deduplication remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-020",
       "title": "Size and corrupt input",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-020",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "64MiB archive and8MiB private payload bounds, verified snapshots and typed private canonicalization. One malformed whole local archive still needs granular salvage; media decode audit remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-021",
@@ -1576,25 +1825,31 @@
       "id": "DATA-022",
       "title": "Complete review context",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-022",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Authentic snapshot prompt/representations/answer/explanation plus report/fresh practice. Protected display checks precede instructional detail; all legacy missing-asset states require device review."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-023",
       "title": "Historical evidence correction",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-023",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Append-only historical corrections preserve original answers/results and use explicit current recommendation membership when earlier uncertainty resolves. Corrected historical accuracy is distinct from exclusions for speed, proficiency, calibration and independence. Signed rule publication remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-024",
       "title": "Rules for each audited defect",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-024",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Historical policy covers the nine specified defect classes plus workflow/leakage. Exact reconstructable cases receive deterministic correction; missing options/tables/aliases have explicit unresolved or precautionary exclusion outcomes. Old originals are never fabricated. All real affected-store fixture coverage remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DATA-025",
@@ -1618,15 +1873,17 @@
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-018",
       "status": "partial",
       "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Independent stable destination paths, safe reselection and back ownership. Installed nested route tests required to close prior hang."
+      "evidence_and_remaining_work": "Independent stable destination paths, safe reselection and back ownership. Nested route journeys passed in the20/20 installed run. Stable-OS and manual/physical hang-closure acceptance remains."
     },
     {
       "id": "RUN-019",
       "title": "Cold launch and recovery",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-019",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Cold Today with Continue, validated typed deep links, deleted-record fallback and path pruning. Disposable paths are not restored blindly."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "RUN-020",
@@ -1648,9 +1905,11 @@
       "id": "RUN-022",
       "title": "Safe exit during work and failure",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-022",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Save/close across phases and durable retry/error controls. Native window close and pending-close journal recovery across all controllers still need certification."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "MIG-001",
@@ -1688,25 +1947,31 @@
       "id": "MIG-005",
       "title": "Archive version",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-005",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Archive18 added;14–17 and future rejection tested; optional new local data defaults. No backward writer promise."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "MIG-006",
       "title": "Export completeness and protection",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-006",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Archive includes local snapshots/sets/drafts/metadata/dispositions; protected receipts redact reusable keys/outcomes. Invalid opaque private payload IDs are reported; all counts/hash references need independent validator expansion."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "MIG-007",
       "title": "Restore transaction",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-007",
-      "status": "partial",
-      "implementation_ledger": "Restore_Runtime_And_Linked_Deletion_Status.md",
-      "evidence_and_remaining_work": "Live reviewed-byte request staging, process lease, startup gate and actual cold two-SQLite/exact-side-file coordinator are implemented. Durable accepted journal, fresh census verification, pre-acceptance cancellation, forward recovery and completion acknowledgement tests pass. Isolated installed journey is running; genuine shipped stores and physical crash/account matrix remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "MIG-008",
@@ -1720,17 +1985,21 @@
       "id": "MIG-009",
       "title": "Cloud deployment",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-009",
-      "status": "partial",
-      "implementation_ledger": "Runtime_Status.md",
-      "evidence_and_remaining_work": "Local additions never enter durable CloudKit model. Signed development/production-equivalent schema/device checks are not verified."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "MIG-010",
       "title": "Deletion and account lifecycle",
       "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-010",
-      "status": "partial",
-      "implementation_ledger": "Restore_Runtime_And_Linked_Deletion_Status.md",
-      "evidence_and_remaining_work": "Live AppStore required guard connects explicit source/generated payload/history/annotation deletion and cloud/duplicate-import callers to authenticated cleanup of completed private restore payloads. Tombstones/counts persist, unfinished/foreign artifacts block and narrow startup retry resumes invalidated cleanup. Thirteen cleanup/guard tests pass; physical lifecycle and all primary-delete compensation cases remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-001",
@@ -1744,25 +2013,31 @@
       "id": "QA-REQ-002",
       "title": "Five independent gates",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-002",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "G1–G5 are not collectively passed; no distribution certification."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-003",
       "title": "Test the shipped configuration",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-003",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Machine-readable run manifest records source/configuration/toolchain and synthetic test environment."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-004",
       "title": "Independent oracle rule",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-004",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Independent spatial/interval/symbolic/admission oracles exist; human prose/diagram blind review remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-005",
@@ -1776,33 +2051,41 @@
       "id": "QA-REQ-006",
       "title": "Layer responsibilities",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-006",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Engine/repository/policy tests separate from installed UI journeys."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-007",
       "title": "Golden fixture package",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-007",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Sixteen committed deterministic golden fixtures cover archives14–18, malformed/future payloads, duplicate/deleted references and seeded runtime phases. Actual10,000-attempt restore passed; one UUID-casing assertion corrected for final rerun. Genuine distributed binary-store fixtures remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-008",
       "title": "Reproduction identity",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-008",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Regression fixtures pin seeds and reproduce known content defects; final logs preserved."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-009",
       "title": "Bounded exhaustive versus sampled checks",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-009",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Bounded domains and full7,000candidate census executed; not proof of all possible generator parameters."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-010",
@@ -1816,9 +2099,11 @@
       "id": "QA-REQ-011",
       "title": "Variety report",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-011",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Actual candidate census and quota feasibility report exist; delivered session distributions pending."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-012",
@@ -1832,9 +2117,11 @@
       "id": "QA-REQ-013",
       "title": "Timing robustness",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-013",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Monotonic injected tests added; physical locked-screen/interruption matrix pending."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-014",
@@ -1864,9 +2151,11 @@
       "id": "QA-REQ-017",
       "title": "Journey coverage",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-017",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Installed flows retain exact source/runner hashes and actual recordings. Quantitative174s, spatial112s, transfer136s, trace122s, science221s and cold restores passed on their respective recorded revisions. Latest three-flow e6ee run failed graph scroll gesture, generated keyboard setup, and empty fragment test expectation; corrections under fresh4e90run. These partial journeys do not establish complete mode/device crossproduct."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-018",
@@ -1880,9 +2169,11 @@
       "id": "QA-REQ-019",
       "title": "Visual artifact review",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-019",
-      "status": "external or manual gate outstanding",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "UI test attachments intended for actual runs; full contact sheet matrix requires review."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "external or manual gate outstanding",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-020",
@@ -1896,25 +2187,31 @@
       "id": "QA-REQ-021",
       "title": "Proposed performance budgets",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-021",
-      "status": "external or manual gate outstanding",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "No invented latency percentiles;30run Release physical baseline and scale/endurance measurements remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "external or manual gate outstanding",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-022",
       "title": "Hang closure",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-022",
-      "status": "external or manual gate outstanding",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Stable-OS macOS hang trace/largehistory route reproduction remains unresolved."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "external or manual gate outstanding",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-023",
       "title": "Migration/restore run sheet",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-023",
-      "status": "external or manual gate outstanding",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Automated14–18archive fixtures exist; real distributed store/physical restoration remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "external or manual gate outstanding",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-024",
@@ -1926,35 +2223,43 @@
     },
     {
       "id": "QA-REQ-025",
-      "title": "Local data and diagnostics boundaries",
+      "title": "Feature processing and diagnostics boundaries",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-025",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Local expiry/pinning/metadata/deletion, typed protected export and inactive-account retry cleanup fixtures exist; physical account lifecycle proof remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-026",
       "title": "Signed integration matrix",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-026",
-      "status": "external or manual gate outstanding",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Signed provider/CloudKit/notification/widget/Spotlight/import matrix not verified."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "external or manual gate outstanding",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-027",
       "title": "Formative usability rounds",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-027",
-      "status": "external or manual gate outstanding",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Two rounds of six participants not recruited or run; no invented observations."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "external or manual gate outstanding",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-028",
-      "title": "Question usefulness review",
+      "title": "Learning output and feature usefulness review",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-028",
-      "status": "external or manual gate outstanding",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "No human usefulness scores invented; all58family reviews required."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "external or manual gate outstanding",
+      "reassessment_version": "1.1"
     },
     {
       "id": "QA-REQ-029",
@@ -1968,25 +2273,31 @@
       "id": "QA-REQ-030",
       "title": "Product metrics with honest denominators",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-030",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Outcome categories explicit; complete local research metrics/denominators instrumentation remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DEL-001",
       "title": "Deliver slices with dependent gates",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-001",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Slices and owner ledgers retained with dependencies; editorial gates remain."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DEL-002",
       "title": "First reviewable vertical slice",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-002",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Numeric continuity/scoring/feedback/history/repair tested; reviewed B1/B2 content sign-off still absent."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DEL-003",
@@ -1998,27 +2309,33 @@
     },
     {
       "id": "DEL-004",
-      "title": "Capability gating",
+      "title": "Capability routing and staged delivery",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-004",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Reviewed demand absent stays unassessed; automatic duration-dependent work refuses unknown estimates; complete persisted capability registry remains."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DEL-005",
       "title": "Definition of done per package",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-005",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Files/tests/remaining acceptance linked; manual review gates still open."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DEL-006",
       "title": "Severity and release decisions",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-006",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Unresolved protected/content/migration failures block affected release claim; no P0/P1 waiver invented."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DEL-007",
@@ -2040,17 +2357,21 @@
       "id": "DEL-009",
       "title": "Release evidence bundle",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-009",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Owner ledgers, census, oracle evidence, manifest and test output collected; signed/human sheets remain unexecuted."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     },
     {
       "id": "DEL-010",
       "title": "Final closure questions",
       "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-010",
-      "status": "partial",
-      "implementation_ledger": "QA_Delivery_Status.md",
-      "evidence_and_remaining_work": "Closure record explicitly states incomplete content/adaptation/manual/distribution work; passing tests alone are not completion."
+      "status": "specified",
+      "implementation_ledger": "AI_Direction_Revision_Status.md",
+      "evidence_and_remaining_work": "AI-centered v1.1 contract revised; implementation and acceptance must be reassessed. Existing evidence remains evidence only for its original scope.",
+      "previous_specification_status": "partial",
+      "reassessment_version": "1.1"
     }
   ]
 }

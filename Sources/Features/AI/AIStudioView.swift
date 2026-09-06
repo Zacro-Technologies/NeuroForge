@@ -12,7 +12,7 @@ enum NFAIStudioQuestionStylePolicy {
         switch lab {
         case .mentalMath: [.numerical, .multipleChoice, .shortAnswer]
         case .spatial: [.spatialTransformation, .multipleChoice, .shortAnswer]
-        case .quantitative: [.dataInterpretation, .numerical, .multipleChoice]
+        case .quantitative: [.dataInterpretation, .numerical, .multipleChoice, .shortAnswer]
         case .scientificReasoning: [.experimentalDesign, .dataInterpretation, .multipleChoice, .shortAnswer]
         case .logicDebugging: [.debugging, .proofOrDerivation, .multipleChoice, .shortAnswer]
         case .retrieval: [.shortAnswer, .multipleChoice]
@@ -309,7 +309,7 @@ struct AIStudioView: View {
     @State private var customTopic = ""
     @FocusState private var topicIsFocused: Bool
     @State private var objective = ""
-    @State private var style: NFQuestionStyle = .multipleChoice
+    @State private var style: NFQuestionStyle = .shortAnswer
     @State private var difficulty = 0.5
     @State private var count = 5
     @State private var selectedDocumentIDs: Set<UUID> = []
@@ -319,6 +319,8 @@ struct AIStudioView: View {
     @State private var isCancelling = false
     @State private var generationTask: Task<Void, Never>?
     @State private var generationError: String?
+    @State private var generationCompletedCount = 0
+    @State private var showsAISettings = false
     @State private var resultNeedsSave = false
     @State private var showPractice = false
     @State private var practiceUsesSavedDraft = true
@@ -391,6 +393,15 @@ struct AIStudioView: View {
             }
         }
         .nfDesktopPresentationFrame(minWidth: 420, idealWidth: 920, minHeight: 620, idealHeight: 850)
+        .sheet(isPresented: $showsAISettings) {
+            NavigationStack {
+                ScrollView { NFAILearningSettingsView().environment(store).padding(24) }
+                    .navigationTitle("AI and offline")
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) { Button("Done") { showsAISettings = false } }
+                    }
+            }
+        }
         .accessibilityIdentifier("ai-studio-root")
         .nfGuardsUnsavedEditor(
             hasUnsavedEditorWork,
@@ -567,7 +578,7 @@ struct AIStudioView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Recent question sets")
                         .font(.title2.bold())
-                    Text("Continue a set you created in the last seven days.")
+                    Text("Continue a saved set, including questions created with AI.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -825,9 +836,7 @@ struct AIStudioView: View {
     private var materialCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             Label("Use your material", systemImage: "doc.text.magnifyingglass").font(.title2.bold())
-            Text(store.profileSnapshot.aiMode == .automatic
-                ? "Optional. Sources set to Question Writer + offline can use approved excerpts; prose sources can also create questions offline."
-                : "Optional. Select sources with complete prose statements to build cited recall practice offline.")
+            Text("Optional. Create questions from your material, with references you can revisit. Each source’s AI setting controls which models can use its excerpts.")
                 .font(.subheadline).foregroundStyle(.secondary)
             if store.documents.isEmpty && selectedDocumentIDs.isEmpty {
                 Text("No study material ready yet.").foregroundStyle(.secondary)
@@ -859,7 +868,7 @@ struct AIStudioView: View {
         guard selectedDocuments.count == selectedDocumentIDs.count else { return false }
         return selectedDocuments.allSatisfy { document in
             documentIsEligibleForCurrentRoute(document)
-                && (shortcutAuthoringRequested || documentSupportsProseRecall(document))
+                && (nativeAuthoringRequested || shortcutAuthoringRequested || documentSupportsProseRecall(document))
         }
     }
 
@@ -869,7 +878,7 @@ struct AIStudioView: View {
             let eligible = documentIsEligibleForCurrentRoute(document)
             let exclusion: String?
             if !NFAIStudioDocumentAuthoringPolicy.allowsOfflineQuestions(policy) {
-                exclusion = NFAppLocalization.localized("Question creation is disabled for this source. Open the source to change its question privacy.", comment: "Source chooser exclusion and policy recovery.")
+                exclusion = NFAppLocalization.localized("Question creation is disabled for this source. Open the source to change its AI setting.", comment: "Source chooser exclusion and policy recovery.")
             } else if !documentHasReadyChunks(document) {
                 exclusion = NFAppLocalization.localized("Open the source to reprocess it or review its preparation status.", comment: "Source chooser preparation recovery.")
             } else if !eligible {
@@ -879,7 +888,7 @@ struct AIStudioView: View {
             }
             return NFAIStudioSourceChoice(id: document.id, filename: document.filename,
                 status: documentStatus(document),
-                route: policy == .noAI ? "" : NFAppLocalization.localized(documentAllowsQuestionWriter(document) ? "Question Writer + offline" : "Created on this device", comment: "Allowed source question route."),
+                route: policy == .noAI ? "" : NFAppLocalization.localized(documentAllowsQuestionWriter(document) ? "Automatic AI" : "On-device AI", comment: "Allowed source question route."),
                 exclusion: exclusion)
         }
         let knownIDs = Set(choices.map(\.id))
@@ -898,12 +907,12 @@ struct AIStudioView: View {
     private var generateCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             Label("Create your set", systemImage: "wand.and.stars").font(.title2.bold())
-            Label(shortcutAuthoringRequested ? "Uses Question Writer" : "Created on this device", systemImage: shortcutAuthoringRequested ? "arrow.up.forward.app" : "iphone")
+            Label(nativeAuthoringRequested ? "AI practice with feedback" : (shortcutAuthoringRequested ? "Uses Question Writer" : "Created on this device"), systemImage: nativeAuthoringRequested ? "text.bubble" : (shortcutAuthoringRequested ? "arrow.up.forward.app" : "iphone"))
                 .font(.subheadline.weight(.semibold))
             Text(generationSummary)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-            if !selectedDocumentIDs.isEmpty {
+            if !selectedDocumentIDs.isEmpty && !nativeAuthoringRequested {
                 Label {
                     Text(shortcutAuthoringRequested
                         ? "Before the Shortcut opens, you’ll approve up to four excerpts. Original files stay on this device."
@@ -928,7 +937,7 @@ struct AIStudioView: View {
             .buttonStyle(.borderedProminent).tint(NFTheme.roseControlTint).controlSize(.large)
             .accessibilityIdentifier("ai-studio-generate-action")
             .disabled(isGenerating || !canGenerate)
-            if shortcutAuthoringRequested, let shortcutInstallURL {
+            if !nativeAuthoringRequested, shortcutAuthoringRequested, let shortcutInstallURL {
                 Button("Add or reinstall Question Writer") {
                     Task { @MainActor in
                         _ = await openExternalURL(shortcutInstallURL)
@@ -937,7 +946,22 @@ struct AIStudioView: View {
                 .buttonStyle(.bordered)
                 .disabled(isGenerating)
             }
-            if shortcutAuthoringRequested {
+            if nativeAuthoringRequested {
+                DisclosureGroup("AI options") {
+                    Button("AI and offline settings") { showsAISettings = true }
+                        .buttonStyle(.bordered).frame(minHeight: 44)
+                    Button("Create with built-in rules") {
+                        generationTask = Task { await generate(preferShortcut: false) }
+                    }
+                    .buttonStyle(.bordered).frame(minHeight: 44)
+                    .disabled(isGenerating || !canGenerateOffline)
+                }
+                if isGenerating {
+                    Text("\(generationCompletedCount) of \(count) questions prepared")
+                        .font(.caption).foregroundStyle(.secondary)
+                        .accessibilityIdentifier("ai-studio-generation-progress")
+                }
+            } else if shortcutAuthoringRequested {
                 Button {
                     generationTask = Task { await generate(preferShortcut: false) }
                 } label: {
@@ -983,7 +1007,7 @@ struct AIStudioView: View {
                 }
                 .buttonStyle(.bordered)
                 .disabled(isCancelling)
-                .accessibilityHint("Stops the active authoring request. You can reinstall Question Writer, try again, or create offline.")
+                .accessibilityHint("Stops creating this set. Your topic and source selection are kept.")
             }
         }
         .nfCard()
@@ -1105,6 +1129,10 @@ struct AIStudioView: View {
                 || selectedDocuments.allSatisfy(documentAllowsQuestionWriter))
     }
 
+    private var nativeAuthoringRequested: Bool {
+        style == .shortAnswer && store.profileSnapshot.aiMode != .disabled
+    }
+
     private var practiceResult: NFAuthoringResult? {
         guard let result else { return nil }
         let allowed = result.questions.filter { !store.isQuarantined(question: $0, in: result) }
@@ -1137,7 +1165,7 @@ struct AIStudioView: View {
             return false
         }
         if !selectedDocumentIDs.isEmpty {
-            return shortcutAuthoringRequested
+            return nativeAuthoringRequested || shortcutAuthoringRequested
                 ? selectedDocuments.contains(where: documentHasReadyChunks)
                 : canGenerateOffline
         }
@@ -1181,7 +1209,7 @@ struct AIStudioView: View {
         guard NFAIStudioDocumentAuthoringPolicy.allowsOfflineQuestions(policy) else {
             return false
         }
-        return store.profileSnapshot.aiMode == .automatic && documentAllowsQuestionWriter(document)
+        return nativeAuthoringRequested || (store.profileSnapshot.aiMode == .automatic && documentAllowsQuestionWriter(document))
             ? documentHasReadyChunks(document)
             : documentSupportsProseRecall(document)
     }
@@ -1233,10 +1261,13 @@ struct AIStudioView: View {
     }
 
     private var generateButtonSymbol: String {
-        return shortcutRouteIsLaunchable ? "wand.and.stars" : "gearshape.2.fill"
+        return nativeAuthoringRequested || shortcutRouteIsLaunchable ? "wand.and.stars" : "gearshape.2.fill"
     }
 
     private var generationSummary: String {
+        if nativeAuthoringRequested {
+            return NFAppLocalization.localized("Create focused questions with a saved rubric. Answer in your own words, get partial credit and a useful next step. Available on-device AI keeps practice working offline.", locale: NFAppLocalization.preferredLocale, comment: "Native AI question authoring and semantic grading summary.")
+        }
         if shortcutRouteIsLaunchable {
             return selectedDocumentIDs.isEmpty
                 ? NFAppLocalization.localized("Question Writer will create a tailored set through your user-configured Shortcut. ChatGPT is recommended.", locale: NFAppLocalization.preferredLocale, comment: "Question-set authoring summary without source documents.")
@@ -1258,7 +1289,7 @@ struct AIStudioView: View {
 
     private func configureDefaults() {
         field = store.profileSnapshot.fields.sorted { $0.rawValue < $1.rawValue }.first ?? .general
-        style = suggestedStyles.first ?? .multipleChoice
+        style = .shortAnswer
         if let initialDocumentID,
            store.documents.contains(where: {
                $0.id == initialDocumentID
@@ -1292,6 +1323,10 @@ struct AIStudioView: View {
     @MainActor
     private func beginDefaultAuthoring() async {
         guard !isGenerating, canGenerate else { return }
+        if nativeAuthoringRequested {
+            generationTask = Task { await generate(preferShortcut: false, preferNative: true) }
+            return
+        }
         if shortcutRouteIsLaunchable && !selectedDocumentIDs.isEmpty {
             showsSourceSharingConfirmation = true
             return
@@ -1302,7 +1337,8 @@ struct AIStudioView: View {
     @MainActor
     private func generate(
         preferShortcut: Bool,
-        sourceConsentGranted: Bool = false
+        sourceConsentGranted: Bool = false,
+        preferNative: Bool = false
     ) async {
         guard selectedDocuments.allSatisfy({ document in
             NFAIStudioDocumentAuthoringPolicy.allowsOfflineQuestions(
@@ -1310,7 +1346,7 @@ struct AIStudioView: View {
             )
         }) else {
             generationError = NFAppLocalization.localized(
-                "A selected source is set to Source review only. Change its Question privacy setting before creating questions.",
+                "A selected source is set to Source review only. Change its AI setting in Sources before creating questions.",
                 locale: NFAppLocalization.preferredLocale,
                 comment: "Question-set authoring error when a selected source disables every authoring route."
             )
@@ -1321,6 +1357,8 @@ struct AIStudioView: View {
             && (selectedDocumentIDs.isEmpty || sourceConsentGranted)
         isGenerating = true
         isCancelling = false
+        generationError = nil
+        generationCompletedCount = 0
         var isWaitingForShortcut = false
         defer {
             if !isWaitingForShortcut {
@@ -1331,7 +1369,7 @@ struct AIStudioView: View {
         }
         let query = [customTopic, objective, lab.subtitle, field.title].filter { !$0.isEmpty }.joined(separator: " ")
         let allChunks = selectedDocuments.flatMap { store.chunks(for: $0) }
-        let compatibleChunks = shouldLaunchShortcut
+        let compatibleChunks = shouldLaunchShortcut || preferNative
             ? allChunks
             : allChunks.filter { isCompatible($0, with: style) }
         let retrieved = NFSourceRetriever.retrieve(
@@ -1392,9 +1430,7 @@ struct AIStudioView: View {
             sourceChunks: retrieved,
             documentPolicies: policies,
             externalSourceConsent: externalSourceConsent,
-            // Question Writer is the only model route. Any request that is not
-            // actually handed to the installed Shortcut is deterministic.
-            aiMode: shouldLaunchShortcut ? .automatic : .disabled,
+            aiMode: preferNative ? store.profileSnapshot.aiMode : (shouldLaunchShortcut ? .automatic : .disabled),
             allowsShortcutAuthoring: shouldLaunchShortcut
         )
 
@@ -1431,7 +1467,13 @@ struct AIStudioView: View {
 
         let generated: NFAuthoringResult
         do {
-            generated = try await NFAuthoringEngine.shared.author(request)
+            if preferNative {
+                generated = try await NFAILearningAuthoringService.shared.author(request) { progress in
+                    await MainActor.run { generationCompletedCount = progress.completedCount }
+                }
+            } else {
+                generated = try await NFAuthoringEngine.shared.author(request)
+            }
             try Task.checkCancellation()
         } catch is CancellationError {
             return
@@ -1443,7 +1485,7 @@ struct AIStudioView: View {
             )
             return
         } catch {
-            generationError = "Questions could not be created. Try again or use a narrower topic."
+            generationError = preferNative ? error.localizedDescription : "Questions could not be created. Try again or use a narrower topic."
             return
         }
         do {
@@ -1794,7 +1836,8 @@ struct AIStudioView: View {
         case .privateCloudCompute: NFAppLocalization.localized("Earlier model version", locale: NFAppLocalization.preferredLocale, comment: "Compatibility label for a historical model route that is no longer available.")
         case .shortcutsAppleIntelligence: NFAppLocalization.localized("Earlier Apple Intelligence Shortcut", locale: NFAppLocalization.preferredLocale, comment: "Compatibility label for a question set created by an earlier Apple Intelligence Shortcut route.")
         case .externalShortcut: NFAppLocalization.localized("Question Writer Shortcut", locale: NFAppLocalization.preferredLocale, comment: "Question-set authoring route using the user-configured Question Writer Shortcut.")
-        case .onDevice: NFAppLocalization.localized("Earlier question set", locale: NFAppLocalization.preferredLocale, comment: "Compatibility label for a restored question set created by an earlier app version.")
+        case .onDevice: NFAppLocalization.localized("Created with on-device AI", locale: NFAppLocalization.preferredLocale, comment: "Question-set provenance for on-device model generation.")
+        case .directCloud: NFAppLocalization.localized("Created with cloud AI", locale: NFAppLocalization.preferredLocale, comment: "Question-set provenance for configured cloud model generation.")
         case .deterministicFallback: NFAppLocalization.localized("Created offline", locale: NFAppLocalization.preferredLocale, comment: "Question-set authoring result created by the offline app rules.")
         }
     }
@@ -2350,6 +2393,17 @@ final class AIGeneratedPracticeRuntime {
     private var terminalState: NFGeneratedTerminalState?
     private var terminalInventory: NFGeneratedTerminalInventory?
     private var pendingUnscored: NFGeneratedRunState.Outcome?
+    private(set) var aiGradingRequest: NFAIGradeRequest?
+    private(set) var aiGradingJob: NFAIGradingJob?
+    private(set) var aiGradeReviews: [NFAIGradingJob] = []
+    private(set) var isAIGrading = false
+    private(set) var aiGradingMessage: String?
+    private var aiJobStore: NFAIGradingJobStore?
+    private var aiProviderTask: Task<NFAIGradeReceipt, Error>?
+    private var aiOperationID: UUID?
+    var gradeAnswer: @Sendable (NFAIGradeRequest, AIMode) async throws -> NFAIGradeReceipt = { request, mode in
+        try await NFAIGradingService.shared.grade(request, mode: mode)
+    }
     private var acknowledgedRevision: Int?
     private var acknowledgedLegacyPayloadDigest: String?
     private var awaitsWriterRefresh = false
@@ -2496,6 +2550,7 @@ final class AIGeneratedPracticeRuntime {
         guard stage == 0, canSubmit, !isReadOnlyRecovery, !isPaused, ownsWriter else { return }
         invalidateConfidenceAfterEdit()
         stopTiming()
+        if exercise.aiRubric != nil { Task { await gradeAIAnswerAsync(store: store) }; return }
         if case .selfCheck = exercise.interaction {
             if !lifecycle.revealReference(canMutate: { self.ownsWriter && !self.isReadOnlyRecovery },
                 expose: { self.selfCheckReferenceRevealed = $0 }, persist: { self.checkpoint(store: store) }) {
@@ -2619,7 +2674,8 @@ final class AIGeneratedPracticeRuntime {
                                          score: NFExerciseScoringResult, confidence: ConfidenceLevel?, store: AppStore) -> Bool {
         guard let savedResponse = try? JSONDecoder().decode(NFExerciseResponse.self, from: Data(attempt.response.utf8)),
               savedResponse == response,
-              store.localSessions.archive.snapshots.first(where: { $0.attemptID == attempt.id })?.exercise == exercise else { return false }
+              store.localSessions.archive.snapshots.first(where: { $0.attemptID == attempt.id })?.exercise == exercise,
+              store.localSessions.archive.snapshots.first(where: { $0.attemptID == attempt.id })?.aiGrade == score.aiGrade else { return false }
         let expectedConfidence: String? = score.outcome == .selfReported ? nil : confidence?.rawValue
         let expectedKey: String
         if case .selfCheck = exercise.interaction,
@@ -2724,6 +2780,7 @@ final class AIGeneratedPracticeRuntime {
     private func prepareInteraction() {
         guard unavailableReason == nil else { return }
         lifecycle.resetForItem()
+        aiGradingRequest = nil; aiGradingJob = nil; aiGradingMessage = nil
         mathWork = NFMathWorkPolicy.kind(for: exercise) == .estimateFirst ? .initial(for: exercise) : nil
         dataInspection = .initial(for: exercise)
         scienceStudy = .initial(for: exercise)
@@ -2775,7 +2832,10 @@ final class AIGeneratedPracticeRuntime {
         return try writerRepository.sessionCommand(authority: activeCommandAuthority ?? retainedWriterAuthority,
             sessionID: runID)
     }
-    func releaseWriter() { writerRepository?.releaseWriter(writerID) }
+    func releaseWriter() {
+        aiProviderTask?.cancel(); aiOperationID = nil; isAIGrading = false
+        writerRepository?.releaseWriter(writerID)
+    }
 
     func takeOver(store: AppStore, automaticallyRetryPrepared: Bool = true) {
         guard !isReadOnlyRecovery,
@@ -2803,7 +2863,7 @@ final class AIGeneratedPracticeRuntime {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
         let payload = (try? encoder.encode(makeResponse())) ?? Data()
-        return "\(index)|\(includePhase ? String(stage) : "")|\(confidence?.rawValue ?? "")|\(showsCoaching)|\(payload.base64EncodedString())|\(((try? encoder.encode(dataInspection)) ?? Data()).base64EncodedString())"
+        return "\(aiGradingRequest?.id.uuidString ?? "")|\(index)|\(includePhase ? String(stage) : "")|\(confidence?.rawValue ?? "")|\(showsCoaching)|\(payload.base64EncodedString())|\(((try? encoder.encode(dataInspection)) ?? Data()).base64EncodedString())"
     }
 
     var responseDraftIdentity: String {
@@ -2981,6 +3041,7 @@ final class AIGeneratedPracticeRuntime {
             state = value
         }
         return NFGeneratedPracticeDraft(
+            schemaVersion: result.questions.contains { $0.authoritativeExercise.aiRubric != nil } ? 2 : 1,
             id: runID, ownerDeviceID: store.localSessions.ownerDeviceID,
             result: result, request: request, index: index, stage: stageOverride ?? stage,
             response: preparedResponse ?? makeResponse(), confidence: confidence,
@@ -2989,7 +3050,8 @@ final class AIGeneratedPracticeRuntime {
             pendingAttemptID: pendingAttemptID, shownAt: shownAt, activeDuration: activeDuration,
             clarificationMessage: clarificationMessage, hintExpanded: showsCoaching, mathWork: mathWork, traceInspection: traceInspection,
             dataInspection: dataInspection, scienceStudy: scienceStudy, transferRelationship: transferRelationship,
-            runState: state, terminalState: terminalState, terminalInventory: terminalInventory, pendingUnscored: pendingUnscored)
+            runState: state, terminalState: terminalState, terminalInventory: terminalInventory, pendingUnscored: pendingUnscored,
+            aiGradingRequest: aiGradingRequest, aiGradeReviews: aiGradeReviews.isEmpty ? nil : aiGradeReviews)
     }
 
     private func persistSnapshot(_ snapshot: NFGeneratedPracticeDraft?, store: AppStore) -> Bool {
@@ -3164,6 +3226,7 @@ final class AIGeneratedPracticeRuntime {
         defer { activeCommandAuthority = previousCommandAuthority }
 
         guard stage == 1, !isReadOnlyRecovery, ownsWriter else { return }
+        if exercise.aiRubric != nil { Task { await retryCommitAsync(store: store) }; return }
         if let pendingUnscored { saveUnscored(pendingUnscored, store: store) }
         else { persistAttempt(store: store) }
     }
@@ -3238,6 +3301,8 @@ struct AIGeneratedPracticeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var runtime: AIGeneratedPracticeRuntime
     @State private var showsConfidence = false
+    @State private var showsAITutor = false
+    @State private var aiReviewReason = ""
     @State private var showReport = false
     @State private var saveAndClosePending = false
     @FocusState private var responseFocus: ResponseFocus?
@@ -3326,9 +3391,13 @@ struct AIGeneratedPracticeView: View {
         .nfDesktopPresentationFrame(minWidth: 400, idealWidth: 760, minHeight: 600, idealHeight: 800)
         .interactiveDismissDisabled(runtime.stage != 3 || runtime.saveError != nil)
         .onAppear {
+            runtime.configureFreshAIGrading(mode: store.profileSnapshot.aiMode)
             _ = runtime.restoreCheckpoint(store: store, automaticallyRetryPrepared: false)
             hasAcknowledgedLocalSave = runtime.checkpoint(store: store)
-            if runtime.stage == 1 { Task { await runtime.retryCommitAsync(store: store) } }
+            Task {
+                await runtime.restoreAIGrading(store: store)
+                if runtime.stage == 1 { await runtime.retryCommitAsync(store: store) }
+            }
             showsConfidence = runtime.confidenceInvitation
             sessionCommands.activate(
                 requestID: runtime.runID,
@@ -3403,6 +3472,9 @@ struct AIGeneratedPracticeView: View {
 
     var body: some View {
         observedSession
+        .sheet(isPresented: $showsAITutor) {
+            if let context = runtime.tutoringContext(store: store) { NFAITutorView(context: context).environment(store) }
+        }
         .sheet(isPresented: Binding(get: { runtime.saveError != nil }, set: { if !$0 { runtime.saveError = nil } })) {
             NFSessionSaveRecoveryView(message: NFAppLocalization.localizedCatalogValue(runtime.saveError ?? "", locale: NFAppLocalization.preferredLocale),
                 disposition: runtime.exitDisposition(store: store), recoveryText: runtime.recoveryText,
@@ -3564,6 +3636,7 @@ struct AIGeneratedPracticeView: View {
                         Text("Confidence (optional)").frame(minHeight: 44).contentShape(Rectangle())
                     }.disabled(!runtime.canEditDraft)
                 }
+                if runtime.hasPendingAIGrade { aiGradingStatusView }
                 if runtime.stage == 1 {
                     Label("Answer waiting to finish saving", systemImage: "arrow.clockwise")
                     Button("Retry saving") { Task { await runtime.retryCommitAsync(store: store) } }.buttonStyle(.borderedProminent)
@@ -3594,14 +3667,19 @@ struct AIGeneratedPracticeView: View {
                 } else {
                 citationList(revealsExcerpt: false)
                 DisclosureGroup("How this answer is checked") {
-                    Label(
+                    if let rubric = runtime.exercise.aiRubric {
+                        Text("AI evaluates the meaning of your answer against these criteria.")
+                        ForEach(rubric.criteria) { criterion in Text(criterion.description) }
+                    } else { Label(
                         runtime.result.validationStatus.summary,
                         systemImage: runtime.result.validationStatus.hasDeterministicAnswerAuthority ? "checkmark.shield.fill" : "exclamationmark.triangle.fill"
                     )
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .padding(.top, 6)
+                    }
                 }
+                if !runtime.hasPendingAIGrade {
                 Button(
                     runtime.awaitsTransferRelationship ? NFAppLocalization.localized("Save relationship and continue", locale: NFAppLocalization.preferredLocale, comment: "Freeze relationship before solving.") : runtime.awaitsScienceEvidence ? NFAppLocalization.localized("Save evidence and continue", locale: NFAppLocalization.preferredLocale, comment: "Save the first study stage before choosing the experiment.") : runtime.awaitsEstimateLock
                         ? NFAppLocalization.localized("Save estimate and continue", locale: NFAppLocalization.preferredLocale, comment: "Save the estimate before exact work.")
@@ -3618,6 +3696,7 @@ struct AIGeneratedPracticeView: View {
                 .frame(maxWidth: .infinity)
                 .disabled(!runtime.canSubmit || runtime.stage == 1 || runtime.isReadOnlyRecovery || runtime.isPaused || !runtime.ownsWriter)
                 .keyboardShortcut(.defaultAction)
+                }
                 if let message = runtime.clarificationMessage {
                     Label {
                         Text(verbatim: NFAppLocalization.localizedCatalogValue(message, locale: NFAppLocalization.preferredLocale))
@@ -3929,7 +4008,12 @@ struct AIGeneratedPracticeView: View {
                     }
                 }
                 .nfCard(cornerRadius: 16, padding: 14)
-                NFFormattedLearningText(runtime.question.explanation, font: .title3)
+                NFFormattedLearningText(runtime.lastScore?.aiGrade == nil ? runtime.question.explanation : (runtime.lastScore?.feedback.explanation ?? ""), font: .title3)
+                if runtime.savedAIGrade != nil { aiSavedGradeView }
+                Button { showsAITutor = true } label: {
+                    Label("Ask AI about this answer", systemImage: "sparkles")
+                        .frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
+                }.buttonStyle(.bordered).accessibilityIdentifier("ai-practice-ask-tutor")
                 if let draft = runtime.transferRelationship {
                     NFTransferSavedRelationshipView(exercise: runtime.exercise, draft: draft)
                     NFTransferRelationshipDebriefView(exercise: runtime.exercise)
@@ -4460,7 +4544,7 @@ extension AIGeneratedPracticeRuntime {
     var canEditDraft: Bool {
         if draftSaveGate.hasQueuedAction || isCommitInFlight || pendingGeneratedSubmission != nil || pendingGeneratedAdvance != nil { return false }
         return stage == 0 && isDurablyPrepared && ownsWriter && !isPaused && !isReadOnlyRecovery
-            && unavailableReason == nil && !hasExited && pendingUnscored == nil
+            && unavailableReason == nil && !hasExited && pendingUnscored == nil && aiGradingRequest == nil
     }
     var canRateSelfCheck: Bool {
         if draftSaveGate.hasQueuedAction || isCommitInFlight || pendingGeneratedSubmission != nil || pendingGeneratedAdvance != nil { return false }
@@ -4518,7 +4602,7 @@ extension AIGeneratedPracticeRuntime {
             runState = value
             guard checkpoint(store: store) else { runState = previous; return }
         }
-        if stage == 0, activeSegmentStart == nil { activeSegmentStart = ProcessInfo.processInfo.systemUptime }
+        if stage == 0, aiGradingRequest == nil, activeSegmentStart == nil { activeSegmentStart = ProcessInfo.processInfo.systemUptime }
     }
     func requestHint(store: AppStore, expectedAttemptID: UUID? = nil, expectedHintIndex: Int? = nil) {
         if deferUntilDraftSaveCompletes({ [weak self, weak store] in
@@ -4684,7 +4768,7 @@ extension AIGeneratedPracticeRuntime {
         let command = try? sessionWriterCommand()
         return draftSaveGate.enqueue { [weak self] in
             guard let self, !self.hasExited else { return }
-            if hadAnswerClock, !self.isPaused, self.stage == 0 { self.activeSegmentStart = ProcessInfo.processInfo.systemUptime }
+            if hadAnswerClock, !self.isPaused, self.stage == 0, self.aiGradingRequest == nil { self.activeSegmentStart = ProcessInfo.processInfo.systemUptime }
             guard let command, (try? self.sessionWriterCommand()) == command,
                   (self.generatedDraftFingerprint(includePhase: false) == identity && self.pendingAttemptID == attempt)
                     || (followsAcceptedAdvance && self.canFollowAcceptedAdvance(command: command,
@@ -4729,6 +4813,7 @@ extension AIGeneratedPracticeRuntime {
         if awaitsEstimateLock { _ = lockEstimate(store: store); return }
         guard stage == 0, !isPaused else { return }
         invalidateConfidenceAfterEdit()
+        if exercise.aiRubric != nil { await gradeAIAnswerAsync(store: store); return }
         guard let command = try? sessionWriterCommand(), draftSaveGate.begin() else { return }
         isCommitInFlight = true
         stopTiming()
@@ -4753,6 +4838,7 @@ extension AIGeneratedPracticeRuntime {
     }
 
     func retryCommitAsync(store: AppStore) async {
+        if stage == 0, aiGradingRequest != nil { await gradeAIAnswerAsync(store: store); return }
         if pendingGeneratedAdvance != nil { await retryAdvanceAsync(store: store); return }
         guard !hasUnexpectedPreparedResponseEdit else {
             generatedSubmissionFailed(NFLocalSessionRepository.RepositoryError.staleRevision); return
@@ -4894,6 +4980,7 @@ extension AIGeneratedPracticeRuntime {
     }
 
     private var hasUnexpectedPreparedResponseEdit: Bool {
+        if let aiGradingRequest, aiGradingRequest.response != makeResponse() { return true }
         if let pendingGeneratedSubmission, pendingGeneratedSubmission.draft.response != makeResponse() { return true }
         return preparedResponse.map { $0 != makeResponse() } ?? false
     }
@@ -4906,7 +4993,7 @@ extension AIGeneratedPracticeRuntime {
 }
 
 extension AIGeneratedPracticeRuntime {
-    private func persistAttemptAsync(store: AppStore, command: NFSessionWriterCommand) async {
+    private func persistAttemptAsync(store: AppStore, command: NFSessionWriterCommand, validatedScore: NFExerciseScoringResult? = nil) async {
         guard !isReadOnlyRecovery, ownsWriter else { return }
         if let id = pendingAttemptID, store.attempts.contains(where: { $0.id == id }),
            let original = store.localSessions.archive.snapshots.first(where: { $0.attemptID == id }),
@@ -4927,7 +5014,7 @@ extension AIGeneratedPracticeRuntime {
         } else { recovered = nil }
         stopTiming()
         await lifecycle.commitAsync(exercise: exercise, response: response, attemptID: pendingAttemptID,
-            confidence: confidence, recoveredIntent: recovered,
+            confidence: confidence, recoveredIntent: recovered, validatedScore: validatedScore,
             canMutate: { self.ownsWriter && !self.isReadOnlyRecovery && command == (try? self.sessionWriterCommand()) },
             receipt: { intent in
                 guard let committed = store.attempts.first(where: { $0.id == intent.attemptID }) else { return .absent }
@@ -5007,6 +5094,9 @@ extension AIGeneratedPracticeRuntime {
         terminalState = draft.terminalState
         terminalInventory = draft.terminalInventory
         pendingUnscored = draft.runState?.pendingUnscored ?? draft.pendingUnscored
+        aiGradingRequest = draft.aiGradingRequest
+        aiGradeReviews = draft.aiGradeReviews ?? []
+        aiGradingJob = nil; aiGradingMessage = nil
         acknowledgedRevision = draft.runState?.revision
         index = draft.index
         stage = draft.stage
@@ -5145,14 +5235,14 @@ extension AIGeneratedPracticeRuntime {
             value.status = .active
             state = value
         }
-        let draft = NFGeneratedPracticeDraft(id: runID, ownerDeviceID: source.ownerDeviceID,
+        let draft = NFGeneratedPracticeDraft(schemaVersion: source.schemaVersion, id: runID, ownerDeviceID: source.ownerDeviceID,
             result: source.result, request: source.request, index: index + 1, stage: 0,
             response: .initialDraft(for: next), confidence: nil, referenceRevealed: false,
             hintRevealed: false, correctness: source.correctness, lastScore: nil,
             pendingAttemptID: state?.current.attemptID ?? UUID(), shownAt: Date(), activeDuration: 0,
             mathWork: NFMathWorkPolicy.kind(for: next) == .estimateFirst ? .initial(for: next) : nil,
             dataInspection: .initial(for: next), scienceStudy: .initial(for: next),
-            transferRelationship: .initial(for: next), runState: state)
+            transferRelationship: .initial(for: next), runState: state, aiGradeReviews: source.aiGradeReviews)
         guard draft.valid else { throw NFLocalSessionRepository.RepositoryError.corruptSnapshot }
         return draft
     }
@@ -5327,5 +5417,307 @@ extension AIGeneratedPracticeRuntime {
         }
         draft.stage = 2
         try await persistGeneratedSubmission(draft, publication: .unscored(outcome), command: command, store: store)
+    }
+}
+
+// MARK: - Generated semantic-answer grading
+extension AIGeneratedPracticeRuntime {
+    /// Applied only before accepting a new run. Saved runs retain their original
+    /// interaction, scorer and item digests, including legacy self-checks.
+    func configureFreshAIGrading(mode: AIMode) {
+        guard mode != .disabled, restoredDraft == nil, !didRestoreDurableProgress,
+              !isDurablyPrepared, acknowledgedRevision == nil, index == 0,
+              !hasUnsavedWork, unavailableReason == nil else { return }
+        let questions = result.questions.map { question -> NFAuthoredQuestion in
+            guard question.authoritativeExercise.aiRubric == nil,
+                  [.shortAnswer, .proofOrDerivation, .debugging, .experimentalDesign, .dataInterpretation].contains(question.style),
+                  let converted = try? NFAIExerciseFactory.shortResponse(from: question.authoritativeExercise,
+                    reference: question.correctAnswer) else { return question }
+            return NFAuthoredQuestion(id: question.id, lab: question.lab, style: question.style,
+                prompt: question.prompt, context: question.context, choices: question.choices,
+                correctAnswer: question.correctAnswer, acceptedAnswers: question.acceptedAnswers,
+                explanation: question.explanation, hint: question.hint, decisiveStep: question.decisiveStep,
+                difficulty: question.difficulty, citationChunkIDs: question.citationChunkIDs,
+                evidenceClass: question.evidenceClass, authoritativeExercise: converted,
+                presentationEnhancement: question.presentationEnhancement)
+        }
+        guard questions != result.questions else { return }
+        let converted = NFAuthoringResult(questions: questions, provenance: result.provenance,
+            routeCandidates: result.routeCandidates, validationStatus: result.validationStatus,
+            validationNotes: result.validationNotes)
+        guard NFGeneratedPracticeCompatibility.unavailableReason(for: converted) == nil else { return }
+        result = converted
+        prepareInteraction()
+        do {
+            runState = try NFGeneratedRunState.initial(exercise: exercise)
+            pendingAttemptID = runState?.current.attemptID
+        } catch { unavailableReason = NFGeneratedPracticeCompatibility.unavailableMessage; isReadOnlyRecovery = true }
+    }
+
+    func allowedLearningMode(store: AppStore) -> AIMode {
+        let sourceIDs = Set(result.provenance.sourceDocumentIDs)
+        let current = store.documents.filter { sourceIDs.contains($0.id) }
+            .map { DocumentAIPolicy(rawValue: $0.aiPolicyRaw) ?? .noAI }
+        let policies = current + (current.count < sourceIDs.count ? request.documentPolicies : [])
+        if policies.contains(.noAI) { return .disabled }
+        if policies.contains(.onDeviceOnly) || current.count < sourceIDs.count { return .onDeviceOnly }
+        return .automatic
+    }
+
+    func tutoringContext(store: AppStore) -> NFAITutorContext? {
+        guard stage == 2, !isUnscoredFeedback, let lastScore, let pendingAttemptID else { return nil }
+        return store.learningContext(exercise: exercise, response: preparedResponse ?? makeResponse(),
+            feedback: aiGradeReview?.explanation ?? lastScore.feedback.explanation,
+            savedSources: lastScore.aiGrade?.request.sourceChunks ?? request.sourceChunks,
+            attemptID: pendingAttemptID)
+    }
+
+    var hasPendingAIGrade: Bool { stage == 0 && aiGradingRequest != nil }
+    var savedAIGrade: NFAIGradeReceipt? { stage == 2 ? lastScore?.aiGrade : nil }
+    var aiGradeReview: NFAIGradeReceipt? {
+        guard let original = savedAIGrade else { return nil }
+        return NFAIGradeReviewProjection.latestAcceptedReview(of: original, jobs: aiGradeReviews)
+    }
+    var gradingResponseText: String { NFSessionRecoveryText.make(response: makeResponse(), exercise: exercise) }
+
+    func useAIJobStore(_ store: NFAIGradingJobStore) { aiJobStore = store }
+    private func gradingJobs(store: AppStore) -> NFAIGradingJobStore {
+        if let aiJobStore { return aiJobStore }
+        let jobs = NFAIGradingJobStore(directoryURL: store.localSessions.aiArtifactDirectoryURL)
+        aiJobStore = jobs
+        return jobs
+    }
+
+    private func matchesAIRequest(_ request: NFAIGradeRequest, command: NFSessionWriterCommand) -> Bool {
+        !hasExited && !isReadOnlyRecovery && ownsWriter && command == (try? sessionWriterCommand())
+            && request.runID == runID && request.attemptID == pendingAttemptID
+            && request.slotID == runState?.current.id.uuidString
+            && request.exercise == exercise && request.response == makeResponse()
+    }
+
+    /// Cold restoration reads a verified saved result but never reissues an
+    /// unknown network request or consumes another provider call implicitly.
+    func restoreAIGrading(store: AppStore) async {
+        guard let request = aiGradingRequest, ownsWriter,
+              let command = try? sessionWriterCommand() else { return }
+        do {
+            let job = try await gradingJobs(store: store).load(id: request.id, ownerDeviceID: store.localSessions.ownerDeviceID)
+            guard matchesAIRequest(request, command: command), job?.request == request else { return }
+            aiGradingJob = job
+            if stage == 0, let receipt = job?.receipt, receipt.decision == .graded {
+                await commitAcceptedAIGrade(receipt, command: command, store: store)
+            } else if stage == 0 {
+                aiGradingMessage = job?.receipt?.explanation ?? "Your answer is saved. Retry grading when you are ready."
+            }
+        } catch {
+            if matchesAIRequest(request, command: command) {
+                aiGradingMessage = "Your answer is saved. The grading request could not be loaded; try again."
+            }
+        }
+    }
+
+    func gradeAIAnswerAsync(store: AppStore) async {
+        guard !isAIGrading, stage == 0, exercise.aiRubric != nil,
+              await waitForGeneratedSubmissionBoundary(), !isPaused,
+              aiGradingRequest != nil || canSubmit,
+              let attemptID = pendingAttemptID, let command = try? sessionWriterCommand() else { return }
+        stopTiming()
+        let frozen = aiGradingRequest ?? NFAIGradeRequest(attemptID: attemptID, runID: runID,
+            slotID: runState?.current.id.uuidString, exercise: exercise, response: makeResponse(),
+            sourceChunks: request.sourceChunks.filter { exercise.sourceContext.sourceChunkIDs.contains($0.id) })
+        let jobs = gradingJobs(store: store), owner = store.localSessions.ownerDeviceID
+        let operation = UUID(); aiOperationID = operation
+        isAIGrading = true; aiGradingMessage = nil
+        defer { if aiOperationID == operation { isAIGrading = false; aiProviderTask = nil; aiOperationID = nil } }
+        do {
+            guard await checkpointAsync(store: store), matchesAIRequest(frozen, command: command) && aiOperationID == operation else { return }
+            var job = try await jobs.create(frozen, ownerDeviceID: owner)
+            guard matchesAIRequest(frozen, command: command) && aiOperationID == operation, stage == 0 else { return }
+            aiGradingRequest = frozen; aiGradingJob = job
+            // This accepted checkpoint fixes response, confidence, timing and
+            // grading identity before any provider is allowed to see the input.
+            guard await checkpointAsync(store: store), matchesAIRequest(frozen, command: command) && aiOperationID == operation else { return }
+            if let receipt = job.receipt {
+                await commitAcceptedAIGrade(receipt, command: command, store: store)
+                return
+            }
+            job = try await jobs.beginDispatch(frozen, ownerDeviceID: owner, expectedRevision: job.revision)
+            guard matchesAIRequest(frozen, command: command) && aiOperationID == operation, stage == 0 else { return }
+            aiGradingJob = job
+            let evaluate = gradeAnswer, mode = NFAITutorModePolicy.resolve(requested: store.profileSnapshot.aiMode, allowed: allowedLearningMode(store: store))
+            guard mode != .disabled else { throw NFAILearningError.disabled }
+            let task = Task { try await evaluate(frozen, mode) }
+            aiProviderTask = task
+            let receipt = try await withTaskCancellationHandler { try await task.value } onCancel: { task.cancel() }
+            guard matchesAIRequest(frozen, command: command) && aiOperationID == operation, stage == 0 else { return }
+            let accepted = try await jobs.accept(receipt, for: frozen, ownerDeviceID: owner, expectedRevision: job.revision)
+            guard matchesAIRequest(frozen, command: command) && aiOperationID == operation, stage == 0 else { return }
+            aiGradingJob = accepted
+            await commitAcceptedAIGrade(receipt, command: command, store: store)
+        } catch {
+            guard matchesAIRequest(frozen, command: command) && aiOperationID == operation, stage == 0 else { return }
+            if let current = try? await jobs.load(id: frozen.id, ownerDeviceID: owner), current.receipt == nil {
+                if current.status == .dispatching {
+                    aiGradingJob = try? await jobs.markPending(frozen, ownerDeviceID: owner,
+                        expectedRevision: current.revision, reason: "providerUnavailable")
+                } else { aiGradingJob = current }
+            }
+            aiGradingMessage = "Your answer is saved. Grading did not finish. Retry or compare with the reference."
+        }
+    }
+
+    private func commitAcceptedAIGrade(_ receipt: NFAIGradeReceipt,
+        command: NFSessionWriterCommand, store: AppStore) async {
+        guard matchesAIRequest(receipt.request, command: command), stage == 0 else { return }
+        if receipt.decision == .needsClarification {
+            aiGradingMessage = receipt.explanation
+            return
+        }
+        do {
+            let score = try NFAIGradeValidator.score(receipt, for: receipt.request)
+            if draftSaveGate.isSaving { await draftSaveGate.waitUntilIdle() }
+            guard matchesAIRequest(receipt.request, command: command), stage == 0,
+                  draftSaveGate.begin() else { return }
+            isCommitInFlight = true
+            defer { isCommitInFlight = false; draftSaveGate.finish() }
+            await persistAttemptAsync(store: store, command: command, validatedScore: score)
+        } catch { aiGradingMessage = "The returned grade could not be verified. Your answer is saved; you can try again." }
+    }
+
+    func cancelAIGrading(store: AppStore) async {
+        guard let request = aiGradingRequest, stage == 0, ownsWriter,
+              let command = try? sessionWriterCommand() else { return }
+        aiProviderTask?.cancel()
+        do {
+            let jobs = gradingJobs(store: store), owner = store.localSessions.ownerDeviceID
+            guard let current = try await jobs.load(id: request.id, ownerDeviceID: owner),
+                  matchesAIRequest(request, command: command) else { return }
+            // Acceptance is immutable. Cancellation after this boundary cannot
+            // erase a grade or make an already accepted request charge again.
+            if current.isAccepted { aiGradingJob = current; return }
+            let cancelled = try await jobs.cancel(request, ownerDeviceID: owner, expectedRevision: current.revision)
+            guard matchesAIRequest(request, command: command) else { return }
+            aiGradingJob = cancelled
+            aiOperationID = nil; isAIGrading = false
+            aiGradingMessage = "Evaluation was cancelled. Your saved answer is retained."
+        } catch { aiGradingMessage = "Your answer is saved. The grading request could not be loaded; try again." }
+    }
+
+    func comparePendingAIAnswer(store: AppStore) async {
+        guard hasPendingAIGrade, !isAIGrading, !isPaused else { return }
+        await cancelAIGrading(store: store)
+        guard aiGradingJob?.status == .cancelled || aiGradingJob?.receipt?.decision == .needsClarification else { return }
+        // Uses the existing durable revealed outcome: no fabricated objective
+        // grade and no unaided-evidence credit are introduced by this fallback.
+        await saveUnscoredAsync(.revealed, store: store)
+    }
+
+    func reviewAIGrade(reason: String, store: AppStore) async {
+        let reason = reason.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !isAIGrading, stage == 2, canAdvanceFeedback, let original = lastScore?.aiGrade,
+              !reason.isEmpty, reason.count <= 2_000, aiGradeReviews.count < 16,
+              let command = try? sessionWriterCommand() else { return }
+        let frozen = aiGradeReviews.last(where: { $0.request.attemptID == pendingAttemptID }).flatMap { $0.receipt == nil ? $0.request : nil }
+            ?? NFAIGradeRequest(attemptID: original.request.attemptID, runID: runID,
+                slotID: original.request.slotID, exercise: original.request.exercise,
+                response: original.request.response, sourceChunks: original.request.sourceChunks,
+                reviewOf: original.id, reviewReason: reason)
+        let jobs = gradingJobs(store: store), owner = store.localSessions.ownerDeviceID
+        let operation = UUID(); aiOperationID = operation
+        isAIGrading = true; aiGradingMessage = nil
+        defer { if aiOperationID == operation { isAIGrading = false; aiProviderTask = nil; aiOperationID = nil } }
+        do {
+            var job = try await jobs.create(frozen, ownerDeviceID: owner)
+            guard matchesAIRequest(frozen, command: command) && aiOperationID == operation, stage == 2 else { return }
+            upsertAIReview(job)
+            guard await checkpointAsync(store: store), matchesAIRequest(frozen, command: command) && aiOperationID == operation else { return }
+            if job.receipt == nil {
+                job = try await jobs.beginDispatch(frozen, ownerDeviceID: owner, expectedRevision: job.revision)
+                guard matchesAIRequest(frozen, command: command) && aiOperationID == operation, stage == 2 else { return }
+                upsertAIReview(job)
+                let evaluate = gradeAnswer, mode = NFAITutorModePolicy.resolve(requested: store.profileSnapshot.aiMode, allowed: allowedLearningMode(store: store))
+                guard mode != .disabled else { throw NFAILearningError.disabled }
+                let task = Task { try await evaluate(frozen, mode) }; aiProviderTask = task
+                let receipt = try await withTaskCancellationHandler { try await task.value } onCancel: { task.cancel() }
+                guard matchesAIRequest(frozen, command: command) && aiOperationID == operation, stage == 2 else { return }
+                job = try await jobs.accept(receipt, for: frozen, ownerDeviceID: owner, expectedRevision: job.revision)
+            }
+            guard matchesAIRequest(frozen, command: command) && aiOperationID == operation, stage == 2 else { return }
+            upsertAIReview(job)
+            _ = await checkpointAsync(store: store)
+        } catch {
+            guard matchesAIRequest(frozen, command: command) && aiOperationID == operation else { return }
+            aiGradingMessage = "Your review request is saved. Retry when you are ready."
+        }
+    }
+
+    private func upsertAIReview(_ job: NFAIGradingJob) {
+        if let index = aiGradeReviews.firstIndex(where: { $0.id == job.id }) { aiGradeReviews[index] = job }
+        else { aiGradeReviews.append(job) }
+    }
+}
+
+extension AIGeneratedPracticeView {
+    private var aiGradingStatusView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label {
+                Text(LocalizedStringKey(runtime.isAIGrading ? "Grading your saved answer…" : "Answer saved — grading pending"))
+            } icon: { Image(systemName: "sparkles") }.font(.headline)
+                .accessibilityIdentifier("ai-grading-status")
+            if runtime.isAIGrading { ProgressView() }
+            if let message = runtime.aiGradingMessage { Text(LocalizedStringKey(message)).font(.callout) }
+            if runtime.isAIGrading {
+                Button { Task { await runtime.cancelAIGrading(store: store) } } label: {
+                    Text("Cancel grading").frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
+                }.buttonStyle(.bordered)
+            } else {
+                Button { Task { await runtime.gradeAIAnswerAsync(store: store) } } label: {
+                    Text("Retry grading").frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
+                }.buttonStyle(.borderedProminent).disabled(runtime.isPaused || !runtime.ownsWriter)
+                    .accessibilityIdentifier("ai-grading-retry")
+                Button { Task { await runtime.comparePendingAIAnswer(store: store) } } label: {
+                    Text("Compare with reference — no score").frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
+                }.buttonStyle(.bordered).disabled(runtime.isPaused || !runtime.ownsWriter)
+            }
+        }.nfCard().accessibilityElement(children: .contain)
+    }
+
+    @ViewBuilder private var aiSavedGradeView: some View {
+        if let receipt = runtime.savedAIGrade {
+            VStack(alignment: .leading, spacing: 10) {
+                Label("Saved AI evaluation", systemImage: "checkmark.seal").font(.headline)
+                    .accessibilityIdentifier("ai-grading-accepted")
+                ForEach(receipt.criteria, id: \.criterionID) { criterion in
+                    if let description = runtime.exercise.aiRubric?.criteria.first(where: { $0.id == criterion.criterionID })?.description {
+                        Text(description).font(.subheadline.bold())
+                    }
+                    Text(criterion.explanation)
+                }
+                DisclosureGroup("Evaluation details") {
+                    LabeledContent("Provider", value: receipt.providerIdentifier)
+                    LabeledContent("Model", value: receipt.modelIdentifier)
+                    Text(receipt.acceptedAt, style: .date)
+                }.font(.footnote)
+                DisclosureGroup("Request a grade review") {
+                    Text("The original evaluation stays saved. A review is added separately.").font(.callout)
+                    TextField("What should the evaluator reconsider?", text: $aiReviewReason, axis: .vertical)
+                        .lineLimit(2...5).textFieldStyle(.roundedBorder)
+                        .disabled(runtime.isAIGrading)
+                    Button { Task { await runtime.reviewAIGrade(reason: aiReviewReason, store: store) } } label: {
+                        Text("Review this grade").frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
+                    }.buttonStyle(.bordered).disabled(runtime.isAIGrading || aiReviewReason.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || aiReviewReason.count > 2_000)
+                    if runtime.isAIGrading { ProgressView("Reviewing the saved answer…") }
+                    if let review = runtime.aiGradeReview {
+                        Text("Saved review").font(.headline)
+                        if let score = try? NFAIGradeValidator.score(review, for: review.request) {
+                            Text(score.feedback.title).font(.subheadline.bold())
+                            Text(score.credit, format: .percent.precision(.fractionLength(0)))
+                        }
+                        Text(review.explanation).accessibilityIdentifier("ai-grading-review-result")
+                    }
+                    if let message = runtime.aiGradingMessage { Text(LocalizedStringKey(message)) }
+                }
+            }.nfCard()
+        }
     }
 }

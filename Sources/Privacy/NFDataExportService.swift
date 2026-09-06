@@ -16,7 +16,7 @@ enum NFDataExportError: Error, LocalizedError {
 
 @MainActor
 enum NFDataExportService {
-    nonisolated static let archiveVersion = 18
+    nonisolated static let archiveVersion = 19
     nonisolated static let oldestRestorableArchiveVersion = 14
     static let generatedQuestionsSchemaVersion = 1
     static let reviewHistorySchemaVersion = 1
@@ -44,11 +44,14 @@ enum NFDataExportService {
         let reviewHistoryURL = folder.appending(
             path: "NeuroForge-Document-AI-Review-History-v\(reviewHistorySchemaVersion).csv"
         )
-        let archive = makeArchive(store)
+        var archive = makeArchive(store)
+        archive.aiLearningArtifacts = try NFAILearningArtifactArchive.capture(at: store.localSessions.aiArtifactDirectoryURL)
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
         encoder.dateEncodingStrategy = .iso8601
-        try protectedPortableData(encoder.encode(archive)).write(to: archiveURL, options: secureWritingOptions)
+        let archiveData = try protectedPortableData(encoder.encode(archive))
+        guard archiveData.count <= NFLocalSessionRepository.maximumBytes else { throw NFAILearningArtifactArchive.Failure.oversized }
+        try archiveData.write(to: archiveURL, options: secureWritingOptions)
         try Data(makeSummaryCSV(store).utf8).write(to: summaryURL, options: secureWritingOptions)
         try encoder.encode(makeGeneratedQuestionsExport(store)).write(
             to: generatedQuestionsURL,
@@ -135,6 +138,12 @@ enum NFDataExportService {
     /// before their permissive Codable adapters can revive hidden fields.
     nonisolated static func protectedPortableData(_ data: Data, forRestore: Bool = false) throws -> Data {
         guard var archive = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return data }
+        try NFAILearningArtifactArchive.validateArchiveVersion(archive)
+        if let artifacts = archive["aiLearningArtifacts"], !(artifacts is NSNull) {
+            guard JSONSerialization.isValidJSONObject(artifacts) else { throw NFAILearningArtifactArchive.Failure.unsupported }
+            let values = try NFAILearningArtifactArchive.decodeEntries(artifacts)
+            guard values.isEmpty || archive["archiveVersion"] as? Int == 19 else { throw NFAILearningArtifactArchive.Failure.unsupported }
+        }
         func rows(_ key: String) -> [[String: Any]] { archive[key] as? [[String: Any]] ?? [] }
         func protected(_ row: [String: Any]) -> Bool { portableProtectedRow(row) }
         func identity(_ value: Any?) -> String { (value as? String ?? "").lowercased() }
@@ -478,7 +487,10 @@ enum NFDataExportService {
                       }), !protectedItems.contains(draft.lastScore?.exerciseID ?? "") {
                 canonical = try? encoder.encode(draft)
             } else { canonical = nil }
-            guard let canonical else { unavailable.append(identity); continue }
+            guard let canonical,
+                  let originalObject = try? JSONSerialization.jsonObject(with: data),
+                  let canonicalObject = try? JSONSerialization.jsonObject(with: canonical),
+                  portableKnownKeys(originalObject, canonicalObject) else { unavailable.append(identity); continue }
             var retained = row.filter { ["id", "generationID", "payload", "updatedAt"].contains($0.key) }
             retained["payload"] = canonical.base64EncodedString()
             safe.append(retained)
@@ -1081,6 +1093,7 @@ enum NFDataExportService {
         let adaptivePlanHistory: [NFAdaptivePlanChangeRecord]?
         let quarantinedReports: [Report]
         var localLearning: NFLocalSessionRepository.Archive? = nil
+        var aiLearningArtifacts: [NFAILearningArtifactFile]? = nil
     }
     struct Profile: Codable, Sendable {
         let id: UUID; let createdAt: Date; let modifiedAt: Date; let stage: String; let fields: [String]; let goals: [String]

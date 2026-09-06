@@ -636,6 +636,13 @@ final class NFSessionLifecycleCoordinator {
                 conflictingReceipt(nil)
                 return
             }
+            if exercise.aiRubric != nil || frozen.score.aiGrade != nil {
+                guard NFAIGradeValidator.validatesScore(frozen.score, exercise: exercise,
+                    response: frozen.response, attemptID: frozen.attemptID) else {
+                    conflictingReceipt(nil)
+                    return
+                }
+            }
             intent = frozen
         } else {
             let evaluated = NFExerciseScoringEngine.score(response, for: exercise)
@@ -685,6 +692,7 @@ final class NFSessionLifecycleCoordinator {
     /// this coordinator never publishes feedback merely because a write began.
     func commitAsync(exercise: NFExercise, response: NFExerciseResponse, attemptID: UUID?,
         confidence: ConfidenceLevel?, recoveredIntent: CommitIntent?,
+        validatedScore: NFExerciseScoringResult? = nil,
         canMutate: () -> Bool, receipt: (CommitIntent) -> Receipt,
         allowsNewCommit: () -> Bool, publishPrepared: (CommitIntent) -> Void,
         persistPrepared: () async throws -> Void, saveAttempt: (CommitIntent) async throws -> Void,
@@ -703,9 +711,23 @@ final class NFSessionLifecycleCoordinator {
                 conflictingReceipt(nil)
                 return
             }
+            if exercise.aiRubric != nil || frozen.score.aiGrade != nil {
+                guard NFAIGradeValidator.validatesScore(frozen.score, exercise: exercise,
+                    response: frozen.response, attemptID: frozen.attemptID) else {
+                    conflictingReceipt(nil)
+                    return
+                }
+            }
             intent = frozen
         } else {
-            let evaluated = NFExerciseScoringEngine.score(response, for: exercise)
+            let evaluated = validatedScore ?? NFExerciseScoringEngine.score(response, for: exercise)
+            if validatedScore != nil {
+                guard NFAIGradeValidator.validatesScore(evaluated, exercise: exercise,
+                    response: response, attemptID: attemptID) else {
+                    conflictingReceipt(nil)
+                    return
+                }
+            }
             let score = exercise.assessmentProtected && [.correct, .partial, .incorrect].contains(evaluated.outcome)
                 ? NFProtectedCommitReceipt.policySafeScore(evaluated) : evaluated
             guard score.outcome != .needsClarification && score.outcome != .invalidItem else {
@@ -1042,6 +1064,13 @@ final class NFUniversalSessionRuntime {
     private var pendingSelfCheckConfidence: ConfidenceLevel?
     private var committedAttemptID: UUID?
     var hasCommittedFeedback: Bool { stage == .feedback && committedAttemptID != nil }
+
+    func tutoringContext(store: AppStore) -> NFAITutorContext? {
+        guard hasCommittedFeedback, let lastResult, !lastResult.feedback.isDelayed else { return nil }
+        return store.learningContext(exercise: exercise, response: makeResponse(),
+            feedback: lastResult.feedback.explanation, savedSources: lastResult.aiGrade?.request.sourceChunks ?? [],
+            attemptID: committedAttemptID)
+    }
     private var responseLockedActiveDuration: TimeInterval?
     private var pointerIsOverResponseControl = false
     private var seenQuestionFingerprints: Set<String> = []
@@ -3168,6 +3197,7 @@ struct UniversalSessionView: View {
     @FocusState private var confidenceHasFocus: Bool
     @State private var saveAndClosePending = false
     @State private var showsAllReflectionReasons = false
+    @State private var showsTutor = false
     @State private var selectedFeedbackCitation: NFCommittedCitationRoute?
     @FocusState private var responseFocus: ResponseFocus?
     @State private var dataPredictionFocusReset = UUID()
@@ -3258,6 +3288,9 @@ struct UniversalSessionView: View {
         )
         .interactiveDismissDisabled(runtime.stage != .summary || runtime.saveError != nil)
         .sheet(isPresented: $runtime.showScratchpad) { ScratchpadView(text: $runtime.scratchpad, exercise: runtime.exercise) }
+        .sheet(isPresented: $showsTutor) {
+            if let context = runtime.tutoringContext(store: store) { NFAITutorView(context: context).environment(store) }
+        }
         .sheet(item: $selectedFeedbackCitation) { route in
             NFHistoryCitationView(route: route)
         }
@@ -4283,6 +4316,14 @@ struct UniversalSessionView: View {
                         }
                     }
                     Text(result.feedback.explanation).font(.title3)
+                    if runtime.tutoringContext(store: store) != nil {
+                        Button { showsTutor = true } label: {
+                            Label("Ask about this answer", systemImage: "text.bubble")
+                                .frame(minHeight: 44)
+                        }
+                        .buttonStyle(.bordered)
+                        .accessibilityIdentifier("session-ask-about-answer")
+                    }
                     if let trigger = runtime.reflectionTrigger {
                         Button("Reflect on this answer (optional)") { runtime.reflect() }
                         Label(

@@ -19,7 +19,7 @@ enum NFExerciseSchemaValidator {
     static let validatorVersion = 2
     // Authored sets use schema 1; static fallback uses 2; pinned linked science uses 3.
     // Enumerate known contracts rather than accepting arbitrary positive values.
-    static let supportedExerciseSchemaVersions: Set<Int> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    static let supportedExerciseSchemaVersions: Set<Int> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
     static func supportsExerciseSchemaVersion(_ version: Int) -> Bool {
         supportedExerciseSchemaVersions.contains(version)
     }
@@ -86,7 +86,17 @@ enum NFExerciseSchemaValidator {
             throw NFExerciseValidationError.feedbackTimingMismatch
         }
 
-        guard exercise.provenance.contentTier != .freeFormAI else {
+        if let rubric = exercise.aiRubric {
+            guard exercise.schemaVersion == 14, rubric.isValid, !exercise.assessmentProtected,
+                  exercise.rubric.criteria == rubric.criteria,
+                  exercise.rubric.permitsPartialCredit,
+                  case .shortText = exercise.interaction else {
+                throw NFExerciseValidationError.unsupportedScoringAuthority
+            }
+        } else if exercise.schemaVersion == 14 {
+            throw NFExerciseValidationError.unsupportedScoringAuthority
+        }
+        guard exercise.provenance.contentTier != .freeFormAI || exercise.aiRubric != nil else {
             throw NFExerciseValidationError.unsupportedScoringAuthority
         }
         if exercise.provenance.contentTier == .sourceGroundedAI {
@@ -878,6 +888,16 @@ enum NFExerciseScoringEngine {
         for exercise: NFExercise,
         revealDelayedFeedback: Bool = false
     ) -> NFExerciseScoringResult {
+        if exercise.aiRubric != nil {
+            // A synchronous exact scorer cannot substitute a keyword result or
+            // zero for an unavailable semantic evaluator.
+            return NFExerciseScoringResult(exerciseID: exercise.id, scoringVersion: scoringVersion,
+                isCorrect: false, credit: 0, normalizedResponse: nil, errorCode: "ai_grading_required",
+                expectedAnswerSummary: nil, feedback: NFExerciseFeedback(title: "Answer awaiting review",
+                    explanation: "This response uses AI rubric grading. Save it for evaluation when a supported model is available.",
+                    decisiveStep: nil, strategy: nil, errorCode: "ai_grading_required", isDelayed: false),
+                outcome: .needsClarification)
+        }
         guard NFExerciseSchemaValidator.supportsExerciseSchemaVersion(exercise.schemaVersion) else {
             return NFExerciseScoringResult(exerciseID: exercise.id, scoringVersion: scoringVersion,
                 isCorrect: false, credit: 0, normalizedResponse: nil, errorCode: "unsupported_exercise_schema",

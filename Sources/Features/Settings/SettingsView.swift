@@ -158,8 +158,8 @@ struct SettingsView: View {
                         if categoryMatches("Notifications") {
                             settingsCategory("Notifications", symbol: "bell") { SystemControlsCard() }
                         }
-                        if categoryMatches("Question Writer") {
-                            settingsCategory("Question Writer", symbol: "pencil.and.outline") { aiCard }
+                        if categoryMatches("AI and offline") {
+                            settingsCategory("AI and offline", symbol: "slider.horizontal.3") { aiCard }
                         }
                         if categoryMatches("Data and sync") {
                             settingsCategory("Data and sync", symbol: "externaldrive") {
@@ -305,7 +305,7 @@ struct SettingsView: View {
         "Practice": "duration minutes timer timing contexts emphasis day boundary 練習 時間 タイマー",
         "Accessibility": "language Japanese English dark appearance motion sound haptic hide timer keyboard 音 言語 日本語 英語 アクセシビリティ",
         "Notifications": "reminder reminders schedule permission 通知 リマインダー",
-        "Question Writer": "Shortcut ChatGPT AI generation model 質問 ショートカット",
+        "AI and offline": "Shortcut ChatGPT provider endpoint key AI generation model grading tutor offline 質問 ショートカット 採点 解説 オフライン モデル",
         "Data and sync": "export restore backup storage reports delete iCloud privacy データ 同期 書き出し 復元 バックアップ 削除",
         "About": "version methodology science help バージョン このアプリ 方法",
     ]
@@ -313,12 +313,12 @@ struct SettingsView: View {
     private func categoryMatches(_ title: String) -> Bool {
         let query = settingsSearch.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else { return true }
-        return [title, NFAppLocalization.localizedCatalogValue(title, locale: NFAppLocalization.preferredLocale), Self.categorySearchTerms[title] ?? ""]
+        return [title, localizedCategoryTitle(title), Self.categorySearchTerms[title] ?? ""]
             .contains { $0.localizedCaseInsensitiveContains(query) }
     }
 
     private func highlightedCategoryTitle(_ title: String) -> AttributedString {
-        var result = AttributedString(NFAppLocalization.localizedCatalogValue(title, locale: NFAppLocalization.preferredLocale))
+        var result = AttributedString(localizedCategoryTitle(title))
         let query = settingsSearch.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else { return result }
         if let range = result.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) {
@@ -330,6 +330,13 @@ struct SettingsView: View {
             result.foregroundColor = NFTheme.indigoForeground
         }
         return result
+    }
+
+    private func localizedCategoryTitle(_ title: String) -> String {
+        if title == "AI and offline" {
+            return NFAILearningCopy.text("AI and offline", "AIとオフライン")
+        }
+        return NFAppLocalization.localizedCatalogValue(title, locale: NFAppLocalization.preferredLocale)
     }
 
     private func settingsCategory<Content: View>(_ title: String, symbol: String, @ViewBuilder content: @escaping () -> Content) -> some View {
@@ -451,55 +458,44 @@ struct SettingsView: View {
     }
 
     private var aiCard: some View {
-        SettingsCard(
-            symbol: "wand.and.stars",
-            color: NFTheme.rose,
-            title: "Question Writer",
-            subtitle: "Use a Shortcut you control. ChatGPT is recommended."
-        ) {
-            VStack(alignment: .leading, spacing: 16) {
-                Toggle("Use Question Writer Shortcut", isOn: shortcutAuthoringBinding)
-                    .font(.subheadline.weight(.semibold))
-                    .disabled(!store.isOnboardingComplete)
+        VStack(alignment: .leading, spacing: 16) {
+            NFAILearningSettingsView()
+            DisclosureGroup(NFAILearningCopy.text("Question Writer Shortcut", "Question Writerショートカット")) {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(NFAILearningCopy.text(
+                        "The existing Shortcut workflow is also available when creating question sets. Add the Shortcut, then choose its model in Shortcuts.",
+                        "問題セットの作成には、既存のショートカットも使えます。追加した後、ショートカットアプリでモデルを選んでください。"
+                    ))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    if let installURL = NFShortcutAuthoringConfiguration.installURL() {
+                        Button {
+                            openURL(installURL) { accepted in
+                                Task { @MainActor in
+                                    guard accepted else { return }
+                                    NFShortcutAuthoringConfiguration.markInstallPageVisited()
+                                }
+                            }
+                        } label: {
+                            Label("Add or reinstall Question Writer", systemImage: "square.and.arrow.down")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
 
-                HStack(alignment: .top, spacing: 12) {
-                    Image(systemName: aiStatusSymbol)
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(aiStatusColor)
-                        .frame(width: 24)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(LocalizedStringKey(aiStatusTitle))
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.primary)
-                        Text(LocalizedStringKey(aiModeExplanation))
+                        Text(NFAILearningCopy.text(
+                            "Shortcuts lists it as NeuroForge Private Authoring. Choose the model in its Use Model action.",
+                            "ショートカットアプリでは「NeuroForge Private Authoring」と表示されます。「モデルを使用」アクションでモデルを選んでください。"
+                        ))
+                        .font(.caption).foregroundStyle(.secondary)
+                    } else {
+                        Text("The Question Writer Shortcut is not available in this build.")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
                 }
-
-                if store.profileSnapshot.aiMode == .automatic,
-                   let installURL = NFShortcutAuthoringConfiguration.installURL() {
-                    Button {
-                        openURL(installURL) { accepted in
-                            Task { @MainActor in
-                                guard accepted else { return }
-                                NFShortcutAuthoringConfiguration.markInstallPageVisited()
-                            }
-                        }
-                    } label: {
-                        Label("Add or reinstall Question Writer", systemImage: "square.and.arrow.down")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(NFTheme.roseControlTint)
-                    .foregroundStyle(NFTheme.roseControlForeground)
-
-                    Text("Shortcuts lists it as NeuroForge Private Authoring. After adding it, choose ChatGPT in its Use Model action. You can choose another available model; NeuroForge cannot verify which provider you select.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                .padding(.top, 12)
             }
+            .nfCard(cornerRadius: 16, padding: 16)
         }
     }
 
@@ -913,13 +909,6 @@ struct SettingsView: View {
         )
     }
 
-    private var shortcutAuthoringBinding: Binding<Bool> {
-        Binding(
-            get: { store.profileSnapshot.aiMode == .automatic },
-            set: { store.updateAIMode($0 ? .automatic : .disabled) }
-        )
-    }
-
     private var privateSyncBinding: Binding<Bool> {
         Binding(
             get: { store.profileSnapshot.iCloudEnabled },
@@ -1106,46 +1095,6 @@ struct SettingsView: View {
 
     private var dayBoundaryDescription: String {
         NFTrainingDayBoundaryFormatter.title(for: store.profileSnapshot.dayBoundaryHour)
-    }
-
-    private var aiStatusTitle: String {
-        switch store.profileSnapshot.aiMode {
-        case .automatic:
-            NFShortcutAuthoringConfiguration.installURL() == nil
-                ? "Question Writer unavailable"
-                : "Question Writer selected"
-        case .onDeviceOnly, .disabled:
-            "Offline authoring"
-        }
-    }
-
-    private var aiStatusSymbol: String {
-        switch store.profileSnapshot.aiMode {
-        case .automatic:
-            NFShortcutAuthoringConfiguration.installURL() == nil
-                ? "exclamationmark.circle.fill"
-                : "arrow.triangle.branch"
-        case .onDeviceOnly, .disabled: "gearshape.2.fill"
-        }
-    }
-
-    private var aiStatusColor: Color {
-        switch store.profileSnapshot.aiMode {
-        case .automatic:
-            NFShortcutAuthoringConfiguration.installURL() == nil ? NFTheme.amberForeground : NFTheme.roseForeground
-        case .onDeviceOnly, .disabled: NFTheme.amberForeground
-        }
-    }
-
-    private var aiModeExplanation: String {
-        switch store.profileSnapshot.aiMode {
-        case .automatic:
-            NFShortcutAuthoringConfiguration.installURL() == nil
-                ? "The Question Writer Shortcut is not available in this build."
-                : "Question Writer is selected. Its availability is checked when you create a set; if the Shortcut is missing or changed, reinstall it or create offline."
-        case .onDeviceOnly, .disabled:
-            "Question sets are created offline."
-        }
     }
 
     private var shareSummary: String {
@@ -1492,6 +1441,7 @@ private struct NFArchiveRestorePreviewView: View {
         case "contentCorrections": "Content corrections"
         case "attemptConflicts": "Retained answer conflicts"
         case "unavailableHistorySnapshots": "Unavailable question references"
+        case "aiArtifacts": NFAILearningCopy.text("Saved explanations and AI evaluations", "保存した解説とAI評価")
         default: "Other local study records"
         }
         return NFAppLocalization.localizedCatalogValue(title, locale: NFAppLocalization.preferredLocale)

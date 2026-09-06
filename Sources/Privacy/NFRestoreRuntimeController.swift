@@ -50,9 +50,10 @@ final class NFRestoreRuntimeController {
         guard canPrepareRestore, store.activeSessionRequest == nil, !store.localSessions.hasActiveWriter else { throw NFDataArchiveRestoreError.activeSession }
         let version = generation
         let side = try await files.captureFiles()
+        let aiArtifacts = try await files.captureAIArtifacts()
         guard !sealed, version == generation else { throw NFRestoreJournalError.invalidated }
         let destination = try NFRestorePlanCompiler.captureDestination(context: store.context,
-            localLearningBytes: side["local-learning"]!, adaptiveHistoryBytes: side["adaptive-history"]!)
+            localLearningBytes: side["local-learning"]!, adaptiveHistoryBytes: side["adaptive-history"]!, aiLearningArtifacts: aiArtifacts)
         let preview = try NFRestorePlanCompiler.preview(prepared: prepared, destination: destination, locale: NFAppLocalization.preferredLocale)
         return .init(prepared: prepared, preview: preview, destinationDigest: try destination.reviewDigest,
             permittedPayload: try NFRestorePlanCompiler.permittedPayload(prepared: prepared))
@@ -65,9 +66,10 @@ final class NFRestoreRuntimeController {
         let requestStore = requests
         let version = generation
         let side = try await files.captureFiles()
+        let aiArtifacts = try await files.captureAIArtifacts()
         guard !sealed, version == generation else { throw NFRestoreJournalError.invalidated }
         let current = try NFRestorePlanCompiler.captureDestination(context: store.context,
-            localLearningBytes: side["local-learning"]!, adaptiveHistoryBytes: side["adaptive-history"]!)
+            localLearningBytes: side["local-learning"]!, adaptiveHistoryBytes: side["adaptive-history"]!, aiLearningArtifacts: aiArtifacts)
         guard try current.reviewDigest == review.destinationDigest else { throw NFRestoreColdCoordinator.Failure.renewedReviewRequired }
         if policy == .abortOnConflict, review.preview.hasConflicts {
             throw NFDataArchiveRestoreError.conflictsRequireDecision(review.preview.conflicts.total + review.preview.localConflicts.values.reduce(0, +))

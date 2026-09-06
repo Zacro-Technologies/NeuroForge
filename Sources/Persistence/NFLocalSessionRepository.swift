@@ -355,6 +355,7 @@ struct NFLocalAttemptSnapshot: Codable, Sendable {
     var dataInspection: NFDataInspectionDraft? = nil
     var scienceStudy: NFScienceStudyDraft? = nil
     var transferRelationship: NFTransferRelationshipDraft? = nil
+    var aiGrade: NFAIGradeReceipt? = nil
 }
 
 /// A diagnostic reference, never a replacement exercise or an answer key.
@@ -591,6 +592,11 @@ final class NFLocalSessionRepository {
     let ownerDeviceID: UUID
     let editorialAdmissions: NFEditorialAdmissionContext
     private let url: URL?
+    /// AI learning artifacts share the exact durable-store namespace and test
+    /// isolation of this repository. A nil URL always means in-memory storage.
+    var aiArtifactDirectoryURL: URL? {
+        url?.deletingLastPathComponent().appending(path: "AILearning", directoryHint: .isDirectory)
+    }
     @ObservationIgnored private var acknowledgedOriginalDigest: String?
     @ObservationIgnored private var pendingWriteTicket: NFLocalArchiveWriteTicket?
     @ObservationIgnored private var deferredArchiveReloads: [ObjectIdentifier: () -> Void] = [:]
@@ -856,7 +862,7 @@ final class NFLocalSessionRepository {
 
     @inline(never)
     nonisolated private static func validateArchiveIdentities(_ decoded: Archive, checkCancellation: () throws -> Void) throws {
-    guard decoded.schemaVersion == 1 else { throw RepositoryError.unsupportedVersion }
+    guard [1, 2].contains(decoded.schemaVersion) else { throw RepositoryError.unsupportedVersion }
     try Self.validateAttemptConflicts(decoded.attemptConflicts ?? [], checkCancellation: checkCancellation)
     if let ledger = decoded.selectionLedger { try Self.validateSelectionLedger(ledger, checkCancellation: checkCancellation) }
     guard Set(decoded.sessions.map(\.id)).count == decoded.sessions.count,
@@ -902,6 +908,12 @@ final class NFLocalSessionRepository {
     nonisolated private static func validateArchiveHistorySnapshots(_ decoded: Archive, checkCancellation: () throws -> Void) throws {
         for snapshot in decoded.snapshots {
             try checkCancellation()
+            if let receipt = snapshot.aiGrade {
+                guard receipt.request.exercise == snapshot.exercise,
+                      receipt.request.attemptID == snapshot.attemptID else { throw RepositoryError.corruptSnapshot }
+                try NFAIGradeValidator.validate(receipt, for: receipt.request)
+                guard receipt.decision == .graded else { throw RepositoryError.corruptSnapshot }
+            }
             guard !snapshot.exercise.assessmentProtected, snapshot.exercise.hasSupportedTraceContract,
                   snapshot.traceInspection.map({ $0.isValid(for: snapshot.exercise) }) ?? true,
                   snapshot.dataInspection?.isCompatible(with: snapshot.exercise) != false,
@@ -1794,9 +1806,9 @@ final class NFLocalSessionRepository {
 
     func retainSnapshot(attemptID: UUID, exercise: NFExercise,
                         editorialCapture: NFEditorialCommitCapture? = nil, mathWork: NFMathWorkDraft? = nil,
-                        traceInspection: NFTraceInspectionDraft? = nil, dataInspection: NFDataInspectionDraft? = nil, scienceStudy: NFScienceStudyDraft? = nil, transferRelationship: NFTransferRelationshipDraft? = nil) throws {
+                        traceInspection: NFTraceInspectionDraft? = nil, dataInspection: NFDataInspectionDraft? = nil, scienceStudy: NFScienceStudyDraft? = nil, transferRelationship: NFTransferRelationshipDraft? = nil, aiGrade: NFAIGradeReceipt? = nil) throws {
         try requireArchiveWriteAvailability()
-        let candidate = try Self.retainedSnapshotCandidate(attemptID: attemptID, exercise: exercise, editorialCapture: editorialCapture, mathWork: mathWork, traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy, transferRelationship: transferRelationship, in: archive)
+        let candidate = try Self.retainedSnapshotCandidate(attemptID: attemptID, exercise: exercise, editorialCapture: editorialCapture, mathWork: mathWork, traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy, transferRelationship: transferRelationship, aiGrade: aiGrade, in: archive)
         guard candidate.snapshots.count != archive.snapshots.count else { return }
         try replace(candidate)
     }
@@ -1825,12 +1837,12 @@ final class NFLocalSessionRepository {
             return try NFLocalSessionRepository.retainedSnapshotCandidate(attemptID: snapshot.attemptID,
                 exercise: snapshot.exercise, editorialCapture: snapshot.editorialCapture, mathWork: snapshot.mathWork,
                 traceInspection: snapshot.traceInspection, dataInspection: snapshot.dataInspection,
-                scienceStudy: snapshot.scienceStudy, transferRelationship: snapshot.transferRelationship, in: original)
+                scienceStudy: snapshot.scienceStudy, transferRelationship: snapshot.transferRelationship, aiGrade: snapshot.aiGrade, in: original)
     }
 
     nonisolated static func retainedSnapshotCandidate(attemptID: UUID, exercise: NFExercise,
                         editorialCapture: NFEditorialCommitCapture? = nil, mathWork: NFMathWorkDraft? = nil,
-                        traceInspection: NFTraceInspectionDraft? = nil, dataInspection: NFDataInspectionDraft? = nil, scienceStudy: NFScienceStudyDraft? = nil, transferRelationship: NFTransferRelationshipDraft? = nil, in archive: Archive) throws -> Archive {
+                        traceInspection: NFTraceInspectionDraft? = nil, dataInspection: NFDataInspectionDraft? = nil, scienceStudy: NFScienceStudyDraft? = nil, transferRelationship: NFTransferRelationshipDraft? = nil, aiGrade: NFAIGradeReceipt? = nil, in archive: Archive) throws -> Archive {
         guard traceInspection.map({ $0.isValid(for: exercise) }) ?? true else { throw RepositoryError.corruptSnapshot }
         guard !exercise.assessmentProtected else { return archive }
         guard archive.unavailableHistorySnapshots?.contains(where: { $0.attemptID == attemptID }) != true else {
@@ -1838,7 +1850,7 @@ final class NFLocalSessionRepository {
         }
         if let old = archive.snapshots.first(where: { $0.attemptID == attemptID }) {
             guard old.exercise == exercise, old.editorialCapture == editorialCapture, old.mathWork == mathWork,
-                  old.traceInspection == traceInspection, old.dataInspection == dataInspection, old.scienceStudy == scienceStudy, old.transferRelationship == transferRelationship else { throw RepositoryError.conflictingAttempt }
+                  old.traceInspection == traceInspection, old.dataInspection == dataInspection, old.scienceStudy == scienceStudy, old.transferRelationship == transferRelationship, old.aiGrade == aiGrade else { throw RepositoryError.conflictingAttempt }
             return archive
         }
         if let editorialCapture {
@@ -1849,7 +1861,7 @@ final class NFLocalSessionRepository {
         }
         guard mathWork?.isCompatible(with: exercise) != false, dataInspection?.isCompatible(with: exercise) != false, NFScienceStudyDraft.permits(scienceStudy, exercise: exercise), NFTransferRelationshipDraft.permits(transferRelationship, exercise: exercise) else { throw RepositoryError.corruptSnapshot }
         var next = archive
-        next.snapshots.append(NFLocalAttemptSnapshot(attemptID: attemptID, exercise: exercise, editorialCapture: editorialCapture, mathWork: mathWork, traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy, transferRelationship: transferRelationship))
+        next.snapshots.append(NFLocalAttemptSnapshot(attemptID: attemptID, exercise: exercise, editorialCapture: editorialCapture, mathWork: mathWork, traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy, transferRelationship: transferRelationship, aiGrade: aiGrade))
         return next
     }
 
@@ -1866,6 +1878,7 @@ final class NFLocalSessionRepository {
     }
 
     func removeAll() throws {
+        try NFAILearningArtifactArchive.removeAll(at: aiArtifactDirectoryURL)
         try replace(Archive())
         writerID = nil
         writerSessionID = nil
@@ -2171,7 +2184,7 @@ final class NFLocalSessionRepository {
     func restorePredecessor(_ predecessor: Archive) throws { try replace(predecessor) }
 
     func importArchive(_ incoming: Archive) throws {
-        guard incoming.schemaVersion == 1 else { throw RepositoryError.unsupportedVersion }
+        guard [1, 2].contains(incoming.schemaVersion) else { throw RepositoryError.unsupportedVersion }
         guard Set(incoming.sessions.map(\.id)).count == incoming.sessions.count,
               Set(incoming.snapshots.map(\.attemptID)).count == incoming.snapshots.count else {
             throw RepositoryError.conflictingAttempt
@@ -2378,12 +2391,21 @@ final class NFLocalSessionRepository {
         let original = try Self.boundedData(at: url)
         guard acknowledgedOriginalDigest == NFReservationSnapshot.digest(original) else { throw RepositoryError.staleRevision }
         let header = try JSONDecoder().decode(Header.self, from: original)
-        guard header.schemaVersion == 1 else { throw RepositoryError.unsupportedVersion }
+        guard [1, 2].contains(header.schemaVersion) else { throw RepositoryError.unsupportedVersion }
         return header.transactionRevision ?? 0
     }
 
     private func replace(_ next: Archive) throws {
         try withPublicationLock { try replaceUnlocked(next) }
+    }
+
+    nonisolated static func preservingAIFormat(_ input: Archive) -> Archive {
+        var copy = input
+        if input.schemaVersion == 2 || input.snapshots.contains(where: { $0.aiGrade != nil || $0.exercise.aiRubric != nil })
+            || input.sessions.contains(where: { $0.checkpoint.exercise?.aiRubric != nil }) {
+            copy.schemaVersion = 2
+        }
+        return copy
     }
 
     private func replaceUnlocked(_ replacement: Archive) throws {
@@ -2393,7 +2415,7 @@ final class NFLocalSessionRepository {
         guard try diskRevision() == expected else { throw RepositoryError.staleRevision }
         let (revision, overflow) = expected.addingReportingOverflow(1)
         guard !overflow else { throw RepositoryError.unsupportedVersion }
-        var next = replacement
+        var next = Self.preservingAIFormat(replacement)
         next.transactionRevision = revision
         let data = try JSONEncoder().encode(next)
         guard data.count <= Self.maximumBytes else { throw RepositoryError.oversized }
@@ -3777,7 +3799,7 @@ extension NFLocalSessionRepository {
         // Validation may classify unsupported legacy rows for display. This
         // transaction preserves every unrelated accepted payload verbatim.
         _ = try validatedArchive(proposal, checkCancellation: { try Task.checkCancellation(); try input.ticket.checkPreparation() })
-        var next = proposal
+        var next = Self.preservingAIFormat(proposal)
         next.transactionRevision = revision
         observe?(.encoding, Thread.isMainThread)
         let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
@@ -3809,7 +3831,7 @@ extension NFLocalSessionRepository {
             guard NFReservationSnapshot.digest(original) == expected else { throw RepositoryError.staleRevision }
             struct Header: Decodable { let schemaVersion: Int; let transactionRevision: UInt64? }
             let header = try JSONDecoder().decode(Header.self, from: original)
-            guard header.schemaVersion == 1, (header.transactionRevision ?? 0) == input.expectedRevision else { throw RepositoryError.staleRevision }
+            guard [1, 2].contains(header.schemaVersion), (header.transactionRevision ?? 0) == input.expectedRevision else { throw RepositoryError.staleRevision }
         } else {
             guard identity == nil, input.expectedRevision == 0 else { throw RepositoryError.staleRevision }
         }
@@ -4043,6 +4065,7 @@ extension NFLocalSessionRepository {
         switch change {
         case .retain(let snapshot, let proposed):
             guard snapshot.attemptID == draft.pendingAttemptID, snapshot.exercise == exercise,
+                  snapshot.aiGrade == score.aiGrade,
                   snapshot.mathWork == draft.mathWork, snapshot.traceInspection == draft.traceInspection,
                   snapshot.dataInspection == draft.dataInspection, snapshot.scienceStudy == draft.scienceStudy,
                   snapshot.transferRelationship == draft.transferRelationship,
@@ -4052,7 +4075,7 @@ extension NFLocalSessionRepository {
             return try retainedSnapshotCandidate(attemptID: snapshot.attemptID, exercise: snapshot.exercise,
                 editorialCapture: snapshot.editorialCapture, mathWork: snapshot.mathWork,
                 traceInspection: snapshot.traceInspection, dataInspection: snapshot.dataInspection,
-                scienceStudy: snapshot.scienceStudy, transferRelationship: snapshot.transferRelationship, in: archive)
+                scienceStudy: snapshot.scienceStudy, transferRelationship: snapshot.transferRelationship, aiGrade: snapshot.aiGrade, in: archive)
         case .conflict(let record):
             guard record.proposedExercise == exercise, record.proposedScore == score,
                   matchesGeneratedPreparedRecord(record.proposed, draft: draft, exercise: exercise, score: score) else {
@@ -4223,7 +4246,7 @@ extension NFLocalSessionRepository {
             return try retainedSnapshotCandidate(attemptID: snapshot.attemptID, exercise: snapshot.exercise,
                 editorialCapture: snapshot.editorialCapture, mathWork: snapshot.mathWork,
                 traceInspection: snapshot.traceInspection, dataInspection: snapshot.dataInspection,
-                scienceStudy: snapshot.scienceStudy, transferRelationship: snapshot.transferRelationship, in: archive)
+                scienceStudy: snapshot.scienceStudy, transferRelationship: snapshot.transferRelationship, aiGrade: snapshot.aiGrade, in: archive)
         case .conflictUnscored(let record):
             guard record.proposedExercise == exercise, record.proposedScore == nil,
                   matchesGeneratedUnscoredRecord(record.proposed, draft: draft, exercise: exercise, outcome: outcome) else {

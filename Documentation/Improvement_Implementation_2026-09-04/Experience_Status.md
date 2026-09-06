@@ -1,5 +1,7 @@
 # Experience implementation ledger — 4 September 2026
 
+> **v1.1 direction update:** this ledger retains prior implementation evidence. [AI-centered requirements](../Improvement_Spec_2026-09-04/README.md) supersede earlier AI/privacy restrictions; [changed contracts](AI_Direction_Revision_Status.md) are specified pending implementation reassessment. No new AI capability is established by this documentation change.
+
 This ledger covers every normative requirement in chapter 01. “Implemented” means code is present; it does not certify device, accessibility, language, or usability acceptance. Root owns integrated builds and records final executed results. No manual or distribution evidence is fabricated here.
 
 Shared changes: five stable root hosts; typed Codable per-destination paths in `Sources/App/NFNavigationState.swift`; user reselection clears only that path (no navigation `.id` replacement); exact item-label history rendering; source/generated self-report authority; device-local generated drafts with owner validation, pinned exact content, durable prepared attempt, explicit resume and writer takeover; sample-first entry; Today continuation hierarchy; exact activity search; separated task difficulty/timing; searchable settings; saved-set retention controls. Existing user changes in release documentation and project configuration were preserved.

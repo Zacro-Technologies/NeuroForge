@@ -35,7 +35,7 @@ enum NFDocumentPolicyMutationKind: Equatable, Sendable {
     case iCloudSync
 }
 
-/// A small value-state gate keeps the two document privacy controls mutually
+/// A small value-state gate keeps the document AI and sync controls mutually
 /// exclusive across their entire persistence and reconciliation lifecycle.
 /// This prevents a rapid second change from racing a save already in flight.
 struct NFDocumentPolicyMutationGate: Equatable, Sendable {
@@ -394,6 +394,17 @@ struct NFDocumentReadinessPresentation: Equatable, Sendable {
         aiPolicy: DocumentAIPolicy,
         questionWriterEnabled: Bool
     ) -> Self {
+        // Compatibility for callers that only distinguished Shortcut and offline authoring.
+        make(indexState: indexState, chunkCount: chunkCount, aiPolicy: aiPolicy,
+             aiMode: questionWriterEnabled ? .automatic : .onDeviceOnly)
+    }
+
+    static func make(
+        indexState: String,
+        chunkCount: Int,
+        aiPolicy: DocumentAIPolicy,
+        aiMode: AIMode
+    ) -> Self {
         let indexStatus: String
         switch indexState {
         case "ready":
@@ -409,15 +420,38 @@ struct NFDocumentReadinessPresentation: Equatable, Sendable {
             questionStatus = NFAppLocalization.localized("Questions unavailable until indexing finishes", locale: NFAppLocalization.preferredLocale, comment: "Imported-source question availability while indexing is incomplete.")
         } else {
             switch aiPolicy {
-            case .privateCloudAllowed where questionWriterEnabled:
-                questionStatus = NFAppLocalization.localized("Question Writer and offline questions allowed", locale: NFAppLocalization.preferredLocale, comment: "Imported-source question availability under the selected privacy policy.")
-            case .privateCloudAllowed, .onDeviceOnly:
-                questionStatus = NFAppLocalization.localized("Offline questions allowed", locale: NFAppLocalization.preferredLocale, comment: "Imported-source question availability under an offline-only route.")
             case .noAI:
-                questionStatus = NFAppLocalization.localized("Question creation off; source review only", locale: NFAppLocalization.preferredLocale, comment: "Imported-source question availability when authoring is disabled.")
+                questionStatus = NFAppLocalization.localized("Source review only", locale: NFAppLocalization.preferredLocale, comment: "Imported-source availability when AI use is disabled.")
+            case _ where aiMode == .disabled:
+                questionStatus = NFAppLocalization.localized("AI off; offline study available", locale: NFAppLocalization.preferredLocale, comment: "Imported-source availability when the global AI preference is off.")
+            case .privateCloudAllowed where aiMode == .automatic:
+                questionStatus = NFAppLocalization.localized("Automatic AI allowed", locale: NFAppLocalization.preferredLocale, comment: "Imported-source permission to use the configured automatic AI route; this does not claim the provider is currently available.")
+            case .privateCloudAllowed, .onDeviceOnly:
+                questionStatus = NFAppLocalization.localized("On-device AI allowed", locale: NFAppLocalization.preferredLocale, comment: "Imported-source permission to use an available on-device model.")
             }
         }
         return Self(indexStatus: indexStatus, questionStatus: questionStatus)
+    }
+}
+
+enum NFSourceAIAvailabilityPresentation {
+    static func title(for policy: DocumentAIPolicy, locale: Locale = NFAppLocalization.preferredLocale) -> String {
+        switch policy {
+        case .privateCloudAllowed: NFAppLocalization.localized("Automatic AI", locale: locale, comment: "Source setting that permits the configured automatic AI route.")
+        case .onDeviceOnly: NFAppLocalization.localized("On-device AI", locale: locale, comment: "Source setting that permits only on-device AI.")
+        case .noAI: NFAppLocalization.localized("Source review only", locale: locale, comment: "Source setting that keeps reading and recall available without AI.")
+        }
+    }
+
+    static func allowsNativeQuestions(aiMode: AIMode, sourcePolicy: DocumentAIPolicy) -> Bool {
+        aiMode != .disabled && sourcePolicy != .noAI
+    }
+
+    static func allowsQuestionSet(
+        aiMode: AIMode, sourcePolicy: DocumentAIPolicy, chunkCount: Int, isProcessing: Bool, hasProseRecall: Bool
+    ) -> Bool {
+        !isProcessing && chunkCount > 0 && sourcePolicy != .noAI
+            && (allowsNativeQuestions(aiMode: aiMode, sourcePolicy: sourcePolicy) || hasProseRecall)
     }
 }
 
@@ -663,7 +697,7 @@ struct LibraryView: View {
         let count = store.documents.count
         switch count {
         case 0:
-            return NFAppLocalization.localized("Your sources, under your control.", locale: NFAppLocalization.preferredLocale, comment: "Library hero title when no study sources have been imported.")
+            return NFAppLocalization.localized("Turn your material into practice.", locale: NFAppLocalization.preferredLocale, comment: "Library hero title when no study sources have been imported.")
         case 1:
             return NFAppLocalization.localized("\(count) local source stored.", locale: NFAppLocalization.preferredLocale, comment: "Library hero title when exactly one study source is stored; the placeholder is the source count.")
         default:
@@ -755,8 +789,8 @@ struct LibraryView: View {
                         .background(.secondary.opacity(0.1), in: Capsule())
                 }
             }
-            DisclosureGroup("Import privacy and OCR") {
-                Text("Import regular files up to 50 MB. Code and structured data are read as text and never run. PDFs stay on device; scanned PDFs use local OCR only when you choose it, while images use local OCR during import.")
+            DisclosureGroup("Import and text recognition") {
+                Text("Import files up to 50 MB for offline reading and practice. Code and structured data are read as text and never run. Scanned PDFs use local OCR when you choose it; images use local OCR during import. New sources use Automatic AI. You can choose On-device AI or Source review only for each source.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .padding(.top, 6)
@@ -1533,7 +1567,7 @@ private struct DocumentRow: View {
             indexState: document.indexState,
             chunkCount: document.chunkCount,
             aiPolicy: DocumentAIPolicy(rawValue: document.aiPolicyRaw) ?? .noAI,
-            questionWriterEnabled: store.profileSnapshot.aiMode == .automatic
+            aiMode: store.profileSnapshot.aiMode
         )
     }
 
@@ -1635,7 +1669,9 @@ struct DocumentDetailView: View {
 
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Practice from this source").font(.title2.bold())
-                        Text("This practice stays separate from your skill score.")
+                        Text(LocalizedStringKey(documentCanUseNativeAI
+                            ? "Recall from memory or create short-answer practice with AI feedback."
+                            : "Review what you remember, then compare with the source."))
                             .foregroundStyle(.secondary)
                         Button {
                             showSourceReview = true
@@ -1655,9 +1691,9 @@ struct DocumentDetailView: View {
                         }
 
                         if document.chunkCount > 0, !documentHasProseRecall {
-                            Text(documentCanUseQuestionWriter
-                                ? "Question Writer can use bounded excerpts from this format. Source review remains local."
-                                : "Offline question sets need complete prose statements. Use Source review for this format.")
+                            Text(LocalizedStringKey(documentCanUseNativeAI
+                                ? "AI short-answer sets can use readable code, tables, and other source text. Model availability is checked when you create the set."
+                                : "Source review works with this format. Enable AI for this source and in Settings to create short-answer questions."))
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
                         }
@@ -1703,7 +1739,7 @@ struct DocumentDetailView: View {
                         LabeledContent("Question creation", value: readinessPresentation.questionStatus)
                         DisclosureGroup("File details", isExpanded: $showFileDetails) {
                             VStack(spacing: 12) {
-                                LabeledContent("Stored copy", value: "Private app storage")
+                                LabeledContent("Stored copy", value: NFAppLocalization.localized("App storage", locale: NFAppLocalization.preferredLocale, comment: "Location of the imported copy used for offline access."))
                                 LabeledContent("Study sections", value: document.chunkCount.formatted())
                                 LabeledContent("Extracted text", value: NFAppLocalization.formattedCharacterCount(document.characterCount))
                                 if let safeDiagnostic = NFDiagnosticRedactor.localizedPersistedMessage(
@@ -1723,13 +1759,13 @@ struct DocumentDetailView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 13) {
-                        Text("Question privacy")
+                        Text("Source AI availability")
                             .font(.title2.bold())
-                        Text("Choose how this source may be used to create questions.")
+                        Text("Choose how AI can help you study this source. On-device AI supports offline learning when a suitable model is available.")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
 
-                        Picker("Question use", selection: Binding(
+                        Picker("Source AI use", selection: Binding(
                             get: { aiPolicy.rawValue },
                             set: { rawValue in
                                 guard let policy = DocumentAIPolicy(rawValue: rawValue) else {
@@ -1738,26 +1774,26 @@ struct DocumentDetailView: View {
                                 commitAIPolicy(policy)
                             }
                         )) {
-                            Text("Question Writer + offline")
+                            Text(NFSourceAIAvailabilityPresentation.title(for: .privateCloudAllowed))
                                 .tag(DocumentAIPolicy.privateCloudAllowed.rawValue)
-                            Text("Offline only")
+                            Text(NFSourceAIAvailabilityPresentation.title(for: .onDeviceOnly))
                                 .tag(DocumentAIPolicy.onDeviceOnly.rawValue)
-                            Text("Source review only")
+                            Text(NFSourceAIAvailabilityPresentation.title(for: .noAI))
                                 .tag(DocumentAIPolicy.noAI.rawValue)
                         }
                         .disabled(aiPolicyChangeInProgress || syncPolicyChangeInProgress)
 
                         if aiPolicyChangeInProgress {
-                            ProgressView("Saving question privacy…")
+                            ProgressView("Saving source AI setting…")
                                 .controlSize(.small)
                         }
 
-                        Text(questionPrivacySummary)
+                        Text(sourceAIAvailabilitySummary)
                             .font(.footnote)
                             .foregroundStyle(.secondary)
 
                         DisclosureGroup("How this choice uses your source") {
-                            Label(questionPrivacyExplanation, systemImage: questionPrivacySymbol)
+                            Label(sourceAIAvailabilityExplanation, systemImage: sourceAIAvailabilitySymbol)
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 8)
@@ -1808,7 +1844,7 @@ struct DocumentDetailView: View {
                         }
 
                         DisclosureGroup("What stays local") {
-                            Text("Extracted text and the local search index do not sync to iCloud. Bounded excerpts leave the device only when you separately approve a Question Writer run for this source.")
+                            Text("The extracted index is stored locally for offline use. Relevant excerpts may be sent to your configured AI service when this source and Settings allow Automatic AI.")
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 8)
@@ -1956,18 +1992,18 @@ struct DocumentDetailView: View {
             indexState: document.indexState,
             chunkCount: document.chunkCount,
             aiPolicy: aiPolicy,
-            questionWriterEnabled: store.profileSnapshot.aiMode == .automatic
+            aiMode: store.profileSnapshot.aiMode
         )
     }
 
-    private var questionPrivacySummary: String {
+    private var sourceAIAvailabilitySummary: String {
         switch aiPolicy {
         case .privateCloudAllowed:
-            NFAppLocalization.localized("Question Writer may use bounded excerpts only after confirmation.", locale: NFAppLocalization.preferredLocale, comment: "Concise per-source privacy summary for external question writing.")
+            NFAppLocalization.localized("Relevant excerpts can be used by your configured AI service.", locale: NFAppLocalization.preferredLocale, comment: "Concise source setting summary permitting normal configured AI use.")
         case .onDeviceOnly:
-            NFAppLocalization.localized("Question creation stays offline.", locale: NFAppLocalization.preferredLocale, comment: "Concise per-source privacy summary for offline question writing.")
+            NFAppLocalization.localized("AI work uses a suitable on-device model, so it can run without a connection.", locale: NFAppLocalization.preferredLocale, comment: "Concise source setting summary explaining the offline purpose of on-device AI.")
         case .noAI:
-            NFAppLocalization.localized("This source is available only for local source review.", locale: NFAppLocalization.preferredLocale, comment: "Concise per-source privacy summary when question creation is disabled.")
+            NFAppLocalization.localized("Browse and review this source without AI.", locale: NFAppLocalization.preferredLocale, comment: "Concise source setting summary when AI is disabled for the source.")
         }
     }
 
@@ -2032,39 +2068,36 @@ struct DocumentDetailView: View {
         }
         .buttonStyle(.bordered)
         .tint(NFTheme.roseForeground)
-        .disabled(
-            isDocumentProcessing
-                || document.chunkCount == 0
-                || !NFAIStudioDocumentAuthoringPolicy.allowsOfflineQuestions(documentAIPolicy)
-                || (!documentCanUseQuestionWriter && !documentHasProseRecall)
-        )
+        .disabled(!NFSourceAIAvailabilityPresentation.allowsQuestionSet(
+            aiMode: store.profileSnapshot.aiMode, sourcePolicy: documentAIPolicy,
+            chunkCount: document.chunkCount, isProcessing: isDocumentProcessing, hasProseRecall: documentHasProseRecall))
     }
 
-    private var documentCanUseQuestionWriter: Bool {
-        store.profileSnapshot.aiMode == .automatic
-            && NFAIStudioDocumentAuthoringPolicy.allowsQuestionWriter(documentAIPolicy)
+    private var documentCanUseNativeAI: Bool {
+        NFSourceAIAvailabilityPresentation.allowsNativeQuestions(
+            aiMode: store.profileSnapshot.aiMode, sourcePolicy: documentAIPolicy)
     }
 
     private var documentAIPolicy: DocumentAIPolicy {
         aiPolicy
     }
 
-    private var questionPrivacyExplanation: LocalizedStringKey {
+    private var sourceAIAvailabilityExplanation: LocalizedStringKey {
         switch documentAIPolicy {
         case .privateCloudAllowed:
-            "Question Writer still asks before every run and sends only bounded excerpts. The original file remains local."
+            "AI can use relevant excerpts for short-answer questions, grading, and explanations. Automatic mode uses your configured cloud provider or a suitable on-device model. Source reading stays available offline. The optional Question Writer Shortcut still asks before sending excerpts."
         case .onDeviceOnly:
-            "Text from this source never enters Question Writer. Offline recall questions remain available when prose is detected."
+            "This source uses on-device AI for questions, grading, and explanations. If a suitable local model is unavailable, source review and reading remain available. This choice is respected even when a cloud provider is configured."
         case .noAI:
-            "Question authoring does not use this source. Source review and browsing remain available."
+            "AI does not use this source for questions, grading, or explanations. Source review and browsing remain available offline."
         }
     }
 
-    private var questionPrivacySymbol: String {
+    private var sourceAIAvailabilitySymbol: String {
         switch documentAIPolicy {
-        case .privateCloudAllowed: "checkmark.shield.fill"
+        case .privateCloudAllowed: "sparkles"
         case .onDeviceOnly: "internaldrive.fill"
-        case .noAI: "hand.raised.fill"
+        case .noAI: "book.closed.fill"
         }
     }
 
@@ -2092,9 +2125,9 @@ struct DocumentDetailView: View {
         } else {
             aiPolicy = priorPolicy
             policyError = store.lastErrorMessage ?? NFAppLocalization.localized(
-                "The question privacy choice was not saved. The previous choice is still active.",
+                "The source AI setting was not saved. The previous choice is still active.",
                 locale: NFAppLocalization.preferredLocale,
-                comment: "Per-document question-privacy persistence error."
+                comment: "Per-document AI availability persistence error."
             )
             policyErrorIsFocused = true
         }

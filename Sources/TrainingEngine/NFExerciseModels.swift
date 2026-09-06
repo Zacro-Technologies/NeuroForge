@@ -778,6 +778,9 @@ struct NFExercise: Codable, Equatable, Sendable, Identifiable {
     let tags: [String]
     var contractMetadata: NFExerciseContractMetadata? = nil
     var availabilityReason: String? = nil
+    /// Present only on a new, explicitly pinned semantic evaluation contract.
+    /// Legacy self-check and exact-answer records retain their original authority.
+    var aiRubric: NFAIGradingRubric? = nil
 
     var spatialDifficultyParameters: NFSpatialDifficultyParameters? {
         representations.lazy.compactMap { representation in
@@ -884,13 +887,14 @@ struct NFExerciseScoringResult: Codable, Equatable, Sendable {
     let feedback: NFExerciseFeedback
     let outcome: NFScoringOutcome
     let components: [NFScoringComponentResult]
+    var aiGrade: NFAIGradeReceipt?
 
     var objectiveCorrectness: Bool? { outcome.objectiveCorrectness }
 
     init(exerciseID: String, scoringVersion: Int, isCorrect: Bool, credit: Double,
          normalizedResponse: String?, errorCode: String?, expectedAnswerSummary: String?,
          feedback: NFExerciseFeedback, outcome: NFScoringOutcome? = nil,
-         components: [NFScoringComponentResult] = []) {
+         components: [NFScoringComponentResult] = [], aiGrade: NFAIGradeReceipt? = nil) {
         self.exerciseID = exerciseID
         self.scoringVersion = scoringVersion
         self.isCorrect = isCorrect
@@ -901,11 +905,12 @@ struct NFExerciseScoringResult: Codable, Equatable, Sendable {
         self.feedback = feedback
         self.outcome = outcome ?? (isCorrect ? .correct : (credit > 0 ? .partial : .incorrect))
         self.components = components
+        self.aiGrade = aiGrade
     }
 
     private enum CodingKeys: String, CodingKey {
         case exerciseID, scoringVersion, isCorrect, credit, normalizedResponse, errorCode
-        case expectedAnswerSummary, feedback, outcome, components
+        case expectedAnswerSummary, feedback, outcome, components, aiGrade
     }
 
     init(from decoder: any Decoder) throws {
@@ -919,6 +924,7 @@ struct NFExerciseScoringResult: Codable, Equatable, Sendable {
                   expectedAnswerSummary: try c.decodeIfPresent(String.self, forKey: .expectedAnswerSummary),
                   feedback: try c.decode(NFExerciseFeedback.self, forKey: .feedback),
                   outcome: try c.decodeIfPresent(NFScoringOutcome.self, forKey: .outcome),
-                  components: try c.decodeIfPresent([NFScoringComponentResult].self, forKey: .components) ?? [])
+                  components: try c.decodeIfPresent([NFScoringComponentResult].self, forKey: .components) ?? [],
+                  aiGrade: try c.decodeIfPresent(NFAIGradeReceipt.self, forKey: .aiGrade))
     }
 }

@@ -130,9 +130,9 @@ enum AIMode: String, Codable, CaseIterable, Identifiable, Sendable {
 
     var title: String {
         switch self {
-        case .automatic: NFAppLocalization.localized("Question Writer", locale: NFAppLocalization.preferredLocale, comment: "Question-authoring preference that uses the installed provider-neutral Question Writer Shortcut.")
-        case .onDeviceOnly: NFAppLocalization.localized("Offline", locale: NFAppLocalization.preferredLocale, comment: "Display label for the legacy on-device-only authoring preference, which now maps to offline question writing.")
-        case .disabled: NFAppLocalization.localized("Off", locale: NFAppLocalization.preferredLocale, comment: "AI routing preference that disables optional AI features.")
+        case .automatic: NFAppLocalization.localized("Automatic", locale: NFAppLocalization.preferredLocale, comment: "AI service mode using a configured capable cloud or local model.")
+        case .onDeviceOnly: NFAppLocalization.localized("On device", locale: NFAppLocalization.preferredLocale, comment: "AI service mode using a supported local model without cloud requests.")
+        case .disabled: NFAppLocalization.localized("Off", locale: NFAppLocalization.preferredLocale, comment: "AI service mode with model features disabled; saved and authored learning remains available.")
         }
     }
 }
@@ -184,9 +184,9 @@ enum NFInputModality: String, Codable, CaseIterable, Sendable {
 }
 
 enum DocumentAIPolicy: String, Codable, CaseIterable, Identifiable, Sendable {
-    /// Legacy persisted raw value. New Shortcut source sharing additionally
-    /// requires exact, one-run `NFExternalSourceConsent`; this value alone is
-    /// never sufficient permission to send document text off-device.
+    /// The legacy raw value now denotes Automatic AI for this source. Native
+    /// requests follow the selected provider mode; the external Shortcut keeps
+    /// its separate per-run handoff confirmation.
     case privateCloudAllowed
     case onDeviceOnly
     case noAI
