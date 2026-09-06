@@ -16,7 +16,7 @@ enum NFOfflineQuestionBank {
     // Version 2 expands the audited deterministic offline floor from 200 to 1,000
     // canonical contracts per top-level lab. The version bump prevents an
     // installed v1 rotation cursor from being mistaken for the expanded bank.
-    static let version = 2
+    static let version = 3
     static let questionsPerLab = 1_000
     // Current v2 banks complete by candidate 12,449 or earlier. Keeping a
     // generous deterministic scan ceiling gives future copy-neutral generator

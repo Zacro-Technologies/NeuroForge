@@ -36,6 +36,99 @@ struct NFRetentionItemState: Codable, Equatable, Sendable, Identifiable {
     }
 }
 
+/// Values copied at the store boundary after content/conflict dispositions.
+/// A legacy score can support a reminder without proving independent retention.
+struct NFCompatibilityReminderObservation: Equatable, Sendable {
+    let id: UUID
+    let memoryItemID: String
+    let templateFamily: String
+    let lab: TrainingLab
+    let itemID: String
+    let semanticID: String?
+    let seed: UInt64
+    let representationID: String?
+    let submittedAt: Date
+    let credit: Double
+    let correct: Bool
+    let evidenceClass: EvidenceClass
+    let evidenceWeight: Double
+    let wasSkipped: Bool
+    let hintCount: Int
+    let responseFormatRaw: String?
+
+    init(attempt: AttemptDTO, memoryItemID: String, templateFamily: String,
+         seed: UInt64, representationID: String?, semanticID: String? = nil) {
+        id = attempt.id; self.memoryItemID = memoryItemID; self.templateFamily = templateFamily
+        lab = attempt.lab; itemID = attempt.itemID; self.semanticID = semanticID
+        self.seed = seed; self.representationID = representationID
+        submittedAt = attempt.submittedAt; credit = attempt.credit; correct = attempt.correct
+        evidenceClass = attempt.evidenceClass; evidenceWeight = attempt.evidenceWeight
+        wasSkipped = attempt.wasSkipped; hintCount = attempt.hintCount
+        responseFormatRaw = attempt.responseFormatRaw
+    }
+}
+
+enum NFCompatibilityReminderPolicy {
+    static let policyVersion = "LegacyPracticeReminderV1"
+
+    /// The compatibility lane has only a one-day reminder, never demonstrated
+    /// retention or an inferred band. Reviewed interval progression belongs to
+    /// NFEditorialRetentionPolicy with its explicit independent observations.
+    static func reduce(_ inputs: [NFCompatibilityReminderObservation], at date: Date,
+                       calendar: Calendar) -> [NFRetentionItemState] {
+        reduceWithOrigins(inputs, at: date, calendar: calendar).map(\.state)
+    }
+
+    static func reduceWithOrigins(_ inputs: [NFCompatibilityReminderObservation], at date: Date,
+                                  calendar: Calendar) -> [NFCompatibilityReminderOrigin] {
+        guard date.timeIntervalSince1970.isFinite else { return [] }
+        // Conflicting duplicate identities cannot acquire authority from input
+        // order. Byte-equivalent repeats contribute at most once.
+        let unique = Dictionary(grouping: inputs, by: \.id).values.compactMap { copies in
+            guard let first = copies.first, copies.allSatisfy({ $0 == first }) else { return nil as NFCompatibilityReminderObservation? }
+            return first
+        }
+        let ordinary = unique.filter {
+            !$0.memoryItemID.isEmpty && !$0.templateFamily.isEmpty && !$0.itemID.isEmpty
+                && $0.submittedAt.timeIntervalSince1970.isFinite && $0.submittedAt <= date
+                && ($0.evidenceClass == .practice || $0.evidenceClass == .retention)
+        }
+        let groups = Dictionary(grouping: ordinary, by: \.memoryItemID)
+        return groups.keys.sorted().compactMap { key in
+            let records = (groups[key] ?? []).sorted {
+                $0.submittedAt == $1.submittedAt ? $0.id.uuidString < $1.id.uuidString : $0.submittedAt < $1.submittedAt
+            }
+            guard let first = records.first,
+                  records.allSatisfy({ $0.lab == first.lab && $0.templateFamily == first.templateFamily }) else { return nil }
+            var anchor: NFCompatibilityReminderObservation?
+            var exposedIdentities: Set<String> = []
+            var exposedSeeds: Set<UInt64> = []
+            for record in records {
+                exposedSeeds.insert(record.seed)
+                let identity = record.semanticID.map { "semantic:\($0)" }
+                    ?? NFSelectionReservationPolicy.identity(["legacy-item", record.itemID, String(record.seed)])
+                let fresh = exposedIdentities.insert(identity).inserted
+                let format = record.responseFormatRaw?.lowercased().filter { $0.isLetter || $0.isNumber }
+                guard record.evidenceWeight.isFinite, record.evidenceWeight > 0,
+                      record.credit.isFinite, record.credit == 1, record.correct,
+                      !record.wasSkipped, record.hintCount == 0,
+                      !["selfcheck", "sourceselfcheck", "selfreported", "revealed", "solutionrevealed"].contains(format ?? "") else { continue }
+                guard let previous = anchor else { anchor = record; continue }
+                let due = calendar.date(byAdding: .day, value: 1, to: previous.submittedAt)
+                // Early or familiar practice never postpones an existing due
+                // reminder. A due fresh full response refreshes the same one-day
+                // reminder; it does not promote an unknown-condition result.
+                if fresh, let due, record.submittedAt >= due { anchor = record }
+            }
+            guard let anchor else { return nil }
+            return NFCompatibilityReminderOrigin(state: NFRetentionItemState(
+                id: key, templateFamily: first.templateFamily, lab: first.lab,
+                lastReviewedAt: anchor.submittedAt, stabilityDays: 1, repetitions: 1, lapses: 0,
+                exposedSeeds: exposedSeeds, lastRepresentationID: anchor.representationID), anchorAttemptID: anchor.id)
+        }
+    }
+}
+
 struct NFRetentionReviewOutcome: Codable, Equatable, Sendable {
     let reviewedAt: Date
     let correct: Bool
@@ -171,43 +264,43 @@ enum NFRetentionRepresentation {
 }
 
 enum NFRetentionScheduler {
-    static let policyVersion = 1
+    static let policyVersion = 3
+    // Compatibility sentinel only; not a probability of remembering.
     static let targetRetention = 0.85
 
     static func predictedRetention(
         for state: NFRetentionItemState,
-        at date: Date
+        at date: Date,
+        calendar: Calendar
     ) -> Double {
-        guard let lastReviewedAt = state.lastReviewedAt else { return 0 }
-        let elapsedDays = max(0, date.timeIntervalSince(lastReviewedAt) / 86_400)
-        return NFStableDeterminism.clampedUnit(exp(-elapsedDays / max(0.25, state.stabilityDays)))
+        // Kept for archive compatibility. This binary due marker must not be
+        // displayed as a memory probability; scheduling uses explicit local days.
+        guard state.lastReviewedAt != nil else { return 0 }
+        return date >= nextReviewDate(for: state, after: state.lastReviewedAt!, calendar: calendar) ? 0 : 1
     }
 
-    static func urgency(
-        for state: NFRetentionItemState,
-        at date: Date
-    ) -> Double {
-        1 - predictedRetention(for: state, at: date)
+    static func urgency(for state: NFRetentionItemState, at date: Date, calendar: Calendar) -> Double {
+        guard let reviewed = state.lastReviewedAt else { return 1 }
+        let due = nextReviewDate(for: state, after: reviewed, calendar: calendar)
+        return date >= due ? 1 + max(0, date.timeIntervalSince(due)) / 86_400 : 0
     }
 
-    static func nextReviewDate(
-        for state: NFRetentionItemState,
-        after date: Date
-    ) -> Date {
-        let intervalDays = -max(0.25, state.stabilityDays) * log(targetRetention)
-        return date.addingTimeInterval(intervalDays * 86_400)
+    static func nextReviewDate(for state: NFRetentionItemState, after date: Date, calendar: Calendar) -> Date {
+        let rung = min(EditorialBandEvidenceV1.intervalDays.count - 1, max(0, state.repetitions - 1))
+        return calendar.date(byAdding: .day, value: EditorialBandEvidenceV1.intervalDays[rung], to: date) ?? date
     }
 
     static func schedule(
         states: [NFRetentionItemState],
         at date: Date,
-        maximumItems: Int
+        maximumItems: Int,
+        calendar: Calendar
     ) -> [NFRetentionAssignment] {
         guard maximumItems > 0 else { return [] }
         return states
             .map { state in
-                let retention = predictedRetention(for: state, at: date)
-                return makeAssignment(state: state, date: date, predictedRetention: retention)
+                let retention = predictedRetention(for: state, at: date, calendar: calendar)
+                return makeAssignment(state: state, date: date, predictedRetention: retention, calendar: calendar)
             }
             .filter { $0.predictedRetention <= targetRetention }
             .sorted { lhs, rhs in
@@ -223,27 +316,16 @@ enum NFRetentionScheduler {
 
     static func updatedState(
         _ state: NFRetentionItemState,
-        after outcome: NFRetentionReviewOutcome
+        after outcome: NFRetentionReviewOutcome,
+        calendar: Calendar
     ) -> NFRetentionItemState {
-        let difficulty = NFStableDeterminism.clampedUnit(outcome.itemDifficulty)
-        let confidenceAdjustment: Double
-        switch outcome.confidence {
-        case .guessing: confidenceAdjustment = -0.12
-        case .uncertain: confidenceAdjustment = -0.04
-        case .fairlyConfident: confidenceAdjustment = 0.06
-        case .certain: confidenceAdjustment = 0.12
-        }
-
-        let updatedStability: Double
-        let updatedLapses: Int
-        if outcome.correct {
-            let growth = 1.40 + confidenceAdjustment + 0.20 * (1 - difficulty)
-            updatedStability = max(0.5, state.stabilityDays * max(1.08, growth))
-            updatedLapses = state.lapses
-        } else {
-            updatedStability = max(0.5, state.stabilityDays * (0.48 + 0.12 * (1 - difficulty)))
-            updatedLapses = state.lapses + 1
-        }
+        // Confidence and legacy nominal difficulty never alter a review interval.
+        let due = state.lastReviewedAt.map { nextReviewDate(for: state, after: $0, calendar: calendar) }
+        let fresh = !state.exposedSeeds.contains(outcome.seed)
+        let canAdvance = fresh && (due == nil || outcome.reviewedAt >= due!)
+        let repetitions = outcome.correct && canAdvance ? state.repetitions + 1 : state.repetitions
+        let updatedStability = Double(EditorialBandEvidenceV1.intervalDays[min(4, max(0, repetitions - 1))])
+        let updatedLapses = state.lapses + (outcome.correct ? 0 : 1)
 
         var exposures = state.exposedSeeds
         exposures.insert(outcome.seed)
@@ -251,9 +333,9 @@ enum NFRetentionScheduler {
             id: state.id,
             templateFamily: state.templateFamily,
             lab: state.lab,
-            lastReviewedAt: outcome.reviewedAt,
+            lastReviewedAt: canAdvance ? outcome.reviewedAt : state.lastReviewedAt,
             stabilityDays: updatedStability,
-            repetitions: state.repetitions + 1,
+            repetitions: repetitions,
             lapses: updatedLapses,
             exposedSeeds: exposures,
             lastRepresentationID: outcome.representationID
@@ -263,7 +345,8 @@ enum NFRetentionScheduler {
     private static func makeAssignment(
         state: NFRetentionItemState,
         date: Date,
-        predictedRetention: Double
+        predictedRetention: Double,
+        calendar: Calendar
     ) -> NFRetentionAssignment {
         let dayOrdinal = Int(floor(date.timeIntervalSince1970 / 86_400))
         var probe = 0
@@ -282,9 +365,9 @@ enum NFRetentionScheduler {
             lab: state.lab,
             alternateSeed: seed,
             predictedRetention: predictedRetention,
-            urgency: 1 - predictedRetention,
+            urgency: urgency(for: state, at: date, calendar: calendar),
             scheduledAt: date,
-            requiresRepresentationShift: state.repetitions > 0,
+            requiresRepresentationShift: false,
             priorRepresentationID: state.lastRepresentationID
         )
     }
@@ -493,5 +576,104 @@ enum NFWeeklyTransferScheduler {
         case .multiRepresentationTransform:
             ["representation", "stimulus_category", "field"]
         }
+    }
+}
+
+/// Scheduling preferences never change the immutable review outcome or rung.
+/// The origin is copied from the same reducer that chooses the success anchor.
+struct NFCompatibilityReminderOrigin: Equatable, Sendable {
+    let state: NFRetentionItemState
+    let anchorAttemptID: UUID
+}
+
+struct NFReviewDeferral: Codable, Equatable, Sendable, Identifiable {
+    var schemaVersion = 1
+    let profileID: UUID
+    let memoryItemID: String
+    let templateFamily: String
+    let lab: TrainingLab
+    let anchorAttemptID: UUID
+    let anchorReviewedAt: Date
+    let requestedAt: Date
+    let deferredUntil: Date
+    let timeZoneIdentifier: String
+    let dayBoundaryHour: Int
+
+    var id: String {
+        NFSelectionReservationPolicy.identity([profileID.uuidString, memoryItemID])
+    }
+
+    var isSupported: Bool {
+        guard schemaVersion == 1, !memoryItemID.isEmpty, memoryItemID.utf8.count <= 1_024,
+              !templateFamily.isEmpty, templateFamily.utf8.count <= 1_024,
+              anchorReviewedAt.timeIntervalSince1970.isFinite,
+              requestedAt.timeIntervalSince1970.isFinite, deferredUntil.timeIntervalSince1970.isFinite,
+              anchorReviewedAt <= requestedAt, deferredUntil > requestedAt,
+              deferredUntil.timeIntervalSince(requestedAt) <= 48 * 3_600,
+              (0...12).contains(dayBoundaryHour),
+              let zone = TimeZone(identifier: timeZoneIdentifier) else { return false }
+        // Captured local-day boundaries are absolute dates. Travelling later
+        // does not move the accepted return instant or repeat a deferral.
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = zone
+        return deferredUntil == NFPlanBoundaryContext.make(at: requestedAt,
+            dayBoundaryHour: dayBoundaryHour, calendar: calendar).nextBoundary
+    }
+
+    func matches(_ origin: NFCompatibilityReminderOrigin, profileID: UUID) -> Bool {
+        isSupported && self.profileID == profileID && memoryItemID == origin.state.id
+            && templateFamily == origin.state.templateFamily && lab == origin.state.lab
+            && anchorAttemptID == origin.anchorAttemptID && anchorReviewedAt == origin.state.lastReviewedAt
+    }
+}
+
+struct NFReviewDueEntry: Equatable, Sendable, Identifiable {
+    let origin: NFCompatibilityReminderOrigin
+    let naturalDueAt: Date
+    let dueAt: Date
+    let deferral: NFReviewDeferral?
+    var id: String { origin.state.id }
+    func isDue(at date: Date) -> Bool { date.timeIntervalSince1970.isFinite && date >= dueAt }
+    func isDeferred(at date: Date) -> Bool {
+        deferral != nil && naturalDueAt <= date && date < dueAt
+    }
+}
+
+enum NFReviewDeferralPolicy {
+    static let maximumRecords = 10_000
+
+    static func supports(_ records: [NFReviewDeferral]) -> Bool {
+        records.count <= maximumRecords && Set(records.map(\.id)).count == records.count
+            && records.allSatisfy(\.isSupported)
+    }
+
+    static func project(origins: [NFCompatibilityReminderOrigin], profileID: UUID,
+                        deferrals: [NFReviewDeferral], calendar: Calendar) -> [NFReviewDueEntry] {
+        // A corrupt/future preference cannot silently suppress reminders.
+        // The store separately displays metadata recovery and forbids writes.
+        let accepted = supports(deferrals) ? deferrals : []
+        let byID = Dictionary(uniqueKeysWithValues: accepted.map { ($0.id, $0) })
+        return origins.compactMap { origin in
+            guard let anchor = origin.state.lastReviewedAt,
+                  anchor.timeIntervalSince1970.isFinite else { return nil }
+            let natural = NFRetentionScheduler.nextReviewDate(for: origin.state, after: anchor, calendar: calendar)
+            guard natural.timeIntervalSince1970.isFinite else { return nil }
+            let key = NFSelectionReservationPolicy.identity([profileID.uuidString, origin.state.id])
+            let deferral = byID[key].flatMap { $0.matches(origin, profileID: profileID) ? $0 : nil }
+            return NFReviewDueEntry(origin: origin, naturalDueAt: natural,
+                dueAt: max(natural, deferral?.deferredUntil ?? natural), deferral: deferral)
+        }.sorted { $0.dueAt == $1.dueAt ? $0.id < $1.id : $0.dueAt < $1.dueAt }
+    }
+
+    static func make(entry: NFReviewDueEntry, profileID: UUID, at date: Date,
+                     dayBoundaryHour: Int, calendar: Calendar) -> NFReviewDeferral? {
+        guard entry.isDue(at: date), let anchor = entry.origin.state.lastReviewedAt else { return nil }
+        let boundary = NFPlanBoundaryContext.make(at: date, dayBoundaryHour: dayBoundaryHour, calendar: calendar)
+        let result = NFReviewDeferral(profileID: profileID, memoryItemID: entry.id,
+            templateFamily: entry.origin.state.templateFamily, lab: entry.origin.state.lab,
+            anchorAttemptID: entry.origin.anchorAttemptID, anchorReviewedAt: anchor,
+            requestedAt: date, deferredUntil: boundary.nextBoundary,
+            timeZoneIdentifier: boundary.timeZoneIdentifier, dayBoundaryHour: boundary.dayBoundaryHour)
+        return result.isSupported ? result : nil
     }
 }

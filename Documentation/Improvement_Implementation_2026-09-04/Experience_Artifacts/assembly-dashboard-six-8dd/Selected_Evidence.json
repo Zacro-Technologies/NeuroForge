@@ -1,0 +1,68 @@
+[
+  {
+    "test": "NavigationSmokeUITests/testAdvancedCoordinatePublicLaunchSavesOriginalAnswerAndSeparateWorkedMap()",
+    "configurationName": "Test Scheme Action",
+    "deviceId": "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+    "deviceName": "NeuroForge Improvement QA",
+    "exportedFileName": "E4C4EE9C-AC73-4D26-B6E8-A5EAE2AA8D1F.png",
+    "isAssociatedWithFailure": false,
+    "suggestedHumanReadableName": "lab-response-feedback-spatial_0_745AEE04-B242-49A8-8E7F-C502EB08EAAA.coordinate-rotation-en",
+    "timestamp": 1788650747.866,
+    "sha256": "926c2c8694b86354af11169a08d635bf9ef845a33088ae5a48681fdb3a4e689f"
+  },
+  {
+    "test": "NavigationSmokeUITests/testAdvancedCoordinatePublicLaunchSavesOriginalAnswerAndSeparateWorkedMap()",
+    "configurationName": "Test Scheme Action",
+    "deviceId": "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+    "deviceName": "NeuroForge Improvement QA",
+    "exportedFileName": "66F16311-6B4B-440F-892B-A93DF7DBA467.png",
+    "isAssociatedWithFailure": false,
+    "suggestedHumanReadableName": "advanced-coordinate-worked-Coordinate Rotation-en_0_A2B13CDC-502E-4F04-96FB-C11786ECE2C6.png",
+    "timestamp": 1788650736.942,
+    "sha256": "5dde617e0f1660b9cccb8bcba2636276ff0bc6f03806792c66eb60b1107a61c4"
+  },
+  {
+    "test": "NavigationSmokeUITests/testAdvancedCoordinatePublicLaunchSavesOriginalAnswerAndSeparateWorkedMap()",
+    "configurationName": "Test Scheme Action",
+    "deviceId": "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+    "deviceName": "NeuroForge Improvement QA",
+    "exportedFileName": "060BF42A-8C80-493E-883C-66F51AE7E947.txt",
+    "isAssociatedWithFailure": false,
+    "suggestedHumanReadableName": "advanced-coordinate-public-oracle-Coordinate Rotation-en_0_B8F93299-36EF-463A-8E62-CA7B71E0A23E.txt",
+    "timestamp": 1788650667.215,
+    "sha256": "ea1e2ae20a34ead3ebc8b2c2384bcdf8a68d0e1c036bf4666fb676c87f7a3da9"
+  },
+  {
+    "test": "NavigationSmokeUITests/testCubeNetRetainsPrintedGivensAcrossCameraAndCommittedFolding()",
+    "configurationName": "Test Scheme Action",
+    "deviceId": "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+    "deviceName": "NeuroForge Improvement QA",
+    "exportedFileName": "651EDF0E-A56B-4EC2-BA36-82C60986134C.png",
+    "isAssociatedWithFailure": false,
+    "suggestedHumanReadableName": "cube-net-saved-complete-fold-en_0_66B14B10-9E7A-495A-8333-221ACDF52095.png",
+    "timestamp": 1788651048.032,
+    "sha256": "c26e6141088e04e46e9dd5ed5a9a27d62b5437a766233d07f7b28acd6adcd28b"
+  },
+  {
+    "test": "NavigationSmokeUITests/testCubeNetRetainsPrintedGivensAcrossCameraAndCommittedFolding()",
+    "configurationName": "Test Scheme Action",
+    "deviceId": "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+    "deviceName": "NeuroForge Improvement QA",
+    "exportedFileName": "3A505934-6300-486C-AD4F-69C359357A10.png",
+    "isAssociatedWithFailure": false,
+    "suggestedHumanReadableName": "cube-net-completed-model-en_0_B9B8A2E9-B767-4837-A53E-89787F716EC2.png",
+    "timestamp": 1788651025.346,
+    "sha256": "9dfce9dda77735f1e3fee0fc801c784d3aa3493d8bf8105873f25cb18b6a586d"
+  },
+  {
+    "test": "NavigationSmokeUITests/testCubeNetRetainsPrintedGivensAcrossCameraAndCommittedFolding()",
+    "configurationName": "Test Scheme Action",
+    "deviceId": "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+    "deviceName": "NeuroForge Improvement QA",
+    "exportedFileName": "0AFEE0D5-6289-4E6F-8BB8-D3D1EC2584FF.txt",
+    "isAssociatedWithFailure": false,
+    "suggestedHumanReadableName": "cube-net-visible-query-oracle_0_2EDE02A9-5FCA-4BCD-B927-D0C71983E19C.txt",
+    "timestamp": 1788650971.389,
+    "sha256": "adfae923d50e148c00732ac83ffd5fbbe4ef8d28292fa6b0823187007fb00f41"
+  }
+]

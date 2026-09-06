@@ -1,0 +1,30 @@
+
+/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+00000000014441a8 <_$s10NeuroForge21NFQuestionFingerprintO17canonicalContract3forSSAA10NFExerciseV_tFZ>:
+ 14441a8: d104c3ff     	sub	sp, sp, #0x130
+ 14441ac: a9116ffc     	stp	x28, x27, [sp, #0x110]
+ 14441b0: a9127bfd     	stp	x29, x30, [sp, #0x120]
+ 14441b4: 910483fd     	add	x29, sp, #0x120
+ 14441b8: f81803a0     	stur	x0, [x29, #-0x80]
+ 14441bc: f81e83bf     	stur	xzr, [x29, #-0x18]
+ 14441c0: f81d83bf     	stur	xzr, [x29, #-0x28]
+ 14441c4: f81e03bf     	stur	xzr, [x29, #-0x20]
+ 14441c8: f81c83bf     	stur	xzr, [x29, #-0x38]
+ 14441cc: f81d03bf     	stur	xzr, [x29, #-0x30]
+ 14441d0: f81b83bf     	stur	xzr, [x29, #-0x48]
+ 14441d4: f81c03bf     	stur	xzr, [x29, #-0x40]
+ 14441d8: f81a83bf     	stur	xzr, [x29, #-0x58]
+ 14441dc: f81b03bf     	stur	xzr, [x29, #-0x50]
+ 14441e0: f81983bf     	stur	xzr, [x29, #-0x68]
+ 14441e4: f81a03bf     	stur	xzr, [x29, #-0x60]
+ 14441e8: aa0003e8     	mov	x8, x0
+ 14441ec: f81e83a8     	stur	x8, [x29, #-0x18]
+ 14441f0: 94000172     	bl	0x14447b8 <_$s10NeuroForge21NFQuestionFingerprintO27coordinateReasoningContract33_1D0631E92A3300BDFE8208DFED50403BLL3forSSSgAA10NFExerciseV_tFZ>
+ 14441f4: f81883a0     	stur	x0, [x29, #-0x78]
+ 14441f8: f81903a1     	stur	x1, [x29, #-0x70]
+ 14441fc: b40001c1     	cbz	x1, 0x1444234 <_$s10NeuroForge21NFQuestionFingerprintO17canonicalContract3forSSAA10NFExerciseV_tFZ+0x8c>
+ 1444200: 14000001     	b	0x1444204 <_$s10NeuroForge21NFQuestionFingerprintO17canonicalContract3forSSAA10NFExerciseV_tFZ+0x5c>
+ 1444204: f85883a9     	ldur	x9, [x29, #-0x78]

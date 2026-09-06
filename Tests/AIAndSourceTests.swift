@@ -471,8 +471,15 @@ final class AIAndSourceTests: XCTestCase {
                     incorrectResponse(for: exercise.interaction),
                     for: exercise
                 )
-                XCTAssertTrue(correct.isCorrect, "Correct typed response failed for \(style.rawValue)")
-                XCTAssertEqual(correct.credit, 1, accuracy: 0.000_001)
+                if case .selfCheck = exercise.interaction {
+                    XCTAssertEqual(correct.outcome, .selfReported)
+                    XCTAssertNil(correct.objectiveCorrectness)
+                    XCTAssertEqual(correct.credit, 0)
+                    XCTAssertEqual(incorrect.outcome, .selfReported)
+                } else {
+                    XCTAssertTrue(correct.isCorrect, "Correct typed response failed for \(style.rawValue)")
+                    XCTAssertEqual(correct.credit, 1, accuracy: 0.000_001)
+                }
                 XCTAssertFalse(incorrect.isCorrect, "Incorrect typed response passed for \(style.rawValue)")
                 XCTAssertEqual(incorrect.credit, 0, accuracy: 0.000_001)
             }
@@ -561,8 +568,7 @@ final class AIAndSourceTests: XCTestCase {
                 correctResponse(for: question.authoritativeExercise.interaction),
                 for: question.authoritativeExercise
             )
-            XCTAssertTrue(score.isCorrect, question.prompt)
-            XCTAssertEqual(score.credit, 1, accuracy: 0.000_001)
+            assertAuthoredReferenceOutcome(score, exercise: question.authoritativeExercise)
         }
 
         for question in questions {
@@ -598,10 +604,10 @@ final class AIAndSourceTests: XCTestCase {
             XCTAssertTrue(containsJapaneseScript(question.explanation), question.explanation)
             XCTAssertTrue(question.prompt.contains("実装をデバッグ"), question.prompt)
             XCTAssertNoThrow(try NFExerciseSchemaValidator.validate(question.authoritativeExercise))
-            XCTAssertTrue(NFExerciseScoringEngine.score(
+            assertAuthoredReferenceOutcome(NFExerciseScoringEngine.score(
                 correctResponse(for: question.authoritativeExercise.interaction),
                 for: question.authoritativeExercise
-            ).isCorrect)
+            ), exercise: question.authoritativeExercise)
         }
     }
 
@@ -634,10 +640,10 @@ final class AIAndSourceTests: XCTestCase {
             XCTAssertTrue(question.prompt.contains(testCase.1), question.prompt)
             XCTAssertFalse(question.prompt.contains("index <="), question.prompt)
             XCTAssertNoThrow(try NFExerciseSchemaValidator.validate(question.authoritativeExercise))
-            XCTAssertTrue(NFExerciseScoringEngine.score(
+            assertAuthoredReferenceOutcome(NFExerciseScoringEngine.score(
                 correctResponse(for: question.authoritativeExercise.interaction),
                 for: question.authoritativeExercise
-            ).isCorrect)
+            ), exercise: question.authoritativeExercise)
         }
     }
 
@@ -710,10 +716,10 @@ final class AIAndSourceTests: XCTestCase {
                 question.prompt
             )
             XCTAssertNoThrow(try NFExerciseSchemaValidator.validate(question.authoritativeExercise))
-            XCTAssertTrue(NFExerciseScoringEngine.score(
+            assertAuthoredReferenceOutcome(NFExerciseScoringEngine.score(
                 correctResponse(for: question.authoritativeExercise.interaction),
                 for: question.authoritativeExercise
-            ).isCorrect)
+            ), exercise: question.authoritativeExercise)
         }
     }
 
@@ -751,7 +757,7 @@ final class AIAndSourceTests: XCTestCase {
                 correctResponse(for: question.authoritativeExercise.interaction),
                 for: question.authoritativeExercise
             )
-            XCTAssertTrue(score.isCorrect)
+            assertAuthoredReferenceOutcome(score, exercise: question.authoritativeExercise)
         }
     }
 
@@ -903,10 +909,10 @@ final class AIAndSourceTests: XCTestCase {
             return XCTFail("Open boundary debugging must reveal a reference for learner self-check")
         }
         XCTAssertTrue(schema.referenceAnswer.contains("index < count"))
-        XCTAssertTrue(NFExerciseScoringEngine.score(
+        XCTAssertEqual(NFExerciseScoringEngine.score(
             .selfCheck(NFSelfCheckSubmission(rating: .matched, reflection: "I excluded index == count.")),
             for: computing.authoritativeExercise
-        ).isCorrect)
+        ).outcome, .selfReported)
         XCTAssertFalse(NFExerciseScoringEngine.score(
             .selfCheck(NFSelfCheckSubmission(rating: .notYet, reflection: nil)),
             for: computing.authoritativeExercise
@@ -1069,8 +1075,7 @@ final class AIAndSourceTests: XCTestCase {
                 correctResponse(for: question.authoritativeExercise.interaction),
                 for: question.authoritativeExercise
             )
-            XCTAssertTrue(score.isCorrect, "Localized key failed for \(style.rawValue)")
-            XCTAssertEqual(score.credit, 1, accuracy: 0.000_001)
+            assertAuthoredReferenceOutcome(score, exercise: question.authoritativeExercise)
         }
     }
 
@@ -1114,8 +1119,7 @@ final class AIAndSourceTests: XCTestCase {
                     correctResponse(for: question.authoritativeExercise.interaction),
                     for: question.authoritativeExercise
                 )
-                XCTAssertTrue(score.isCorrect)
-                XCTAssertEqual(score.credit, 1, accuracy: 0.000_001)
+                assertAuthoredReferenceOutcome(score, exercise: question.authoritativeExercise)
             } else {
                 do {
                     _ = try await engine.author(request)
@@ -1931,9 +1935,9 @@ final class AIAndSourceTests: XCTestCase {
 
         let resumed = AIGeneratedPracticeRuntime(result: result, request: request)
         resumed.restoreDurableProgress(from: store.attempts)
-        XCTAssertEqual(resumed.index, 1)
+        XCTAssertEqual(resumed.index, 0, "Starting without an exact saved draft must not infer a run from set history")
         XCTAssertEqual(resumed.stage, 0)
-        XCTAssertEqual(resumed.correctness, [true])
+        XCTAssertTrue(resumed.correctness.isEmpty)
 
         XCTAssertEqual(try store.deleteAIGenerationAttempts(id: result.provenance.requestID), 1)
         XCTAssertTrue(store.attempts.allSatisfy { $0.generationID != result.provenance.requestID })
@@ -1962,6 +1966,7 @@ final class AIAndSourceTests: XCTestCase {
         )
         let result = try await NFAuthoringEngine.shared.author(request)
         let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store))
         guard case let .selfCheck(schema) = runtime.exercise.interaction else {
             return XCTFail("Expected a multiline recall-and-self-check interaction")
         }
@@ -1973,10 +1978,8 @@ final class AIAndSourceTests: XCTestCase {
         runtime.selfCheckReflection = learnerDraft
         XCTAssertGreaterThan(runtime.selfCheckReflection.count, 40)
         XCTAssertTrue(runtime.canSubmit)
-        runtime.submit()
-        XCTAssertEqual(runtime.stage, 1)
-        XCTAssertFalse(runtime.selfCheckReferenceRevealed)
-        runtime.chooseConfidence(.fairlyConfident, store: store)
+        runtime.confidence = .fairlyConfident
+        runtime.submit(store: store)
         XCTAssertEqual(runtime.stage, 4)
         XCTAssertTrue(runtime.selfCheckReferenceRevealed)
         XCTAssertNil(store.attempts.first)
@@ -1994,12 +1997,16 @@ final class AIAndSourceTests: XCTestCase {
             .selfCheck(NFSelfCheckSubmission(rating: .matched, reflection: learnerDraft))
         )
         XCTAssertEqual(schema.referenceAnswer, result.questions[0].correctAnswer)
-        XCTAssertTrue(attempt.isCorrect)
+        XCTAssertFalse(attempt.isCorrect)
+        XCTAssertEqual(runtime.lastScore?.outcome, .selfReported)
+        XCTAssertNil(runtime.lastScore?.objectiveCorrectness)
         XCTAssertEqual(attempt.scoringVersion, NFExerciseScoringEngine.scoringVersion)
     }
 
     @MainActor
-    func testGeneratedPracticeRuntimeDetectsUnsavedDraftBeforeDismissal() async throws {
+    func testGeneratedPracticeRuntimeDetectsDraftAndPersistsReferenceExposureBeforeDismissal() async throws {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let store = AppStore(context: container.mainContext)
         let request = NFAuthoringRequest(
             capability: .contextualize,
             lab: .logicDebugging,
@@ -2014,20 +2021,23 @@ final class AIAndSourceTests: XCTestCase {
         )
         let result = try await NFAuthoringEngine.shared.author(request)
         let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store))
 
         XCTAssertFalse(runtime.hasUnsavedWork)
         runtime.selfCheckReflection = "Divide net force by mass, then compare with the reference derivation."
         XCTAssertTrue(runtime.hasUnsavedWork)
         XCTAssertTrue(runtime.canSubmit)
-        runtime.submit()
-        XCTAssertEqual(runtime.stage, 1)
-        XCTAssertFalse(runtime.selfCheckReferenceRevealed)
+        runtime.submit(store: store)
+        XCTAssertEqual(runtime.stage, 4)
+        XCTAssertTrue(runtime.selfCheckReferenceRevealed)
         XCTAssertTrue(runtime.hasUnsavedWork)
-        runtime.editResponse()
-        XCTAssertEqual(runtime.stage, 0)
-        XCTAssertFalse(runtime.selfCheckReferenceRevealed)
+        XCTAssertNil(runtime.confidence)
         XCTAssertTrue(runtime.selfCheckReflection.contains("net force"))
-        XCTAssertTrue(runtime.hasUnsavedWork)
+        let draft = try XCTUnwrap(store.generatedPracticeDrafts.first)
+        XCTAssertEqual(draft.stage, 4)
+        XCTAssertTrue(draft.referenceRevealed)
+        XCTAssertNil(store.attempts.first)
+        runtime.releaseWriter()
     }
 
     @MainActor
@@ -2179,6 +2189,480 @@ final class AIAndSourceTests: XCTestCase {
         }
     }
 
+    func testGeneratedNestedFutureExerciseSchemaCannotValidateOrScore() throws {
+        let (_, result) = generatedCompatibilityFixture()
+        let original = try XCTUnwrap(result.questions.first)
+        XCTAssertEqual(original.authoritativeExercise.schemaVersion, 1)
+        XCTAssertNoThrow(try NFExerciseSchemaValidator.validate(original.authoritativeExercise))
+        let fallback = try NFFallbackExerciseGenerator.generate(.init(seed: 347811, index: 0, lab: .mentalMath, purpose: .practice))
+        XCTAssertEqual(fallback.schemaVersion, 2)
+        XCTAssertNoThrow(try NFExerciseSchemaValidator.validate(fallback))
+        XCTAssertNotEqual(NFExerciseScoringEngine.score(correctResponse(for: fallback.interaction), for: fallback).outcome, .invalidItem)
+        XCTAssertFalse(NFExerciseSchemaValidator.supportsExerciseSchemaVersion(0))
+        XCTAssertFalse(NFExerciseSchemaValidator.supportsExerciseSchemaVersion(999))
+        let data = try compatibilityJSON(result) { object in
+            var questions = object["questions"] as! [[String: Any]]
+            var exercise = questions[0]["authoritativeExercise"] as! [String: Any]
+            exercise["schemaVersion"] = 999
+            questions[0]["authoritativeExercise"] = exercise
+            object["questions"] = questions
+        }
+        let future = try JSONDecoder().decode(NFAuthoringResult.self, from: data)
+        let exercise = try XCTUnwrap(future.questions.first).authoritativeExercise
+        XCTAssertEqual(exercise.prompt, original.prompt)
+        XCTAssertThrowsError(try NFExerciseSchemaValidator.validate(exercise))
+        XCTAssertNotNil(NFGeneratedPracticeCompatibility.unavailableReason(for: future))
+        let score = NFExerciseScoringEngine.score(.numeric(.init(value: "2", unit: nil)), for: exercise)
+        XCTAssertEqual(score.outcome, .invalidItem)
+        XCTAssertNil(score.objectiveCorrectness)
+        XCTAssertNil(score.expectedAnswerSummary)
+        XCTAssertEqual(score.errorCode, "unsupported_exercise_schema")
+    }
+
+    func testGeneratedDraftVersionPinsDecodeLegacyWithoutGuessingAnEvaluator() throws {
+        let (request, result) = generatedCompatibilityFixture()
+        let draft = generatedCompatibilityDraft(request: request, result: result)
+        XCTAssertTrue(draft.valid)
+        for key in ["schemaVersion", "scorerVersion", "presentationVersion", "selectionPolicyVersion"] {
+            let data = try compatibilityJSON(draft) { $0[key] = 999 }
+            let future = try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: data)
+            XCTAssertFalse(future.valid, key)
+            XCTAssertNotNil(future.unavailableReason, key)
+            XCTAssertEqual(future.response, draft.response, key)
+        }
+        let legacyData = try compatibilityJSON(draft) { object in
+            for key in ["scorerVersion", "presentationVersion", "selectionPolicyVersion"] { object.removeValue(forKey: key) }
+        }
+        let legacy = try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: legacyData)
+        XCTAssertNil(legacy.scorerVersion)
+        XCTAssertNil(legacy.presentationVersion)
+        XCTAssertNil(legacy.selectionPolicyVersion)
+        XCTAssertFalse(legacy.valid)
+        XCTAssertEqual(legacy.response, draft.response)
+        XCTAssertEqual(legacy.result.questions, draft.result.questions)
+        let score = NFExerciseScoringEngine.score(draft.response, for: result.questions[0].authoritativeExercise)
+        let mismatchedScoreData = try compatibilityJSON(draft) { object in
+            var savedScore = try! JSONSerialization.jsonObject(with: JSONEncoder().encode(score)) as! [String: Any]
+            savedScore["scoringVersion"] = 999
+            object["lastScore"] = savedScore
+        }
+        XCTAssertFalse(try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: mismatchedScoreData).valid)
+    }
+
+    @MainActor
+    func testFutureGeneratedPendingCommitStaysReadOnlyAndPreservesOriginalBytes() throws {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let repository = NFLocalSessionRepository()
+        let store = AppStore(context: container.mainContext, localSessionRepository: repository, allowsSharedWidgetPublishing: false)
+        let (request, result) = generatedCompatibilityFixture()
+        let draft = generatedCompatibilityDraft(request: request, result: result, owner: repository.ownerDeviceID, stage: 1)
+        let encoded = try compatibilityJSON(draft) { $0["scorerVersion"] = 999 }
+        let bytes = Data(" \n".utf8) + encoded + Data("\n ".utf8)
+        try repository.savePrivateStudyRun(id: draft.id, generationID: request.id, payload: bytes)
+        let revision = repository.archive.transactionRevision
+        let retained = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+        XCTAssertEqual(retained.scorerVersion, 999)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request, draft: retained)
+        XCTAssertTrue(runtime.restoreCheckpoint(store: store)); runtime.resume()
+        XCTAssertTrue(runtime.isReadOnlyRecovery)
+        XCTAssertNotNil(runtime.unavailableReason)
+        XCTAssertFalse(runtime.canSubmit)
+        XCTAssertEqual(runtime.recoveryResponseText, "2")
+        runtime.retryCommit(store: store)
+        runtime.submit(store: store)
+        runtime.next(store: store)
+        runtime.endSession(store: store)
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        XCTAssertTrue(store.attempts.isEmpty)
+        XCTAssertEqual(repository.archive.transactionRevision, revision)
+        XCTAssertEqual(repository.archive.privateStudyRuns?.first?.payload, bytes)
+        XCTAssertTrue(repository.archive.snapshots.isEmpty)
+    }
+
+    @MainActor
+    func testUnknownGeneratedDraftCannotBeMistakenForANewEmptySession() throws {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let repository = NFLocalSessionRepository()
+        let store = AppStore(context: container.mainContext, localSessionRepository: repository, allowsSharedWidgetPublishing: false)
+        let (request, result) = generatedCompatibilityFixture()
+        let bytes = Data("{ \"schemaVersion\": 999, \"futureState\": {\"response\": \"  retained  \"} }".utf8)
+        try repository.savePrivateStudyRun(id: UUID(), generationID: request.id, payload: bytes)
+        let revision = repository.archive.transactionRevision
+        XCTAssertNil(store.generatedPracticeDraft(for: request.id))
+        XCTAssertNotNil(store.generatedPracticeRecoveryReason(for: request.id))
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.restoreCheckpoint(store: store)); runtime.resume()
+        XCTAssertTrue(runtime.isReadOnlyRecovery)
+        XCTAssertNotNil(runtime.unavailableReason)
+        runtime.numericValue = "2"
+        runtime.submit(store: store)
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        XCTAssertTrue(store.attempts.isEmpty)
+        XCTAssertEqual(repository.archive.transactionRevision, revision)
+        XCTAssertEqual(repository.archive.privateStudyRuns?.first?.payload, bytes)
+    }
+
+    @MainActor
+    func testSupportedPinnedGeneratedDraftResumesItsExactQuestionAndScorer() throws {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let repository = NFLocalSessionRepository()
+        let store = AppStore(context: container.mainContext, localSessionRepository: repository, allowsSharedWidgetPublishing: false)
+        let (request, result) = generatedCompatibilityFixture()
+        let draft = generatedCompatibilityDraft(request: request, result: result, owner: repository.ownerDeviceID)
+        try repository.savePrivateStudyRun(id: draft.id, generationID: request.id, payload: JSONEncoder().encode(draft))
+        XCTAssertNil(store.generatedPracticeRecoveryReason(for: request.id))
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request, draft: draft)
+        XCTAssertTrue(runtime.restoreCheckpoint(store: store)); runtime.resume()
+        XCTAssertFalse(runtime.isReadOnlyRecovery)
+        XCTAssertNil(runtime.unavailableReason)
+        XCTAssertEqual(runtime.exercise, result.questions[0].authoritativeExercise)
+        XCTAssertEqual(runtime.numericValue, "2")
+        runtime.submit(store: store)
+        XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(store.attempts.first?.scoringVersion, NFExerciseScoringEngine.scoringVersion)
+        XCTAssertEqual(runtime.lastScore?.outcome, .correct)
+        runtime.releaseWriter()
+    }
+
+    @MainActor
+    func testGeneratedDraftRejectsDuplicateClaimIdentitiesBeforeRestoreButKeepsBlankAndWrongDrafts() throws {
+        let (request, result) = generatedCompatibilityFixture()
+        let original = generatedCompatibilityDraft(request: request, result: result)
+        let duplicate = NFExerciseResponse.claimEvidence(.init(pairs: [
+            .init(claimID: "claim-a", evidenceIDs: ["evidence-a"]),
+            .init(claimID: "claim-a", evidenceIDs: [])
+        ]))
+        let responseObject = try JSONSerialization.jsonObject(with: JSONEncoder().encode(duplicate))
+        let data = try compatibilityJSON(original) { $0["response"] = responseObject }
+        let malformed = try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: data)
+        XCTAssertFalse(malformed.valid)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request, draft: malformed)
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let store = AppStore(context: container.mainContext, localSessionRepository: NFLocalSessionRepository(), allowsSharedWidgetPublishing: false)
+        XCTAssertTrue(runtime.restoreCheckpoint(store: store)); runtime.resume()
+        XCTAssertTrue(runtime.isReadOnlyRecovery)
+        XCTAssertFalse(runtime.canSubmit)
+        let schema = NFExerciseInteraction.claimEvidence(.init(claims: [.init(id: "claim-a", text: "Claim")],
+            evidence: [.init(id: "evidence-a", text: "Evidence", citationID: nil)],
+            correctPairs: [.init(claimID: "claim-a", evidenceIDs: ["evidence-a"])]))
+        XCTAssertFalse(NFGeneratedPracticeCompatibility.responseIsStructurallyCompatible(duplicate, with: schema))
+        XCTAssertTrue(NFGeneratedPracticeCompatibility.responseIsStructurallyCompatible(.claimEvidence(.init(pairs: [])), with: schema))
+        for value in ["", "3", "unfinished notation ("] {
+            let response = NFExerciseResponse.numeric(.init(value: value, unit: nil))
+            let object = try JSONSerialization.jsonObject(with: JSONEncoder().encode(response))
+            let bytes = try compatibilityJSON(original) { $0["response"] = object }
+            XCTAssertTrue(try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: bytes).valid, value)
+        }
+        XCTAssertTrue(store.attempts.isEmpty)
+    }
+
+    func testGeneratedPreparedAndFeedbackDraftsRequireFrozenResponseAndMatchingResult() throws {
+        let (request, result) = generatedCompatibilityFixture()
+        for phase in [1, 2] {
+            let original = generatedCompatibilityDraft(request: request, result: result, stage: phase)
+            XCTAssertTrue(original.valid)
+            for key in ["pendingAttemptID", "scoredResponse", "lastScore"] {
+                let bytes = try compatibilityJSON(original) { $0.removeValue(forKey: key) }
+                XCTAssertFalse(try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: bytes).valid, key)
+            }
+            let wrongResponse = try JSONSerialization.jsonObject(with: JSONEncoder().encode(NFExerciseResponse.numeric(.init(value: "3", unit: nil))))
+            let mismatched = try compatibilityJSON(original) { $0["response"] = wrongResponse }
+            XCTAssertFalse(try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: mismatched).valid)
+            let wrongResult = try compatibilityJSON(original) { object in
+                var score = object["lastScore"] as! [String: Any]
+                score["exerciseID"] = "different-question"
+                object["lastScore"] = score
+            }
+            XCTAssertFalse(try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: wrongResult).valid)
+        }
+    }
+
+    @MainActor
+    func testGeneratedOldWriterCannotRetryOrAcknowledgeAfterTakeover() throws {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let repository = NFLocalSessionRepository()
+        let store = AppStore(context: container.mainContext, localSessionRepository: repository, allowsSharedWidgetPublishing: false)
+        let (request, result) = generatedCompatibilityFixture()
+        let draft = generatedCompatibilityDraft(request: request, result: result, owner: repository.ownerDeviceID, stage: 1)
+        try repository.savePrivateStudyRun(id: draft.id, generationID: request.id, payload: JSONEncoder().encode(draft))
+        try store.saveItemReport(question: result.questions[0], result: result, reason: "Synthetic quarantine", note: "")
+        let first = AIGeneratedPracticeRuntime(result: result, request: request, draft: draft)
+        XCTAssertTrue(first.restoreCheckpoint(store: store)); first.resume()
+        XCTAssertEqual(first.stage, 1)
+        XCTAssertTrue(first.ownsWriter)
+        let second = AIGeneratedPracticeRuntime(result: result, request: request, draft: draft)
+        let retainedRuns = repository.archive.privateStudyRuns?.map(\.id)
+        XCTAssertFalse(second.restoreCheckpoint(store: store), "A stale supplied payload cannot be adopted as the current writable draft")
+        XCTAssertEqual(second.runID, draft.id)
+        XCTAssertFalse(second.ownsWriter)
+        XCTAssertEqual(second.recoveryText, NFResponsePresentation.text(draft.response))
+        // Model the real onAppear follow-up. A refused stale restore must not
+        // become a writable fresh UUID or create another legacy private run.
+        XCTAssertFalse(second.checkpoint(store: store)); second.resume()
+        XCTAssertEqual(repository.archive.privateStudyRuns?.map(\.id), retainedRuns)
+        XCTAssertEqual(second.exitDisposition(store: store), .saved)
+        XCTAssertTrue(first.ownsWriter)
+        second.takeOver(store: store)
+        XCTAssertTrue(second.ownsWriter)
+        XCTAssertFalse(first.ownsWriter)
+        store.allowReportedItemAgain(try XCTUnwrap(store.itemReports.first))
+        XCTAssertFalse(store.isQuarantined(question: result.questions[0], in: result))
+        let revision = repository.archive.transactionRevision
+        first.retryCommit(store: store)
+        first.next(store: store)
+        XCTAssertFalse(first.checkpoint(store: store))
+        XCTAssertTrue(store.attempts.isEmpty)
+        XCTAssertEqual(first.stage, 1)
+        XCTAssertEqual(repository.archive.transactionRevision, revision)
+        second.retryCommit(store: store)
+        XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(second.stage, 2)
+        let acknowledgedRevision = repository.archive.transactionRevision
+        first.retryCommit(store: store)
+        XCTAssertEqual(first.stage, 1)
+        XCTAssertEqual(repository.archive.transactionRevision, acknowledgedRevision)
+        second.releaseWriter()
+    }
+
+    @MainActor
+    func testGeneratedCommittedReceiptAcknowledgesDespiteLaterQuarantineWithoutReplacingOriginal() throws {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let repository = NFLocalSessionRepository()
+        let store = AppStore(context: container.mainContext, localSessionRepository: repository, allowsSharedWidgetPublishing: false)
+        let (request, result) = generatedCompatibilityFixture()
+        let draft = generatedCompatibilityDraft(request: request, result: result, owner: repository.ownerDeviceID, stage: 1)
+        try repository.savePrivateStudyRun(id: draft.id, generationID: request.id, payload: JSONEncoder().encode(draft))
+        try store.saveAuthoredExerciseAttempt(attemptID: try XCTUnwrap(draft.pendingAttemptID), generationID: request.id,
+            question: result.questions[0], response: draft.response, score: try XCTUnwrap(draft.lastScore),
+            confidence: nil, sourceDocumentIDs: [], shownAt: draft.shownAt, activeDuration: draft.activeDuration)
+        let original = try XCTUnwrap(store.attempts.first)
+        let originalBytes = original.response, originalDate = original.submittedAt
+        try store.saveItemReport(question: result.questions[0], result: result, reason: "Later synthetic quarantine", note: "")
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request, draft: draft)
+        XCTAssertTrue(runtime.restoreCheckpoint(store: store)); runtime.resume()
+        XCTAssertEqual(runtime.stage, 2)
+        XCTAssertEqual(runtime.lastScore, draft.lastScore)
+        XCTAssertEqual(runtime.correctness, [true])
+        XCTAssertTrue(store.isQuarantined(question: result.questions[0], in: result))
+        XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(store.attempts[0].id, draft.pendingAttemptID)
+        XCTAssertEqual(store.attempts[0].response, originalBytes)
+        XCTAssertEqual(store.attempts[0].submittedAt, originalDate)
+        XCTAssertEqual(store.generatedPracticeDraft(for: request.id)?.stage, 2)
+        runtime.releaseWriter()
+    }
+
+    @MainActor
+    func testGeneratedConflictingCommittedReceiptIsNotAcknowledgedOrRewritten() throws {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let repository = NFLocalSessionRepository()
+        let store = AppStore(context: container.mainContext, localSessionRepository: repository, allowsSharedWidgetPublishing: false)
+        let (request, result) = generatedCompatibilityFixture()
+        let draft = generatedCompatibilityDraft(request: request, result: result, owner: repository.ownerDeviceID, stage: 1)
+        try repository.savePrivateStudyRun(id: draft.id, generationID: request.id, payload: JSONEncoder().encode(draft))
+        let different = NFExerciseResponse.numeric(.init(value: "3", unit: nil))
+        let score = NFExerciseScoringEngine.score(different, for: result.questions[0].authoritativeExercise)
+        try store.saveAuthoredExerciseAttempt(attemptID: try XCTUnwrap(draft.pendingAttemptID), generationID: request.id,
+            question: result.questions[0], response: different, score: score, confidence: nil,
+            sourceDocumentIDs: [], shownAt: draft.shownAt, activeDuration: draft.activeDuration)
+        let original = try XCTUnwrap(store.attempts.first).response
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request, draft: draft)
+        XCTAssertTrue(runtime.restoreCheckpoint(store: store)); runtime.resume()
+        XCTAssertTrue(runtime.isReadOnlyRecovery)
+        XCTAssertNotNil(runtime.unavailableReason)
+        XCTAssertEqual(runtime.stage, 1)
+        XCTAssertTrue(runtime.correctness.isEmpty)
+        XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(store.attempts[0].response, original)
+        let journal = try XCTUnwrap(repository.archive.attemptConflicts?.first)
+        XCTAssertEqual(journal.attemptID, draft.pendingAttemptID)
+        XCTAssertEqual(journal.original.response, original)
+        XCTAssertEqual(NFResponsePresentation.decode(journal.proposed.response), draft.response)
+        XCTAssertEqual(journal.proposedScore, draft.lastScore)
+        XCTAssertEqual(journal.originalExercise, result.questions[0].authoritativeExercise)
+        XCTAssertEqual(journal.proposedExercise, result.questions[0].authoritativeExercise)
+        runtime.retryCommit(store: store)
+        XCTAssertEqual(repository.archive.attemptConflicts?.count, 1)
+        XCTAssertEqual(store.attempts.count, 1)
+        runtime.releaseWriter()
+    }
+
+    private func compatibilityJSON<T: Encodable>(_ value: T, update: (inout [String: Any]) -> Void) throws -> Data {
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(value)) as? [String: Any])
+        update(&object)
+        return try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys])
+    }
+
+    @MainActor
+    func testGeneratedNextWriteFailureRetainsFeedbackThenPublishesExactSavedQuestion() throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFGeneratedNext-\(UUID())")
+        let retainedFolder = folder.appendingPathExtension("retained")
+        defer {
+            try? FileManager.default.removeItem(at: folder)
+            try? FileManager.default.removeItem(at: retainedFolder)
+        }
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+        let store = AppStore(context: container.mainContext, localSessionRepository: repository, allowsSharedWidgetPublishing: false)
+        let (request, firstResult) = generatedCompatibilityFixture()
+        let second = NFAuthoredQuestion(id: "synthetic.shared.next", lab: .quantitative, style: .numerical,
+            prompt: "What is 2 + 2?", context: "Synthetic second addition", choices: [], correctAnswer: "4",
+            acceptedAnswers: [], explanation: "Two plus two is four.", hint: "Count four units.",
+            decisiveStep: "Add the units.", difficulty: 0.3, citationChunkIDs: [], evidenceClass: .documentPractice)
+        let result = NFAuthoringResult(questions: firstResult.questions + [second], provenance: firstResult.provenance,
+            routeCandidates: firstResult.routeCandidates, validationStatus: firstResult.validationStatus,
+            validationNotes: firstResult.validationNotes)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        runtime.numericValue = "2"
+        runtime.submit(store: store)
+        XCTAssertEqual(runtime.stage, 2)
+        let originalQuestion = runtime.question
+        let originalResponse = store.attempts.first?.response
+        // Keep the accepted journal intact while making its location temporarily unwritable.
+        // A missing journal is a stale-revision conflict, not a transient write failure.
+        try FileManager.default.moveItem(at: folder, to: retainedFolder)
+        try Data("blocked write target".utf8).write(to: folder)
+        runtime.next(store: store)
+        XCTAssertEqual(runtime.index, 0)
+        XCTAssertEqual(runtime.stage, 2)
+        XCTAssertEqual(runtime.question, originalQuestion)
+        XCTAssertEqual(runtime.numericValue, "2")
+        XCTAssertNotNil(runtime.saveError)
+        XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(store.attempts.first?.response, originalResponse)
+        try FileManager.default.removeItem(at: folder)
+        try FileManager.default.moveItem(at: retainedFolder, to: folder)
+        runtime.next(store: store)
+        XCTAssertEqual(runtime.index, 1)
+        XCTAssertEqual(runtime.stage, 0)
+        XCTAssertNil(runtime.saveError)
+        XCTAssertEqual(runtime.question, second)
+        let draft = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+        XCTAssertEqual(draft.index, 1)
+        XCTAssertEqual(draft.stage, 0)
+        XCTAssertEqual(draft.response, .initialDraft(for: second.authoritativeExercise))
+        XCTAssertEqual(draft.result.questions[1], runtime.question)
+        runtime.releaseWriter()
+        let resumed = AIGeneratedPracticeRuntime(result: result, request: request, draft: draft)
+        XCTAssertTrue(resumed.restoreCheckpoint(store: store)); resumed.resume()
+        XCTAssertEqual(resumed.question, second)
+        XCTAssertEqual(resumed.stage, 0)
+        XCTAssertEqual(resumed.correctness, [true])
+        XCTAssertEqual(store.attempts.count, 1)
+        resumed.releaseWriter()
+    }
+
+    @MainActor
+    func testGeneratedSharedLifecycleReferenceIsNotExposedWhenSaveFails() throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFGeneratedReveal-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+        let store = AppStore(context: container.mainContext, localSessionRepository: repository, allowsSharedWidgetPublishing: false)
+        let (request, fixture) = generatedCompatibilityFixture()
+        let question = NFAuthoredQuestion(id: "synthetic.shared.reference", lab: .quantitative, style: .shortAnswer,
+            prompt: "Explain why adding two equal units doubles the quantity.", context: "Synthetic explanation",
+            choices: [], correctAnswer: "Two equal units contain twice one unit.", acceptedAnswers: [],
+            explanation: "Compare two units with one.", hint: "Compare equal groups.", decisiveStep: "Count equal units.",
+            difficulty: 0.3, citationChunkIDs: [], evidenceClass: .documentPractice)
+        guard case .selfCheck = question.authoritativeExercise.interaction else { return XCTFail("Expected authentic self-check authority") }
+        let result = NFAuthoringResult(questions: [question], provenance: fixture.provenance,
+            routeCandidates: [], validationStatus: fixture.validationStatus, validationNotes: [])
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        runtime.selfCheckReflection = "There are two equal groups, so the total contains twice as many units."
+        try FileManager.default.removeItem(at: folder)
+        try Data("blocked write target".utf8).write(to: folder)
+        runtime.submit(store: store)
+        XCTAssertEqual(runtime.stage, 0)
+        XCTAssertFalse(runtime.selfCheckReferenceRevealed)
+        XCTAssertFalse(runtime.selfCheckReflection.isEmpty)
+        XCTAssertTrue(store.attempts.isEmpty)
+        XCTAssertNotNil(runtime.saveError)
+        runtime.releaseWriter()
+    }
+
+    @MainActor
+    func testGeneratedClarificationIsDurableInlineGuidanceWithoutAnAttemptOrSaveAlert() throws {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let repository = NFLocalSessionRepository()
+        let store = AppStore(context: container.mainContext, localSessionRepository: repository, allowsSharedWidgetPublishing: false)
+        let (request, fixture) = generatedCompatibilityFixture()
+        let original = NFAuthoredQuestion(id: "synthetic.shared.symbolic", lab: .quantitative, style: .shortAnswer,
+            prompt: "Simplify 2x + 2x.", context: "Synthetic symbolic combination", choices: [], correctAnswer: "4x",
+            acceptedAnswers: [], explanation: "Combine the coefficients of x.", hint: "Add the coefficients.",
+            decisiveStep: "Two plus two equals four.", difficulty: 0.3, citationChunkIDs: [], evidenceClass: .documentPractice)
+        let interaction = NFExerciseInteraction.shortText(.init(expectedAnswer: "4x",
+            scoringRule: .normalizedExact(acceptedAnswers: ["4x"]), maximumCharacters: 280,
+            authority: .symbolic(.init(acceptedExpressions: ["4*x"], variables: ["x"]))))
+        let interactionJSON = try JSONSerialization.jsonObject(with: JSONEncoder().encode(interaction))
+        let bytes = try compatibilityJSON(original.authoritativeExercise) { $0["interaction"] = interactionJSON }
+        let authority = try JSONDecoder().decode(NFExercise.self, from: bytes)
+        let question = NFAuthoredQuestion(id: original.id, lab: original.lab, style: original.style,
+            prompt: original.prompt, context: original.context, choices: [], correctAnswer: original.correctAnswer,
+            acceptedAnswers: [], explanation: original.explanation, hint: original.hint, decisiveStep: original.decisiveStep,
+            difficulty: original.difficulty, citationChunkIDs: [], evidenceClass: .documentPractice, authoritativeExercise: authority)
+        XCTAssertTrue(NFAuthoredExerciseAuthority.validatesBinding(question))
+        let result = NFAuthoringResult(questions: [question], provenance: fixture.provenance,
+            routeCandidates: [], validationStatus: fixture.validationStatus, validationNotes: [])
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        runtime.shortText = "4/x"
+        XCTAssertTrue(runtime.canSubmit)
+        runtime.submit(store: store)
+        XCTAssertEqual(runtime.stage, 0)
+        XCTAssertNil(runtime.saveError)
+        XCTAssertNil(runtime.lastScore)
+        let guidance = try XCTUnwrap(runtime.clarificationMessage)
+        XCTAssertTrue(store.attempts.isEmpty)
+        let draft = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+        XCTAssertEqual(draft.clarificationMessage, guidance)
+        XCTAssertEqual(draft.response, .shortText("4/x"))
+        runtime.releaseWriter()
+        let resumed = AIGeneratedPracticeRuntime(result: result, request: request, draft: draft)
+        XCTAssertTrue(resumed.restoreCheckpoint(store: store)); resumed.resume()
+        XCTAssertEqual(resumed.clarificationMessage, guidance)
+        XCTAssertNil(resumed.saveError)
+        resumed.shortText = "4x"
+        XCTAssertNil(resumed.clarificationMessage)
+        resumed.submit(store: store)
+        XCTAssertEqual(resumed.stage, 2)
+        XCTAssertEqual(resumed.lastScore?.outcome, .correct)
+        XCTAssertEqual(store.attempts.count, 1)
+        resumed.releaseWriter()
+    }
+
+    private func generatedCompatibilityFixture() -> (NFAuthoringRequest, NFAuthoringResult) {
+        let id = UUID(uuidString: "51343824-ECD8-482B-8542-36677F11D462")!
+        let request = NFAuthoringRequest(id: id, capability: .contextualize, lab: .quantitative,
+            field: .general, customTopic: "Synthetic addition", learningObjective: "Add two integers",
+            style: .numerical, difficulty: 0.3, count: 1, localeIdentifier: "en", seed: 347811, aiMode: .disabled)
+        let question = NFAuthoredQuestion(id: "synthetic.compatibility.addition", lab: .quantitative, style: .numerical,
+            prompt: "What is 1 + 1?", context: "Synthetic addition", choices: [], correctAnswer: "2",
+            acceptedAnswers: [], explanation: "One plus one is two.", hint: "Count the two units.",
+            decisiveStep: "Add the two units.", difficulty: 0.3, citationChunkIDs: [], evidenceClass: .documentPractice)
+        let result = NFAuthoringResult(questions: [question], provenance: NFAIGenerationProvenance(requestID: id,
+            generatedAt: Date(timeIntervalSince1970: 1_788_523_200), route: .deterministicFallback,
+            routeReason: "Synthetic compatibility fixture", promptVersion: 1, modelIdentifier: "synthetic.fixture",
+            sourceChunkIDs: [], sourceDocumentIDs: [], validationVersion: 1, repairCount: 0,
+            cacheKey: "synthetic.compatibility", isFallback: true), routeCandidates: [],
+            validationStatus: .init(level: .deterministicKey, sourceSupport: .notApplicable), validationNotes: [])
+        return (request, result)
+    }
+
+    private func generatedCompatibilityDraft(request: NFAuthoringRequest, result: NFAuthoringResult,
+                                             owner: UUID = UUID(), stage: Int = 0) -> NFGeneratedPracticeDraft {
+        let response = NFExerciseResponse.numeric(.init(value: "2", unit: nil))
+        let scored = stage == 1 || stage == 2
+        return NFGeneratedPracticeDraft(id: UUID(), ownerDeviceID: owner, result: result, request: request,
+            index: 0, stage: stage, response: response, confidence: nil,
+            referenceRevealed: false, hintRevealed: false, correctness: [],
+            lastScore: scored ? NFExerciseScoringEngine.score(response, for: result.questions[0].authoritativeExercise) : nil,
+            scoredResponse: scored ? response : nil,
+            pendingAttemptID: UUID(), shownAt: Date(timeIntervalSince1970: 1_788_523_200), activeDuration: 12)
+    }
+
     private func makeRequest(lab: TrainingLab, aiMode: AIMode) -> NFAuthoringRequest {
         NFAuthoringRequest(
             id: UUID(),
@@ -2200,6 +2684,18 @@ final class AIAndSourceTests: XCTestCase {
         value.unicodeScalars.contains { scalar in
             (0x3040...0x30FF).contains(scalar.value)
                 || (0x3400...0x9FFF).contains(scalar.value)
+        }
+    }
+
+    private func assertAuthoredReferenceOutcome(_ score: NFExerciseScoringResult, exercise: NFExercise,
+                                                file: StaticString = #filePath, line: UInt = #line) {
+        if case .selfCheck = exercise.interaction {
+            XCTAssertEqual(score.outcome, .selfReported, file: file, line: line)
+            XCTAssertNil(score.objectiveCorrectness, file: file, line: line)
+            XCTAssertEqual(score.credit, 0, file: file, line: line)
+        } else {
+            XCTAssertTrue(score.isCorrect, exercise.prompt, file: file, line: line)
+            XCTAssertEqual(score.credit, 1, accuracy: 0.000001, file: file, line: line)
         }
     }
 
@@ -4180,5 +4676,1943 @@ private func assertThrowsAsync<T>(
         XCTFail("Expected an error")
     } catch {
         handler(error)
+    }
+}
+
+
+@MainActor final class GeneratedLifecycleParityTests: XCTestCase {
+    private enum Fault: Error { case blocked }
+    private func fixture(count: Int = 2, selfCheck: Bool = false) -> (NFAuthoringRequest, NFAuthoringResult) {
+        let id = UUID()
+        let request = NFAuthoringRequest(id: id, capability: .contextualize, lab: .quantitative,
+            field: .general, customTopic: "Synthetic local arithmetic", learningObjective: "Add integers",
+            style: .numerical, difficulty: 0.3, count: count, localeIdentifier: "en", seed: 29, aiMode: .disabled)
+        let questions = (0..<count).map { index in
+            NFAuthoredQuestion(id: "generated-lifecycle-\(id)-\(index)", lab: .quantitative,
+                style: selfCheck ? .proofOrDerivation : .numerical, prompt: "What is \(index + 1) plus one?",
+                context: "Synthetic arithmetic", choices: [], correctAnswer: selfCheck ? "Explain adding one unit." : "\(index + 2)",
+                acceptedAnswers: [], explanation: "Add one unit to the starting quantity.", hint: "Count one additional unit.",
+                decisiveStep: "Add one.", difficulty: 0.3, citationChunkIDs: [], evidenceClass: .documentPractice)
+        }
+        let result = NFAuthoringResult(questions: questions,
+            provenance: .init(requestID: id, generatedAt: Date(timeIntervalSince1970: 1_788_523_200), route: .deterministicFallback,
+                routeReason: "Synthetic lifecycle fixture", promptVersion: NFAuthoringRequest.promptVersion, modelIdentifier: "synthetic.fixture",
+                sourceChunkIDs: [], sourceDocumentIDs: [], validationVersion: NFAuthoringEngine.validationVersion, repairCount: 0,
+                cacheKey: id.uuidString, isFallback: true), routeCandidates: [],
+            validationStatus: .init(level: selfCheck ? .schemaCheckedModelOutput : .deterministicKey, sourceSupport: .notApplicable), validationNotes: [])
+        return (request, result)
+    }
+    private func store(_ repository: NFLocalSessionRepository = NFLocalSessionRepository()) throws -> (AppStore, ModelContainer) {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        return (AppStore(context: container.mainContext, localSessionRepository: repository, allowsSharedWidgetPublishing: false), container)
+    }
+
+    func testInitialFailedAcknowledgementCannotEditSubmitHintOrStartAnswerClock() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture()
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        let slot = try XCTUnwrap(runtime.acceptedSlotID), attempt = try XCTUnwrap(runtime.acceptedAttemptID)
+        runtime.numericValue = "2"
+        XCTAssertFalse(runtime.canEditDraft); XCTAssertFalse(runtime.canSubmit)
+        runtime.privateCheckpointWriteFailure = { _ in throw Fault.blocked }
+        XCTAssertFalse(runtime.checkpoint(store: store))
+        runtime.submit(store: store); runtime.requestHint(store: store); runtime.acknowledgePresented(store: store)
+        XCTAssertTrue(store.attempts.isEmpty); XCTAssertFalse(runtime.isDurablyPrepared)
+        XCTAssertNil(store.generatedPracticeDraft(for: request.id))
+        runtime.privateCheckpointWriteFailure = nil
+        XCTAssertTrue(runtime.checkpoint(store: store)); XCTAssertTrue(runtime.canEditDraft)
+        let saved = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+        XCTAssertEqual(saved.runState?.current.id, slot); XCTAssertEqual(saved.pendingAttemptID, attempt)
+        XCTAssertEqual(saved.activeDuration, 0); XCTAssertNil(saved.runState?.current.presentedAt)
+        runtime.acknowledgePresented(store: store)
+        XCTAssertNotNil(store.generatedPracticeDraft(for: request.id)?.runState?.current.presentedAt)
+    }
+
+    func testTwoRunsOfOneSetHaveSeparateAttemptSessionsAndStableNextSlots() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture()
+        var sessions: [UUID] = []
+        for _ in 0..<2 {
+            let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+            XCTAssertTrue(runtime.checkpoint(store: store)); let first = runtime.acceptedSlotID
+            runtime.numericValue = "2"; runtime.submit(store: store)
+            sessions.append(runtime.runID)
+            XCTAssertEqual(store.attempts.last?.generationID, request.id)
+            XCTAssertTrue(store.attempts.contains { $0.sessionID == runtime.runID })
+            runtime.next(store: store)
+            XCTAssertEqual(runtime.index, 1); XCTAssertNotEqual(runtime.acceptedSlotID, first)
+            let next = try XCTUnwrap(store.generatedPracticeDrafts.first { $0.id == runtime.runID })
+            XCTAssertEqual(next.pendingAttemptID, runtime.acceptedAttemptID)
+            runtime.finishClosing()
+        }
+        XCTAssertNotEqual(sessions[0], sessions[1])
+        XCTAssertEqual(Set(store.attempts.map(\.sessionID)), Set(sessions))
+    }
+
+    func testSkipFailedNextRetainsOneUnscoredReceiptAndExactDraftThenColdAdvances() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture()
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "unfinished 17"
+        let id = try XCTUnwrap(runtime.acceptedAttemptID)
+        runtime.privateCheckpointWriteFailure = { draft in if draft.index == 1 { throw Fault.blocked } }
+        runtime.skip(store: store); runtime.skip(store: store)
+        XCTAssertEqual(runtime.stage, 2); XCTAssertEqual(runtime.index, 0)
+        XCTAssertEqual(store.attempts.count, 1); XCTAssertEqual(store.attempts.first?.id, id)
+        let original = try XCTUnwrap(store.attempts.first)
+        let bytes = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(original))
+        XCTAssertTrue(original.wasSkipped); XCTAssertEqual(original.deterministicCredit, 0); XCTAssertEqual(original.evidenceWeight, 0)
+        XCTAssertEqual(original.generationID, request.id); XCTAssertEqual(original.sessionID, runtime.runID)
+        XCTAssertEqual(try JSONDecoder().decode(NFExerciseResponse.self, from: Data(original.response.utf8)), .numeric(.init(value: "unfinished 17", unit: nil)))
+        let draft = try XCTUnwrap(store.generatedPracticeDraft(for: request.id)); runtime.finishClosing()
+        let cold = AIGeneratedPracticeRuntime(result: result, request: request, draft: draft)
+        XCTAssertTrue(cold.restoreCheckpoint(store: store)); XCTAssertTrue(cold.isPaused)
+        cold.next(store: store); XCTAssertEqual(cold.index, 0)
+        cold.resume(); cold.next(store: store)
+        XCTAssertEqual(cold.index, 1); XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(original)), bytes)
+    }
+
+    func testWorkedSolutionWaitsForReceiptAndFeedbackFailureReplaysWithoutGrading() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture(count: 1)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "draft 9"
+        runtime.privateCheckpointWriteFailure = { draft in if draft.stage == 1 { throw Fault.blocked } }
+        runtime.revealSolution(store: store)
+        XCTAssertFalse(runtime.isSolutionViewed); XCTAssertEqual(runtime.stage, 1); XCTAssertTrue(store.attempts.isEmpty)
+        runtime.privateCheckpointWriteFailure = { draft in if draft.stage == 2 { throw Fault.blocked } }
+        runtime.retryCommit(store: store)
+        XCTAssertTrue(runtime.isSolutionViewed); XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(store.attempts.first?.errorCode, "solution_revealed")
+        XCTAssertEqual(runtime.exitDisposition(store: store), .pendingCommit)
+        let prepared = try XCTUnwrap(store.generatedPracticeDraft(for: request.id)); XCTAssertEqual(prepared.stage, 1)
+        runtime.finishClosing()
+        let cold = AIGeneratedPracticeRuntime(result: result, request: request, draft: prepared)
+        XCTAssertTrue(cold.restoreCheckpoint(store: store)); XCTAssertTrue(cold.isSolutionViewed)
+        XCTAssertEqual(store.attempts.count, 1); XCTAssertNil(cold.lastScore); XCTAssertTrue(cold.correctness.isEmpty)
+        cold.resume(); cold.next(store: store)
+        let terminal = try XCTUnwrap(store.generatedPracticeRuns.first { $0.id == cold.runID })
+        XCTAssertEqual(terminal.runState?.status, .completed)
+        XCTAssertEqual(terminal.runState?.completedCount, 1)
+        XCTAssertEqual(terminal.runState?.current.assistance.filter { $0.kind == .workedSolution }.count, 1)
+    }
+
+    func testEarlyEndFailurePreservesEditorUntilDurableTerminalAcknowledgement() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture()
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "2"; runtime.submit(store: store); runtime.next(store: store)
+        runtime.numericValue = "unfinished second answer"
+        runtime.privateCheckpointWriteFailure = { draft in if draft.stage == 3 { throw Fault.blocked } }
+        runtime.endSession(store: store)
+        XCTAssertEqual(runtime.stage, 0); XCTAssertEqual(runtime.numericValue, "unfinished second answer")
+        XCTAssertEqual(store.attempts.count, 1); XCTAssertEqual(store.generatedPracticeDraft(for: request.id)?.stage, 0)
+        runtime.privateCheckpointWriteFailure = nil; runtime.endSession(store: store)
+        XCTAssertEqual(runtime.stage, 3); XCTAssertEqual(runtime.completedActivityCount, 1)
+        let terminal = try XCTUnwrap(store.generatedPracticeRuns.first { $0.id == runtime.runID })
+        XCTAssertEqual(terminal.runState?.status, .endedEarly); XCTAssertEqual(terminal.runState?.stopReason, .learnerEnded)
+        XCTAssertNil(store.generatedPracticeDraft(for: request.id))
+        XCTAssertEqual(terminal.response, .numeric(.init(value: "unfinished second answer", unit: nil)))
+        XCTAssertNotNil(store.generatedRunSummary(sessionID: runtime.runID))
+        runtime.finishClosing()
+        let cold = AIGeneratedPracticeRuntime(result: result, request: request, draft: terminal)
+        XCTAssertTrue(cold.restoreCheckpoint(store: store)); XCTAssertEqual(cold.stage, 3)
+        XCTAssertEqual(cold.completedActivityCount, 1); XCTAssertTrue(cold.runSummary.contains("Ended"))
+    }
+
+    func testInitialReferenceAndSelfRatingAreLockedWhilePausedAndCountAsActivity() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture(count: 1, selfCheck: true)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        guard case .selfCheck = runtime.exercise.interaction else { return XCTFail("Expected declared self-check authority") }
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.selfCheckReflection = "I recall adding one unit."
+        runtime.submit(store: store); XCTAssertEqual(runtime.stage, 4)
+        runtime.selfCheckRating = .matched; runtime.pause(store: store)
+        runtime.saveSelfCheck(store: store); XCTAssertTrue(store.attempts.isEmpty)
+        XCTAssertFalse(NFAIGeneratedPracticeCommandPolicy.resolve(stage: 4, canSubmit: true, isPaused: true).canAdvance)
+        runtime.resume(); runtime.saveSelfCheck(store: store)
+        XCTAssertEqual(runtime.stage, 2); XCTAssertEqual(runtime.completedActivityCount, 1); XCTAssertTrue(runtime.correctness.isEmpty)
+        runtime.next(store: store)
+        XCTAssertEqual(runtime.stage, 3); XCTAssertEqual(runtime.completedActivityCount, 1)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.current.outcome, .selfReported)
+    }
+
+    func testExactLegacyPendingCommitKeepsOriginalRunAndAttemptProtocol() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture(count: 1)
+        let id = UUID(), attemptID = UUID(), response = NFExerciseResponse.numeric(.init(value: "2", unit: nil))
+        let draft = NFGeneratedPracticeDraft(id: id, ownerDeviceID: store.localSessions.ownerDeviceID,
+            result: result, request: request, index: 0, stage: 1, response: response, confidence: nil,
+            referenceRevealed: false, hintRevealed: false, correctness: [],
+            lastScore: NFExerciseScoringEngine.score(response, for: result.questions[0].authoritativeExercise),
+            scoredResponse: response, pendingAttemptID: attemptID, shownAt: Date(), activeDuration: 4)
+        let originalBytes = try JSONEncoder().encode(draft)
+        try store.localSessions.savePrivateStudyRun(id: id, generationID: request.id, payload: originalBytes)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request, draft: draft)
+        XCTAssertTrue(runtime.restoreCheckpoint(store: store)); XCTAssertEqual(runtime.stage, 2)
+        XCTAssertEqual(runtime.runID, id); XCTAssertNil(runtime.acceptedSlotID)
+        XCTAssertEqual(store.attempts.first?.id, attemptID); XCTAssertEqual(store.attempts.first?.sessionID, request.id)
+        XCTAssertNil(try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: originalBytes).runState)
+        runtime.resume(); runtime.next(store: store)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.terminalState?.completedCount, 1)
+    }
+
+    func testNoDraftStartDoesNotInferRunFromSetHistoryAndRetainedTerminalCannotReopen() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture(count: 1)
+        let first = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(first.checkpoint(store: store)); first.numericValue = "2"; first.submit(store: store); first.next(store: store)
+        let terminal = try XCTUnwrap(store.generatedPracticeRuns.first); first.finishClosing()
+        let new = AIGeneratedPracticeRuntime(result: result, request: request)
+        new.restoreDurableProgress(from: store.attempts)
+        XCTAssertEqual(new.index, 0); XCTAssertEqual(new.stage, 0); XCTAssertNotEqual(new.runID, first.runID)
+        XCTAssertTrue(new.correctness.isEmpty); XCTAssertFalse(new.canEditDraft)
+        var forged = terminal; forged.stage = 0
+        forged.runState?.status = .active; forged.runState?.stopReason = nil; forged.runState?.revision += 1
+        XCTAssertThrowsError(try store.localSessions.saveGeneratedPracticeDraft(forged, expectedRevision: terminal.runState?.revision))
+        XCTAssertEqual(store.generatedPracticeRuns.first?.stage, 3)
+    }
+
+    func testRealUnwritableFileRetainsInitialIdentityAndCannotPublishOrAdvance() throws {
+        let root = FileManager.default.temporaryDirectory.appending(path: "GeneratedLifecycle-\(UUID())")
+        let backup = root.appendingPathExtension("retained")
+        defer { try? FileManager.default.removeItem(at: root); try? FileManager.default.removeItem(at: backup) }
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        let repository = NFLocalSessionRepository(url: root.appending(path: "Sessions.json"))
+        let (store, container) = try store(repository); _ = container
+        let (request, result) = fixture()
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "2"; runtime.submit(store: store)
+        let id = runtime.acceptedSlotID
+        try FileManager.default.moveItem(at: root, to: backup); try Data("blocked".utf8).write(to: root)
+        runtime.next(store: store)
+        XCTAssertEqual(runtime.stage, 2); XCTAssertEqual(runtime.acceptedSlotID, id); XCTAssertEqual(store.attempts.count, 1)
+        try FileManager.default.removeItem(at: root); try FileManager.default.moveItem(at: backup, to: root)
+        runtime.next(store: store)
+        XCTAssertEqual(runtime.index, 1); XCTAssertNotEqual(runtime.acceptedSlotID, id)
+        runtime.finishClosing()
+        let reopened = NFLocalSessionRepository(url: root.appending(path: "Sessions.json"), ownerDeviceID: repository.ownerDeviceID)
+        XCTAssertNil(reopened.loadError)
+        let saved = try XCTUnwrap(reopened.archive.privateStudyRuns?.first)
+        XCTAssertEqual(try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: saved.payload).index, 1)
+    }
+    func testHintFailureRevealsNoStageAndCapturedSkipCannotSkipTheFollowingItem() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture()
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        runtime.privateCheckpointWriteFailure = { draft in if draft.runState?.nextHintIndex == 1 { throw Fault.blocked } }
+        runtime.requestHint(store: store); runtime.requestHint(store: store)
+        XCTAssertEqual(runtime.coachingHintCount, 0); XCTAssertFalse(runtime.showsCoaching)
+        XCTAssertTrue(runtime.runState?.current.assistance.isEmpty == true)
+        runtime.privateCheckpointWriteFailure = nil; runtime.requestHint(store: store)
+        XCTAssertEqual(runtime.coachingHintCount, 1)
+        let commandAttempt = try XCTUnwrap(runtime.acceptedAttemptID)
+        runtime.skip(store: store, expectedAttemptID: commandAttempt)
+        XCTAssertEqual(runtime.index, 1); XCTAssertEqual(store.attempts.count, 1)
+        runtime.skip(store: store, expectedAttemptID: commandAttempt)
+        XCTAssertEqual(runtime.index, 1); XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(runtime.runState?.slots[0].assistance.filter { $0.kind == .hint }.count, 1)
+        XCTAssertTrue(runtime.runState?.current.assistance.isEmpty == true)
+    }
+
+    func testPreparedResponseCannotBeRewrittenByAValidLookingSameSlotCheckpoint() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture()
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "2"
+        runtime.privateCheckpointWriteFailure = { draft in if draft.stage == 2 { throw Fault.blocked } }
+        runtime.submit(store: store)
+        let saved = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+        XCTAssertEqual(saved.stage, 1); XCTAssertEqual(store.attempts.count, 1)
+        let raw = try XCTUnwrap(store.localSessions.archive.privateStudyRuns?.first?.payload)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(saved)) as? [String: Any])
+        let changed = try JSONSerialization.jsonObject(with: JSONEncoder().encode(NFExerciseResponse.numeric(.init(value: "99", unit: nil))))
+        object["response"] = changed; object["scoredResponse"] = changed
+        var state = try XCTUnwrap(object["runState"] as? [String: Any]); state["revision"] = (saved.runState?.revision ?? 0) + 1
+        object["runState"] = state
+        let forged = try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: JSONSerialization.data(withJSONObject: object))
+        XCTAssertThrowsError(try store.localSessions.saveGeneratedPracticeDraft(forged, expectedRevision: saved.runState?.revision))
+        XCTAssertEqual(store.localSessions.archive.privateStudyRuns?.first?.payload, raw)
+        XCTAssertEqual(store.attempts.first?.response, try String(decoding: JSONEncoder().encode(saved.response), as: UTF8.self))
+    }
+
+}
+
+
+extension GeneratedLifecycleParityTests {
+    func testTerminalInventoryReleasesFutureQuestionsAndRetainsExactUnfinishedSlotOnColdOpen() throws {
+        let root = FileManager.default.temporaryDirectory.appending(path: "terminal-inventory-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let repository = NFLocalSessionRepository(url: root.appending(path: "Sessions.json"))
+        let (store, container) = try store(repository); _ = container
+        let (request, result) = fixture(count: 4)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        runtime.numericValue = "2"; runtime.submit(store: store); runtime.next(store: store)
+        runtime.numericValue = "original unfinished answer"
+        let exactQuestion = runtime.question
+        let receipt = try XCTUnwrap(store.attempts.first)
+        let originalReceipt = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(receipt))
+        let originalSnapshot = try NFImmutableAttemptRecordSnapshot.encoded(XCTUnwrap(repository.archive.snapshots.first))
+        runtime.endSession(store: store)
+        let terminal = try XCTUnwrap(store.generatedPracticeRuns.first { $0.id == runtime.runID })
+        XCTAssertTrue(terminal.valid); XCTAssertEqual(terminal.result.questions.count, 2)
+        XCTAssertEqual(terminal.plannedQuestionCount, 4); XCTAssertEqual(terminal.terminalInventory?.version, 1)
+        XCTAssertEqual(terminal.result.questions[1], exactQuestion)
+        XCTAssertEqual(terminal.response, .numeric(.init(value: "original unfinished answer", unit: nil)))
+        XCTAssertEqual(terminal.terminalInventory?.originalResultDigest, try NFEditorialCanonicalData.digest(result))
+        XCTAssertEqual(terminal.terminalInventory?.originalRequestDigest, try NFEditorialCanonicalData.digest(request))
+        XCTAssertFalse(String(decoding: try JSONEncoder().encode(terminal), as: UTF8.self).contains(result.questions[3].id))
+        XCTAssertTrue(runtime.runSummary.contains("1 of 4")); XCTAssertEqual(runtime.plannedQuestionCount, 4)
+        XCTAssertEqual(runtime.exitDisposition(store: store), .saved)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(receipt)), originalReceipt)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(XCTUnwrap(repository.archive.snapshots.first)), originalSnapshot)
+        runtime.finishClosing()
+        let reopened = NFLocalSessionRepository(url: root.appending(path: "Sessions.json"), ownerDeviceID: repository.ownerDeviceID)
+        XCTAssertNil(reopened.loadError)
+        let payload = try XCTUnwrap(reopened.archive.privateStudyRuns?.first { $0.id == terminal.id }?.payload)
+        let cold = try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: payload)
+        XCTAssertTrue(cold.valid); XCTAssertEqual(cold.plannedQuestionCount, 4)
+        XCTAssertEqual(cold.response, terminal.response); XCTAssertEqual(cold.runState?.slots, terminal.runState?.slots)
+        XCTAssertEqual(cold.result.questions, terminal.result.questions)
+    }
+
+    func testTerminalInventoryFailedWriteRetainsFullRunUntilAtomicRetry() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture(count: 4)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "draft 77"
+        runtime.privateCheckpointWriteFailure = { snapshot in
+            if snapshot.stage == 3 {
+                XCTAssertEqual(snapshot.result.questions.count, 1)
+                XCTAssertEqual(snapshot.plannedQuestionCount, 4)
+                throw Fault.blocked
+            }
+        }
+        runtime.endSession(store: store)
+        XCTAssertEqual(runtime.stage, 0); XCTAssertEqual(runtime.result.questions.count, 4)
+        let retained = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+        XCTAssertNil(retained.terminalInventory); XCTAssertEqual(retained.result.questions.count, 4)
+        XCTAssertEqual(retained.response, .numeric(.init(value: "draft 77", unit: nil)))
+        XCTAssertTrue(store.attempts.isEmpty)
+        runtime.privateCheckpointWriteFailure = nil; runtime.endSession(store: store)
+        XCTAssertEqual(runtime.stage, 3); XCTAssertEqual(runtime.result.questions.count, 1)
+        XCTAssertTrue(runtime.runSummary.contains("0 of 4")); XCTAssertTrue(store.attempts.isEmpty)
+    }
+
+    func testCompletedInventoryKeepsEveryAttemptAndOriginalCompletionScope() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture(count: 2)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        runtime.numericValue = "2"; runtime.submit(store: store); runtime.next(store: store)
+        runtime.numericValue = "3"; runtime.submit(store: store)
+        let bytes = try store.attempts.map { try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot($0)) }
+        runtime.next(store: store)
+        let terminal = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertTrue(terminal.valid); XCTAssertEqual(terminal.runState?.status, .completed)
+        XCTAssertEqual(terminal.result.questions, result.questions); XCTAssertEqual(terminal.plannedQuestionCount, 2)
+        XCTAssertTrue(runtime.runSummary.contains("Completed 2 of 2"))
+        XCTAssertEqual(try store.attempts.map { try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot($0)) }, bytes)
+        let saved = try NFImmutableAttemptRecordSnapshot.encoded(XCTUnwrap(store.localSessions.archive.privateStudyRuns?.first))
+        runtime.endSession(store: store); runtime.next(store: store)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(XCTUnwrap(store.localSessions.archive.privateStudyRuns?.first)), saved)
+    }
+
+    func testTerminalInventoryCASRejectsTamperedCountsQuestionAndSourceClosure() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture(count: 4)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "draft"
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        let previous = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+        var ending = previous
+        ending.stage = 3; ending.terminalState = .init(endedEarly: true, completedCount: 0)
+        ending.runState?.status = .endedEarly; ending.runState?.stopReason = .learnerEnded
+        ending.runState?.revision += 1
+        let exact = try ending.releasingUnneededTerminalInventory()
+        var countTamper = exact
+        countTamper.terminalInventory = .init(plannedQuestionCount: 3,
+            originalResultDigest: try NFEditorialCanonicalData.digest(result), originalRequestDigest: try NFEditorialCanonicalData.digest(request))
+        XCTAssertTrue(countTamper.valid)
+        XCTAssertThrowsError(try store.localSessions.saveGeneratedPracticeDraft(countTamper, expectedRevision: previous.runState?.revision))
+        var extraFuture = exact
+        extraFuture.result = result
+        XCTAssertFalse(extraFuture.valid)
+        XCTAssertThrowsError(try store.localSessions.saveGeneratedPracticeDraft(extraFuture, expectedRevision: previous.runState?.revision))
+        var differentRequest = exact
+        differentRequest.request = .init(id: request.id, capability: request.capability, lab: request.lab,
+            field: request.field, customTopic: "changed", learningObjective: request.learningObjective,
+            style: request.style, difficulty: request.difficulty, count: request.count,
+            localeIdentifier: request.localeIdentifier, seed: request.seed, aiMode: request.aiMode)
+        XCTAssertTrue(differentRequest.valid)
+        XCTAssertThrowsError(try store.localSessions.saveGeneratedPracticeDraft(differentRequest, expectedRevision: previous.runState?.revision))
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(XCTUnwrap(store.generatedPracticeDraft(for: request.id))), try NFImmutableAttemptRecordSnapshot.encoded(previous))
+        try store.localSessions.saveGeneratedPracticeDraft(exact, expectedRevision: previous.runState?.revision)
+        var resurrected = previous; resurrected.runState?.revision = (exact.runState?.revision ?? 0) + 1
+        XCTAssertThrowsError(try store.localSessions.saveGeneratedPracticeDraft(resurrected, expectedRevision: exact.runState?.revision))
+        var rewritten = exact; rewritten.runState?.revision += 1
+        rewritten.terminalInventory = countTamper.terminalInventory
+        XCTAssertThrowsError(try store.localSessions.saveGeneratedPracticeDraft(rewritten, expectedRevision: exact.runState?.revision))
+    }
+
+    func testTerminalCollectionSkipsActiveOwnedAndAmbiguousLegacyPayloads() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture(count: 4)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "saved draft"
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        let active = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+        XCTAssertEqual(try store.localSessions.compactGeneratedTerminalInventory(), 0)
+        let activeBytes = try NFImmutableAttemptRecordSnapshot.encoded(active)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(XCTUnwrap(store.generatedPracticeDraft(for: request.id))), activeBytes)
+        var terminal = active
+        terminal.stage = 3; terminal.terminalState = .init(endedEarly: true, completedCount: 0)
+        terminal.runState?.status = .endedEarly; terminal.runState?.stopReason = .learnerEnded
+        try store.localSessions.savePrivateStudyRun(id: terminal.id, generationID: request.id, payload: JSONEncoder().encode(terminal))
+        XCTAssertEqual(try store.localSessions.compactGeneratedTerminalInventory(), 0, "Owned presentation is not rewritten by maintenance.")
+        runtime.finishClosing()
+        XCTAssertEqual(try store.localSessions.compactGeneratedTerminalInventory(), 1)
+        let compact = try XCTUnwrap(store.generatedPracticeRuns.first { $0.id == terminal.id })
+        XCTAssertEqual(compact.plannedQuestionCount, 4); XCTAssertEqual(compact.result.questions.count, 1)
+        XCTAssertEqual(compact.response, active.response)
+        XCTAssertEqual(compact.runState?.revision, (terminal.runState?.revision ?? 0) + 1)
+        XCTAssertEqual(try store.localSessions.compactGeneratedTerminalInventory(), 0)
+        let unknownID = UUID()
+        let unknown = Data("{\"id\":\"\(unknownID)\",\"stage\":3,\"future\":\"retain original\"}".utf8)
+        try store.localSessions.savePrivateStudyRun(id: unknownID, generationID: request.id, payload: unknown)
+        XCTAssertEqual(try store.localSessions.compactGeneratedTerminalInventory(), 0)
+        XCTAssertEqual(store.localSessions.archive.privateStudyRuns?.first { $0.id == unknownID }?.payload, unknown)
+    }
+}
+
+extension GeneratedLifecycleParityTests {
+    private func terminalSourceFixture() -> (NFAuthoringRequest, NFAuthoringResult) {
+        let (baseRequest, base) = fixture(count: 4)
+        let documents = (0..<4).map { _ in UUID() }
+        let chunks = (0..<4).map { index in NFSourceChunk(id: "terminal-source-\(index)", documentID: documents[index],
+            documentVersion: 1, sourceName: "Source \(index)", locator: .init(page: index + 1, lineStart: nil, lineEnd: nil, section: nil),
+            text: "Exact source text \(index) RETENTION-CANARY-\(index)", contentHash: String(repeating: "\(index)", count: 64), ordinal: index) }
+        var request = baseRequest; request.sourceChunks = chunks
+        let questions = base.questions.enumerated().map { index, question -> NFAuthoredQuestion in
+            let citations = [chunks[index].id]
+            let authority = NFAuthoredExerciseAuthority.make(id: question.id, lab: question.lab, style: question.style,
+                prompt: question.prompt, context: question.context, choices: question.choices, correctAnswer: question.correctAnswer,
+                acceptedAnswers: question.acceptedAnswers, explanation: question.explanation, hint: question.hint,
+                decisiveStep: question.decisiveStep, difficulty: question.difficulty, citationChunkIDs: citations,
+                evidenceClass: question.evidenceClass, request: request)
+            return .init(id: question.id, lab: question.lab, style: question.style, prompt: question.prompt,
+                context: question.context, choices: question.choices, correctAnswer: question.correctAnswer,
+                acceptedAnswers: question.acceptedAnswers, explanation: question.explanation, hint: question.hint,
+                decisiveStep: question.decisiveStep, difficulty: question.difficulty, citationChunkIDs: citations,
+                evidenceClass: question.evidenceClass, authoritativeExercise: authority)
+        }
+        return (request, .init(questions: questions, provenance: base.provenance, routeCandidates: base.routeCandidates,
+            validationStatus: base.validationStatus, validationNotes: base.validationNotes))
+    }
+
+    func testTerminalSourceClosureDropsOnlyUnusedChunksAndPreservesReusableCollection() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = terminalSourceFixture()
+        XCTAssertNil(NFGeneratedPracticeCompatibility.unavailableReason(for: result))
+        try store.localSessions.saveSet(result, at: result.provenance.generatedAt)
+        let collection = try NFImmutableAttemptRecordSnapshot.encoded(XCTUnwrap(store.localSessions.archive.savedSets?.first))
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "unfinished source response"
+        runtime.endSession(store: store)
+        let terminal = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertTrue(terminal.valid); XCTAssertEqual(terminal.request.sourceChunks, [request.sourceChunks[0]])
+        XCTAssertEqual(terminal.result.questions, [result.questions[0]])
+        XCTAssertEqual(terminal.result.questions[0].authoritativeExercise.citations, result.questions[0].authoritativeExercise.citations)
+        let text = String(decoding: try JSONEncoder().encode(terminal), as: UTF8.self)
+        XCTAssertTrue(text.contains("RETENTION-CANARY-0")); XCTAssertFalse(text.contains("RETENTION-CANARY-3"))
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(terminal.result.provenance), try NFImmutableAttemptRecordSnapshot.encoded(result.provenance))
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(XCTUnwrap(store.localSessions.archive.savedSets?.first)), collection)
+        XCTAssertEqual(store.recoverAIGeneration(id: request.id, at: result.provenance.generatedAt.addingTimeInterval(20 * 86_400))?.questions, result.questions)
+    }
+
+    func testExpiredTemporaryInventoryStillPinsSuspendedRunUntilExplicitEnd() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture(count: 4)
+        try store.saveAIGeneration(request: request, result: result)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "exact day-seven draft"
+        runtime.pause(store: store); runtime.finishClosing()
+        let dayEight = result.provenance.generatedAt.addingTimeInterval(8 * 86_400)
+        _ = try store.purgeExpiredAIGenerationPayloads(at: dayEight)
+        XCTAssertNil(store.recoverAIGeneration(id: request.id, at: dayEight))
+        let suspended = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+        XCTAssertEqual(suspended.result.questions, result.questions); XCTAssertNil(suspended.terminalInventory)
+        let cold = AIGeneratedPracticeRuntime(result: result, request: request, draft: suspended)
+        XCTAssertTrue(cold.restoreCheckpoint(store: store)); XCTAssertEqual(cold.numericValue, "exact day-seven draft")
+        cold.endSession(store: store)
+        let terminal = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertEqual(terminal.result.questions.count, 1); XCTAssertEqual(terminal.plannedQuestionCount, 4)
+        XCTAssertNil(store.generatedPracticeDraft(for: request.id)); XCTAssertTrue(store.attempts.isEmpty)
+    }
+
+    func testTerminalCollectionFailedFileWritePreservesAllOriginalPayloadsForRetry() throws {
+        let parent = FileManager.default.temporaryDirectory.appending(path: "terminal-collection-\(UUID())")
+        let folder = parent.appending(path: "Live"), held = parent.appending(path: "Held")
+        defer { try? FileManager.default.removeItem(at: parent) }
+        let repository = NFLocalSessionRepository(url: folder.appending(path: "Sessions.json"))
+        let (store, container) = try store(repository); _ = container
+        let (request, result) = fixture(count: 4)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "retained"
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        var oldTerminal = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+        oldTerminal.stage = 3; oldTerminal.terminalState = .init(endedEarly: true, completedCount: 0)
+        oldTerminal.runState?.status = .endedEarly; oldTerminal.runState?.stopReason = .learnerEnded
+        try repository.savePrivateStudyRun(id: oldTerminal.id, generationID: request.id, payload: JSONEncoder().encode(oldTerminal))
+        runtime.finishClosing()
+        let before = try NFImmutableAttemptRecordSnapshot.encoded(repository.archive)
+        try FileManager.default.moveItem(at: folder, to: held)
+        try Data("not a directory".utf8).write(to: folder)
+        XCTAssertThrowsError(try repository.compactGeneratedTerminalInventory())
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(repository.archive), before)
+        try FileManager.default.removeItem(at: folder); try FileManager.default.moveItem(at: held, to: folder)
+        XCTAssertEqual(try repository.compactGeneratedTerminalInventory(), 1)
+        XCTAssertEqual(try repository.compactGeneratedTerminalInventory(), 0)
+        let reopened = NFLocalSessionRepository(url: folder.appending(path: "Sessions.json"), ownerDeviceID: repository.ownerDeviceID)
+        XCTAssertNil(reopened.loadError)
+        let terminal = try JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: XCTUnwrap(reopened.archive.privateStudyRuns?.first?.payload))
+        XCTAssertTrue(terminal.valid); XCTAssertEqual(terminal.result.questions.count, 1)
+        XCTAssertEqual(terminal.response, oldTerminal.response); XCTAssertEqual(terminal.plannedQuestionCount, 4)
+    }
+}
+
+
+extension GeneratedLifecycleParityTests {
+    func testTerminalSourceClosureRetainsLowercaseDocumentAndUnresolvedLegacyReferences() throws {
+        for isLegacy in [false, true] {
+            let (store, container) = try store(); _ = container
+            let (request, original) = terminalSourceFixture()
+            var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(original.questions[0])) as? [String: Any])
+            var exercise = try XCTUnwrap(object["authoritativeExercise"] as? [String: Any])
+            var context = try XCTUnwrap(exercise["sourceContext"] as? [String: Any])
+            context["sourceDocumentIDs"] = [request.sourceChunks[0].documentID.uuidString,
+                isLegacy ? "legacy-personal-document" : request.sourceChunks[1].documentID.uuidString.lowercased()]
+            exercise["sourceContext"] = context; object["authoritativeExercise"] = exercise
+            let first = try JSONDecoder().decode(NFAuthoredQuestion.self, from: JSONSerialization.data(withJSONObject: object))
+            XCTAssertTrue(NFAuthoredExerciseAuthority.validatesBinding(first))
+            let result = NFAuthoringResult(questions: [first] + original.questions.dropFirst(), provenance: original.provenance,
+                routeCandidates: original.routeCandidates, validationStatus: original.validationStatus, validationNotes: original.validationNotes)
+            let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+            XCTAssertTrue(runtime.checkpoint(store: store)); runtime.endSession(store: store)
+            let terminal = try XCTUnwrap(store.generatedPracticeRuns.first)
+            XCTAssertTrue(terminal.valid)
+            XCTAssertEqual(terminal.request.sourceChunks, isLegacy ? request.sourceChunks : Array(request.sourceChunks.prefix(2)))
+            XCTAssertEqual(terminal.result.questions, [first])
+            XCTAssertEqual(terminal.plannedQuestionCount, 4)
+        }
+    }
+}
+
+extension GeneratedLifecycleParityTests {
+    func testGeneratedReceiptThenWriterLossKeepsPreparedDraftAndColdReconcilesExactlyOnce() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture()
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.numericValue = "2"
+        let old = try runtime.sessionWriterCommand(), other = UUID()
+        runtime.receiptWriteAcknowledged = {
+            runtime.receiptWriteAcknowledged = nil
+            XCTAssertEqual(store.attempts.count, 1)
+            runtime.releaseWriter()
+            XCTAssertTrue(store.localSessions.claimWriter(other, sessionID: runtime.runID, checkpoint: { true }))
+        }
+        runtime.submit(store: store)
+        XCTAssertEqual(runtime.stage, 1); XCTAssertEqual(store.attempts.count, 1)
+        let prepared = try XCTUnwrap(store.generatedPracticeRuns.first { $0.id == runtime.runID })
+        XCTAssertEqual(prepared.stage, 1); XCTAssertNil(prepared.runState?.current.outcome)
+        let before = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(XCTUnwrap(store.attempts.first)))
+        store.localSessions.releaseWriter(other)
+        let cold = AIGeneratedPracticeRuntime(result: result, request: request, draft: prepared)
+        XCTAssertTrue(cold.restoreCheckpoint(store: store)); XCTAssertEqual(cold.stage, 2)
+        XCTAssertNotEqual(old, try cold.sessionWriterCommand())
+        XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(XCTUnwrap(store.attempts.first))), before)
+        XCTAssertFalse(cold.isReadOnlyRecovery)
+    }
+
+    func testGeneratedCheckpointRetainsCapturedGenerationAcrossRealPrewriteFailureHook() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture()
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        let original = try XCTUnwrap(store.localSessions.archive.privateStudyRuns?.first)
+        runtime.numericValue = "retained old window text"
+        let other = UUID()
+        runtime.privateCheckpointWriteFailure = { _ in
+            runtime.privateCheckpointWriteFailure = nil
+            runtime.releaseWriter()
+            XCTAssertTrue(store.localSessions.claimWriter(other, sessionID: runtime.runID, checkpoint: { true }))
+        }
+        XCTAssertFalse(runtime.checkpoint(store: store))
+        XCTAssertEqual(store.localSessions.archive.privateStudyRuns?.first?.payload, original.payload)
+        XCTAssertEqual(runtime.numericValue, "retained old window text")
+        XCTAssertFalse(runtime.canEditDraft); XCTAssertTrue(store.attempts.isEmpty)
+        store.localSessions.releaseWriter(other)
+    }
+
+    func testLegacyGeneratedCommandRejectsABAAndExactPayloadConflictWithoutInventingSlots() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture(count: 1)
+        let id = UUID(), writer = UUID(), other = UUID()
+        let draft = NFGeneratedPracticeDraft(id: id, ownerDeviceID: store.localSessions.ownerDeviceID,
+            result: result, request: request, index: 0, stage: 0,
+            response: .numeric(.init(value: "original 17", unit: nil)), confidence: nil,
+            referenceRevealed: false, hintRevealed: false, correctness: [], lastScore: nil,
+            scoredResponse: nil, pendingAttemptID: UUID(), shownAt: Date(), activeDuration: 4)
+        let bytes = try JSONEncoder().encode(draft)
+        try store.localSessions.savePrivateStudyRun(id: id, generationID: request.id, payload: bytes)
+        XCTAssertTrue(store.localSessions.claimWriter(writer, sessionID: id, checkpoint: { true }))
+        let old = try store.localSessions.sessionCommand(authority: store.localSessions.writerAuthority(for: writer, sessionID: id), sessionID: id)
+        store.localSessions.releaseWriter(writer)
+        XCTAssertTrue(store.localSessions.claimWriter(other, sessionID: id, checkpoint: { true }))
+        store.localSessions.releaseWriter(other)
+        XCTAssertTrue(store.localSessions.claimWriter(writer, sessionID: id, checkpoint: { true }))
+        defer { store.localSessions.releaseWriter(writer) }
+        XCTAssertThrowsError(try store.localSessions.saveLegacyGeneratedSession(draft, command: old,
+            expectedPayloadDigest: NFReservationSnapshot.digest(bytes)))
+        let current = try store.localSessions.sessionCommand(authority: store.localSessions.writerAuthority(for: writer, sessionID: id), sessionID: id)
+        XCTAssertThrowsError(try store.localSessions.saveLegacyGeneratedSession(draft, command: current, expectedPayloadDigest: "wrong original bytes"))
+        XCTAssertEqual(store.localSessions.archive.privateStudyRuns?.first?.payload, bytes)
+        try store.localSessions.saveLegacyGeneratedSession(draft, command: current, expectedPayloadDigest: NFReservationSnapshot.digest(bytes))
+        let retained = try XCTUnwrap(store.generatedPracticeRuns.first { $0.id == id })
+        XCTAssertNil(retained.runState); XCTAssertEqual(retained.id, id)
+        XCTAssertEqual(retained.pendingAttemptID, draft.pendingAttemptID); XCTAssertEqual(retained.response, draft.response)
+    }
+}
+
+extension GeneratedLifecycleParityTests {
+    func testColdGeneratedMaximumRevisionDoesNotWrapOrEraseSavedPayload() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture()
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.finishClosing()
+        var maximal = try XCTUnwrap(store.generatedPracticeRuns.first { $0.id == runtime.runID })
+        maximal.runState?.revision = Int.max
+        XCTAssertTrue(maximal.valid)
+        let bytes = try JSONEncoder().encode(maximal)
+        try store.localSessions.savePrivateStudyRun(id: maximal.id, generationID: request.id, payload: bytes)
+        let cold = AIGeneratedPracticeRuntime(result: result, request: request, draft: maximal)
+        XCTAssertTrue(cold.restoreCheckpoint(store: store))
+        XCTAssertFalse(cold.checkpoint(store: store)); XCTAssertNotNil(cold.saveError)
+        XCTAssertFalse(cold.canEditDraft)
+        XCTAssertEqual(store.localSessions.archive.privateStudyRuns?.first { $0.id == maximal.id }?.payload, bytes)
+        XCTAssertTrue(store.attempts.isEmpty)
+    }
+}
+
+extension GeneratedLifecycleParityTests {
+    func testRawModernDraftCASRefusesExhaustedRevisionWithoutArithmeticOverflow() throws {
+        let (store, container) = try store(); _ = container
+        let (request, result) = fixture()
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.finishClosing()
+        var maximal = try XCTUnwrap(store.generatedPracticeRuns.first { $0.id == runtime.runID })
+        maximal.runState?.revision = Int.max
+        XCTAssertTrue(maximal.valid)
+        let bytes = try JSONEncoder().encode(maximal)
+        try store.localSessions.savePrivateStudyRun(id: maximal.id, generationID: request.id, payload: bytes)
+        XCTAssertThrowsError(try store.localSessions.saveGeneratedPracticeDraft(maximal, expectedRevision: Int.max)) {
+            guard case NFLocalSessionRepository.RepositoryError.unsupportedVersion = $0 else {
+                return XCTFail("Expected checked revision refusal: \($0)")
+            }
+        }
+        XCTAssertEqual(store.localSessions.archive.privateStudyRuns?.first { $0.id == maximal.id }?.payload, bytes)
+        XCTAssertTrue(store.attempts.isEmpty)
+    }
+}
+
+@MainActor
+final class AuthoringReadyRecoveryTests: XCTestCase {
+    private func request(topic: String, locale: String = "en") -> NFAuthoringRequest {
+        .init(capability: .contextualize, lab: .logicDebugging, field: .general,
+            customTopic: topic, learningObjective: "", style: .debugging,
+            difficulty: 0.5, count: 5, localeIdentifier: locale,
+            seed: 16935018149198410945, sourceChunks: [], documentPolicies: [], aiMode: .disabled)
+    }
+    private func store(root: URL) throws -> (AppStore, ModelContainer) {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let store = AppStore(context: container.mainContext,
+            nextDayEnhancementCache: NFNextDayEnhancementCache(rootURL: root.appending(path: "cache")),
+            documentStorageRootURL: root.appending(path: "documents"),
+            localSessionRepository: NFLocalSessionRepository(url: root.appending(path: "sessions.json")),
+            adaptivePlanHistoryRepository: NFAdaptivePlanHistoryRepository(fileURL: root.appending(path: "history.json")),
+            offlineQuestionRotation: NFOfflineQuestionRotation(store: NFMemoryOfflineQuestionRotationStateStore()),
+            temporaryArtifactsRootURL: root.appending(path: "temporary"), allowsSharedWidgetPublishing: false)
+        return (store, container)
+    }
+    func testFreshOfflineReasoningSetIsImmediatelyRecoverableAndCanStartItsFirstRun() async throws {
+        for locale in ["en", "ja"] {
+            let root = FileManager.default.temporaryDirectory.appending(path: "NFReadySet-\(UUID())")
+            defer { try? FileManager.default.removeItem(at: root) }
+            let (store, container) = try store(root: root)
+            let request = request(topic: "Condition reasoning", locale: locale)
+            let engine = NFAuthoringEngine(cacheCapacity: 2, cacheTTL: 600)
+            let result = try await engine.author(request)
+            XCTAssertEqual(result.questions.count, 5)
+            XCTAssertTrue(result.questions.allSatisfy(\.hasValidResponseSchema))
+            try store.saveAIGeneration(request: request, result: result)
+            store.reload()
+            let recovered = try XCTUnwrap(store.recoverAIGeneration(id: request.id))
+            XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(recovered), try NFImmutableAttemptRecordSnapshot.encoded(result))
+            let runtime = AIGeneratedPracticeRuntime(result: recovered, request: request)
+            XCTAssertTrue(runtime.checkpoint(store: store)); runtime.acknowledgePresented(store: store)
+            XCTAssertTrue(runtime.canEditDraft); XCTAssertNil(runtime.unavailableReason)
+            XCTAssertEqual(runtime.question.prompt, result.questions[0].prompt)
+            XCTAssertTrue(store.attempts.isEmpty)
+            runtime.finishClosing()
+            withExtendedLifetime(container) {}
+        }
+    }
+    func testInvalidAuthoredContentCannotBeReturnedCachedOrPublishedAsAReadySet() async throws {
+        let engine = NFAuthoringEngine(cacheCapacity: 2, cacheTTL: 600)
+        do {
+            _ = try await engine.author(request(topic: "Faulty faulty reasoning"))
+            XCTFail("Malformed repeated-word content must fail before the ready result is returned")
+        } catch let error as NFAIError {
+            guard case .invalidOutput = error else { return XCTFail("Unexpected error: \(error)") }
+        }
+        let cached = await engine.cachedResultCount(); XCTAssertEqual(cached, 0)
+        let request = request(topic: "Condition reasoning")
+        let valid = try await engine.author(request)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(valid)) as? [String: Any])
+        var questions = try XCTUnwrap(object["questions"] as? [[String: Any]])
+        questions[0]["prompt"] = "Changed after the authoritative response was bound."
+        object["questions"] = questions
+        let malformed = try JSONDecoder().decode(NFAuthoringResult.self, from: JSONSerialization.data(withJSONObject: object))
+        let root = FileManager.default.temporaryDirectory.appending(path: "NFRejectedReadySet-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let (store, container) = try store(root: root)
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(store.localSessions.archive)
+        XCTAssertThrowsError(try store.saveAIGeneration(request: request, result: malformed))
+        XCTAssertTrue(store.aiGenerations.isEmpty)
+        XCTAssertEqual(try store.context.fetchCount(FetchDescriptor<AIGenerationRecord>()), 0)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(store.localSessions.archive), original)
+        XCTAssertNil(store.recoverAIGeneration(id: request.id))
+        withExtendedLifetime(container) {}
+    }
+}
+
+@MainActor
+extension AuthoringReadyRecoveryTests {
+    func testRetainedAuthoredVersionsDoNotBecomeFallbackRetrievalRecipes() throws {
+        for version in [10, 11, 12] {
+            let root = FileManager.default.temporaryDirectory.appending(path: "NFAuthoredNamespace-\(UUID())")
+            defer { try? FileManager.default.removeItem(at: root) }
+            let (store, container) = try store(root: root)
+            defer { withExtendedLifetime(container) {} }
+            let id = UUID()
+            let request = NFAuthoringRequest(id: id, capability: .contextualize, lab: .quantitative,
+                field: .general, customTopic: "Synthetic retained arithmetic", learningObjective: "Add integers",
+                style: .numerical, difficulty: 0.3, count: 1, localeIdentifier: "en", seed: 1, aiMode: .disabled)
+            let base = NFAuthoredExerciseAuthority.make(id: "namespace-\(id)", lab: .quantitative, style: .numerical,
+                prompt: "What is seven plus five?", context: "", choices: [], correctAnswer: "12", acceptedAnswers: [],
+                explanation: "Adding five to seven gives twelve.", hint: "Add the two quantities.",
+                decisiveStep: "The sum is twelve.", difficulty: 0.3, citationChunkIDs: [], evidenceClass: .documentPractice)
+            var raw = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(base)) as? [String: Any])
+            raw["generatorVersion"] = version
+            var provenance = try XCTUnwrap(raw["provenance"] as? [String: Any])
+            provenance["generatorVersion"] = version; raw["provenance"] = provenance
+            let exercise = try JSONDecoder().decode(NFExercise.self, from: JSONSerialization.data(withJSONObject: raw))
+            XCTAssertFalse(exercise.requiresRetrievalAssetContract)
+            XCTAssertTrue(exercise.hasSupportedRetrievalAsset)
+            XCTAssertNoThrow(try NFExerciseSchemaValidator.validate(exercise))
+            let question = NFAuthoredQuestion(id: exercise.id, lab: exercise.lab, style: .numerical,
+                prompt: exercise.prompt, context: "", choices: [], correctAnswer: "12", acceptedAnswers: [],
+                explanation: exercise.feedback.correctExplanation, hint: exercise.feedback.hintLadder[0],
+                decisiveStep: exercise.feedback.decisiveStep, difficulty: 0.3, citationChunkIDs: [],
+                evidenceClass: .documentPractice, authoritativeExercise: exercise)
+            XCTAssertTrue(question.hasValidResponseSchema)
+            let result = NFAuthoringResult(questions: [question], provenance: .init(requestID: id, generatedAt: Date(),
+                route: .deterministicFallback, routeReason: "Synthetic producer namespace compatibility",
+                promptVersion: NFAuthoringRequest.promptVersion, modelIdentifier: "synthetic.authority.\(version)",
+                sourceChunkIDs: [], sourceDocumentIDs: [], validationVersion: NFAuthoringEngine.validationVersion,
+                repairCount: 0, cacheKey: id.uuidString, isFallback: true), routeCandidates: [],
+                validationStatus: .init(level: .deterministicKey, sourceSupport: .notApplicable), validationNotes: [])
+            try store.saveAIGeneration(request: request, result: result)
+            let recovered = try XCTUnwrap(store.recoverAIGeneration(id: id))
+            let runtime = AIGeneratedPracticeRuntime(result: recovered, request: request)
+            XCTAssertTrue(runtime.checkpoint(store: store)); runtime.resume(); runtime.numericValue = "12.0"
+            XCTAssertTrue(runtime.checkpoint(store: store)); runtime.pause(store: store)
+            let draft = try XCTUnwrap(store.generatedPracticeDraft(for: id)); runtime.finishClosing()
+            let cold = AIGeneratedPracticeRuntime(result: recovered, request: request, draft: draft)
+            XCTAssertTrue(cold.restoreCheckpoint(store: store)); cold.resume()
+            XCTAssertEqual(cold.numericValue, "12.0"); XCTAssertEqual(cold.exercise, exercise)
+            cold.submit(store: store); XCTAssertEqual(cold.lastScore?.outcome, .correct)
+            let attempt = try XCTUnwrap(store.attempts.first)
+            XCTAssertEqual(store.exerciseSnapshot(for: attempt.id), exercise)
+            let context = NFHistoryContextProjection.make(exercise: exercise, hintCount: 0, isProtected: false)
+            XCTAssertEqual(context.representations, exercise.independentRepresentations)
+            XCTAssertFalse(try XCTUnwrap(store.exerciseSnapshot(for: attempt.id)).requiresRetrievalAssetContract)
+            cold.finishClosing()
+        }
+    }
+}
+
+extension GeneratedLifecycleParityTests {
+    func testAsyncGeneratedModernAndLegacyAutosaveRetainsExactIdentityAcrossColdRead() async throws {
+        for legacy in [false, true] {
+            let folder = FileManager.default.temporaryDirectory.appending(path: "NFAsync-Generated-\(UUID())")
+            defer { try? FileManager.default.removeItem(at: folder) }
+            let url = folder.appending(path: "sessions.json")
+            let repository = NFLocalSessionRepository(url: url)
+            let (store, container) = try store(repository); _ = container
+            let (request, result) = fixture()
+            var runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+            XCTAssertTrue(runtime.checkpoint(store: store))
+            if legacy {
+                var saved = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+                runtime.finishClosing()
+                // An explicit historical-format fixture retains its original
+                // run/attempt IDs; recovery must not manufacture a modern ledger.
+                saved.runState = nil
+                try repository.savePrivateStudyRun(id: saved.id, generationID: request.id, payload: JSONEncoder().encode(saved))
+                runtime = AIGeneratedPracticeRuntime(result: result, request: request, draft: saved)
+                XCTAssertTrue(runtime.restoreCheckpoint(store: store)); runtime.resume()
+            }
+            runtime.acknowledgePresented(store: store)
+            let id = runtime.runID, attempt = runtime.acceptedAttemptID
+            runtime.numericValue = "17"
+            let saved = await runtime.checkpointAsync(store: store); XCTAssertTrue(saved)
+            let draft = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+            XCTAssertEqual(draft.id, id); XCTAssertEqual(draft.pendingAttemptID, attempt)
+            XCTAssertEqual(draft.runState == nil, legacy)
+            XCTAssertEqual(draft.response, .numeric(.init(value: "17", unit: nil)))
+            runtime.finishClosing()
+            let coldRepository = NFLocalSessionRepository(url: url, ownerDeviceID: repository.ownerDeviceID)
+            let (coldStore, coldContainer) = try self.store(coldRepository); _ = coldContainer
+            let retained = try XCTUnwrap(coldStore.generatedPracticeDraft(for: request.id))
+            let cold = AIGeneratedPracticeRuntime(result: result, request: request, draft: retained)
+            XCTAssertTrue(cold.restoreCheckpoint(store: coldStore)); XCTAssertEqual(cold.runID, id)
+            XCTAssertEqual(cold.numericValue, "17"); XCTAssertTrue(coldStore.attempts.isEmpty)
+        }
+    }
+
+    func testAsyncGeneratedQueuedSkipAndEndKeepOneReceiptAndUnfinishedLastResponse() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let (request, result) = fixture()
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.acknowledgePresented(store: store)
+        let firstAttempt = try XCTUnwrap(runtime.acceptedAttemptID)
+        runtime.numericValue = "unfinished 17"
+        let probe = NFAsyncArchiveWriteProbe(.encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let saving = Task { await runtime.checkpointAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        runtime.skip(store: store)
+        XCTAssertFalse(runtime.canEditDraft); XCTAssertEqual(runtime.index, 0)
+        XCTAssertTrue(store.attempts.isEmpty)
+        probe.release(); _ = await saving.value
+        XCTAssertEqual(runtime.index, 1); XCTAssertEqual(runtime.stage, 0)
+        XCTAssertEqual(store.attempts.map(\.id), [firstAttempt])
+        XCTAssertTrue(store.attempts[0].wasSkipped)
+        XCTAssertEqual(store.attempts[0].evidenceWeight, 0)
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0]))
+        runtime.acknowledgePresented(store: store)
+        runtime.numericValue = "unfinished second answer"
+        let endingProbe = NFAsyncArchiveWriteProbe(.encoding); defer { endingProbe.release() }
+        repository.archiveWriteObserver = { endingProbe.observe($0, $1) }
+        let savingSecond = Task { await runtime.checkpointAsync(store: store) }
+        let heldSecond = await endingProbe.waitUntilHeld(); XCTAssertTrue(heldSecond)
+        runtime.endSession(store: store)
+        XCTAssertEqual(runtime.stage, 0)
+        endingProbe.release(); _ = await savingSecond.value
+        XCTAssertEqual(runtime.stage, 3)
+        let terminal = try XCTUnwrap(store.generatedPracticeRuns.first { $0.id == runtime.runID })
+        XCTAssertEqual(terminal.runState?.status, .endedEarly)
+        XCTAssertEqual(terminal.runState?.completedCount, 1)
+        XCTAssertEqual(terminal.plannedQuestionCount, 2)
+        XCTAssertEqual(terminal.response, .numeric(.init(value: "unfinished second answer", unit: nil)))
+        XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0])), original)
+    }
+
+    func testAsyncGeneratedQueuedSelfCheckRevealKeepsReferenceBehindAcknowledgement() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let (request, result) = fixture(selfCheck: true)
+        let runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store)); runtime.acknowledgePresented(store: store)
+        guard case .selfCheck = runtime.exercise.interaction else { return XCTFail("Expected declared self-check authority") }
+        runtime.selfCheckReflection = "Add one unit to the starting number."
+        XCTAssertTrue(runtime.canSubmit, runtime.responseValidationMessage ?? "Expected a complete recalled answer")
+        let probe = NFAsyncArchiveWriteProbe(.encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let saving = Task { await runtime.checkpointAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        runtime.submit(store: store)
+        XCTAssertEqual(runtime.stage, 0); XCTAssertFalse(runtime.selfCheckReferenceRevealed)
+        XCTAssertTrue(store.attempts.isEmpty)
+        probe.release(); _ = await saving.value
+        XCTAssertEqual(runtime.stage, 4); XCTAssertTrue(runtime.selfCheckReferenceRevealed)
+        XCTAssertFalse(runtime.canEditDraft); XCTAssertTrue(runtime.canRateSelfCheck)
+        let saved = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+        XCTAssertEqual(saved.stage, 4); XCTAssertTrue(saved.referenceRevealed)
+        XCTAssertEqual(saved.response, .selfCheck(.init(rating: .notYet, reflection: "Add one unit to the starting number.")))
+        XCTAssertTrue(store.attempts.isEmpty)
+    }
+}
+
+
+extension GeneratedLifecycleParityTests {
+    private func asyncFixture(legacy: Bool, repository: NFLocalSessionRepository,
+        store: AppStore, selfCheck: Bool = false) throws -> AIGeneratedPracticeRuntime {
+        let (request, result) = fixture(selfCheck: selfCheck)
+        var runtime = AIGeneratedPracticeRuntime(result: result, request: request)
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        if legacy {
+            var original = try XCTUnwrap(store.generatedPracticeDraft(for: request.id))
+            runtime.finishClosing()
+            original.runState = nil
+            try repository.savePrivateStudyRun(id: original.id, generationID: request.id, payload: JSONEncoder().encode(original))
+            runtime = AIGeneratedPracticeRuntime(result: result, request: request, draft: original)
+            XCTAssertTrue(runtime.restoreCheckpoint(store: store, automaticallyRetryPrepared: false))
+            runtime.resume()
+        }
+        runtime.acknowledgePresented(store: store)
+        return runtime
+    }
+
+    func testAsyncGeneratedSubmitHoldsFeedbackUntilThirdAcceptedWriteAndKeepsOneReceipt() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"
+        let attemptID = try XCTUnwrap(runtime.acceptedAttemptID)
+        let probe = NFAsyncSubmitProbe(transaction: 3, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let submit = Task { await runtime.submitAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        XCTAssertEqual(runtime.stage, 1); XCTAssertTrue(runtime.isCommitInFlight)
+        XCTAssertFalse(runtime.canEditDraft); XCTAssertFalse(runtime.canSubmit); XCTAssertFalse(runtime.canAdvanceFeedback)
+        XCTAssertEqual(store.attempts.map(\.id), [attemptID]); XCTAssertTrue(runtime.correctness.isEmpty)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.stage, 1)
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0]))
+        let duration = store.attempts[0].activeDurationSeconds
+        probe.release(); await submit.value
+        XCTAssertTrue(probe.stayedOffMain); XCTAssertEqual(runtime.stage, 2)
+        XCTAssertEqual(runtime.correctness, [true]); XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.current.outcome, .scored)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.activeDuration, duration)
+        repository.archiveWriteObserver = nil
+        await runtime.retryCommitAsync(store: store)
+        XCTAssertEqual(store.attempts.map(\.id), [attemptID]); XCTAssertEqual(runtime.correctness, [true])
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0])), original)
+    }
+
+    func testAsyncGeneratedModernAndLegacyCancelledPreparationPreserveOriginalIDsAndBytes() async throws {
+        for legacy in [false, true] {
+            let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Submit-Cancel-\(UUID())")
+            defer { try? FileManager.default.removeItem(at: folder) }
+            let url = folder.appending(path: "sessions.json"), repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+            let (store, container) = try store(repository); _ = container
+            let runtime = try asyncFixture(legacy: legacy, repository: repository, store: store)
+            let before = try Data(contentsOf: url), attemptID = try XCTUnwrap(runtime.acceptedAttemptID), runID = runtime.runID
+            runtime.numericValue = "2"
+            let probe = NFAsyncSubmitProbe(transaction: 1, stage: .staged); defer { probe.release() }
+            repository.archiveWriteObserver = { probe.observe($0, $1) }
+            let submit = Task { await runtime.submitAsync(store: store) }
+            let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+            submit.cancel(); probe.release(); await submit.value
+            XCTAssertEqual(try Data(contentsOf: url), before); XCTAssertTrue(store.attempts.isEmpty)
+            XCTAssertEqual(runtime.stage, 1); XCTAssertEqual(runtime.numericValue, "2")
+            repository.archiveWriteObserver = nil
+            await runtime.retryCommitAsync(store: store)
+            XCTAssertEqual(runtime.stage, 2); XCTAssertEqual(store.attempts.map(\.id), [attemptID])
+            XCTAssertEqual(store.attempts[0].sessionID, legacy ? runtime.result.provenance.requestID : runID)
+            XCTAssertEqual(store.generatedPracticeRuns.first?.id, runID)
+            XCTAssertEqual(store.generatedPracticeRuns.first?.runState == nil, legacy)
+            XCTAssertTrue(probe.stayedOffMain)
+        }
+    }
+
+    func testAsyncGeneratedSnapshotCancellationColdResumeReusesFrozenAttemptForBothProtocols() async throws {
+        for legacy in [false, true] {
+            let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Submit-Cold-\(UUID())")
+            defer { try? FileManager.default.removeItem(at: folder) }
+            let owner = UUID(), url = folder.appending(path: "sessions.json")
+            let repository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+            let (store, container) = try store(repository); _ = container
+            let runtime = try asyncFixture(legacy: legacy, repository: repository, store: store)
+            runtime.numericValue = "2"
+            let probe = NFAsyncSubmitProbe(transaction: 2, stage: .committed); defer { probe.release() }
+            repository.archiveWriteObserver = { probe.observe($0, $1) }
+            let submit = Task { await runtime.submitAsync(store: store) }
+            let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+            submit.cancel(); probe.release(); await submit.value
+            XCTAssertTrue(store.attempts.isEmpty); XCTAssertEqual(runtime.stage, 1)
+            let saved = try XCTUnwrap(store.generatedPracticeRuns.first)
+            XCTAssertEqual(repository.archive.snapshots.first?.attemptID, saved.pendingAttemptID)
+            runtime.finishClosing()
+            let coldRepository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+            let (coldStore, coldContainer) = try self.store(coldRepository); _ = coldContainer
+            let exact = try XCTUnwrap(coldStore.generatedPracticeRuns.first)
+            let cold = AIGeneratedPracticeRuntime(result: exact.result, request: exact.request, draft: exact)
+            XCTAssertTrue(cold.restoreCheckpoint(store: coldStore, automaticallyRetryPrepared: false))
+            XCTAssertTrue(coldStore.attempts.isEmpty); XCTAssertEqual(cold.stage, 1)
+            await cold.retryCommitAsync(store: coldStore)
+            XCTAssertEqual(cold.stage, 2); XCTAssertEqual(cold.lastScore, saved.lastScore)
+            XCTAssertEqual(coldStore.attempts.map(\.id), [try XCTUnwrap(saved.pendingAttemptID)])
+            XCTAssertEqual(coldStore.attempts[0].sessionID, legacy ? saved.result.provenance.requestID : saved.id)
+            XCTAssertEqual(coldRepository.archive.snapshots.first?.exercise, saved.result.questions[saved.index].authoritativeExercise)
+        }
+    }
+
+    func testAsyncGeneratedFeedbackCancellationAdoptsColdReceiptWithoutDuplicatingIt() async throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Feedback-Cold-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let owner = UUID(), url = folder.appending(path: "sessions.json")
+        let repository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+        let (store, container) = try store(repository)
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"
+        let probe = NFAsyncSubmitProbe(transaction: 3, stage: .committed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let submit = Task { await runtime.submitAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        submit.cancel(); probe.release(); await submit.value
+        XCTAssertEqual(runtime.stage, 2); XCTAssertEqual(runtime.correctness, [true])
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(XCTUnwrap(store.attempts.first)))
+        runtime.finishClosing()
+        let coldRepository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+        let coldStore = AppStore(context: container.mainContext, localSessionRepository: coldRepository, allowsSharedWidgetPublishing: false)
+        let draft = try XCTUnwrap(coldStore.generatedPracticeRuns.first)
+        let cold = AIGeneratedPracticeRuntime(result: draft.result, request: draft.request, draft: draft)
+        XCTAssertTrue(cold.restoreCheckpoint(store: coldStore, automaticallyRetryPrepared: false))
+        await cold.retryCommitAsync(store: coldStore)
+        XCTAssertEqual(cold.stage, 2); XCTAssertEqual(cold.correctness, [true]); XCTAssertEqual(coldStore.attempts.count, 1)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(coldStore.attempts[0])), original)
+    }
+
+    func testAsyncGeneratedFeedbackVerificationFailureCannotAdvanceOrOverwritePendingPhase() async throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Feedback-Verify-\(UUID())")
+        let backup = folder.appendingPathExtension("held")
+        defer { try? FileManager.default.removeItem(at: folder); try? FileManager.default.removeItem(at: backup) }
+        let repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"
+        let probe = NFAsyncSubmitProbe(transaction: 3, stage: .renamed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let submit = Task { await runtime.submitAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        try FileManager.default.moveItem(at: folder, to: backup)
+        probe.release(); await submit.value
+        XCTAssertTrue(repository.archiveWriteVerificationNeeded); XCTAssertEqual(runtime.stage, 1)
+        XCTAssertTrue(runtime.correctness.isEmpty); XCTAssertFalse(runtime.canAdvanceFeedback)
+        let saved = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertEqual(saved.stage, 2); XCTAssertEqual(saved.correctness, [true])
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(XCTUnwrap(store.attempts.first)))
+        runtime.next(store: store); runtime.endSession(store: store)
+        let autosave = await runtime.checkpointAsync(store: store); XCTAssertFalse(autosave)
+        XCTAssertEqual(runtime.exitDisposition(store: store), .unacknowledged)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.revision, saved.runState?.revision)
+        try FileManager.default.moveItem(at: backup, to: folder)
+        repository.archiveWriteObserver = nil
+        await runtime.retryCommitAsync(store: store)
+        XCTAssertFalse(repository.archiveWriteVerificationNeeded); XCTAssertEqual(runtime.stage, 2)
+        XCTAssertEqual(runtime.correctness, [true]); XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0])), original)
+    }
+
+    func testAsyncGeneratedSelfCheckReferenceRemainsPrivateUntilVerifiedRepairAndRatingSave() async throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Reference-Verify-\(UUID())")
+        let backup = folder.appendingPathExtension("held")
+        defer { try? FileManager.default.removeItem(at: folder); try? FileManager.default.removeItem(at: backup) }
+        let repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store, selfCheck: true)
+        runtime.selfCheckReflection = "Add one unit to the starting quantity."
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .renamed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let submit = Task { await runtime.submitAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        try FileManager.default.moveItem(at: folder, to: backup)
+        probe.release(); await submit.value
+        XCTAssertEqual(runtime.stage, 0); XCTAssertFalse(runtime.selfCheckReferenceRevealed)
+        XCTAssertFalse(runtime.canEditDraft); XCTAssertFalse(runtime.canRateSelfCheck); XCTAssertTrue(store.attempts.isEmpty)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.stage, 4)
+        let autosave = await runtime.checkpointAsync(store: store); XCTAssertFalse(autosave)
+        try FileManager.default.moveItem(at: backup, to: folder)
+        repository.archiveWriteObserver = nil
+        await runtime.retryCommitAsync(store: store)
+        XCTAssertEqual(runtime.stage, 4); XCTAssertTrue(runtime.selfCheckReferenceRevealed)
+        XCTAssertTrue(runtime.canRateSelfCheck); XCTAssertTrue(store.attempts.isEmpty)
+        runtime.selfCheckRating = .partiallyMatched
+        await runtime.saveSelfCheckAsync(store: store)
+        XCTAssertEqual(runtime.stage, 2); XCTAssertTrue(runtime.correctness.isEmpty)
+        XCTAssertEqual(store.attempts.count, 1); XCTAssertEqual(store.attempts[0].evidenceWeight, 0)
+        XCTAssertEqual(store.attempts[0].deterministicCredit, 0); XCTAssertNil(store.attempts[0].confidenceRaw)
+    }
+
+    func testAsyncGeneratedReleasedWriterCannotInsertAfterAcceptedPreparation() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let old = try asyncFixture(legacy: false, repository: repository, store: store)
+        old.numericValue = "2"
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .committed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let submit = Task { await old.submitAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        old.releaseWriter(); probe.release(); await submit.value
+        XCTAssertTrue(store.attempts.isEmpty); XCTAssertFalse(old.ownsWriter)
+        repository.archiveWriteObserver = nil
+        let accepted = try XCTUnwrap(store.generatedPracticeRuns.first)
+        let current = AIGeneratedPracticeRuntime(result: accepted.result, request: accepted.request, draft: accepted)
+        XCTAssertTrue(current.restoreCheckpoint(store: store, automaticallyRetryPrepared: false))
+        await current.retryCommitAsync(store: store)
+        XCTAssertEqual(current.stage, 2); XCTAssertEqual(store.attempts.map(\.id), [try XCTUnwrap(accepted.pendingAttemptID)])
+        await old.retryCommitAsync(store: store)
+        XCTAssertEqual(store.attempts.count, 1); XCTAssertEqual(old.stage, 1)
+    }
+
+    func testAsyncGeneratedLateNativeAnswerRetainsExportWithoutChangingFrozenSubmission() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let submit = Task { await runtime.submitAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        XCTAssertFalse(runtime.canEditDraft)
+        runtime.numericValue = "99"
+        probe.release(); await submit.value
+        XCTAssertTrue(store.attempts.isEmpty); XCTAssertEqual(runtime.numericValue, "99")
+        XCTAssertEqual(store.generatedPracticeRuns.first?.response, .numeric(.init(value: "2", unit: nil)))
+        repository.archiveWriteObserver = nil
+        await runtime.retryCommitAsync(store: store)
+        XCTAssertTrue(runtime.recoveryText.contains("99")); XCTAssertEqual(runtime.numericValue, "99")
+        XCTAssertEqual(runtime.prepareToClose(store: store), .unacknowledged)
+        XCTAssertTrue(store.attempts.isEmpty)
+    }
+
+    func testAsyncGeneratedEndWaitsForSubmitAndRetainsOneOutcomeAndPlannedCount() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"
+        let probe = NFAsyncSubmitProbe(transaction: 3, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let submit = Task { await runtime.submitAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        let end = Task { await runtime.endSessionAsync(store: store) }
+        for _ in 0..<20 where !runtime.draftSaveGate.hasQueuedAction { await Task.yield() }
+        XCTAssertTrue(runtime.draftSaveGate.hasQueuedAction); XCTAssertEqual(runtime.stage, 1)
+        probe.release(); await submit.value; await end.value
+        XCTAssertEqual(runtime.stage, 3); XCTAssertEqual(runtime.completedActivityCount, 1)
+        XCTAssertEqual(runtime.plannedQuestionCount, 2); XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.status, .endedEarly)
+    }
+
+    func testAsyncGeneratedCurrentWriterCannotAttachDifferentAnswerToPreparedAttempt() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .committed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let submit = Task { await runtime.submitAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        submit.cancel(); probe.release(); await submit.value
+        repository.archiveWriteObserver = nil
+        let prepared = try XCTUnwrap(store.generatedPracticeRuns.first)
+        let response = NFExerciseResponse.numeric(.init(value: "3", unit: nil))
+        do {
+            try await store.saveAuthoredExerciseAttemptAsync(command: runtime.sessionWriterCommand(), runID: runtime.runID,
+                attemptID: XCTUnwrap(runtime.acceptedAttemptID), generationID: runtime.result.provenance.requestID,
+                sessionID: runtime.runID, question: runtime.question, response: response,
+                score: NFExerciseScoringEngine.score(response, for: runtime.exercise), confidence: runtime.confidence,
+                sourceDocumentIDs: runtime.result.provenance.sourceDocumentIDs, shownAt: prepared.shownAt,
+                activeDuration: prepared.activeDuration, hintCount: runtime.capturedSupportCount)
+            XCTFail("A current writer still must match the exact prepared answer.")
+        } catch { guard case NFLocalSessionRepository.RepositoryError.staleRevision = error else { return XCTFail("Expected exact-response refusal: \(error)") } }
+        XCTAssertTrue(store.attempts.isEmpty); XCTAssertTrue(repository.archive.snapshots.isEmpty)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.response, prepared.response)
+        await runtime.retryCommitAsync(store: store)
+        XCTAssertEqual(runtime.stage, 2); XCTAssertEqual(try JSONDecoder().decode(NFExerciseResponse.self, from: Data(store.attempts[0].response.utf8)), prepared.response)
+    }
+}
+
+extension GeneratedLifecycleParityTests {
+    func testAsyncGeneratedPauseDuringFeedbackSaveRetainsInterruptionAndNoFalseChangedAnswerError() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"
+        let before = runtime.runState?.interruptionCount ?? 0
+        let probe = NFAsyncSubmitProbe(transaction: 3, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let submit = Task { await runtime.submitAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        runtime.pause(store: store)
+        XCTAssertTrue(runtime.isPaused); XCTAssertTrue(runtime.draftSaveGate.hasQueuedAction)
+        probe.release(); await submit.value
+        XCTAssertEqual(runtime.stage, 2); XCTAssertTrue(runtime.isPaused); XCTAssertNil(runtime.saveError)
+        XCTAssertEqual(runtime.runState?.interruptionCount, before + 1)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.interruptionCount, before + 1)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.status, .suspended)
+        XCTAssertEqual(store.attempts.count, 1); XCTAssertEqual(runtime.correctness, [true])
+    }
+
+    func testAsyncGeneratedConflictingReceiptKeepsOriginalAndJournalsProposalThroughWorker() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        let initial = try XCTUnwrap(store.generatedPracticeRuns.first)
+        let priorResponse = NFExerciseResponse.numeric(.init(value: "3", unit: nil))
+        try store.withSessionCommand(runtime.sessionWriterCommand(), sessionID: runtime.runID) {
+            try store.saveAuthoredExerciseAttempt(attemptID: XCTUnwrap(runtime.acceptedAttemptID),
+                generationID: runtime.result.provenance.requestID, sessionID: runtime.runID,
+                question: runtime.question, response: priorResponse,
+                score: NFExerciseScoringEngine.score(priorResponse, for: runtime.exercise), confidence: nil,
+                sourceDocumentIDs: runtime.result.provenance.sourceDocumentIDs, shownAt: initial.shownAt,
+                activeDuration: initial.activeDuration)
+        }
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(XCTUnwrap(store.attempts.first)))
+        runtime.numericValue = "2"
+        let probe = NFAsyncSubmitProbe(transaction: 2, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let submit = Task { await runtime.submitAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        XCTAssertEqual(runtime.stage, 1); XCTAssertEqual(repository.archive.attemptConflicts?.count ?? 0, 0)
+        probe.release(); await submit.value
+        XCTAssertTrue(probe.stayedOffMain); XCTAssertTrue(runtime.isReadOnlyRecovery)
+        XCTAssertEqual(store.attempts.count, 1); XCTAssertEqual(repository.archive.attemptConflicts?.count, 1)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0])), original)
+        XCTAssertEqual(try JSONDecoder().decode(NFExerciseResponse.self,
+            from: Data(XCTUnwrap(repository.archive.attemptConflicts?.first?.proposed.response).utf8)), .numeric(.init(value: "2", unit: nil)))
+    }
+}
+
+
+extension GeneratedLifecycleParityTests {
+    func testAsyncGeneratedNextHoldsOriginalFeedbackUntilActorAcceptsExactNextSlot() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"; await runtime.submitAsync(store: store)
+        let prior = try XCTUnwrap(store.generatedPracticeRuns.first)
+        let receipt = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(XCTUnwrap(store.attempts.first)))
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let next = Task { await runtime.nextAsync(store: store, expectedAttemptID: prior.pendingAttemptID) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        XCTAssertEqual(runtime.index, 0); XCTAssertEqual(runtime.stage, 2)
+        XCTAssertFalse(runtime.canAdvanceFeedback); XCTAssertFalse(runtime.canEditDraft)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.pendingAttemptID, prior.pendingAttemptID)
+        probe.release(); await next.value
+        XCTAssertTrue(probe.stayedOffMain); XCTAssertEqual(runtime.index, 1); XCTAssertEqual(runtime.stage, 0)
+        let accepted = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertEqual(accepted.runState?.slots.count, 2)
+        XCTAssertNotEqual(accepted.pendingAttemptID, prior.pendingAttemptID)
+        XCTAssertEqual(accepted.pendingAttemptID, runtime.acceptedAttemptID)
+        XCTAssertNil(accepted.runState?.current.presentedAt)
+        repository.archiveWriteObserver = nil
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        XCTAssertEqual(try XCTUnwrap(store.generatedPracticeRuns.first).activeDuration, 0, accuracy: 0.000_001)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0])), receipt)
+        repository.archiveWriteObserver = nil
+        runtime.acknowledgePresented(store: store)
+        XCTAssertNotNil(store.generatedPracticeRuns.first?.runState?.current.presentedAt)
+    }
+
+    func testAsyncGeneratedCancelledNextRetainsExactPreparedIDsForModernAndLegacyRetry() async throws {
+        for legacy in [false, true] {
+            let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Next-Cancel-\(UUID())")
+            defer { try? FileManager.default.removeItem(at: folder) }
+            let url = folder.appending(path: "sessions.json"), repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+            let (store, container) = try store(repository); _ = container
+            let runtime = try asyncFixture(legacy: legacy, repository: repository, store: store)
+            runtime.numericValue = "2"; await runtime.submitAsync(store: store)
+            let before = try Data(contentsOf: url), firstAttempt = runtime.acceptedAttemptID
+            var proposedIDs: [UUID] = []
+            runtime.privateCheckpointWriteFailure = { if $0.index == 1, let id = $0.pendingAttemptID { proposedIDs.append(id) } }
+            let probe = NFAsyncSubmitProbe(transaction: 1, stage: .staged); defer { probe.release() }
+            repository.archiveWriteObserver = { probe.observe($0, $1) }
+            let next = Task { await runtime.nextAsync(store: store) }
+            let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+            next.cancel(); probe.release(); await next.value
+            XCTAssertEqual(try Data(contentsOf: url), before)
+            XCTAssertEqual(runtime.index, 0); XCTAssertEqual(runtime.acceptedAttemptID, firstAttempt)
+            XCTAssertFalse(runtime.canAdvanceFeedback)
+            XCTAssertFalse(runtime.checkpoint(store: store), "The old editor cannot overwrite a pending transition.")
+            repository.archiveWriteObserver = nil
+            await runtime.retryCommitAsync(store: store)
+            XCTAssertEqual(runtime.index, 1); XCTAssertEqual(runtime.stage, 0)
+            XCTAssertEqual(proposedIDs.count, 2); XCTAssertEqual(Set(proposedIDs).count, 1)
+            XCTAssertEqual(runtime.acceptedAttemptID, proposedIDs.first)
+            XCTAssertEqual(store.attempts.count, 1)
+            XCTAssertEqual(store.generatedPracticeRuns.first?.runState == nil, legacy)
+        }
+    }
+
+    func testAsyncGeneratedCancelledAfterNextCommitPublishesAndColdRestoresSameUnpresentedQuestion() async throws {
+        for legacy in [false, true] {
+            let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Next-Cold-\(UUID())")
+            defer { try? FileManager.default.removeItem(at: folder) }
+            let owner = UUID(), url = folder.appending(path: "sessions.json")
+            let repository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+            let (store, container) = try store(repository)
+            let runtime = try asyncFixture(legacy: legacy, repository: repository, store: store)
+            runtime.numericValue = "2"; await runtime.submitAsync(store: store)
+            let probe = NFAsyncSubmitProbe(transaction: 1, stage: .committed); defer { probe.release() }
+            repository.archiveWriteObserver = { probe.observe($0, $1) }
+            let next = Task { await runtime.nextAsync(store: store) }
+            let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+            next.cancel(); probe.release(); await next.value
+            XCTAssertEqual(runtime.index, 1); XCTAssertEqual(runtime.stage, 0)
+            let accepted = try XCTUnwrap(store.generatedPracticeRuns.first)
+            XCTAssertEqual(runtime.acceptedAttemptID, accepted.pendingAttemptID)
+            repository.archiveWriteObserver = nil
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        XCTAssertEqual(try XCTUnwrap(store.generatedPracticeRuns.first).activeDuration, 0, accuracy: 0.000_001)
+            runtime.finishClosing()
+            let coldRepository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+            let coldStore = AppStore(context: container.mainContext, localSessionRepository: coldRepository, allowsSharedWidgetPublishing: false)
+            let draft = try XCTUnwrap(coldStore.generatedPracticeRuns.first)
+            let cold = AIGeneratedPracticeRuntime(result: draft.result, request: draft.request, draft: draft)
+            XCTAssertTrue(cold.restoreCheckpoint(store: coldStore, automaticallyRetryPrepared: false))
+            XCTAssertEqual(cold.index, 1); XCTAssertEqual(cold.acceptedAttemptID, accepted.pendingAttemptID)
+            XCTAssertEqual(cold.exercise, accepted.result.questions[1].authoritativeExercise)
+            XCTAssertTrue(cold.isPaused); XCTAssertEqual(coldStore.attempts.count, 1)
+        }
+    }
+
+    func testAsyncGeneratedNextVerificationRepairDoesNotPublishOrRewindAcceptedItem() async throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Next-Verify-\(UUID())")
+        let heldFolder = folder.appendingPathExtension("held")
+        defer { try? FileManager.default.removeItem(at: folder); try? FileManager.default.removeItem(at: heldFolder) }
+        let repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"; await runtime.submitAsync(store: store)
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .renamed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let next = Task { await runtime.nextAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        try FileManager.default.moveItem(at: folder, to: heldFolder)
+        probe.release(); await next.value
+        XCTAssertTrue(repository.archiveWriteVerificationNeeded)
+        XCTAssertEqual(runtime.index, 0); XCTAssertEqual(runtime.stage, 2)
+        let accepted = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertEqual(accepted.index, 1)
+        XCTAssertFalse(runtime.canEditDraft); XCTAssertFalse(runtime.canAdvanceFeedback)
+        XCTAssertFalse(runtime.exitDisposition(store: store).permitsClose)
+        let checkpointed = await runtime.checkpointAsync(store: store); XCTAssertFalse(checkpointed)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.index, 1)
+        try FileManager.default.moveItem(at: heldFolder, to: folder)
+        repository.archiveWriteObserver = nil
+        await runtime.retryCommitAsync(store: store)
+        XCTAssertEqual(runtime.index, 1); XCTAssertEqual(runtime.acceptedAttemptID, accepted.pendingAttemptID)
+        XCTAssertNil(runtime.saveError); XCTAssertFalse(repository.archiveWriteVerificationNeeded)
+        XCTAssertEqual(store.attempts.count, 1)
+    }
+
+    func testAsyncGeneratedEndRetainsUnfinishedResponseAndCompactsOnlyAfterAcceptedTerminalWrite() async throws {
+        for legacy in [false, true] {
+            let repository = NFLocalSessionRepository()
+            let (store, container) = try store(repository); _ = container
+            let runtime = try asyncFixture(legacy: legacy, repository: repository, store: store)
+            runtime.numericValue = "123"
+            let original = try XCTUnwrap(store.generatedPracticeRuns.first)
+            var capturedDuration: TimeInterval?
+            runtime.privateCheckpointWriteFailure = { if $0.stage == 3 { capturedDuration = $0.activeDuration } }
+            let probe = NFAsyncSubmitProbe(transaction: 1, stage: .encoding); defer { probe.release() }
+            repository.archiveWriteObserver = { probe.observe($0, $1) }
+            let end = Task { await runtime.endSessionAsync(store: store) }
+            let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+            XCTAssertEqual(runtime.stage, 0); XCTAssertEqual(runtime.numericValue, "123")
+            XCTAssertFalse(runtime.canEditDraft); XCTAssertEqual(store.generatedPracticeRuns.first?.result.questions.count, 2)
+            probe.release(); await end.value
+            let terminal = try XCTUnwrap(store.generatedPracticeRuns.first)
+            XCTAssertEqual(runtime.stage, 3); XCTAssertEqual(runtime.numericValue, "123")
+            XCTAssertEqual(terminal.terminalState?.endedEarly, true); XCTAssertEqual(terminal.terminalState?.completedCount, 0)
+            XCTAssertEqual(terminal.response, .numeric(.init(value: "123", unit: nil)))
+            XCTAssertEqual(terminal.result.questions.count, 1); XCTAssertEqual(terminal.plannedQuestionCount, 2)
+            XCTAssertEqual(terminal.result.questions[0], original.result.questions[0])
+            XCTAssertEqual(terminal.terminalInventory?.originalResultDigest, try NFEditorialCanonicalData.digest(original.result))
+            XCTAssertTrue(store.attempts.isEmpty); XCTAssertEqual(try XCTUnwrap(capturedDuration), terminal.activeDuration, accuracy: 0.000_001)
+        }
+    }
+
+    func testAsyncGeneratedEndAfterRenameCancellationAdoptsTerminalAndPreservesExactOriginalReceipt() async throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-End-Commit-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"; await runtime.submitAsync(store: store)
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(XCTUnwrap(store.attempts.first)))
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .committed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let end = Task { await runtime.endSessionAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        end.cancel(); probe.release(); await end.value
+        XCTAssertEqual(runtime.stage, 3); XCTAssertEqual(store.generatedPracticeRuns.first?.terminalState?.completedCount, 1)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.terminalState?.endedEarly, true)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0])), original)
+        repository.archiveWriteObserver = nil
+        await runtime.endSessionAsync(store: store)
+        XCTAssertEqual(store.attempts.count, 1)
+    }
+
+    func testAsyncGeneratedNextReleasedWriterCannotPublishAcceptedNewSlot() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"; await runtime.submitAsync(store: store)
+        let first = runtime.acceptedAttemptID
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .committed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let next = Task { await runtime.nextAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        runtime.releaseWriter(); probe.release(); await next.value
+        XCTAssertEqual(runtime.index, 0); XCTAssertEqual(runtime.acceptedAttemptID, first)
+        let saved = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertEqual(saved.index, 1)
+        repository.archiveWriteObserver = nil
+        let current = AIGeneratedPracticeRuntime(result: saved.result, request: saved.request, draft: saved)
+        XCTAssertTrue(current.restoreCheckpoint(store: store, automaticallyRetryPrepared: false))
+        XCTAssertEqual(current.index, 1); XCTAssertEqual(current.acceptedAttemptID, saved.pendingAttemptID)
+        await runtime.retryCommitAsync(store: store)
+        XCTAssertEqual(runtime.index, 0); XCTAssertEqual(store.generatedPracticeRuns.first?.pendingAttemptID, saved.pendingAttemptID)
+        await runtime.takeOverAsync(store: store)
+        XCTAssertTrue(runtime.ownsWriter); XCTAssertFalse(current.ownsWriter)
+        XCTAssertEqual(runtime.index, 1); XCTAssertEqual(runtime.acceptedAttemptID, saved.pendingAttemptID)
+        XCTAssertEqual(runtime.numericValue, ""); XCTAssertTrue(runtime.isPaused)
+    }
+
+    func testAsyncGeneratedPauseAndQueuedCheckpointFollowOnlyTheAcceptedNextBoundary() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"; await runtime.submitAsync(store: store)
+        let count = runtime.runState?.interruptionCount ?? 0
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let next = Task { await runtime.nextAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        runtime.pause(store: store)
+        XCTAssertTrue(runtime.draftSaveGate.hasQueuedAction); XCTAssertTrue(runtime.isPaused)
+        probe.release(); await next.value
+        XCTAssertEqual(runtime.index, 1); XCTAssertTrue(runtime.isPaused); XCTAssertNil(runtime.saveError)
+        XCTAssertEqual(runtime.runState?.interruptionCount, count + 1)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.interruptionCount, count + 1)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.status, .suspended)
+        XCTAssertNil(store.generatedPracticeRuns.first?.runState?.current.presentedAt)
+        repository.archiveWriteObserver = nil
+        XCTAssertTrue(runtime.checkpoint(store: store))
+        XCTAssertEqual(try XCTUnwrap(store.generatedPracticeRuns.first).activeDuration, 0, accuracy: 0.000_001)
+    }
+
+    func testAsyncGeneratedLateFeedbackFieldCannotOverwriteAnAcceptedNextSnapshot() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"; await runtime.submitAsync(store: store)
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let next = Task { await runtime.nextAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        runtime.numericValue = "99"
+        probe.release(); await next.value
+        XCTAssertEqual(runtime.index, 0); XCTAssertEqual(runtime.numericValue, "99")
+        XCTAssertTrue(runtime.recoveryText.contains("99")); XCTAssertFalse(runtime.exitDisposition(store: store).permitsClose)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.index, 1)
+        XCTAssertFalse(runtime.checkpoint(store: store)); XCTAssertEqual(store.generatedPracticeRuns.first?.index, 1)
+        XCTAssertEqual(store.attempts.count, 1)
+    }
+}
+
+extension GeneratedLifecycleParityTests {
+    func testAsyncGeneratedNextOwnershipReleaseBeforeCommitPreservesArchiveBytes() async throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Next-Owner-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let url = folder.appending(path: "sessions.json"), repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"; await runtime.submitAsync(store: store)
+        let original = try Data(contentsOf: url)
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .staged); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let next = Task { await runtime.nextAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        runtime.releaseWriter(); probe.release(); await next.value
+        XCTAssertEqual(runtime.index, 0); XCTAssertEqual(try Data(contentsOf: url), original)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.slots.count, 1)
+        XCTAssertEqual(store.attempts.count, 1)
+    }
+
+    func testAsyncGeneratedUnverifiedEndKeepsEditableItemHiddenBehindRecoveryUntilExactRepair() async throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-End-Verify-\(UUID())")
+        let heldFolder = folder.appendingPathExtension("held")
+        defer { try? FileManager.default.removeItem(at: folder); try? FileManager.default.removeItem(at: heldFolder) }
+        let repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "123"
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .renamed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let end = Task { await runtime.endSessionAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        try FileManager.default.moveItem(at: folder, to: heldFolder)
+        probe.release(); await end.value
+        XCTAssertEqual(runtime.stage, 0); XCTAssertEqual(runtime.numericValue, "123")
+        XCTAssertFalse(runtime.canEditDraft); XCTAssertTrue(repository.archiveWriteVerificationNeeded)
+        let accepted = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertEqual(accepted.stage, 3); XCTAssertEqual(accepted.terminalState?.endedEarly, true)
+        XCTAssertFalse(runtime.checkpoint(store: store)); XCTAssertFalse(runtime.exitDisposition(store: store).permitsClose)
+        try FileManager.default.moveItem(at: heldFolder, to: folder)
+        repository.archiveWriteObserver = nil
+        await runtime.retryCommitAsync(store: store)
+        let repaired = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertEqual(runtime.stage, 3); XCTAssertEqual(repaired.response, accepted.response)
+        XCTAssertEqual(repaired.terminalInventory, accepted.terminalInventory)
+        XCTAssertTrue(store.attempts.isEmpty); XCTAssertNil(runtime.saveError)
+    }
+
+    func testAsyncGeneratedEndQueuedDuringNextFollowsExactAcceptedBoundaryWithoutSecondAdvance() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "2"; await runtime.submitAsync(store: store)
+        let first = runtime.acceptedAttemptID
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let next = Task { await runtime.nextAsync(store: store, expectedAttemptID: first) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        let end = Task { await runtime.endSessionAsync(store: store) }
+        for _ in 0..<100 where !runtime.draftSaveGate.hasQueuedAction { await Task.yield() }
+        XCTAssertTrue(runtime.draftSaveGate.hasQueuedAction)
+        await runtime.nextAsync(store: store, expectedAttemptID: first)
+        probe.release(); await next.value; await end.value
+        XCTAssertEqual(runtime.index, 1); XCTAssertEqual(runtime.stage, 3)
+        let final = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertEqual(final.runState?.slots.count, 2); XCTAssertEqual(final.terminalState?.completedCount, 1)
+        XCTAssertEqual(final.terminalState?.endedEarly, true)
+        XCTAssertNil(final.runState?.current.presentedAt); XCTAssertNil(final.runState?.current.outcome)
+        XCTAssertEqual(final.plannedQuestionCount, 2); XCTAssertEqual(store.attempts.count, 1)
+    }
+}
+
+extension GeneratedLifecycleParityTests {
+    func testAsyncGeneratedEndFromSavedSelfCheckComparisonRetainsReferenceWithoutScoredOutcome() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store, selfCheck: true)
+        runtime.selfCheckReflection = "My recalled explanation"
+        await runtime.submitAsync(store: store)
+        XCTAssertEqual(runtime.stage, 4); XCTAssertTrue(runtime.selfCheckReferenceRevealed)
+        let compared = try XCTUnwrap(store.generatedPracticeRuns.first)
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let end = Task { await runtime.endSessionAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        XCTAssertEqual(runtime.stage, 4); XCTAssertTrue(store.attempts.isEmpty)
+        probe.release(); await end.value
+        XCTAssertEqual(runtime.stage, 3)
+        let terminal = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertTrue(terminal.referenceRevealed); XCTAssertEqual(terminal.response, compared.response)
+        XCTAssertNil(terminal.lastScore); XCTAssertEqual(terminal.terminalState?.completedCount, 0)
+        XCTAssertEqual(terminal.terminalState?.endedEarly, true); XCTAssertEqual(terminal.plannedQuestionCount, 2)
+        XCTAssertNil(terminal.runState?.current.outcome); XCTAssertTrue(store.attempts.isEmpty)
+    }
+}
+
+extension GeneratedLifecycleParityTests {
+    func testAsyncGeneratedWorkedSolutionWaitsForVerifiedFeedbackAndKeepsOneAssistanceEvent() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "unfinished 2"
+        let attemptID = try XCTUnwrap(runtime.acceptedAttemptID)
+        let probe = NFAsyncSubmitProbe(transaction: 3, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let reveal = Task { await runtime.revealSolutionAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        XCTAssertEqual(runtime.stage, 1); XCTAssertFalse(runtime.isSolutionViewed)
+        XCTAssertFalse(runtime.canEditDraft); XCTAssertFalse(runtime.canAdvanceFeedback)
+        XCTAssertNil(runtime.lastScore); XCTAssertTrue(runtime.correctness.isEmpty)
+        XCTAssertEqual(store.attempts.map(\.id), [attemptID])
+        let saved = try XCTUnwrap(store.generatedPracticeRuns.first)
+        let event = try XCTUnwrap(saved.runState?.current.assistance.first)
+        XCTAssertEqual(event.kind, .workedSolution); XCTAssertEqual(saved.stage, 1)
+        let receipt = try XCTUnwrap(store.attempts.first)
+        XCTAssertTrue(receipt.wasSkipped); XCTAssertEqual(receipt.responseFormatRaw, "revealed")
+        XCTAssertEqual(receipt.deterministicCredit, 0); XCTAssertEqual(receipt.evidenceWeight, 0)
+        XCTAssertNil(receipt.confidenceRaw); XCTAssertEqual(receipt.errorCode, "solution_revealed")
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(receipt))
+        probe.release(); await reveal.value
+        XCTAssertTrue(probe.stayedOffMain); XCTAssertTrue(runtime.isSolutionViewed)
+        XCTAssertEqual(runtime.stage, 2); XCTAssertNil(runtime.lastScore); XCTAssertTrue(runtime.correctness.isEmpty)
+        repository.archiveWriteObserver = nil
+        await runtime.retryCommitAsync(store: store)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.current.assistance.map(\.id), [event.id])
+        XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.current.outcome, .revealed)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0])), original)
+    }
+
+    func testAsyncGeneratedSkipWaitsForFourthWriteBeforePublishingFreshQuestion() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "draft preserved"
+        let first = try XCTUnwrap(runtime.acceptedAttemptID), slot = runtime.acceptedSlotID
+        let probe = NFAsyncSubmitProbe(transaction: 4, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let skip = Task { await runtime.skipAsync(store: store, expectedAttemptID: first) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        XCTAssertEqual(runtime.index, 0); XCTAssertEqual(runtime.stage, 2)
+        XCTAssertTrue(runtime.isUnscoredFeedback); XCTAssertFalse(runtime.isSolutionViewed)
+        XCTAssertEqual(runtime.acceptedSlotID, slot); XCTAssertFalse(runtime.canAdvanceFeedback)
+        XCTAssertEqual(store.attempts.map(\.id), [first]); XCTAssertNil(runtime.lastScore)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.index, 0)
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0]))
+        probe.release(); await skip.value
+        XCTAssertTrue(probe.stayedOffMain); XCTAssertEqual(runtime.index, 1); XCTAssertEqual(runtime.stage, 0)
+        XCTAssertNotEqual(runtime.acceptedAttemptID, first); XCTAssertNotEqual(runtime.acceptedSlotID, slot)
+        XCTAssertEqual(runtime.numericValue, ""); XCTAssertEqual(store.generatedPracticeRuns.first?.activeDuration, 0)
+        XCTAssertTrue(runtime.correctness.isEmpty); XCTAssertEqual(runtime.skippedActivityCount, 1)
+        XCTAssertNil(store.generatedPracticeRuns.first?.runState?.current.presentedAt)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0])), original)
+        repository.archiveWriteObserver = nil
+        await runtime.skipAsync(store: store, expectedAttemptID: first)
+        XCTAssertEqual(runtime.index, 1); XCTAssertEqual(store.attempts.count, 1)
+    }
+
+    func testAsyncGeneratedUnscoredCancelledPreparationPreservesBytesAndRetryIdentityInBothProtocols() async throws {
+        for legacy in [false, true] {
+            let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Unscored-Cancel-\(UUID())")
+            defer { try? FileManager.default.removeItem(at: folder) }
+            let url = folder.appending(path: "sessions.json"), repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+            let (store, container) = try store(repository); _ = container
+            let runtime = try asyncFixture(legacy: legacy, repository: repository, store: store)
+            runtime.numericValue = "incomplete response"
+            let original = try Data(contentsOf: url), attemptID = try XCTUnwrap(runtime.acceptedAttemptID)
+            let probe = NFAsyncSubmitProbe(transaction: 1, stage: .staged); defer { probe.release() }
+            repository.archiveWriteObserver = { probe.observe($0, $1) }
+            let reveal = Task { await runtime.revealSolutionAsync(store: store) }
+            let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+            let preparedAssistance = runtime.runState?.current.assistance.map(\.id)
+            reveal.cancel(); probe.release(); await reveal.value
+            XCTAssertEqual(try Data(contentsOf: url), original); XCTAssertTrue(store.attempts.isEmpty)
+            XCTAssertEqual(runtime.stage, 1); XCTAssertFalse(runtime.isSolutionViewed)
+            XCTAssertEqual(runtime.numericValue, "incomplete response")
+            repository.archiveWriteObserver = nil
+            await runtime.retryCommitAsync(store: store)
+            XCTAssertTrue(runtime.isSolutionViewed); XCTAssertEqual(store.attempts.map(\.id), [attemptID])
+            XCTAssertEqual(store.attempts[0].sessionID, legacy ? runtime.result.provenance.requestID : runtime.runID)
+            XCTAssertEqual(store.generatedPracticeRuns.first?.runState == nil, legacy)
+            XCTAssertTrue(runtime.correctness.isEmpty); XCTAssertTrue(probe.stayedOffMain)
+            if !legacy {
+                XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.current.assistance.count, 1)
+                XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.current.assistance.map(\.id), preparedAssistance)
+            }
+        }
+    }
+
+    func testAsyncGeneratedUnscoredSnapshotCancellationColdRetryKeepsExactPreparedWork() async throws {
+        for legacy in [false, true] {
+            let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Unscored-Cold-\(UUID())")
+            defer { try? FileManager.default.removeItem(at: folder) }
+            let owner = UUID(), url = folder.appending(path: "sessions.json")
+            let repository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+            let (store, container) = try store(repository); _ = container
+            let runtime = try asyncFixture(legacy: legacy, repository: repository, store: store)
+            runtime.numericValue = "unfinished value"
+            let probe = NFAsyncSubmitProbe(transaction: 2, stage: .committed); defer { probe.release() }
+            repository.archiveWriteObserver = { probe.observe($0, $1) }
+            let skip = Task { await runtime.skipAsync(store: store) }
+            let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+            skip.cancel(); probe.release(); await skip.value
+            XCTAssertTrue(store.attempts.isEmpty); XCTAssertEqual(runtime.stage, 1)
+            let saved = try XCTUnwrap(store.generatedPracticeRuns.first)
+            XCTAssertEqual(repository.archive.snapshots.first?.attemptID, saved.pendingAttemptID)
+            runtime.finishClosing()
+            let coldRepository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+            let (coldStore, coldContainer) = try self.store(coldRepository); _ = coldContainer
+            let exact = try XCTUnwrap(coldStore.generatedPracticeRuns.first)
+            let cold = AIGeneratedPracticeRuntime(result: exact.result, request: exact.request, draft: exact)
+            XCTAssertTrue(cold.restoreCheckpoint(store: coldStore, automaticallyRetryPrepared: false))
+            XCTAssertEqual(cold.stage, 1); XCTAssertEqual(cold.numericValue, "unfinished value")
+            await cold.retryCommitAsync(store: coldStore)
+            XCTAssertEqual(cold.stage, 2); XCTAssertEqual(cold.index, 0)
+            XCTAssertTrue(cold.isUnscoredFeedback); XCTAssertFalse(cold.isSolutionViewed)
+            XCTAssertEqual(coldStore.attempts.map(\.id), [try XCTUnwrap(saved.pendingAttemptID)])
+            XCTAssertEqual(coldStore.attempts[0].sessionID, legacy ? saved.result.provenance.requestID : saved.id)
+            XCTAssertEqual(coldStore.attempts[0].activeDurationSeconds, saved.activeDuration)
+            XCTAssertEqual(coldRepository.archive.snapshots.first?.exercise, saved.result.questions[0].authoritativeExercise)
+            XCTAssertTrue(cold.correctness.isEmpty)
+        }
+    }
+
+    func testAsyncGeneratedSkippedFeedbackCommittedCancellationAdoptsWithoutAdvancingOrDuplicating() async throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Skip-Feedback-\(UUID())")
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let owner = UUID(), url = folder.appending(path: "sessions.json")
+        let repository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+        let (store, container) = try store(repository)
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "unfinished"
+        let probe = NFAsyncSubmitProbe(transaction: 3, stage: .committed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let skip = Task { await runtime.skipAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        skip.cancel(); probe.release(); await skip.value
+        XCTAssertEqual(runtime.stage, 2); XCTAssertEqual(runtime.index, 0); XCTAssertEqual(runtime.skippedActivityCount, 1)
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(XCTUnwrap(store.attempts.first)))
+        runtime.finishClosing()
+        let coldRepository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+        let coldStore = AppStore(context: container.mainContext, localSessionRepository: coldRepository, allowsSharedWidgetPublishing: false)
+        let draft = try XCTUnwrap(coldStore.generatedPracticeRuns.first)
+        let cold = AIGeneratedPracticeRuntime(result: draft.result, request: draft.request, draft: draft)
+        XCTAssertTrue(cold.restoreCheckpoint(store: coldStore, automaticallyRetryPrepared: false))
+        await cold.retryCommitAsync(store: coldStore)
+        XCTAssertEqual(cold.stage, 2); XCTAssertEqual(cold.index, 0); XCTAssertEqual(coldStore.attempts.count, 1)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(coldStore.attempts[0])), original)
+        cold.resume(); await cold.nextAsync(store: coldStore)
+        XCTAssertEqual(cold.index, 1); XCTAssertEqual(coldStore.attempts.count, 1)
+    }
+
+    func testAsyncGeneratedUnverifiedWorkedFeedbackCannotRevealAdvanceCloseOrOverwrite() async throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Unscored-Verify-\(UUID())")
+        let backup = folder.appendingPathExtension("held")
+        defer { try? FileManager.default.removeItem(at: folder); try? FileManager.default.removeItem(at: backup) }
+        let repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "draft"
+        let probe = NFAsyncSubmitProbe(transaction: 3, stage: .renamed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let reveal = Task { await runtime.revealSolutionAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        try FileManager.default.moveItem(at: folder, to: backup)
+        probe.release(); await reveal.value
+        XCTAssertTrue(repository.archiveWriteVerificationNeeded); XCTAssertEqual(runtime.stage, 1)
+        XCTAssertFalse(runtime.isSolutionViewed); XCTAssertFalse(runtime.canEditDraft); XCTAssertFalse(runtime.canAdvanceFeedback)
+        let accepted = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertEqual(accepted.stage, 2); XCTAssertEqual(accepted.runState?.current.outcome, .revealed)
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(XCTUnwrap(store.attempts.first)))
+        await runtime.nextAsync(store: store)
+        let autosave = await runtime.checkpointAsync(store: store); XCTAssertFalse(autosave)
+        XCTAssertEqual(runtime.exitDisposition(store: store), .unacknowledged)
+        XCTAssertEqual(store.generatedPracticeRuns.first?.runState?.revision, accepted.runState?.revision)
+        try FileManager.default.moveItem(at: backup, to: folder)
+        repository.archiveWriteObserver = nil
+        await runtime.retryCommitAsync(store: store)
+        XCTAssertFalse(repository.archiveWriteVerificationNeeded); XCTAssertTrue(runtime.isSolutionViewed)
+        XCTAssertTrue(runtime.correctness.isEmpty); XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0])), original)
+    }
+
+    func testAsyncGeneratedUnscoredReleasedGenerationCannotInsertOrPublishBeforeOrAfterCommit() async throws {
+        for stage: NFLocalArchiveWriteStage in [.staged, .committed] {
+            let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Unscored-Owner-\(UUID())")
+            defer { try? FileManager.default.removeItem(at: folder) }
+            let repository = NFLocalSessionRepository(url: folder.appending(path: "sessions.json"))
+            let (store, container) = try store(repository); _ = container
+            let old = try asyncFixture(legacy: false, repository: repository, store: store)
+            old.numericValue = "draft"
+            let before = repository.archive.privateStudyRuns?.first?.payload
+            let probe = NFAsyncSubmitProbe(transaction: 1, stage: stage); defer { probe.release() }
+            repository.archiveWriteObserver = { probe.observe($0, $1) }
+            let reveal = Task { await old.revealSolutionAsync(store: store) }
+            let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+            old.releaseWriter(); probe.release(); await reveal.value
+            XCTAssertTrue(store.attempts.isEmpty); XCTAssertFalse(old.isSolutionViewed); XCTAssertFalse(old.ownsWriter)
+            if stage == .staged { XCTAssertEqual(repository.archive.privateStudyRuns?.first?.payload, before) }
+            repository.archiveWriteObserver = nil
+            let accepted = try XCTUnwrap(store.generatedPracticeRuns.first)
+            let current = AIGeneratedPracticeRuntime(result: accepted.result, request: accepted.request, draft: accepted)
+            XCTAssertTrue(current.restoreCheckpoint(store: store, automaticallyRetryPrepared: false))
+            current.resume()
+            if current.stage == 1 { await current.retryCommitAsync(store: store) }
+            else { await current.revealSolutionAsync(store: store) }
+            XCTAssertTrue(current.isSolutionViewed); XCTAssertEqual(store.attempts.count, 1)
+            await old.retryCommitAsync(store: store)
+            XCTAssertEqual(old.stage, 1); XCTAssertEqual(store.attempts.count, 1)
+        }
+    }
+
+    func testAsyncGeneratedUnscoredLateNativeInputRetainsExportAndDoesNotReplaceFrozenDraft() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "first draft"
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .committed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let reveal = Task { await runtime.revealSolutionAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        runtime.numericValue = "late native edit"
+        probe.release(); await reveal.value
+        XCTAssertEqual(runtime.numericValue, "late native edit"); XCTAssertFalse(runtime.isSolutionViewed)
+        XCTAssertTrue(store.attempts.isEmpty); XCTAssertEqual(store.generatedPracticeRuns.first?.response, .numeric(.init(value: "first draft", unit: nil)))
+        repository.archiveWriteObserver = nil
+        await runtime.retryCommitAsync(store: store)
+        XCTAssertTrue(store.attempts.isEmpty); XCTAssertEqual(runtime.exitDisposition(store: store), .unacknowledged)
+        XCTAssertTrue(runtime.recoveryText.contains("late native edit"))
+    }
+
+    func testAsyncGeneratedEndQueuedDuringWorkedSolutionRetainsOutcomeAndNoInventedAnswer() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "unfinished"
+        let attemptID = try XCTUnwrap(runtime.acceptedAttemptID)
+        let probe = NFAsyncSubmitProbe(transaction: 3, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let reveal = Task { await runtime.revealSolutionAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        let end = Task { await runtime.endSessionAsync(store: store) }
+        for _ in 0..<20 where !runtime.draftSaveGate.hasQueuedAction { await Task.yield() }
+        XCTAssertTrue(runtime.draftSaveGate.hasQueuedAction)
+        XCTAssertEqual(runtime.stage, 1); XCTAssertFalse(runtime.isSolutionViewed)
+        probe.release(); await reveal.value; await end.value
+        XCTAssertEqual(runtime.stage, 3); XCTAssertEqual(runtime.completedActivityCount, 1)
+        XCTAssertEqual(runtime.plannedQuestionCount, 2); XCTAssertEqual(runtime.revealedActivityCount, 1)
+        XCTAssertTrue(runtime.correctness.isEmpty); XCTAssertEqual(store.attempts.map(\.id), [attemptID])
+        let saved = try XCTUnwrap(store.generatedPracticeRuns.first)
+        XCTAssertEqual(saved.runState?.status, .endedEarly); XCTAssertEqual(saved.result.questions.count, 1)
+        XCTAssertEqual(saved.runState?.current.outcome, .revealed); XCTAssertEqual(saved.runState?.slots.count, 1)
+        XCTAssertNil(saved.lastScore)
+    }
+
+    func testAsyncGeneratedHintCommandUsesActorForWorkedSolutionAfterRetainedLadder() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        for _ in runtime.activeHintLadder { runtime.requestHint(store: store) }
+        XCTAssertEqual(runtime.hintRequestIndex, runtime.activeHintLadder.count)
+        let originalHints = try XCTUnwrap(store.generatedPracticeRuns.first).runState?.current.assistance ?? []
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let request = Task { await runtime.requestHintAsync(store: store, expectedAttemptID: runtime.acceptedAttemptID,
+            expectedHintIndex: runtime.hintRequestIndex) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        XCTAssertFalse(runtime.isSolutionViewed); XCTAssertTrue(store.attempts.isEmpty)
+        probe.release(); await request.value
+        XCTAssertTrue(runtime.isSolutionViewed); XCTAssertTrue(probe.stayedOffMain)
+        let events = try XCTUnwrap(store.generatedPracticeRuns.first).runState?.current.assistance ?? []
+        XCTAssertEqual(Array(events.prefix(originalHints.count)), originalHints)
+        XCTAssertEqual(events.filter { $0.kind == .workedSolution }.count, 1)
+        XCTAssertEqual(store.attempts.first?.hintCount, runtime.hintRequestIndex)
+        XCTAssertTrue(runtime.correctness.isEmpty)
+    }
+}
+
+extension GeneratedLifecycleParityTests {
+    func testAsyncGeneratedUnscoredConflictingOriginalIsRetainedAndWorkerJournalsZeroEvidenceProposal() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        let initial = try XCTUnwrap(store.generatedPracticeRuns.first)
+        let response = NFExerciseResponse.numeric(.init(value: "3", unit: nil))
+        try store.withSessionCommand(runtime.sessionWriterCommand(), sessionID: runtime.runID) {
+            try store.saveAuthoredExerciseAttempt(attemptID: XCTUnwrap(runtime.acceptedAttemptID),
+                generationID: runtime.result.provenance.requestID, sessionID: runtime.runID,
+                question: runtime.question, response: response,
+                score: NFExerciseScoringEngine.score(response, for: runtime.exercise), confidence: nil,
+                sourceDocumentIDs: runtime.result.provenance.sourceDocumentIDs, shownAt: initial.shownAt,
+                activeDuration: initial.activeDuration)
+        }
+        let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(XCTUnwrap(store.attempts.first)))
+        runtime.numericValue = "retained proposed draft"
+        let probe = NFAsyncSubmitProbe(transaction: 2, stage: .encoding); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let reveal = Task { await runtime.revealSolutionAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        XCTAssertEqual(runtime.stage, 1); XCTAssertFalse(runtime.isSolutionViewed)
+        XCTAssertEqual(repository.archive.attemptConflicts?.count ?? 0, 0)
+        probe.release(); await reveal.value
+        XCTAssertTrue(runtime.isReadOnlyRecovery); XCTAssertTrue(probe.stayedOffMain)
+        XCTAssertEqual(store.attempts.count, 1); XCTAssertEqual(repository.archive.attemptConflicts?.count, 1)
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(store.attempts[0])), original)
+        let proposed = try XCTUnwrap(repository.archive.attemptConflicts?.first)
+        XCTAssertTrue(proposed.proposed.wasSkipped); XCTAssertEqual(proposed.proposed.responseFormatRaw, "revealed")
+        XCTAssertEqual(proposed.proposed.deterministicCredit, 0); XCTAssertNil(proposed.proposedScore)
+        XCTAssertEqual(try JSONDecoder().decode(NFExerciseResponse.self, from: Data(proposed.proposed.response.utf8)),
+            .numeric(.init(value: "retained proposed draft", unit: nil)))
+    }
+
+    func testAsyncGeneratedUnscoredCurrentWriterCannotChangePreparedResponseOrOutcome() async throws {
+        let repository = NFLocalSessionRepository()
+        let (store, container) = try store(repository); _ = container
+        let runtime = try asyncFixture(legacy: false, repository: repository, store: store)
+        runtime.numericValue = "original unfinished"
+        let probe = NFAsyncSubmitProbe(transaction: 1, stage: .committed); defer { probe.release() }
+        repository.archiveWriteObserver = { probe.observe($0, $1) }
+        let reveal = Task { await runtime.revealSolutionAsync(store: store) }
+        let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+        reveal.cancel(); probe.release(); await reveal.value
+        repository.archiveWriteObserver = nil
+        let saved = try XCTUnwrap(store.generatedPracticeRuns.first)
+        for alterResponse in [false, true] {
+            do {
+                try await store.saveGeneratedSkippedExerciseAsync(command: runtime.sessionWriterCommand(), runID: runtime.runID,
+                    attemptID: XCTUnwrap(runtime.acceptedAttemptID), sessionID: runtime.runID,
+                    generationID: runtime.result.provenance.requestID, exercise: runtime.exercise,
+                    response: alterResponse ? .numeric(.init(value: "changed", unit: nil)) : saved.response,
+                    shownAt: saved.shownAt, activeDuration: saved.activeDuration,
+                    revealedSolution: alterResponse, hintCount: runtime.capturedSupportCount,
+                    mathWork: saved.mathWork, traceInspection: saved.traceInspection,
+                    dataInspection: saved.dataInspection, scienceStudy: saved.scienceStudy,
+                    transferRelationship: saved.transferRelationship)
+                XCTFail("The actor must bind both the exact draft and the unscored outcome.")
+            } catch { guard case NFLocalSessionRepository.RepositoryError.staleRevision = error else { return XCTFail("Unexpected refusal: \(error)") } }
+            XCTAssertTrue(store.attempts.isEmpty); XCTAssertTrue(repository.archive.snapshots.isEmpty)
+            XCTAssertEqual(store.generatedPracticeRuns.first?.response, saved.response)
+        }
+        await runtime.retryCommitAsync(store: store)
+        XCTAssertTrue(runtime.isSolutionViewed); XCTAssertEqual(store.attempts.count, 1)
+        XCTAssertEqual(try JSONDecoder().decode(NFExerciseResponse.self, from: Data(store.attempts[0].response.utf8)), saved.response)
+    }
+}
+
+extension GeneratedLifecycleParityTests {
+    func testAsyncGeneratedUnscoredColdReceiptBeforeFeedbackAndMatchingFeedbackRetryNeverDuplicate() async throws {
+        for legacy in [false, true] {
+            let folder = FileManager.default.temporaryDirectory.appending(path: "NFGenerated-Unscored-Receipt-\(UUID())")
+            defer { try? FileManager.default.removeItem(at: folder) }
+            let owner = UUID(), url = folder.appending(path: "sessions.json")
+            let repository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+            let (store, container) = try store(repository)
+            let runtime = try asyncFixture(legacy: legacy, repository: repository, store: store)
+            runtime.numericValue = "unfinished retained value"
+            let probe = NFAsyncSubmitProbe(transaction: 3, stage: .encoding); defer { probe.release() }
+            repository.archiveWriteObserver = { probe.observe($0, $1) }
+            let reveal = Task { await runtime.revealSolutionAsync(store: store) }
+            let held = await probe.waitUntilHeld(); XCTAssertTrue(held)
+            let original = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(XCTUnwrap(store.attempts.first)))
+            let savedAssistance = store.generatedPracticeRuns.first?.runState?.current.assistance
+            reveal.cancel(); probe.release(); await reveal.value
+            XCTAssertEqual(runtime.stage, 1); XCTAssertFalse(runtime.isSolutionViewed)
+            XCTAssertEqual(store.generatedPracticeRuns.first?.stage, 1); XCTAssertEqual(store.attempts.count, 1)
+            runtime.finishClosing()
+            let coldRepository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+            let coldStore = AppStore(context: container.mainContext, localSessionRepository: coldRepository, allowsSharedWidgetPublishing: false)
+            let draft = try XCTUnwrap(coldStore.generatedPracticeRuns.first)
+            let cold = AIGeneratedPracticeRuntime(result: draft.result, request: draft.request, draft: draft)
+            XCTAssertTrue(cold.restoreCheckpoint(store: coldStore, automaticallyRetryPrepared: false))
+            XCTAssertEqual(cold.stage, 1); XCTAssertFalse(cold.isSolutionViewed)
+            await cold.retryCommitAsync(store: coldStore)
+            XCTAssertTrue(cold.isSolutionViewed); XCTAssertEqual(coldStore.attempts.count, 1)
+            XCTAssertEqual(coldStore.generatedPracticeRuns.first?.runState?.current.assistance, savedAssistance)
+            // Matching feedback is also idempotent if a delayed same-slot command
+            // reaches the adapter after the receipt has already been acknowledged.
+            await cold.revealSolutionAsync(store: coldStore)
+            XCTAssertEqual(cold.stage, 2); XCTAssertFalse(cold.isReadOnlyRecovery)
+            XCTAssertTrue(cold.correctness.isEmpty); XCTAssertNil(cold.lastScore)
+            XCTAssertEqual(coldStore.attempts.count, 1)
+            XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(coldStore.attempts[0])), original)
+            XCTAssertEqual(coldStore.generatedPracticeRuns.first?.runState?.current.assistance, savedAssistance)
+        }
     }
 }

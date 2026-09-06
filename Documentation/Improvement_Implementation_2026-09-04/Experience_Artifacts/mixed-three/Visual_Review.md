@@ -1,0 +1,5 @@
+# Failed installed journeys, source e6eea47e
+
+Root visually reviewed both extracted final video frames and read actual AX trees. Topic Condition reasoning is present, keyboard remains visible and the selection popover is open after attempted scrolling. Graph scrolling instead moved the answer point near (3,47), leaving the page at the chart. AX independently confirms individually named controls: 58pt actual buttons and a 295×280 plot region. Retrieval actual AX shows the true arithmetic mean prompt, chart and three exact table rows 11,15,19; test stopped before the independent figure calculation because a Foundation empty-substring assertion fails.
+
+These are concrete failed journeys. Next source supplies topic submitLabel Done/onSubmit focus dismissal and interactive keyboard dismissal, plot hold-before-drag so ordinary swipes scroll, and a nonblank prompt check plus optional fragment matching; the figure/table/independent-answer and cold graph assertions remain intact. Actual injected runner PID20628 SHA fe1f069ebdf6eb2bc434d01ff3180412d58d7b844c000978d5eb95107e6869ee verified in installation manifest.

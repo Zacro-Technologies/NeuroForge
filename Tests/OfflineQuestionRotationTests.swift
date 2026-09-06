@@ -4,6 +4,61 @@ import XCTest
 @testable import NeuroForge
 
 final class OfflineQuestionRotationTests: XCTestCase {
+    func testEligibilitySeekingPreservesOriginalPositionsAndReclaimsOnlyUnconsumedHoles() throws {
+        let bank = try makeBank(), profile = UUID()
+        let store = InMemoryOfflineQuestionRotationStore(), rotation = NFOfflineQuestionRotation(store: store)
+        let original = try rotation.prepareReservation(profileID: profile, lab: .mentalMath, itemCount: 10, bank: bank, loadedLedger: nil)
+        let excluded = Set([original.plan.items[0].questionID, original.plan.items[3].questionID])
+        let selected = try rotation.prepareReservation(profileID: profile, lab: .mentalMath, itemCount: 5, bank: bank,
+            loadedLedger: nil, isEligible: { !excluded.contains($0.questionID) })
+        XCTAssertEqual(selected.plan.items.map(\.stableOrdinal), [1, 2, 4, 5, 6])
+        XCTAssertEqual(selected.plan.items.map(\.questionID), [1, 2, 4, 5, 6].map { original.plan.items[$0].questionID })
+        let sparse = try XCTUnwrap(selected.replacement.scopes.values.first)
+        XCTAssertEqual(sparse.cursor, 0); XCTAssertEqual(sparse.consumedEpochOrdinals, Set([1, 2, 4, 5, 6]))
+        XCTAssertFalse(sparse.containsConsumed(epoch: 0, ordinal: 0))
+        XCTAssertFalse(sparse.containsConsumed(epoch: 0, ordinal: 3))
+        let scope = NFReservationScope(profileID: profile.uuidString, labID: TrainingLab.mentalMath.rawValue,
+            contentEditionID: "fixture-bank", laneID: "mixed", privacyScopeID: "fixture", positionRecipeID: "offline.v1")
+        let migrated = try NFSelectionReservationPolicy.seedLegacyScope(scope, source: sparse,
+            sourcePositionRecipeID: "offline.v1", migrationID: "sparse-source", sourceDigest: "verified-sparse-source", in: .init())
+        XCTAssertTrue(migrated.scopes[scope.key]?.contains(.init(epoch: 0, ordinal: 1)) == true)
+        XCTAssertFalse(migrated.scopes[scope.key]?.contains(.init(epoch: 0, ordinal: 0)) == true)
+        XCTAssertNil(store.load())
+        let restoredLedger = try JSONDecoder().decode(NFOfflineQuestionRotationLedger.self, from: JSONEncoder().encode(selected.replacement))
+        let reinstated = try rotation.prepareReservation(profileID: profile, lab: .mentalMath, itemCount: 5, bank: bank, loadedLedger: restoredLedger)
+        XCTAssertEqual(reinstated.plan.items.map(\.stableOrdinal), [0, 3, 7, 8, 9])
+        XCTAssertEqual(reinstated.replacement.scopes.values.first?.cursor, 10)
+        XCTAssertNil(reinstated.replacement.scopes.values.first?.consumedEpochOrdinals)
+        XCTAssertTrue(Set(reinstated.plan.items.map(\.stableOrdinal)).isDisjoint(with: Set(selected.plan.items.map(\.stableOrdinal))))
+    }
+
+    func testIneligibleEpochTailCannotBeConsumedOrStartAFreshEpochToHideShortage() throws {
+        let bank = try makeBank(), profile = UUID()
+        let store = InMemoryOfflineQuestionRotationStore(), rotation = NFOfflineQuestionRotation(store: store)
+        _ = try rotation.reserve(profileID: profile, lab: .mentalMath, itemCount: 995, bank: bank)
+        let source = try XCTUnwrap(store.load())
+        let baseline = try rotation.prepareReservation(profileID: profile, lab: .mentalMath, itemCount: 5, bank: bank, loadedLedger: source)
+        let hole = baseline.plan.items[0].questionID
+        XCTAssertThrowsError(try rotation.prepareReservation(profileID: profile, lab: .mentalMath, itemCount: 5,
+            bank: bank, loadedLedger: source, isEligible: { $0.questionID != hole })) { error in
+            XCTAssertEqual(error as? NFOfflineQuestionRotationError, .insufficientEligibleQuestions(actual: 4, required: 5))
+        }
+        XCTAssertEqual(store.load(), source)
+        let four = try rotation.prepareReservation(profileID: profile, lab: .mentalMath, itemCount: 4,
+            bank: bank, loadedLedger: source, isEligible: { $0.questionID != hole })
+        XCTAssertEqual(four.plan.items.map(\.stableOrdinal), [996, 997, 998, 999])
+        XCTAssertEqual(four.replacement.scopes.values.first?.epoch, 0)
+        XCTAssertEqual(four.replacement.scopes.values.first?.cursor, 995)
+        XCTAssertThrowsError(try rotation.prepareReservation(profileID: profile, lab: .mentalMath, itemCount: 1,
+            bank: bank, loadedLedger: four.replacement, isEligible: { $0.questionID != hole }))
+        let restored = try rotation.prepareReservation(profileID: profile, lab: .mentalMath, itemCount: 1, bank: bank, loadedLedger: four.replacement)
+        XCTAssertEqual(restored.plan.items.first?.questionID, hole)
+        XCTAssertEqual(restored.plan.items.first?.stableOrdinal, 995)
+        XCTAssertEqual(restored.replacement.scopes.values.first?.epoch, 1)
+        XCTAssertEqual(restored.replacement.scopes.values.first?.cursor, 0)
+        XCTAssertEqual(restored.replacement.scopes.values.first?.boundaryExclusions, baseline.replacement.scopes.values.first?.boundaryExclusions)
+    }
+
     func testBankRequiresOneThousandUniqueStableIDsForEveryLab() throws {
         XCTAssertEqual(NFVersionedOfflineQuestionBank.minimumQuestionsPerLab, 1_000)
         var IDs = makeQuestionIDs()
@@ -359,6 +414,23 @@ final class OfflineQuestionRotationTests: XCTestCase {
         )
         XCTAssertEqual(fresh.reservationOrdinal, 0)
         XCTAssertEqual(fresh.items.map(\.stableOrdinal), (0..<5).map(UInt64.init))
+    }
+
+    func testPureProposalPreservesLegacyRecipeWithoutMutatingItsSource() throws {
+        let source = InMemoryOfflineQuestionRotationStore()
+        let rotation = NFOfflineQuestionRotation(store: source, boundaryTailLength: 8)
+        let bank = try makeBank()
+        let profileID = UUID()
+        _ = try rotation.reserve(profileID: profileID, lab: .spatial, itemCount: 995, bank: bank)
+        let original = try XCTUnwrap(source.load())
+        let proposal = try rotation.prepareReservation(profileID: profileID, lab: .spatial,
+            itemCount: 10, bank: bank, loadedLedger: original)
+        XCTAssertEqual(source.load(), original)
+        XCTAssertEqual(proposal.plan.items.map(\.stableOrdinal), (995..<1005).map(UInt64.init))
+        XCTAssertEqual(Set(proposal.plan.items.map(\.questionID)).count, 10)
+        let legacyAccepted = try rotation.reserve(profileID: profileID, lab: .spatial, itemCount: 10, bank: bank)
+        XCTAssertEqual(proposal.plan, legacyAccepted)
+        XCTAssertEqual(source.load(), proposal.replacement)
     }
 
     private func makeBank(version: Int = 1) throws -> NFVersionedOfflineQuestionBank {

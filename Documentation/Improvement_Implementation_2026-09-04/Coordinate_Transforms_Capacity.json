@@ -1,0 +1,47 @@
+{
+  "kind": "coordinate-transform-provisional-finite-census",
+  "policyVersion": 1,
+  "generatorVersion": 12,
+  "exerciseSchemaVersion": 9,
+  "executed": "Independent Python homogeneous matrix/distance/involution oracle. App/runtime tests authored, root execution pending.",
+  "authoredOperationRecipes": 24,
+  "sourceCoverageCases": 14,
+  "exactParameterizedContracts": 336,
+  "semanticQueryClassesAfterD4TranslationScaleAndFixedPointCanonicalization": 120,
+  "substructureKinds": {
+    "rotateOrigin": 84,
+    "rotateOffset": 84,
+    "translateThenRotate": 14,
+    "rotateThenTranslate": 14,
+    "reflectAxis": 28,
+    "reflectOffset": 28,
+    "reflectDiagonal": 28,
+    "reflectTwice": 28,
+    "rotateThenReflect": 14,
+    "reflectThenRotate": 14
+  },
+  "allQuadrants": true,
+  "axisOriginSymmetryAndNamedCenterCases": true,
+  "finalFixedPointCases": 29,
+  "answerBounds": [
+    -12,
+    12
+  ],
+  "response": "Two typed exact numeric coordinates; half credit each; full correctness requires both.",
+  "countsDoNotGrantIndependentTopologiesOrReviewedBands": true,
+  "reviewedBandSlots": 0,
+  "signedEditionSlots": 0,
+  "remainingEngineering": [
+    "Unknown-transform inference from sufficient point correspondences",
+    "Scored orientation/fixed-point classification rather than post-response explanation",
+    "Broader authored transform families and demand-tier selection",
+    "Exact retention recipes for new identities",
+    "Requested-block feasibility independent of bounded legacy random probes",
+    "QA-F13 solid-plane intersections and QA-F15 varied folding queries"
+  ],
+  "separateReleaseGates": [
+    "Independent editorial/visual/language review",
+    "Band admission and balanced quota assignment",
+    "Calibration and signature approval"
+  ]
+}

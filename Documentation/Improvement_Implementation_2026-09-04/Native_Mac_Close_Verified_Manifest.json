@@ -1,0 +1,37 @@
+{
+  "createdAt": "2026-09-05T09:33:30.905003+00:00",
+  "runID": "FA6C9231-9195-48C8-8A95-8A5A7F9992F3",
+  "appPath": "/tmp/NeuroForge-Native-QA-fa6c9231-9195-48c8-8a95-8a5a7f9992f3/NeuroForgeNativeQA.app",
+  "bundleID": "com.zacrotech.NeuroForge.nativeqa.fa6c9231919548c88a958a5a7f9992f3",
+  "purpose": "Native CmdW event routing verification; UUID test files/preferences, CloudKit disabled",
+  "sourceManifest": "Native_Close_Raw_Corrected_Source_Hashes.json",
+  "sourceInputManifestDigest": "8cf205d949e9219014a4c4b599d1cc7d36bbbe19afe44ba437943d42070d6ed7",
+  "fixtureRoot": "/var/folders/9s/lwj2ss7d679bl8hv9dx2qf6h0000gn/T/NeuroForge-UITests-FA6C9231-9195-48C8-8A95-8A5A7F9992F3",
+  "NeuroForge": {
+    "builtSHA256": "a664ae4291bbfec57d86bec08832758797577eefe6e576130f12e413c673191a",
+    "copiedSHA256": "a664ae4291bbfec57d86bec08832758797577eefe6e576130f12e413c673191a"
+  },
+  "NeuroForge.debug.dylib": {
+    "builtSHA256": "f054bc32be4b1853a6aca219f4bf2d62a881dc6846c0772e79857de2b1db4e5d",
+    "copiedSHA256": "f054bc32be4b1853a6aca219f4bf2d62a881dc6846c0772e79857de2b1db4e5d"
+  },
+  "trace": "registry.register.count=1\nwindow.close-key.captured\nwindow.command\nwindow.request\nwindow.dismiss-owned-presentations\nwindow.registry-remove.count=0.requested=true\ncontinuation.start.windows=1\nregistry.remove.count=0.pending=false\nwindow.registry-remove.count=0.requested=false\nregistry.remove.count=0.pending=false\ncontinuation.inspect.attached=0\ncontinuation.finish\nwindow.retry-original-delegate\nquit.delegate\nregistry.register.count=1\nwindow.close-key.unregistered\nwindow.close-key.captured\nwindow.command\nwindow.request\nwindow.blocked\nwindow.close-key.captured\nwindow.command\nwindow.request\nwindow.dismiss-owned-presentations\nwindow.registry-remove.count=0.requested=true\ncontinuation.start.windows=1\nregistry.remove.count=0.pending=false\nwindow.registry-remove.count=0.requested=false\nregistry.remove.count=0.pending=false\ncontinuation.inspect.attached=0\ncontinuation.finish\nwindow.retry-original-delegate\nquit.delegate\n",
+  "retainedResponse": {
+    "numeric": {
+      "_0": {
+        "value": "345"
+      }
+    }
+  },
+  "retainedScratchpad": "neuroforge-scratchpad-v1:eyJub3RlcyI6IktlZXAgdGhpcyBzY3JhdGNocGFkLiIsImRyYXdpbmdEYXRhIjoiIn0=",
+  "status": "PASS scoped actual native CmdW success, cold continuation, child-sheet exclusion, failed-save retention and retry.",
+  "verifiedAt": "2026-09-05T09:38:20.965959+00:00",
+  "remainingQAProcesses": [],
+  "observations": [
+    "Active draft34 + CmdW reached window.close-key.captured, saved/suspended, dismissed and terminated last-window app.",
+    "Cold relaunch+Continue+Resume showed original10\u00d79prompt, Q1/5 and34.",
+    "Scratchpad entry kept text; CmdW emitted unregistered and left child/parent open. Done returned to original draft.",
+    "After UUID-only save obstruction and edit345, CmdW showed recovery with345and scratchpad; previous disk34 remained intact.",
+    "Restored exact file, Retry save, fresh CmdW terminated and retained345plus scratchpad. No obstruction or test process remains."
+  ]
+}

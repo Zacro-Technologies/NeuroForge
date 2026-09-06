@@ -26,6 +26,45 @@ enum NFDeterministicSessionExerciseFactory {
         assessmentDescriptor: NFAssessmentItemDescriptor?,
         excludingContentFingerprints: Set<String> = []
     ) -> NFExercise {
+        var unavailableLab = request.lab
+        if let exercise = materializeExercise(request: request, index: index,
+            assessmentDescriptor: assessmentDescriptor,
+            excludingContentFingerprints: excludingContentFingerprints, unavailableLab: &unavailableLab) {
+            return exercise
+        }
+        // Exhaustion and invalid requests need the same bounded placeholder,
+        // but only after all candidate-construction frames have unwound. This
+        // also keeps locale formatting within the cooperative worker's stack.
+        return unavailableExercise(lab: unavailableLab, localeIdentifier: request.localeIdentifier)
+    }
+
+    @inline(never)
+    private static func materializeExercise(
+        request: SessionRequest,
+        index: Int,
+        assessmentDescriptor: NFAssessmentItemDescriptor?,
+        excludingContentFingerprints: Set<String>,
+        unavailableLab: inout TrainingLab
+    ) -> NFExercise? {
+        guard request.hasSupportedSpatialAssemblyPolicy else { return nil }
+        guard request.hasSupportedCoordinateReasoningPolicy else { return nil }
+        guard request.hasSupportedNetFoldingPolicy else { return nil }
+        guard request.hasSupportedSolidSectionPolicy else { return nil }
+        guard request.hasSupportedCoordinateTransformPolicy else { return nil }
+        guard request.hasSupportedSpatialStructurePolicy else { return nil }
+        guard request.hasSupportedRetrievalAssetPolicy else { return nil }
+        guard request.hasSupportedRetrievalAuthorityPolicy else { return nil }
+        guard request.hasSupportedTransferPolicy else { return nil }
+        guard request.hasSupportedGraphConstructionPolicy else {
+            return nil
+        }
+        guard request.scienceStudyPolicyVersion == nil || request.scienceStudyPolicyVersion == 1,
+              request.scienceStudyExcludedContextID.map({ NFScienceStudyContract.contextIDs.contains($0) && request.scienceStudyPolicyVersion == 1 }) ?? true else {
+            return nil
+        }
+        guard request.tracePolicyVersion == nil || request.tracePolicyVersion == 1 else {
+            return nil
+        }
         let purpose: NFExercisePurpose = if assessmentDescriptor?.role == .practice {
             .practice
         } else {
@@ -39,6 +78,7 @@ enum NFDeterministicSessionExerciseFactory {
             }
         }
         let selectedLab = assessmentDescriptor?.lab ?? request.lab
+        unavailableLab = selectedLab
         let transferBrief = assessmentDescriptor == nil ? request.transferBrief : nil
         let retentionTarget = assessmentDescriptor == nil && purpose == .retention
             ? request.retentionTarget(at: index)
@@ -83,7 +123,6 @@ enum NFDeterministicSessionExerciseFactory {
         let probeCount = offlineDescriptor == nil
             ? (assessmentDescriptor == nil ? (retentionTarget == nil ? 32 : 96) : 1)
             : 1
-        var firstCandidate: NFExercise?
         var exactMechanicCandidate: NFExercise?
         var familyCandidate: NFExercise?
         var shiftedFamilyCandidate: NFExercise?
@@ -98,7 +137,21 @@ enum NFDeterministicSessionExerciseFactory {
                 sourceContext: context,
                 targetDifficulty: assessmentDescriptor?.difficulty ?? request.targetDifficulty,
                 preferredAssessmentFormat: preferredFormat,
-                preferredAssessmentMechanicID: preferredMechanicID
+                preferredAssessmentMechanicID: preferredMechanicID,
+                tracePolicyVersion: assessmentDescriptor == nil ? request.tracePolicyVersion : nil,
+                scienceStudyPolicyVersion: assessmentDescriptor == nil ? request.scienceStudyPolicyVersion : nil,
+                scienceStudyExcludedContextID: assessmentDescriptor == nil ? request.scienceStudyExcludedContextID : nil,
+                transferPolicyVersion: assessmentDescriptor == nil ? request.transferPolicyVersion : nil,
+                transferExcludedContextID: assessmentDescriptor == nil ? request.transferExcludedContextID : nil,
+                graphConstructionPolicyVersion: assessmentDescriptor == nil ? request.graphConstructionPolicyVersion : nil,
+                retrievalAuthorityPolicyVersion: assessmentDescriptor == nil ? request.retrievalAuthorityPolicyVersion : nil,
+                retrievalAssetPolicyVersion: assessmentDescriptor == nil ? request.retrievalAssetPolicyVersion : nil,
+                spatialStructurePolicyVersion: assessmentDescriptor == nil ? request.spatialStructurePolicyVersion : nil,
+                coordinateTransformPolicyVersion: assessmentDescriptor == nil ? request.coordinateTransformPolicyVersion : nil,
+                solidSectionPolicyVersion: assessmentDescriptor == nil ? request.solidSectionPolicyVersion : nil,
+                netFoldingPolicyVersion: assessmentDescriptor == nil ? request.netFoldingPolicyVersion : nil,
+                coordinateReasoningPolicyVersion: assessmentDescriptor == nil ? request.coordinateReasoningPolicyVersion : nil,
+                spatialAssemblyPolicyVersion: assessmentDescriptor == nil ? request.spatialAssemblyPolicyVersion : nil
             ))
             if let candidate,
                (assessmentDescriptor != nil || !request.quarantinedItemIDs.contains(candidate.id)),
@@ -107,7 +160,6 @@ enum NFDeterministicSessionExerciseFactory {
                         NFQuestionFingerprint.fingerprint(for: candidate)
                     )) {
                 guard let retentionTarget else { return candidate }
-                firstCandidate = firstCandidate ?? candidate
                 let candidateMechanic = retentionMechanicToken(candidate.templateID)
                 let targetMechanic = retentionMechanicToken(retentionTarget.memoryItemID)
                 let exactMechanic = targetMechanic != nil && candidateMechanic == targetMechanic
@@ -119,10 +171,10 @@ enum NFDeterministicSessionExerciseFactory {
                 if exactMechanic && (!retentionTarget.requiresRepresentationShift || shifted) {
                     return candidate
                 }
-                if exactMechanic { exactMechanicCandidate = exactMechanicCandidate ?? candidate }
-                if sameFamily { familyCandidate = familyCandidate ?? candidate }
-                if sameFamily && shifted {
-                    shiftedFamilyCandidate = shiftedFamilyCandidate ?? candidate
+                if exactMechanic, case .none = exactMechanicCandidate { exactMechanicCandidate = candidate }
+                if sameFamily, case .none = familyCandidate { familyCandidate = candidate }
+                if sameFamily && shifted, case .none = shiftedFamilyCandidate {
+                    shiftedFamilyCandidate = candidate
                 }
             }
         }
@@ -132,87 +184,135 @@ enum NFDeterministicSessionExerciseFactory {
                 return shiftedFamilyCandidate
             }
             if let exactMechanicCandidate { return exactMechanicCandidate }
-            if let familyCandidate { return familyCandidate }
-            if let firstCandidate { return firstCandidate }
+            // A known scheduled mechanic cannot be replaced by another
+            // question from the same broad lab when its finite pool is spent.
+            if retentionMechanicToken(retentionTarget.memoryItemID) == nil,
+               let familyCandidate { return familyCandidate }
+            return nil
         }
-        // Some narrowly selected activities intentionally have a single
-        // reviewed contract. Once that contract has appeared in this run,
-        // broaden to the remaining reviewed families in the same lab rather
-        // than showing the identical question again.
+        // Only generated selection can seek another eligible candidate. An
+        // exact fixed-plan descriptor must become explicitly unavailable when
+        // excluded; substituting a different seed would amend the saved plan.
         if assessmentDescriptor == nil,
            retentionTarget == nil,
+           offlineDescriptor == nil,
+           request.mechanicID == nil,
            !excludingContentFingerprints.isEmpty {
-            for probe in 0..<256 {
-                let seed = resolvedBaseSeed
-                    &+ UInt64(probeCount + probe) &* 0x9E37_79B9_7F4A_7C15
-                guard let candidate = try? NFFallbackExerciseGenerator.generate(
-                    NFExerciseGenerationRequest(
-                        seed: seed,
-                        index: generationIndex,
-                        lab: selectedLab,
-                        purpose: purpose,
-                        localeIdentifier: request.localeIdentifier,
-                        sourceContext: context,
-                        targetDifficulty: request.targetDifficulty,
-                        preferredAssessmentFormat: preferredFormat,
-                        preferredAssessmentMechanicID: nil
-                    )
-                ),
-                !request.quarantinedItemIDs.contains(candidate.id),
-                !excludingContentFingerprints.contains(
-                    NFQuestionFingerprint.fingerprint(for: candidate)
-                ) else { continue }
-                return candidate
-            }
-
-            // The compiled bank is the final no-repeat authority for ordinary
-            // practice. This path is rarely needed (the probes above normally
-            // find a different mechanic immediately), but it prevents a narrow
-            // selected activity from silently replaying its first item.
-            for ordinal in 0..<NFOfflineQuestionBank.questionsPerLab {
-                guard let descriptor = NFOfflineQuestionBank.descriptor(
-                    for: selectedLab,
-                    ordinal: ordinal
-                ),
-                let candidate = try? NFFallbackExerciseGenerator.generate(
-                    NFExerciseGenerationRequest(
-                        seed: descriptor.seed,
-                        index: 0,
-                        lab: selectedLab,
-                        purpose: purpose,
-                        localeIdentifier: request.localeIdentifier,
-                        sourceContext: context,
-                        targetDifficulty: request.targetDifficulty
-                    )
-                ),
-                !request.quarantinedItemIDs.contains(candidate.id),
-                !excludingContentFingerprints.contains(
-                    NFQuestionFingerprint.fingerprint(for: candidate)
-                ) else { continue }
-                return candidate
-            }
-
-            preconditionFailure(
-                "Verified offline bank could not provide a unique \(selectedLab.rawValue) practice question"
-            )
+            return materializeAlternativeExercise(request: request, selectedLab: selectedLab,
+                purpose: purpose, context: context, resolvedBaseSeed: resolvedBaseSeed,
+                generationIndex: generationIndex, probeCount: probeCount,
+                preferredFormat: preferredFormat, excludingContentFingerprints: excludingContentFingerprints)
         }
-        return try! NFFallbackExerciseGenerator.generate(NFExerciseGenerationRequest(
-            seed: retentionTarget?.alternateSeed ?? 1,
-            index: max(0, index),
-            lab: selectedLab,
-            purpose: purpose,
-            localeIdentifier: request.localeIdentifier,
-            sourceContext: context,
-            targetDifficulty: nil,
-            preferredAssessmentFormat: preferredFormat,
-            preferredAssessmentMechanicID: preferredMechanicID
-        ))
+        return nil
+    }
+
+    /// Fixed/retention selection returns before these unrelated fallback search
+    /// temporaries are allocated. Probe order, seeds, and exclusions are unchanged.
+    @inline(never)
+    private static func materializeAlternativeExercise(
+        request: SessionRequest, selectedLab: TrainingLab, purpose: NFExercisePurpose,
+        context: NFExerciseSourceContext, resolvedBaseSeed: UInt64, generationIndex: Int,
+        probeCount: Int, preferredFormat: NFAssessmentItemFormat?, excludingContentFingerprints: Set<String>
+    ) -> NFExercise? {
+        for probe in 0..<256 {
+            let seed = resolvedBaseSeed
+                &+ UInt64(probeCount + probe) &* 0x9E37_79B9_7F4A_7C15
+            guard let candidate = try? NFFallbackExerciseGenerator.generate(
+                NFExerciseGenerationRequest(
+                    seed: seed,
+                    index: generationIndex,
+                    lab: selectedLab,
+                    purpose: purpose,
+                    localeIdentifier: request.localeIdentifier,
+                    sourceContext: context,
+                    targetDifficulty: request.targetDifficulty,
+                    preferredAssessmentFormat: preferredFormat,
+                    preferredAssessmentMechanicID: nil,
+                    tracePolicyVersion: request.tracePolicyVersion,
+                    scienceStudyPolicyVersion: request.scienceStudyPolicyVersion,
+                    scienceStudyExcludedContextID: request.scienceStudyExcludedContextID,
+                    transferPolicyVersion: request.transferPolicyVersion, transferExcludedContextID: request.transferExcludedContextID,
+                    graphConstructionPolicyVersion: request.graphConstructionPolicyVersion,
+                    retrievalAuthorityPolicyVersion: request.retrievalAuthorityPolicyVersion,
+                    retrievalAssetPolicyVersion: request.retrievalAssetPolicyVersion,
+                    spatialStructurePolicyVersion: request.spatialStructurePolicyVersion,
+                    coordinateTransformPolicyVersion: request.coordinateTransformPolicyVersion,
+                        solidSectionPolicyVersion: request.solidSectionPolicyVersion,
+                        netFoldingPolicyVersion: request.netFoldingPolicyVersion,
+                        coordinateReasoningPolicyVersion: request.coordinateReasoningPolicyVersion,
+                        spatialAssemblyPolicyVersion: request.spatialAssemblyPolicyVersion
+                )
+            ),
+            !request.quarantinedItemIDs.contains(candidate.id),
+            !excludingContentFingerprints.contains(
+                NFQuestionFingerprint.fingerprint(for: candidate)
+            ) else { continue }
+            return candidate
+        }
+
+        // The compiled bank is the final no-repeat authority for ordinary
+        // practice. This path is rarely needed (the probes above normally
+        // find a different mechanic immediately), but it prevents a narrow
+        // selected activity from silently replaying its first item.
+        for ordinal in 0..<NFOfflineQuestionBank.questionsPerLab {
+            guard let descriptor = NFOfflineQuestionBank.descriptor(
+                for: selectedLab,
+                ordinal: ordinal
+            ),
+            let candidate = try? NFFallbackExerciseGenerator.generate(
+                NFExerciseGenerationRequest(
+                    seed: descriptor.seed,
+                    index: 0,
+                    lab: selectedLab,
+                    purpose: purpose,
+                    localeIdentifier: request.localeIdentifier,
+                    sourceContext: context,
+                    targetDifficulty: request.targetDifficulty,
+                    tracePolicyVersion: request.tracePolicyVersion,
+                    scienceStudyPolicyVersion: request.scienceStudyPolicyVersion,
+                    scienceStudyExcludedContextID: request.scienceStudyExcludedContextID,
+                    transferPolicyVersion: request.transferPolicyVersion, transferExcludedContextID: request.transferExcludedContextID,
+                    graphConstructionPolicyVersion: request.graphConstructionPolicyVersion,
+                    retrievalAuthorityPolicyVersion: request.retrievalAuthorityPolicyVersion,
+                    retrievalAssetPolicyVersion: request.retrievalAssetPolicyVersion,
+                    spatialStructurePolicyVersion: request.spatialStructurePolicyVersion,
+                    coordinateTransformPolicyVersion: request.coordinateTransformPolicyVersion,
+                        solidSectionPolicyVersion: request.solidSectionPolicyVersion,
+                        netFoldingPolicyVersion: request.netFoldingPolicyVersion,
+                        coordinateReasoningPolicyVersion: request.coordinateReasoningPolicyVersion,
+                        spatialAssemblyPolicyVersion: request.spatialAssemblyPolicyVersion
+                )
+            ),
+            !request.quarantinedItemIDs.contains(candidate.id),
+            !excludingContentFingerprints.contains(
+                NFQuestionFingerprint.fingerprint(for: candidate)
+            ) else { continue }
+            return candidate
+        }
+
+        return nil
+    }
+
+    private static func unavailableExercise(lab: TrainingLab, localeIdentifier: String) -> NFExercise {
+        // The placeholder is never presented as a question or admitted to a
+        // scorer. The known bounded factory inputs only construct its shape.
+        var placeholder = try! NFFallbackExerciseGenerator.generate(NFExerciseGenerationRequest(
+            seed: 1, index: 0, lab: lab, purpose: .practice, localeIdentifier: localeIdentifier))
+        placeholder.availabilityReason = "No fresh question is available for this activity. Your completed answers are saved. Choose another activity or return later."
+        return placeholder
     }
 
     private static func retentionMechanicToken(_ identity: String) -> String? {
-        guard let marker = identity.range(of: ".v3.", options: .backwards) else { return nil }
-        let token = identity[marker.upperBound...]
-        return token.isEmpty ? nil : String(token)
+        // These are explicit shipped template editions, not an arbitrary
+        // future-version parser. This applies only to a fresh review target;
+        // accepted snapshots retain their exact original exercise.
+        for edition in ["v3", "v4"] {
+            if let marker = identity.range(of: ".\(edition).", options: .backwards) {
+                let token = identity[marker.upperBound...]
+                return token.isEmpty ? nil : String(token)
+            }
+        }
+        return nil
     }
 
     private static func normalizedRetentionFamily(_ identity: String) -> String {
@@ -220,8 +320,10 @@ enum NFDeterministicSessionExerciseFactory {
         for purpose in ["baseline", "practice", "near", "applied", "retention", "holdout", "document"] {
             normalized = normalized.replacingOccurrences(of: ".\(purpose).", with: ".")
         }
-        if let version = normalized.range(of: ".v3", options: .backwards) {
-            return String(normalized[..<version.upperBound])
+        for edition in ["v3", "v4"] {
+            if normalized.hasSuffix("." + edition) {
+                return String(normalized.dropLast(edition.count + 1))
+            }
         }
         return normalized
     }

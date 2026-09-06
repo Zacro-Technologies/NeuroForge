@@ -1,0 +1,20 @@
+{
+  "bundle": "Test-NeuroForgeUISmoke-2026.09.05_01-48-51--0400.xcresult",
+  "log": "/tmp/neuroforge-current-installed-ui.log",
+  "executedTests": 20,
+  "failures": 0,
+  "sourceFiles": {
+    "A1C4AA44-0DA0-4223-B94F-48FA136DB35E.png": "SE-claim-mapping-visible-feedback.png",
+    "D6015F88-4C1B-4C36-8945-2DA97DF87912.png": "SE-clarification-visible-guidance.png",
+    "4635CBD8-F665-4DEF-9D58-FA1FA645EA8F.png": "SE-source-exact-cold-recall-neutral-feedback.png",
+    "922481F7-1760-4CD1-B632-E613F926FB04.png": "SE-finite-logic-conditions-retained-feedback.png",
+    "C33E9606-425C-4E3A-B533-FF51339C1098.png": "SE-finite-ordered-proof-retained-answer.png",
+    "BAD202FA-0131-42E7-8B7F-BED691819338.png": "SE-finite-science-confound-retained-feedback.png",
+    "690B852F-1E83-402E-BF6B-31A82888E82C.png": "SE-finite-transfer-retained-feedback.png",
+    "909BE39C-C557-4CC4-BF36-0BA1C42CB575.png": "SE-Q3-exact-feedback-cold-relaunch-en.png",
+    "1F605265-D6A5-493F-AAB7-B06F3869AE08.png": "SE-Q3-exact-feedback-cold-relaunch-ja.png",
+    "43753E12-ADC7-4D19-97B1-A9EDE95EFC4A.png": "SE-onboarding-verified-AX5.png",
+    "EB445605-089C-4953-A43B-6C146BC6D5BA.png": "SE-sample-visible-feedback.png"
+  },
+  "scope": "Unedited actual screenshots, before later accessibility-focus, timing separation and scratchpad recovery changes."
+}

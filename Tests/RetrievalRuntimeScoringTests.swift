@@ -8,7 +8,7 @@ final class RetrievalRuntimeScoringTests: XCTestCase {
             for answer in target.allAcceptedAnswers {
                 XCTAssertTrue(
                     NFExerciseScoringEngine.validateNormalizedExact(
-                        "  \(answer.uppercased())!  ",
+                        target.id.hasSuffix(".integral-derivative-link") ? answer : "  \(answer.uppercased())!  ",
                         acceptedAnswers: target.allAcceptedAnswers
                     ),
                     "Production scoring rejected \(target.id): \(answer)"

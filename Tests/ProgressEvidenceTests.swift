@@ -1,4 +1,5 @@
 import XCTest
+import SwiftData
 
 @testable import NeuroForge
 
@@ -27,10 +28,10 @@ final class ProgressEvidenceTests: XCTestCase {
 
         let evidence = NFSpeedEvidenceEngine.estimate(for: .mentalMath, attempts: attempts)
 
-        XCTAssertEqual(evidence.status, .available)
-        XCTAssertEqual(evidence.eligibleCount, 5)
-        XCTAssertEqual(try XCTUnwrap(evidence.medianActiveSeconds), 12, accuracy: 0.0001)
-        XCTAssertEqual(try XCTUnwrap(evidence.medianAbsoluteDeviationSeconds), 2, accuracy: 0.0001)
+        XCTAssertEqual(evidence.status, .insufficientTimedEvidence)
+        XCTAssertEqual(evidence.eligibleCount, 0)
+        XCTAssertNil(evidence.medianActiveSeconds)
+        XCTAssertNil(evidence.medianAbsoluteDeviationSeconds)
     }
 
     func testWeeklyTrendUsesWeightedCreditAndExcludesSkipAndZeroEvidenceAcrossWeekBoundary() throws {
@@ -315,31 +316,25 @@ final class ProgressEvidenceTests: XCTestCase {
         XCTAssertNil(NFUserFacingContentLinter.lint(safe))
     }
 
-    func testMentalMathProgressAdapterRecoversCompositeEstimateAndExactReference() throws {
+    func testMentalMathProgressAdapterReadsEstimateOnlyFromExactRetainedContract() throws {
+        let exercise = try NFFallbackExerciseGenerator.generate(.init(seed: 4391, index: 0,
+            lab: .mentalMath, purpose: .practice, localeIdentifier: "en",
+            preferredAssessmentMechanicID: "fixture.fallback-variant-7"))
+        guard case let .logicState(schema) = exercise.interaction else { return XCTFail("Expected composite contract") }
         let attempt = makeAttempt(index: 40, timed: false, seconds: 18)
-        attempt.templateID = "nf.fallback.mental_math.practice.v3.estimate-first"
-        let response = NFExerciseResponse.logicState(
-            NFLogicStateSubmission(
-                finalState: [
-                    NFEstimateExactContract.estimateKey: "10,000",
-                    NFEstimateExactContract.plausibilityKey: "plausible",
-                    NFEstimateExactContract.exactKey: "9,702"
-                ],
-                violatedRuleID: nil
-            )
-        )
-        attempt.response = try XCTUnwrap(String(
-            data: JSONEncoder().encode(response),
-            encoding: .utf8
-        ))
-        attempt.correctAnswerText = "1 · estimate=10000, 2 · plausibility=plausible, 3 · exact=9702"
-
-        let observation = try XCTUnwrap(NFMentalMathProgressAdapter.observation(from: attempt))
-
-        XCTAssertEqual(observation.estimate, try NFExactNumber(numerator: 10_000))
-        XCTAssertEqual(observation.exactReference, try NFExactNumber(numerator: 9_702))
+        attempt.itemID = exercise.id
+        attempt.templateID = exercise.templateID
+        attempt.correctAnswerText = "3 · exact=1"
+        let response = NFExerciseResponse.logicState(.init(finalState: schema.expectedFinalState, violatedRuleID: nil))
+        let observation = try XCTUnwrap(NFMentalMathProgressAdapter.observation(from:
+            NFMentalMathProgressInput(attempt: attempt.dto, response: response, exercise: exercise), at: attempt.submittedAt))
+        XCTAssertEqual(observation.estimate, NFStateValueAuthority.exactNumber(schema.expectedFinalState[NFEstimateExactContract.estimateKey] ?? ""))
+        XCTAssertEqual(observation.exactReference, NFStateValueAuthority.exactNumber(schema.expectedFinalState[NFEstimateExactContract.exactKey] ?? ""))
+        XCTAssertNotEqual(observation.exactReference, try NFExactNumber(numerator: 1), "Answer-summary text cannot replace the retained key")
         XCTAssertTrue(observation.tags.contains("estimate-first"))
-        XCTAssertNotNil(observation.strategyID)
+        XCTAssertNil(observation.strategyID)
+        let legacy = try XCTUnwrap(NFMentalMathProgressAdapter.observation(from: attempt))
+        XCTAssertNil(legacy.estimate); XCTAssertNil(legacy.exactReference)
     }
 
     func testMentalMathProgressAdapterUsesDurableUnitAndRapidRecallSignalsOnly() throws {
@@ -354,9 +349,9 @@ final class ProgressEvidenceTests: XCTestCase {
         ))
 
         let unitObservation = try XCTUnwrap(NFMentalMathProgressAdapter.observation(from: unitAttempt))
-        XCTAssertTrue(unitObservation.unitRequired)
-        XCTAssertEqual(unitObservation.unitWasCorrect, true)
-        XCTAssertTrue(unitObservation.tags.contains("unit-conversion"))
+        XCTAssertFalse(unitObservation.unitRequired, "Display copy is not an authenticated unit contract")
+        XCTAssertNil(unitObservation.unitWasCorrect, "Legacy aggregate credit does not encode a scored unit criterion.")
+        XCTAssertFalse(unitObservation.tags.contains("unit-conversion"), "Template names do not supply observed criteria")
 
         let untimedRecall = makeAttempt(index: 42, timed: false, seconds: 3)
         untimedRecall.templateID = "nf.fallback.mental_math.practice.v3.rapid-recall"
@@ -368,6 +363,143 @@ final class ProgressEvidenceTests: XCTestCase {
         XCTAssertFalse(result.isAvailable)
     }
 
+    @MainActor
+    func testMentalMathStoreAdapterAppliesCorrectionsAndConflictsWithoutChangingOriginalAnswers() throws {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let store = AppStore(context: container.mainContext)
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        var records: [AttemptRecord] = []
+        for index in 0..<6 {
+            let record = makeAttempt(index: 100 + index, timed: true, seconds: 10)
+            record.id = try XCTUnwrap(UUID(uuidString: String(format: "A1000000-0000-0000-0000-%012d", index)))
+            record.submittedAt = now.addingTimeInterval(Double(index))
+            record.responseFormatRaw = "numeric"
+            container.mainContext.insert(record); records.append(record)
+        }
+        try container.mainContext.save(); store.reload()
+        let initial = NFMentalMathMetricReducer.reduce(store.mentalMathMetricObservations(from: records, at: now.addingTimeInterval(10)))
+        XCTAssertEqual(initial[.independentAccuracy]?.sampleCount, 6)
+        XCTAssertEqual(initial[.independentAccuracy]?.value, 1)
+        let corrected = records[0], conflicted = records[1]
+        try store.localSessions.appendDispositions([.init(id: "QA.mental-metric-correction.v1",
+            attemptID: corrected.id.uuidString, revision: 1,
+            policyVersion: NFHistoricalPracticeProjection.policyVersion, occurredAt: now,
+            disposition: .legacyPracticeHistory, reason: "Synthetic rubric correction for projection test",
+            correctedDerivedCredit: 0.5, supersedesDispositionID: nil)])
+        let proposed = makeAttempt(index: 101, timed: true, seconds: 10)
+        proposed.id = conflicted.id; proposed.sessionID = conflicted.sessionID
+        proposed.response = "different proposed answer"
+        try store.localSessions.appendAttemptConflict(.init(original: .init(conflicted), proposed: .init(proposed),
+            originalExercise: nil, proposedExercise: nil, proposedScore: nil))
+        let observations = store.mentalMathMetricObservations(from: records, at: now.addingTimeInterval(10))
+        let metrics = NFMentalMathMetricReducer.reduce(observations)
+        XCTAssertEqual(metrics[.independentAccuracy]?.sampleCount, 5)
+        XCTAssertEqual(try XCTUnwrap(metrics[.independentAccuracy]?.value), 0.9, accuracy: 0.000_001)
+        XCTAssertEqual(metrics[.retrievalFluency]?.sampleCount, 0)
+        XCTAssertTrue(records.allSatisfy { $0.deterministicCredit == 1 && $0.response == "1" && $0.isCorrect })
+        XCTAssertEqual(store.attempts.count, 6)
+    }
+
+    @MainActor
+    func testMentalMathStoreAdapterAuthenticatesSnapshotBeforeUsingEstimationReference() throws {
+        let container = try ModelContainer(for: Schema(NFSchemaV1.models), configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let store = AppStore(context: container.mainContext)
+        let exercise = try NFFallbackExerciseGenerator.generate(.init(seed: 4391, index: 0,
+            lab: .mentalMath, purpose: .practice, localeIdentifier: "en",
+            preferredAssessmentMechanicID: "fixture.fallback-variant-7"))
+        guard case let .logicState(schema) = exercise.interaction else { return XCTFail("Expected composite contract") }
+        let response = NFExerciseResponse.logicState(.init(finalState: schema.expectedFinalState, violatedRuleID: nil))
+        let id = try XCTUnwrap(UUID(uuidString: "A2000000-0000-0000-0000-000000000001"))
+        try store.saveExerciseAttempt(attemptID: id, sessionID: UUID(), exercise: exercise, response: response,
+            result: NFExerciseScoringEngine.score(response, for: exercise), confidence: nil,
+            shownAt: Date(timeIntervalSince1970: 1_800_000_000), activeDuration: 10, source: .focused)
+        let original = try XCTUnwrap(store.attempts.first { $0.id == id })
+        let observation = try XCTUnwrap(store.mentalMathMetricObservations(from: [original]).first)
+        XCTAssertEqual(observation.exactReference, NFStateValueAuthority.exactNumber(schema.expectedFinalState[NFEstimateExactContract.exactKey] ?? ""))
+        let mismatched = makeAttempt(index: 200, timed: false, seconds: 10)
+        mismatched.id = id; mismatched.itemID = exercise.id; mismatched.templateID = exercise.templateID
+        mismatched.seed = exercise.seed; mismatched.response = original.response
+        mismatched.prompt = "A different original prompt"
+        let missingAuthority = try XCTUnwrap(store.mentalMathMetricObservations(from: [mismatched]).first)
+        XCTAssertNil(missingAuthority.exactReference); XCTAssertNil(missingAuthority.estimate)
+        XCTAssertEqual(store.exerciseSnapshot(for: id), exercise)
+        XCTAssertEqual(original.prompt, exercise.prompt)
+        let protectedSource = makeAttempt(index: 201, timed: false, seconds: 10)
+        protectedSource.id = id; protectedSource.itemID = exercise.id
+        protectedSource.templateID = exercise.templateID; protectedSource.seed = exercise.seed
+        protectedSource.prompt = exercise.prompt; protectedSource.response = original.response
+        protectedSource.sessionSourceRaw = SessionSource.baseline.rawValue
+        XCTAssertTrue(store.mentalMathMetricObservations(from: [protectedSource]).isEmpty)
+        XCTAssertNil(NFMentalMathProgressAdapter.observation(from: protectedSource))
+        var markerOnly = NFLocalSessionRepository.Archive()
+        markerOnly.withheldProtectedConflictAttemptIDs = [id]
+        try store.localSessions.importArchive(markerOnly)
+        XCTAssertTrue(store.mentalMathMetricObservations(from: [original]).isEmpty)
+        XCTAssertEqual(store.exerciseSnapshot(for: id), exercise, "A marker cannot erase the authentic local original")
+        XCTAssertEqual(original.sessionSourceRaw, SessionSource.focused.rawValue)
+    }
+
+    @MainActor
+    func testMentalMathAdapterOmitsWholeConflictingIdentitiesAndFutureInputs() throws {
+        let now = Date(timeIntervalSince1970: 1_785_000_000)
+        let record = makeAttempt(index: 400, timed: false, seconds: 10)
+        record.id = try XCTUnwrap(UUID(uuidString: "A4000000-0000-0000-0000-000000000001"))
+        record.submittedAt = now
+        let original = NFMentalMathProgressInput(attempt: record.dto, response: .numeric(.init(value: "1", unit: nil)), exercise: nil)
+        XCTAssertEqual(NFMentalMathProgressAdapter.observations(from: [original, original], at: now).count, 1)
+        let conflictingResponse = NFMentalMathProgressInput(attempt: record.dto, response: .numeric(.init(value: "2", unit: nil)), exercise: nil)
+        XCTAssertTrue(NFMentalMathProgressAdapter.observations(from: [original, conflictingResponse], at: now).isEmpty)
+        XCTAssertTrue(NFMentalMathProgressAdapter.observations(from: [conflictingResponse, original], at: now).isEmpty)
+        let exercise = try NFFallbackExerciseGenerator.generate(.init(seed: 4391, index: 0,
+            lab: .mentalMath, purpose: .practice, localeIdentifier: "en",
+            preferredAssessmentMechanicID: "fixture.fallback-variant-7"))
+        let conflictingContract = NFMentalMathProgressInput(attempt: record.dto, response: original.response, exercise: exercise)
+        XCTAssertTrue(NFMentalMathProgressAdapter.observations(from: [original, conflictingContract], at: now).isEmpty)
+        var originalRaw = original
+        originalRaw.originalRecord = NFImmutableAttemptRecordSnapshot(record)
+        var changedRaw = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(originalRaw.originalRecord)) as? [String: Any])
+        changedRaw["prompt"] = "Conflicting original prompt under the same attempt identity"
+        var conflictingRaw = original
+        conflictingRaw.originalRecord = try JSONDecoder().decode(NFImmutableAttemptRecordSnapshot.self,
+            from: JSONSerialization.data(withJSONObject: changedRaw))
+        XCTAssertTrue(NFMentalMathProgressAdapter.observations(from: [originalRaw, conflictingRaw], at: now).isEmpty)
+        record.submittedAt = now.addingTimeInterval(1)
+        let future = NFMentalMathProgressInput(attempt: record.dto, response: original.response, exercise: nil)
+        XCTAssertTrue(NFMentalMathProgressAdapter.observations(from: [future], at: now).isEmpty)
+        XCTAssertNil(NFMentalMathProgressAdapter.observation(from: future, at: now))
+        XCTAssertEqual(NFMentalMathProgressAdapter.observations(from: [future], at: now.addingTimeInterval(1)).count, 1)
+    }
+
+    func testMentalMathAdapterDoesNotInferReviewedLanesOrClampInvalidCreditIntoAccuracy() throws {
+        for lane in [EvidenceClass.retention, .appliedTransfer] {
+            let attempt = makeAttempt(index: 300, timed: true, seconds: 1)
+            attempt.evidenceClassRaw = lane.rawValue
+            let observation = try XCTUnwrap(NFMentalMathProgressAdapter.observation(from: attempt))
+            XCTAssertEqual(observation.evidenceClass, .practice)
+            let metrics = NFMentalMathMetricReducer.reduce([observation])
+            XCTAssertEqual(metrics[.independentAccuracy]?.sampleCount, 1)
+            XCTAssertEqual(metrics[.retention]?.sampleCount, 0)
+            XCTAssertEqual(metrics[.transfer]?.sampleCount, 0)
+        }
+        for lane in [EvidenceClass.assessmentHoldout, .nearTransfer] {
+            let attempt = makeAttempt(index: 303, timed: false, seconds: 1)
+            attempt.evidenceClassRaw = lane.rawValue
+            XCTAssertNil(NFMentalMathProgressAdapter.observation(from: attempt))
+            XCTAssertNil(NFMentalMathProgressAdapter.observation(from: .init(attempt: attempt.dto, response: nil, exercise: nil), at: Date()))
+        }
+        for credit in [Double.nan, -Double.infinity, -1, 2] {
+            let attempt = makeAttempt(index: 301, timed: false, seconds: 1)
+            attempt.deterministicCredit = credit
+            XCTAssertNil(NFMentalMathProgressAdapter.observation(from: attempt))
+        }
+        for format in ["selfCheck", "selfReported", "revealed"] {
+            let attempt = makeAttempt(index: 302, timed: false, seconds: 1)
+            attempt.responseFormatRaw = format
+            XCTAssertNil(NFMentalMathProgressAdapter.observation(from: attempt))
+        }
+    }
+
+    @MainActor
     func testForgeProgressRewardsUniqueEngagementAndEligibleCompletionOnly() throws {
         let now = Date(timeIntervalSince1970: 1_768_219_200)
         let sessionID = UUID(uuidString: "B18C3C09-E710-4B29-8E62-C81950EC91A8")!
@@ -451,6 +583,7 @@ final class ProgressEvidenceTests: XCTestCase {
         )
     }
 
+    @MainActor
     func testForgeProgressDerivesRestAwareMomentumWeeklyCoverageAndMilestones() throws {
         var calendar = Calendar(identifier: .iso8601)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!

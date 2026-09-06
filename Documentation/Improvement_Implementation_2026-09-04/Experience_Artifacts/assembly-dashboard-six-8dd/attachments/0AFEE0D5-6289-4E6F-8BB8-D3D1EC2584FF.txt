@@ -1,0 +1,4 @@
+Six unit squares on a grid: A: (0, 0); B: (0, 1); C: (1, 1); D: (1, 2); E: (1, 3); F: (2, 3). Columns increase right and rows increase up. Each printed arrow points up the original page. Orange dashed lines mark hinges along full shared edges; no cutting, stretching or overlap is allowed. Hold face A fixed at the origin: its outward normal is +z, its printed arrow is +y, and its right edge points +x. Fold the other faces away from the viewer, behind this face, to form the closed cube.
+A proposed completed fold must satisfy BOTH conditions: faces C and A are opposite; face C has its printed arrow pointing −z. Does the exact net satisfy both with the anchor fixed?
+Valid closed cube: true
+Independent response: No — at least one rule fails

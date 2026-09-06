@@ -1,0 +1,12 @@
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testDeclinedQuestionWriterHandoffShowsRecoveryWithoutTerminating]' started.
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testDeclinedQuestionWriterHandoffShowsRecoveryWithoutTerminating]' passed (38.336 seconds).
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testMentalMathQuickPracticeStartsAUniversalSession]' started.
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testMentalMathQuickPracticeStartsAUniversalSession]' passed (19.782 seconds).
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testOnboardingReflowsAtMaximumAccessibilitySizeOnCompactPhone]' started.
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testOnboardingReflowsAtMaximumAccessibilitySizeOnCompactPhone]' passed (12.187 seconds).
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testPrimaryNavigationIsAccessibleAndReachesEveryDestination]' started.
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testPrimaryNavigationIsAccessibleAndReachesEveryDestination]' passed (27.848 seconds).
+	 Executed 4 tests, with 0 failures (0 unexpected) in 98.153 (98.161) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 98.153 (98.163) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 98.153 (98.166) seconds
+** TEST SUCCEEDED **

@@ -1,0 +1,1 @@
+These exact source bytes are captured from the committed baseline. They are reference material, not a claim that shipped binary store metadata was frozen or migrated. No persistent @Model fields were added by the local-envelope implementation. Genuine prerelease store fixtures and an explicit frozen V1/V2 plan remain required under MIG-001.

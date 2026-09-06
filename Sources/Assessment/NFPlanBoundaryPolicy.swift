@@ -15,16 +15,31 @@ struct NFPlanBoundaryContext: Equatable, Sendable {
     ) -> NFPlanBoundaryContext {
         let calendar = suppliedCalendar
         let hour = min(12, max(0, dayBoundaryHour))
-        let adjusted = calendar.date(byAdding: .hour, value: -hour, to: date) ?? date
-        let logicalDay = calendar.dateComponents([.era, .year, .month, .day], from: adjusted)
-        var startComponents = logicalDay
-        startComponents.hour = hour
-        startComponents.minute = 0
-        startComponents.second = 0
-        let boundaryStart = calendar.date(from: startComponents)
-            ?? calendar.startOfDay(for: adjusted).addingTimeInterval(Double(hour) * 3_600)
-        let nextBoundary = calendar.date(byAdding: .day, value: 1, to: boundaryStart)
-            ?? boundaryStart.addingTimeInterval(86_400)
+        let today = calendar.startOfDay(for: date)
+        // Resolve the requested wall-clock hour separately on each civil day.
+        // Subtracting elapsed hours misclassifies the hour after a DST jump;
+        // adding a day to an adjusted missing hour can also shift tomorrow.
+        // A missing boundary occurs at the next valid time; a repeated boundary
+        // uses its first occurrence, so there is one learner-day transition.
+        func boundary(on day: Date) -> Date {
+            calendar.date(bySettingHour: hour, minute: 0, second: 0, of: day,
+                matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)
+                ?? calendar.startOfDay(for: day)
+        }
+        let todayBoundary = boundary(on: today)
+        let boundaryStart: Date
+        let nextBoundary: Date
+        if date < todayBoundary {
+            let previousDay = calendar.date(byAdding: .day, value: -1, to: today)
+                ?? today.addingTimeInterval(-86_400)
+            boundaryStart = boundary(on: previousDay)
+            nextBoundary = todayBoundary
+        } else {
+            boundaryStart = todayBoundary
+            let followingDay = calendar.date(byAdding: .day, value: 1, to: today)
+                ?? today.addingTimeInterval(86_400)
+            nextBoundary = boundary(on: followingDay)
+        }
         return NFPlanBoundaryContext(
             evaluatedAt: date,
             timeZoneIdentifier: calendar.timeZone.identifier,

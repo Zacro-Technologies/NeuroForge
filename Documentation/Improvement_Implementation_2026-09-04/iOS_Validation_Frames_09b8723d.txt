@@ -1,0 +1,79 @@
+(lldb) target create "/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForge.app/NeuroForge.debug.dylib"
+Current executable set to '/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForge.app/NeuroForge.debug.dylib' (arm64).
+(lldb) disassemble -c 9 -n $s10NeuroForge24NFLocalSessionRepositoryC16validatedArchive33_E3035CCE794389C771E9C72010A3A7DCLL_17checkCancellationAC0G0VAH_yyKXEtKFZ
+NeuroForge.debug.dylib`static NFLocalSessionRepository.validatedArchive(_:checkCancellation:):
+NeuroForge.debug.dylib[0xe68e24] <+0>:  stp    x28, x20, [sp, #-0x20]!
+NeuroForge.debug.dylib[0xe68e28] <+4>:  stp    x29, x30, [sp, #0x10]
+NeuroForge.debug.dylib[0xe68e2c] <+8>:  add    x29, sp, #0x10
+NeuroForge.debug.dylib[0xe68e30] <+12>: sub    sp, sp, #0x180
+NeuroForge.debug.dylib[0xe68e34] <+16>: stur   x8, [x29, #-0xa8]
+NeuroForge.debug.dylib[0xe68e38] <+20>: stur   x0, [x29, #-0x80]
+NeuroForge.debug.dylib[0xe68e3c] <+24>: stur   x1, [x29, #-0x88]
+NeuroForge.debug.dylib[0xe68e40] <+28>: stur   x2, [x29, #-0xa0]
+NeuroForge.debug.dylib[0xe68e44] <+32>: mov    x0, x20
+(lldb) disassemble -c 9 -n $s10NeuroForge24NFLocalSessionRepositoryC14decodedArchive33_E3035CCE794389C771E9C72010A3A7DCLL_17checkCancellationAC0G0V7archive_Sb14requiresBackupt10Foundation4DataV_yyKXEtKFZ
+NeuroForge.debug.dylib`static NFLocalSessionRepository.decodedArchive(_:checkCancellation:):
+NeuroForge.debug.dylib[0xe66240] <+0>:  str    x20, [sp, #-0x20]!
+NeuroForge.debug.dylib[0xe66244] <+4>:  stp    x29, x30, [sp, #0x10]
+NeuroForge.debug.dylib[0xe66248] <+8>:  add    x29, sp, #0x10
+NeuroForge.debug.dylib[0xe6624c] <+12>: sub    sp, sp, #0xd0
+NeuroForge.debug.dylib[0xe66250] <+16>: stur   x0, [x29, #-0xb0]
+NeuroForge.debug.dylib[0xe66254] <+20>: stur   x1, [x29, #-0xa0]
+NeuroForge.debug.dylib[0xe66258] <+24>: stur   x2, [x29, #-0x98]
+NeuroForge.debug.dylib[0xe6625c] <+28>: stur   x3, [x29, #-0x90]
+NeuroForge.debug.dylib[0xe66260] <+32>: stur   x4, [x29, #-0x88]
+(lldb) disassemble -c 9 -n $s10NeuroForge24NFLocalSessionRepositoryC17normalizedArchive33_E3035CCE794389C771E9C72010A3A7DCLL_17checkCancellationAC0G0V7archive_Sb14requiresBackupt10Foundation4DataV_yyKXEtKFZ
+NeuroForge.debug.dylib`static NFLocalSessionRepository.normalizedArchive(_:checkCancellation:):
+NeuroForge.debug.dylib[0xe66b94] <+0>:  str    x28, [sp, #-0x30]!
+NeuroForge.debug.dylib[0xe66b98] <+4>:  stp    x20, x19, [sp, #0x10]
+NeuroForge.debug.dylib[0xe66b9c] <+8>:  stp    x29, x30, [sp, #0x20]
+NeuroForge.debug.dylib[0xe66ba0] <+12>: add    x29, sp, #0x20
+NeuroForge.debug.dylib[0xe66ba4] <+16>: sub    sp, sp, #0x6, lsl #12     ; =0x6000 
+NeuroForge.debug.dylib[0xe66ba8] <+20>: sub    sp, sp, #0xb70
+NeuroForge.debug.dylib[0xe66bac] <+24>: mov    x19, sp
+NeuroForge.debug.dylib[0xe66bb0] <+28>: add    x8, x19, #0x4, lsl #12    ; =0x4000 
+NeuroForge.debug.dylib[0xe66bb4] <+32>: add    x8, x8, #0x738
+(lldb) disassemble -c 9 -n $s10NeuroForge24NFLocalSessionRepositoryC31validateArchiveAdaptiveReceipts33_E3035CCE794389C771E9C72010A3A7DCLL_17checkCancellationyAC0G0Vz_yyKXEtKFZ
+NeuroForge.debug.dylib`static NFLocalSessionRepository.validateArchiveAdaptiveReceipts(_:checkCancellation:):
+NeuroForge.debug.dylib[0xe6fd24] <+0>:  str    x28, [sp, #-0x30]!
+NeuroForge.debug.dylib[0xe6fd28] <+4>:  stp    x20, x19, [sp, #0x10]
+NeuroForge.debug.dylib[0xe6fd2c] <+8>:  stp    x29, x30, [sp, #0x20]
+NeuroForge.debug.dylib[0xe6fd30] <+12>: add    x29, sp, #0x20
+NeuroForge.debug.dylib[0xe6fd34] <+16>: sub    sp, sp, #0x2, lsl #12     ; =0x2000 
+NeuroForge.debug.dylib[0xe6fd38] <+20>: sub    sp, sp, #0xf20
+NeuroForge.debug.dylib[0xe6fd3c] <+24>: mov    x19, sp
+NeuroForge.debug.dylib[0xe6fd40] <+28>: add    x8, x19, #0x2, lsl #12    ; =0x2000 
+NeuroForge.debug.dylib[0xe6fd44] <+32>: add    x8, x8, #0x9a0
+(lldb) disassemble -c 9 -n $s10NeuroForge24NFLocalSessionRepositoryC33validateArchiveEditorialDecisions33_E3035CCE794389C771E9C72010A3A7DCLL_17checkCancellationyAC0G0V_yyKXEtKFZ
+NeuroForge.debug.dylib`static NFLocalSessionRepository.validateArchiveEditorialDecisions(_:checkCancellation:):
+NeuroForge.debug.dylib[0xe75248] <+0>:  str    x28, [sp, #-0x30]!
+NeuroForge.debug.dylib[0xe7524c] <+4>:  stp    x20, x19, [sp, #0x10]
+NeuroForge.debug.dylib[0xe75250] <+8>:  stp    x29, x30, [sp, #0x20]
+NeuroForge.debug.dylib[0xe75254] <+12>: add    x29, sp, #0x20
+NeuroForge.debug.dylib[0xe75258] <+16>: sub    sp, sp, #0x7, lsl #12     ; =0x7000 
+NeuroForge.debug.dylib[0xe7525c] <+20>: sub    sp, sp, #0x7b0
+NeuroForge.debug.dylib[0xe75260] <+24>: mov    x19, sp
+NeuroForge.debug.dylib[0xe75264] <+28>: add    x8, x19, #0x5, lsl #12    ; =0x5000 
+NeuroForge.debug.dylib[0xe75268] <+32>: add    x8, x8, #0xabf
+(lldb) disassemble -c 9 -n $s10NeuroForge24NFLocalSessionRepositoryC28validateArchiveRetiredDrafts33_E3035CCE794389C771E9C72010A3A7DCLL_17checkCancellationyAC0G0Vz_yyKXEtKFZ
+NeuroForge.debug.dylib`static NFLocalSessionRepository.validateArchiveRetiredDrafts(_:checkCancellation:):
+NeuroForge.debug.dylib[0xe7a8e4] <+0>:  str    x28, [sp, #-0x30]!
+NeuroForge.debug.dylib[0xe7a8e8] <+4>:  stp    x20, x19, [sp, #0x10]
+NeuroForge.debug.dylib[0xe7a8ec] <+8>:  stp    x29, x30, [sp, #0x20]
+NeuroForge.debug.dylib[0xe7a8f0] <+12>: add    x29, sp, #0x20
+NeuroForge.debug.dylib[0xe7a8f4] <+16>: sub    sp, sp, #0xd, lsl #12     ; =0xd000 
+NeuroForge.debug.dylib[0xe7a8f8] <+20>: sub    sp, sp, #0x40
+NeuroForge.debug.dylib[0xe7a8fc] <+24>: mov    x19, sp
+NeuroForge.debug.dylib[0xe7a900] <+28>: add    x8, x19, #0xc, lsl #12    ; =0xc000 
+NeuroForge.debug.dylib[0xe7a904] <+32>: add    x8, x8, #0xe70
+(lldb) disassemble -c 9 -n $s10NeuroForge24NFLocalSessionRepositoryC21commitPreparedArchive33_E3035CCE794389C771E9C72010A3A7DCLL_7observeAA0cH20WriteAcknowledgementVAA0chR5InputV_yAA0chR5StageO_SbtYbcSgtKFZ
+NeuroForge.debug.dylib`static NFLocalSessionRepository.commitPreparedArchive(_:observe:):
+NeuroForge.debug.dylib[0xf286c8] <+0>:  str    x28, [sp, #-0x30]!
+NeuroForge.debug.dylib[0xf286cc] <+4>:  stp    x20, x19, [sp, #0x10]
+NeuroForge.debug.dylib[0xf286d0] <+8>:  stp    x29, x30, [sp, #0x20]
+NeuroForge.debug.dylib[0xf286d4] <+12>: add    x29, sp, #0x20
+NeuroForge.debug.dylib[0xf286d8] <+16>: sub    sp, sp, #0x1, lsl #12     ; =0x1000 
+NeuroForge.debug.dylib[0xf286dc] <+20>: sub    sp, sp, #0xa0
+NeuroForge.debug.dylib[0xf286e0] <+24>: mov    x19, sp
+NeuroForge.debug.dylib[0xf286e4] <+28>: str    x8, [x19, #0x708]
+NeuroForge.debug.dylib[0xf286e8] <+32>: str    x0, [x19, #0x7e8]

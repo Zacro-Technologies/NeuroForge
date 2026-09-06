@@ -1,0 +1,1813 @@
+{
+  "scope": "Documentation validation only; no application acceptance tests run by this script.",
+  "source_word_count": 60864,
+  "requirement_count": 256,
+  "requirements_by_source": {
+    "README.md": 10,
+    "01_Experience_and_Interaction.md": 47,
+    "02_Content_and_Scoring.md": 53,
+    "03_Adaptive_Learning_and_Evidence.md": 44,
+    "04_Runtime_Data_and_Migration.md": 62,
+    "05_QA_and_Delivery.md": 40
+  },
+  "catalog_families_mapped": 58,
+  "adaptive_simulation_fixtures": 60,
+  "cross_chapter_acceptance_cases": 62,
+  "audit_findings_mapped": 17,
+  "requirements": [
+    {
+      "id": "PRD-001",
+      "title": "Trustworthy attempts",
+      "file": "README.md",
+      "line": 58,
+      "status": "specified"
+    },
+    {
+      "id": "PRD-002",
+      "title": "Dependable continuity",
+      "file": "README.md",
+      "line": 64,
+      "status": "specified"
+    },
+    {
+      "id": "PRD-003",
+      "title": "A complete learning loop",
+      "file": "README.md",
+      "line": 70,
+      "status": "specified"
+    },
+    {
+      "id": "PRD-004",
+      "title": "Meaningful personalization",
+      "file": "README.md",
+      "line": 76,
+      "status": "specified"
+    },
+    {
+      "id": "PRD-005",
+      "title": "Useful breadth",
+      "file": "README.md",
+      "line": 82,
+      "status": "specified"
+    },
+    {
+      "id": "PRD-006",
+      "title": "Clear interface hierarchy",
+      "file": "README.md",
+      "line": 88,
+      "status": "specified"
+    },
+    {
+      "id": "PRD-007",
+      "title": "Inclusive operation",
+      "file": "README.md",
+      "line": 94,
+      "status": "specified"
+    },
+    {
+      "id": "PRD-008",
+      "title": "Historical honesty and privacy",
+      "file": "README.md",
+      "line": 100,
+      "status": "specified"
+    },
+    {
+      "id": "PRD-009",
+      "title": "Release evidence matches claims",
+      "file": "README.md",
+      "line": 106,
+      "status": "specified"
+    },
+    {
+      "id": "PRD-010",
+      "title": "Scope stays coherent",
+      "file": "README.md",
+      "line": 112,
+      "status": "specified"
+    },
+    {
+      "id": "UX-001",
+      "title": "Five stable destinations",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 13,
+      "status": "specified"
+    },
+    {
+      "id": "UX-002",
+      "title": "Primary-action hierarchy",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 31,
+      "status": "specified"
+    },
+    {
+      "id": "UX-003",
+      "title": "Learning and evidence policies belong to the core model",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 41,
+      "status": "specified"
+    },
+    {
+      "id": "UX-004",
+      "title": "Destination and visible content must agree",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 53,
+      "status": "specified"
+    },
+    {
+      "id": "UX-005",
+      "title": "Unsaved work and reversible navigation",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 76,
+      "status": "specified"
+    },
+    {
+      "id": "UX-006",
+      "title": "Sample-first onboarding",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 92,
+      "status": "specified"
+    },
+    {
+      "id": "UX-007",
+      "title": "Short, purposeful setup",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 104,
+      "status": "specified"
+    },
+    {
+      "id": "UX-008",
+      "title": "Optional short calibration with honest scope",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 116,
+      "status": "specified"
+    },
+    {
+      "id": "UX-009",
+      "title": "Today screen composition and defaults",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 130,
+      "status": "specified"
+    },
+    {
+      "id": "UX-010",
+      "title": "Readiness and adjustment",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 147,
+      "status": "specified"
+    },
+    {
+      "id": "UX-011",
+      "title": "Today states",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 157,
+      "status": "specified"
+    },
+    {
+      "id": "UX-012",
+      "title": "Exact activity discovery",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 176,
+      "status": "specified"
+    },
+    {
+      "id": "UX-013",
+      "title": "Activity detail and setup",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 188,
+      "status": "specified"
+    },
+    {
+      "id": "UX-014",
+      "title": "Question creation as a guided task",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 200,
+      "status": "specified"
+    },
+    {
+      "id": "UX-015",
+      "title": "Saved versus temporary sets and collections",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 212,
+      "status": "specified"
+    },
+    {
+      "id": "UX-016",
+      "title": "Keep the problem present through the answer loop",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 228,
+      "status": "specified"
+    },
+    {
+      "id": "UX-017",
+      "title": "Confidence before commit, inline",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 256,
+      "status": "specified"
+    },
+    {
+      "id": "UX-018",
+      "title": "Feedback that teaches",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 268,
+      "status": "specified"
+    },
+    {
+      "id": "UX-019",
+      "title": "Graduated help and repair",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 284,
+      "status": "specified"
+    },
+    {
+      "id": "UX-020",
+      "title": "Reflection is useful and never a trap",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 296,
+      "status": "specified"
+    },
+    {
+      "id": "UX-021",
+      "title": "Session exit, pause and completion",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 306,
+      "status": "specified"
+    },
+    {
+      "id": "UX-022",
+      "title": "Scratchpad with visible context",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 318,
+      "status": "specified"
+    },
+    {
+      "id": "UX-023",
+      "title": "Progress overview leads with useful interpretation",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 330,
+      "status": "specified"
+    },
+    {
+      "id": "UX-024",
+      "title": "Review is a learning queue",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 340,
+      "status": "specified"
+    },
+    {
+      "id": "UX-025",
+      "title": "History is directly readable, searchable and replayable",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 350,
+      "status": "specified"
+    },
+    {
+      "id": "UX-026",
+      "title": "Sources root and import states",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 377,
+      "status": "specified"
+    },
+    {
+      "id": "UX-027",
+      "title": "Source detail and studying",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 389,
+      "status": "specified"
+    },
+    {
+      "id": "UX-028",
+      "title": "Searchable Settings categories",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 401,
+      "status": "specified"
+    },
+    {
+      "id": "INT-001",
+      "title": "Mental math: estimate, decompose, solve, repair",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 417,
+      "status": "specified"
+    },
+    {
+      "id": "INT-002",
+      "title": "Spatial reasoning: controlled transformations with reset",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 429,
+      "status": "specified"
+    },
+    {
+      "id": "INT-003",
+      "title": "Quantitative reasoning: predict, inspect and compare data",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 441,
+      "status": "specified"
+    },
+    {
+      "id": "INT-004",
+      "title": "Scientific reasoning: claim, evidence and experimental choice",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 453,
+      "status": "specified"
+    },
+    {
+      "id": "INT-005",
+      "title": "Logic and debugging: visible state trace",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 465,
+      "status": "specified"
+    },
+    {
+      "id": "INT-006",
+      "title": "Retrieval: recall, reference and honest self-check",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 477,
+      "status": "specified"
+    },
+    {
+      "id": "INT-007",
+      "title": "Transfer: choose the useful structure in a new context",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 489,
+      "status": "specified"
+    },
+    {
+      "id": "INT-008",
+      "title": "Ordering, touch and keyboard conventions",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 501,
+      "status": "specified"
+    },
+    {
+      "id": "A11Y-001",
+      "title": "Layout matrix and breakpoints",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 515,
+      "status": "specified"
+    },
+    {
+      "id": "A11Y-002",
+      "title": "Token proposal",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 523,
+      "status": "specified"
+    },
+    {
+      "id": "A11Y-003",
+      "title": "Dynamic Type and safe areas",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 548,
+      "status": "specified"
+    },
+    {
+      "id": "A11Y-004",
+      "title": "Focus and keyboard sequence",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 558,
+      "status": "specified"
+    },
+    {
+      "id": "A11Y-005",
+      "title": "VoiceOver names, values and announcements",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 570,
+      "status": "specified"
+    },
+    {
+      "id": "A11Y-006",
+      "title": "Motion, audio, haptics and sensory alternatives",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 582,
+      "status": "specified"
+    },
+    {
+      "id": "COPY-001",
+      "title": "Vocabulary contract",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 594,
+      "status": "specified"
+    },
+    {
+      "id": "COPY-002",
+      "title": "Standard action and state catalog",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 616,
+      "status": "specified"
+    },
+    {
+      "id": "COPY-003",
+      "title": "English and Japanese parity",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 655,
+      "status": "specified"
+    },
+    {
+      "id": "UX-029",
+      "title": "Package order",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 669,
+      "status": "specified"
+    },
+    {
+      "id": "UX-030",
+      "title": "Release evidence required for this appendix",
+      "file": "01_Experience_and_Interaction.md",
+      "line": 683,
+      "status": "specified"
+    },
+    {
+      "id": "CON-001",
+      "title": "One contract must drive generation, rendering, validation, and explanation",
+      "file": "02_Content_and_Scoring.md",
+      "line": 29,
+      "status": "specified"
+    },
+    {
+      "id": "CON-002",
+      "title": "Parameters must be generated before prose",
+      "file": "02_Content_and_Scoring.md",
+      "line": 50,
+      "status": "specified"
+    },
+    {
+      "id": "CON-003",
+      "title": "Generation failure must remain a content failure",
+      "file": "02_Content_and_Scoring.md",
+      "line": 58,
+      "status": "specified"
+    },
+    {
+      "id": "CON-004",
+      "title": "Every representation needs a declared instructional role",
+      "file": "02_Content_and_Scoring.md",
+      "line": 64,
+      "status": "specified"
+    },
+    {
+      "id": "CON-005",
+      "title": "An item must state what is being judged",
+      "file": "02_Content_and_Scoring.md",
+      "line": 72,
+      "status": "specified"
+    },
+    {
+      "id": "CON-006",
+      "title": "Every selectable alternative must be semantically distinct",
+      "file": "02_Content_and_Scoring.md",
+      "line": 80,
+      "status": "specified"
+    },
+    {
+      "id": "CON-007",
+      "title": "Statistical interpretations must follow the estimand and procedure",
+      "file": "02_Content_and_Scoring.md",
+      "line": 88,
+      "status": "specified"
+    },
+    {
+      "id": "CON-008",
+      "title": "No pre-answer solution leakage in independent modes",
+      "file": "02_Content_and_Scoring.md",
+      "line": 100,
+      "status": "specified"
+    },
+    {
+      "id": "CON-009",
+      "title": "Distractors must express plausible errors",
+      "file": "02_Content_and_Scoring.md",
+      "line": 106,
+      "status": "specified"
+    },
+    {
+      "id": "CON-010",
+      "title": "A response form must perform the operation its name promises",
+      "file": "02_Content_and_Scoring.md",
+      "line": 114,
+      "status": "specified"
+    },
+    {
+      "id": "CON-011",
+      "title": "Editorial difficulty must be based on real demands",
+      "file": "02_Content_and_Scoring.md",
+      "line": 122,
+      "status": "specified"
+    },
+    {
+      "id": "CON-012",
+      "title": "Difficulty requests must select valid demand specifications",
+      "file": "02_Content_and_Scoring.md",
+      "line": 130,
+      "status": "specified"
+    },
+    {
+      "id": "CON-013",
+      "title": "Editorial and empirical difficulty must remain separate",
+      "file": "02_Content_and_Scoring.md",
+      "line": 138,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-001",
+      "title": "Correctness and credit must be consistent",
+      "file": "02_Content_and_Scoring.md",
+      "line": 146,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-002",
+      "title": "Scoring must produce an inspectable component result",
+      "file": "02_Content_and_Scoring.md",
+      "line": 154,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-003",
+      "title": "Parsing policy must follow the answer domain",
+      "file": "02_Content_and_Scoring.md",
+      "line": 162,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-004",
+      "title": "The eight response types remain the stable surface contract",
+      "file": "02_Content_and_Scoring.md",
+      "line": 170,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-005",
+      "title": "Numeric responses require exact and approximate contracts",
+      "file": "02_Content_and_Scoring.md",
+      "line": 187,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-006",
+      "title": "Single-choice scoring requires a unique semantic answer",
+      "file": "02_Content_and_Scoring.md",
+      "line": 197,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-007",
+      "title": "Multiple-choice credit must be explicit and resistant to selecting everything",
+      "file": "02_Content_and_Scoring.md",
+      "line": 203,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-008",
+      "title": "Ordered steps must represent dependency rather than stylistic preference",
+      "file": "02_Content_and_Scoring.md",
+      "line": 211,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-009",
+      "title": "Short text must declare its supported interpretation",
+      "file": "02_Content_and_Scoring.md",
+      "line": 219,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-010",
+      "title": "Restricted symbolic equivalence must preserve symbol roles",
+      "file": "02_Content_and_Scoring.md",
+      "line": 227,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-011",
+      "title": "Symbolic processing must have bounded complexity",
+      "file": "02_Content_and_Scoring.md",
+      "line": 237,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-012",
+      "title": "Prose grading must preserve direction, conditions, and negation",
+      "file": "02_Content_and_Scoring.md",
+      "line": 245,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-013",
+      "title": "Retrieval computations must use computational response contracts",
+      "file": "02_Content_and_Scoring.md",
+      "line": 253,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-014",
+      "title": "Self-check must be honest about its authority",
+      "file": "02_Content_and_Scoring.md",
+      "line": 259,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-015",
+      "title": "Composite and state answers must grade typed components",
+      "file": "02_Content_and_Scoring.md",
+      "line": 267,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-016",
+      "title": "Estimates and units require explicit semantic policies",
+      "file": "02_Content_and_Scoring.md",
+      "line": 275,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-017",
+      "title": "Claim/evidence tasks must encode support constraints",
+      "file": "02_Content_and_Scoring.md",
+      "line": 285,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-018",
+      "title": "Feedback and replay must preserve the original result",
+      "file": "02_Content_and_Scoring.md",
+      "line": 293,
+      "status": "specified"
+    },
+    {
+      "id": "CON-020",
+      "title": "Separate identity layers and exposure relationships",
+      "file": "02_Content_and_Scoring.md",
+      "line": 303,
+      "status": "specified"
+    },
+    {
+      "id": "CON-021",
+      "title": "Version the smallest changed authority and the containing edition",
+      "file": "02_Content_and_Scoring.md",
+      "line": 313,
+      "status": "specified"
+    },
+    {
+      "id": "CON-022",
+      "title": "The release manifest must cover the actual delivered bank",
+      "file": "02_Content_and_Scoring.md",
+      "line": 321,
+      "status": "specified"
+    },
+    {
+      "id": "CON-023",
+      "title": "Every family needs an editorial record and an independent reviewer",
+      "file": "02_Content_and_Scoring.md",
+      "line": 329,
+      "status": "specified"
+    },
+    {
+      "id": "CON-024",
+      "title": "Editorial review must evaluate language as part of correctness",
+      "file": "02_Content_and_Scoring.md",
+      "line": 337,
+      "status": "specified"
+    },
+    {
+      "id": "CON-025",
+      "title": "Feedback must be authored as a learning sequence",
+      "file": "02_Content_and_Scoring.md",
+      "line": 345,
+      "status": "specified"
+    },
+    {
+      "id": "CON-026",
+      "title": "Metacognitive tasks must not masquerade as subject knowledge",
+      "file": "02_Content_and_Scoring.md",
+      "line": 353,
+      "status": "specified"
+    },
+    {
+      "id": "CON-027",
+      "title": "Content incidents need a reproducible correction path",
+      "file": "02_Content_and_Scoring.md",
+      "line": 359,
+      "status": "specified"
+    },
+    {
+      "id": "CON-014",
+      "title": "Balanced admission must precede balanced delivery",
+      "file": "02_Content_and_Scoring.md",
+      "line": 369,
+      "status": "specified"
+    },
+    {
+      "id": "CON-015",
+      "title": "Quota feasibility must be checked as a finite assignment problem",
+      "file": "02_Content_and_Scoring.md",
+      "line": 389,
+      "status": "specified"
+    },
+    {
+      "id": "CON-016",
+      "title": "Per-target novelty and per-rendering variety must be distinguished",
+      "file": "02_Content_and_Scoring.md",
+      "line": 397,
+      "status": "specified"
+    },
+    {
+      "id": "CON-017",
+      "title": "Separate candidate order from the reservation of an adaptive item",
+      "file": "02_Content_and_Scoring.md",
+      "line": 405,
+      "status": "specified"
+    },
+    {
+      "id": "CON-018",
+      "title": "Exhaustion fallback must preserve the guarantee it actually has",
+      "file": "02_Content_and_Scoring.md",
+      "line": 419,
+      "status": "specified"
+    },
+    {
+      "id": "CON-019",
+      "title": "Epoch boundaries must solve capacity before reserving",
+      "file": "02_Content_and_Scoring.md",
+      "line": 427,
+      "status": "specified"
+    },
+    {
+      "id": "CON-028",
+      "title": "The matrix is the migration inventory, not a new count claim",
+      "file": "02_Content_and_Scoring.md",
+      "line": 511,
+      "status": "specified"
+    },
+    {
+      "id": "CON-029",
+      "title": "Family expansion must preserve a coherent operation",
+      "file": "02_Content_and_Scoring.md",
+      "line": 519,
+      "status": "specified"
+    },
+    {
+      "id": "SCO-019",
+      "title": "The score test corpus must contain both meaning-preserving and meaning-changing edits",
+      "file": "02_Content_and_Scoring.md",
+      "line": 624,
+      "status": "specified"
+    },
+    {
+      "id": "CON-030",
+      "title": "Bank and identity tests must validate capacity, not only counts",
+      "file": "02_Content_and_Scoring.md",
+      "line": 645,
+      "status": "specified"
+    },
+    {
+      "id": "CON-031",
+      "title": "Release review must inspect representative learner sessions",
+      "file": "02_Content_and_Scoring.md",
+      "line": 661,
+      "status": "specified"
+    },
+    {
+      "id": "CON-032",
+      "title": "Instrument quality without inventing a psychometric model",
+      "file": "02_Content_and_Scoring.md",
+      "line": 669,
+      "status": "specified"
+    },
+    {
+      "id": "CON-033",
+      "title": "Implement in a dependency order that cannot hide unresolved defects",
+      "file": "02_Content_and_Scoring.md",
+      "line": 677,
+      "status": "specified"
+    },
+    {
+      "id": "CON-034",
+      "title": "The chapter is complete only when quality and honesty agree",
+      "file": "02_Content_and_Scoring.md",
+      "line": 692,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-001",
+      "title": "Make the delivered question, the explanation and the record agree",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 13,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-002",
+      "title": "Use a shared, explicit item contract",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 31,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-003",
+      "title": "Represent difficulty on multiple axes",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 60,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-004",
+      "title": "Define B1–B4 as reviewed task bands",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 81,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-005",
+      "title": "Test difficulty through its actual demands",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 114,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-006",
+      "title": "Start from low-stakes evidence without demanding a long baseline",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 130,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-007",
+      "title": "Keep challenge, timing and assistance independent",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 147,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-008",
+      "title": "Apply overrides at a safe boundary",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 165,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-009",
+      "title": "Explain the change in learner language",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 175,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-001",
+      "title": "Reduce durable events into separate evidence channels",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 190,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-002",
+      "title": "Use `EditorialBandEvidenceV1` for both live and replayed results",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 212,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-003",
+      "title": "Define an independent observation before counting it",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 260,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-004",
+      "title": "Assistance produces a learning outcome, not an unassisted success",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 288,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-010",
+      "title": "Maintain a practice control state distinct from evidence",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 306,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-011",
+      "title": "Apply a bounded practice staircase",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 329,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-012",
+      "title": "Demonstrate a band using broader evidence than a short streak",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 386,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-005",
+      "title": "Collect confidence only under a defined purpose",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 409,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-006",
+      "title": "Treat partial credit according to the rubric, not the renderer",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 431,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-007",
+      "title": "Give uncertainty an honest, implementable meaning",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 443,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-008",
+      "title": "Make invalid content exclusions affect every derived view",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 461,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-009",
+      "title": "Preserve active time and exclude interrupted items from clean speed evidence",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 478,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-010",
+      "title": "Keep personal study separate from built-in skill evidence",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 498,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-011",
+      "title": "Limit improvement statements to comparable observed tasks",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 508,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-013",
+      "title": "Protect an assessment contract rather than a nominal seed namespace",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 520,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-014",
+      "title": "Use the same band evidence model with a separate protected channel",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 530,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-001",
+      "title": "Change the old eight-minute cap into a sitting budget",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 552,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-012",
+      "title": "Disclose results without leaking reusable protected keys",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 570,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-002",
+      "title": "Filter hard constraints before ranking candidates",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 582,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-003",
+      "title": "Balance at the experience level, not only at bank construction",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 598,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-004",
+      "title": "Handle content shortage visibly and safely",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 617,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-005",
+      "title": "Use deterministic tie-breaking and persist the actual path",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 633,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-006",
+      "title": "Keep review objectives separate from literal question repetition",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 676,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-007",
+      "title": "Use a bounded, explainable initial interval ladder",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 686,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-008",
+      "title": "Make the mistake queue actionable and criterion-specific",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 707,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-009",
+      "title": "Limit review backlog pressure",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 729,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-010",
+      "title": "Preserve the canonical daily plan while allowing real adaptation inside it",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 739,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-011",
+      "title": "Derive workload from item durations and interaction overhead",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 751,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-012",
+      "title": "Handle stopping and completion without falsifying achievement",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 776,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-013",
+      "title": "Respect travel, offline use and changes in available content",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 788,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-013",
+      "title": "Guarantee deterministic equivalence",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 800,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-014",
+      "title": "Make policy versions deployable without silent reinterpretation",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 817,
+      "status": "specified"
+    },
+    {
+      "id": "SCH-014",
+      "title": "Map the implementation to current components",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 831,
+      "status": "specified"
+    },
+    {
+      "id": "ADP-015",
+      "title": "Validate the proposed bands with representative learners",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 938,
+      "status": "specified"
+    },
+    {
+      "id": "EVD-015",
+      "title": "Require evidence integrity before stronger product claims",
+      "file": "03_Adaptive_Learning_and_Evidence.md",
+      "line": 950,
+      "status": "specified"
+    },
+    {
+      "id": "CORE-001",
+      "title": "One learning runtime",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 9,
+      "status": "specified"
+    },
+    {
+      "id": "CORE-002",
+      "title": "Separate responsibilities",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 13,
+      "status": "specified"
+    },
+    {
+      "id": "CORE-003",
+      "title": "Pure boundaries",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 31,
+      "status": "specified"
+    },
+    {
+      "id": "CORE-004",
+      "title": "Concurrency",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 35,
+      "status": "specified"
+    },
+    {
+      "id": "CORE-005",
+      "title": "Versioned interfaces",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 39,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-001",
+      "title": "A run has a durable identity before interaction",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 45,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-002",
+      "title": "Launch is not resume",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 49,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-003",
+      "title": "Persist the complete launch contract",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 53,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-004",
+      "title": "Multiple suspended sessions",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 85,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-005",
+      "title": "Same-device window ownership",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 89,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-006",
+      "title": "Cross-device limit",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 93,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-007",
+      "title": "Lifecycle states",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 99,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-008",
+      "title": "Ordinary deterministic answer",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 119,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-009",
+      "title": "Confidence",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 123,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-010",
+      "title": "Reflection",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 127,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-011",
+      "title": "Protected feedback",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 131,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-012",
+      "title": "Reference/self-check",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 135,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-013",
+      "title": "Hint progression",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 139,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-014",
+      "title": "Skip",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 143,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-015",
+      "title": "Next and repair",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 147,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-016",
+      "title": "Ending",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 151,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-001",
+      "title": "Exact item snapshot",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 157,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-002",
+      "title": "Evaluation identity",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 161,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-003",
+      "title": "Current-item fields",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 165,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-004",
+      "title": "Time accounting",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 185,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-005",
+      "title": "Clock edge cases",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 191,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-006",
+      "title": "Save guarantees",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 195,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-007",
+      "title": "Scratchpad portability",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 199,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-008",
+      "title": "Resume algorithm",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 203,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-009",
+      "title": "Language changes",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 207,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-010",
+      "title": "Idempotent commit protocol",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 213,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-011",
+      "title": "Crash boundaries",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 244,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-012",
+      "title": "Payload conflict",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 248,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-013",
+      "title": "Derived state",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 252,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-014",
+      "title": "Save failure UI",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 256,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-015",
+      "title": "Reservation atomicity and adaptive delivery",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 260,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-016",
+      "title": "Proposed schema additions",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 270,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-017",
+      "title": "Privacy partition",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 292,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-018",
+      "title": "Legacy scope",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 296,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-019",
+      "title": "Content storage",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 300,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-020",
+      "title": "Size and corrupt input",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 306,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-021",
+      "title": "Presentation is typed",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 312,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-022",
+      "title": "Complete review context",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 316,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-023",
+      "title": "Historical evidence correction",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 320,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-024",
+      "title": "Rules for each audited defect",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 324,
+      "status": "specified"
+    },
+    {
+      "id": "DATA-025",
+      "title": "Communicating corrections",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 340,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-017",
+      "title": "Five destinations",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 346,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-018",
+      "title": "Path ownership",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 350,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-019",
+      "title": "Cold launch and recovery",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 354,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-020",
+      "title": "Transactional route intents",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 358,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-021",
+      "title": "Implementation constraint",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 362,
+      "status": "specified"
+    },
+    {
+      "id": "RUN-022",
+      "title": "Safe exit during work and failure",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 366,
+      "status": "specified"
+    },
+    {
+      "id": "MIG-001",
+      "title": "Freeze the shipped schema",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 372,
+      "status": "specified"
+    },
+    {
+      "id": "MIG-002",
+      "title": "Additive first",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 376,
+      "status": "specified"
+    },
+    {
+      "id": "MIG-003",
+      "title": "Legacy sessions",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 380,
+      "status": "specified"
+    },
+    {
+      "id": "MIG-004",
+      "title": "Content epoch transition",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 384,
+      "status": "specified"
+    },
+    {
+      "id": "MIG-005",
+      "title": "Archive version",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 388,
+      "status": "specified"
+    },
+    {
+      "id": "MIG-006",
+      "title": "Export completeness and protection",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 392,
+      "status": "specified"
+    },
+    {
+      "id": "MIG-007",
+      "title": "Restore transaction",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 398,
+      "status": "specified"
+    },
+    {
+      "id": "MIG-008",
+      "title": "Rollback",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 404,
+      "status": "specified"
+    },
+    {
+      "id": "MIG-009",
+      "title": "Cloud deployment",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 408,
+      "status": "specified"
+    },
+    {
+      "id": "MIG-010",
+      "title": "Deletion and account lifecycle",
+      "file": "04_Runtime_Data_and_Migration.md",
+      "line": 412,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-001",
+      "title": "Separate the claims",
+      "file": "05_QA_and_Delivery.md",
+      "line": 9,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-002",
+      "title": "Five independent gates",
+      "file": "05_QA_and_Delivery.md",
+      "line": 13,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-003",
+      "title": "Test the shipped configuration",
+      "file": "05_QA_and_Delivery.md",
+      "line": 25,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-004",
+      "title": "Independent oracle rule",
+      "file": "05_QA_and_Delivery.md",
+      "line": 29,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-005",
+      "title": "Test the failure path as a product",
+      "file": "05_QA_and_Delivery.md",
+      "line": 33,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-006",
+      "title": "Layer responsibilities",
+      "file": "05_QA_and_Delivery.md",
+      "line": 39,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-007",
+      "title": "Golden fixture package",
+      "file": "05_QA_and_Delivery.md",
+      "line": 54,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-008",
+      "title": "Reproduction identity",
+      "file": "05_QA_and_Delivery.md",
+      "line": 58,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-009",
+      "title": "Bounded exhaustive versus sampled checks",
+      "file": "05_QA_and_Delivery.md",
+      "line": 62,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-010",
+      "title": "Editorial inspection",
+      "file": "05_QA_and_Delivery.md",
+      "line": 95,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-011",
+      "title": "Variety report",
+      "file": "05_QA_and_Delivery.md",
+      "line": 99,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-012",
+      "title": "Navigation coverage algorithm",
+      "file": "05_QA_and_Delivery.md",
+      "line": 135,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-013",
+      "title": "Timing robustness",
+      "file": "05_QA_and_Delivery.md",
+      "line": 139,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-014",
+      "title": "Human demand audit",
+      "file": "05_QA_and_Delivery.md",
+      "line": 165,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-015",
+      "title": "Simulation is a policy check",
+      "file": "05_QA_and_Delivery.md",
+      "line": 169,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-016",
+      "title": "Required configurations",
+      "file": "05_QA_and_Delivery.md",
+      "line": 175,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-017",
+      "title": "Journey coverage",
+      "file": "05_QA_and_Delivery.md",
+      "line": 189,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-018",
+      "title": "Manual accessibility protocol",
+      "file": "05_QA_and_Delivery.md",
+      "line": 193,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-019",
+      "title": "Visual artifact review",
+      "file": "05_QA_and_Delivery.md",
+      "line": 197,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-020",
+      "title": "Contrast and target targets",
+      "file": "05_QA_and_Delivery.md",
+      "line": 201,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-021",
+      "title": "Proposed performance budgets",
+      "file": "05_QA_and_Delivery.md",
+      "line": 207,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-022",
+      "title": "Hang closure",
+      "file": "05_QA_and_Delivery.md",
+      "line": 225,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-023",
+      "title": "Migration/restore run sheet",
+      "file": "05_QA_and_Delivery.md",
+      "line": 231,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-024",
+      "title": "Correction validation",
+      "file": "05_QA_and_Delivery.md",
+      "line": 235,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-025",
+      "title": "Local data and diagnostics boundaries",
+      "file": "05_QA_and_Delivery.md",
+      "line": 239,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-026",
+      "title": "Signed integration matrix",
+      "file": "05_QA_and_Delivery.md",
+      "line": 243,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-027",
+      "title": "Formative usability rounds",
+      "file": "05_QA_and_Delivery.md",
+      "line": 261,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-028",
+      "title": "Question usefulness review",
+      "file": "05_QA_and_Delivery.md",
+      "line": 269,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-029",
+      "title": "Learning evaluation is a separate study",
+      "file": "05_QA_and_Delivery.md",
+      "line": 273,
+      "status": "specified"
+    },
+    {
+      "id": "QA-REQ-030",
+      "title": "Product metrics with honest denominators",
+      "file": "05_QA_and_Delivery.md",
+      "line": 277,
+      "status": "specified"
+    },
+    {
+      "id": "DEL-001",
+      "title": "Deliver slices with dependent gates",
+      "file": "05_QA_and_Delivery.md",
+      "line": 283,
+      "status": "specified"
+    },
+    {
+      "id": "DEL-002",
+      "title": "First reviewable vertical slice",
+      "file": "05_QA_and_Delivery.md",
+      "line": 301,
+      "status": "specified"
+    },
+    {
+      "id": "DEL-003",
+      "title": "Preserve source-of-truth build configuration",
+      "file": "05_QA_and_Delivery.md",
+      "line": 305,
+      "status": "specified"
+    },
+    {
+      "id": "DEL-004",
+      "title": "Capability gating",
+      "file": "05_QA_and_Delivery.md",
+      "line": 309,
+      "status": "specified"
+    },
+    {
+      "id": "DEL-005",
+      "title": "Definition of done per package",
+      "file": "05_QA_and_Delivery.md",
+      "line": 313,
+      "status": "specified"
+    },
+    {
+      "id": "DEL-006",
+      "title": "Severity and release decisions",
+      "file": "05_QA_and_Delivery.md",
+      "line": 319,
+      "status": "specified"
+    },
+    {
+      "id": "DEL-007",
+      "title": "Rollout order",
+      "file": "05_QA_and_Delivery.md",
+      "line": 323,
+      "status": "specified"
+    },
+    {
+      "id": "DEL-008",
+      "title": "Rollback means compatible recovery",
+      "file": "05_QA_and_Delivery.md",
+      "line": 327,
+      "status": "specified"
+    },
+    {
+      "id": "DEL-009",
+      "title": "Release evidence bundle",
+      "file": "05_QA_and_Delivery.md",
+      "line": 331,
+      "status": "specified"
+    },
+    {
+      "id": "DEL-010",
+      "title": "Final closure questions",
+      "file": "05_QA_and_Delivery.md",
+      "line": 335,
+      "status": "specified"
+    }
+  ],
+  "errors": [],
+  "status": "passed"
+}

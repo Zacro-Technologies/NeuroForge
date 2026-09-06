@@ -29,6 +29,9 @@ struct OnboardingView: View {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
+  @State private var showsSample = false
+  @State private var sampleRequestsSetup = false
+  @State private var showsRestore = false
   @State private var draft = OnboardingDraft()
   @State private var step: OnboardingStep = .welcome
   @FocusState private var keyboardFocus: NFOnboardingKeyboardFocusTarget?
@@ -83,6 +86,19 @@ struct OnboardingView: View {
       }
     }
     .accessibilityIdentifier("onboarding-root")
+    .sheet(isPresented: $showsSample, onDismiss: {
+      guard sampleRequestsSetup else { return }
+      sampleRequestsSetup = false
+      if step == .welcome { goForward() }
+    }) {
+      NFOnboardingSampleView {
+        sampleRequestsSetup = true
+        showsSample = false
+      }
+    }
+    .sheet(isPresented: $showsRestore) {
+      NavigationStack { SettingsView() }
+    }
     .safeAreaInset(edge: .bottom, spacing: 0) {
       actionBar
         .frame(maxWidth: 760)
@@ -199,8 +215,8 @@ struct OnboardingView: View {
       if step == .routine {
         Button { finishOnboarding(startBaseline: false) } label: {
           onboardingPrimaryActionLabel(
-            title: "Open the Forge",
-            symbol: "flame.fill"
+            title: "Start practice",
+            symbol: "play.fill"
           )
         }
         .buttonStyle(.plain)
@@ -209,14 +225,14 @@ struct OnboardingView: View {
         .keyboardShortcut(.defaultAction)
 
         Button { finishOnboarding(startBaseline: true) } label: {
-          Text("Start with a skill check")
+          Text("Take a short skill check")
         }
         .buttonStyle(.borderless)
         .accessibilityIdentifier("onboarding-skill-check-action")
       } else {
-        Button(action: goForward) {
+        Button(action: { if step == .welcome { showsSample = true } else { goForward() } }) {
           onboardingPrimaryActionLabel(
-            title: step == .welcome ? "Get started" : "Continue",
+            title: step == .welcome ? "Try a sample" : "Continue",
             symbol: dynamicTypeSize.isAccessibilitySize ? nil : "arrow.right"
           )
         }
@@ -225,6 +241,10 @@ struct OnboardingView: View {
         .disabled(!canContinue)
         .focused($keyboardFocus, equals: .primaryAction)
         .keyboardShortcut(.defaultAction)
+        if step == .welcome {
+          Button("Set up my practice", action: goForward).buttonStyle(.borderless)
+          Button("Restore a backup") { showsRestore = true }.buttonStyle(.borderless)
+        }
       }
     }
   }
@@ -346,6 +366,7 @@ struct OnboardingView: View {
 
   private var schedulePage: some View {
     VStack(alignment: .leading, spacing: 24) {
+      Text("Start with a short session. Your next practice will adjust as you answer.").font(.headline)
       NFSectionHeader(
         "Set your daily circuit",
         eyebrow: "Your rhythm",

@@ -1,0 +1,25 @@
+{
+  "recordedAt": "2026-09-05T09:22:06.309852+00:00",
+  "inputDigest": "412f2d3b5163cfdec90c5146e493923c287d24e4a2b141d051066caf38d99714",
+  "simulatorUDID": "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+  "files": [
+    {
+      "path": "NeuroForge",
+      "builtSHA256": "391bbddbcb5096300bfbd5e03d557070d33e371965663e0f0a9ac9de652674ca",
+      "installedSHA256": "391bbddbcb5096300bfbd5e03d557070d33e371965663e0f0a9ac9de652674ca",
+      "installedPath": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/0EBF5ED9-D7C1-439D-81F2-524F3A625450/NeuroForge.app/NeuroForge"
+    },
+    {
+      "path": "NeuroForge.debug.dylib",
+      "builtSHA256": "efadc059ca257142cad73525dfd8a9dcbbd9027b5e8977fccd1efb150f45380e",
+      "installedSHA256": "efadc059ca257142cad73525dfd8a9dcbbd9027b5e8977fccd1efb150f45380e",
+      "installedPath": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/0EBF5ED9-D7C1-439D-81F2-524F3A625450/NeuroForge.app/NeuroForge.debug.dylib"
+    },
+    {
+      "path": "PlugIns/NeuroForgeNativeInputTests.xctest/NeuroForgeNativeInputTests",
+      "builtSHA256": "3eaaf30fb877325eb2b0c68383554da5b202ffc818cfdae357dae0c0f052c1e1",
+      "installedSHA256": "3eaaf30fb877325eb2b0c68383554da5b202ffc818cfdae357dae0c0f052c1e1",
+      "installedPath": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/0EBF5ED9-D7C1-439D-81F2-524F3A625450/NeuroForge.app/PlugIns/NeuroForgeNativeInputTests.xctest/NeuroForgeNativeInputTests"
+    }
+  ]
+}

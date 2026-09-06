@@ -1,0 +1,35 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "21C3F268-3801-4F9C-801F-804C8D6596D8.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lab-response-feedback-spatial_0_721DAD33-C068-4F4F-BEF4-B79F57EC76E7.coordinate-rotation-en",
+        "timestamp" : 1788647980.654
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "464C166B-50CF-4B2C-9BE2-40D2F1D97893.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "advanced-coordinate-worked-Coordinate Rotation-en_0_16C27FC4-146E-4585-814C-580C1E37FEF0.png",
+        "timestamp" : 1788647969.901
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "54D8A19B-F045-432B-AB20-BA08628A41AB.txt",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "advanced-coordinate-public-oracle-Coordinate Rotation-en_0_6C388ECF-317E-407A-A703-B44E52CECBED.txt",
+        "timestamp" : 1788647906.438
+      }
+    ],
+    "testIdentifier" : "NavigationSmokeUITests/testAdvancedCoordinatePublicLaunchSavesOriginalAnswerAndSeparateWorkedMap()",
+    "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeUITests/NavigationSmokeUITests/testAdvancedCoordinatePublicLaunchSavesOriginalAnswerAndSeparateWorkedMap"
+  }
+]

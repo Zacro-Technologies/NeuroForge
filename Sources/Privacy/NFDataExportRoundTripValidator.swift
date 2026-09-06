@@ -29,9 +29,12 @@ struct NFDataArchiveRoundTripSnapshot: Equatable, Sendable {
 }
 
 enum NFDataExportRoundTripValidator {
-    @MainActor
     static func decodeArchive(at url: URL) throws -> NFDataArchiveRoundTripSnapshot {
-        let data = try NFDataArchiveMigration.normalizedData(from: Data(contentsOf: url))
+        try decodeArchive(data: NFDataArchiveReadBoundary.boundedData(at: url))
+    }
+
+    static func decodeArchive(data original: Data) throws -> NFDataArchiveRoundTripSnapshot {
+        let data = try NFDataArchiveMigration.normalizedData(from: original)
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let archive = try decoder.decode(ArchiveEnvelope.self, from: data)
@@ -101,7 +104,6 @@ enum NFDataExportRoundTripValidator {
 /// v14. Both the identity validator and the restoring decoder consume this
 /// normalized representation, so preview and restore cannot disagree about a
 /// historical file. The original archiveVersion is retained for disclosure.
-@MainActor
 enum NFDataArchiveMigration {
     static func normalizedData(from data: Data) throws -> Data {
         guard var object = try JSONSerialization.jsonObject(with: data) as? [String: Any],

@@ -1,0 +1,1954 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E4C4EE9C-AC73-4D26-B6E8-A5EAE2AA8D1F.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lab-response-feedback-spatial_0_745AEE04-B242-49A8-8E7F-C502EB08EAAA.coordinate-rotation-en",
+        "timestamp" : 1788650747.866
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "66F16311-6B4B-440F-892B-A93DF7DBA467.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "advanced-coordinate-worked-Coordinate Rotation-en_0_A2B13CDC-502E-4F04-96FB-C11786ECE2C6.png",
+        "timestamp" : 1788650736.942
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "060BF42A-8C80-493E-883C-66F51AE7E947.txt",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "advanced-coordinate-public-oracle-Coordinate Rotation-en_0_B8F93299-36EF-463A-8E62-CA7B71E0A23E.txt",
+        "timestamp" : 1788650667.215
+      }
+    ],
+    "testIdentifier" : "NavigationSmokeUITests/testAdvancedCoordinatePublicLaunchSavesOriginalAnswerAndSeparateWorkedMap()",
+    "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeUITests/NavigationSmokeUITests/testAdvancedCoordinatePublicLaunchSavesOriginalAnswerAndSeparateWorkedMap"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "084EF6F8-8459-464F-A637-F21BF774DF4C.txt",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Response control reveal geometry_0_EE77B3E1-9016-42DA-B2CC-5922285CC409.txt",
+        "timestamp" : 1788650868.575
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "5F9A48CD-CDE6-4621-AE72-13BC506D88AA",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.46",
+        "timestamp" : 1788650866.734
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "D9661264-2319-4EB2-96E0-E501DFF503C8",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.47",
+        "timestamp" : 1788650867.984
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "786F7E13-D7B2-4FDF-9BFB-F497DED2D523",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.43",
+        "timestamp" : 1788650863.238
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "1176004D-3958-455B-B927-7EFA72EFFFD7",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.44",
+        "timestamp" : 1788650864.494
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "53832E30-E9E4-4915-99B4-002334B2717B",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.39",
+        "timestamp" : 1788650859.723
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "59B2EFE5-A687-461D-940D-D2ADA178C0B6",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.40",
+        "timestamp" : 1788650860.992
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "40130D1B-7FB1-48F8-BB81-3358FC8233D4",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.36",
+        "timestamp" : 1788650856.241
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "EE94C3C2-4A4A-4148-BFCF-F67F44A01770",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.37",
+        "timestamp" : 1788650857.492
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "29CBBAC9-A266-4039-86C3-D4AE0245DF05",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.32",
+        "timestamp" : 1788650852.734
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E031C9A0-617D-4C27-B4A8-E9DC543A7DC6",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.33",
+        "timestamp" : 1788650853.987
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "D618B644-7221-4F98-BAB9-9B49891CF12D",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.29",
+        "timestamp" : 1788650849.202
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "C1027F2A-26A1-4B75-92B1-579FF2227C60",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.30",
+        "timestamp" : 1788650850.454
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "A5BC5044-F669-41E5-B57E-77146B6AC8BD",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.25",
+        "timestamp" : 1788650845.898
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "BD486305-78B8-4145-963F-36AC48256B16",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.27",
+        "timestamp" : 1788650847.15
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E652C7A4-1DB0-4CF4-88E2-24FB350676F1",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.22",
+        "timestamp" : 1788650842.261
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "BEB031D9-FA91-4FCB-9F9C-23FE16889629",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.23",
+        "timestamp" : 1788650843.53
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "C039970C-ADC0-4EFA-9980-8AB94B3A5294",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.18",
+        "timestamp" : 1788650838.665
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "813925AE-E827-4E5A-BB0F-32A96E19E5AC",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.19",
+        "timestamp" : 1788650839.917
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "83564010-00D8-466D-823E-FC1C8EB302A2",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.15",
+        "timestamp" : 1788650835.379
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "CA5960EF-BA6C-4826-9142-FB899A60077D",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.16",
+        "timestamp" : 1788650836.63
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "50380A82-A370-48F6-BDF6-CEA90BB6EF7C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.12",
+        "timestamp" : 1788650832.152
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E96879E9-A241-48B9-A9F7-95D9D9C42D43",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.13",
+        "timestamp" : 1788650833.409
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "BEBD2FEE-EC6C-43DF-A935-D8E77C72B447",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.08",
+        "timestamp" : 1788650828.649
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "552FDF2E-E56F-4A23-93D8-C2F22D85C763",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.09",
+        "timestamp" : 1788650829.9
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "FBC6B631-7BAC-496B-95F3-9809DC2E03F9",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.06",
+        "timestamp" : 1788650826.909
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "1A7557F9-7FE3-4864-9DA5-22949737F4F4",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.05",
+        "timestamp" : 1788650825.4
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "A072F1B5-4A1B-49D9-AD06-8136A16ADD84",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.05",
+        "timestamp" : 1788650825.778
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "D9E8941A-170D-4B9E-A0D7-391504BE9093",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.27.01",
+        "timestamp" : 1788650821.753
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "FE9FEF24-4477-4D2B-8089-CE4439367B9C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.27.02",
+        "timestamp" : 1788650822.502
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "CBA4B580-AD47-4D0F-90C2-FD93A50A8C55",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.57",
+        "timestamp" : 1788650817.856
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "BEF26077-A538-4DC9-B433-0A6B62472ED7",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.59",
+        "timestamp" : 1788650819.205
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "336F8B3E-A1E7-4104-BB1F-70C8EA515EC7",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.54",
+        "timestamp" : 1788650814.205
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "B541C829-EDAB-46EA-8BE1-12EB332E5FFB",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.55",
+        "timestamp" : 1788650815.648
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "4C466FA6-31B2-4776-8202-CEE58A499237",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.49",
+        "timestamp" : 1788650809.157
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "BB2BFDDD-F0F3-4DBB-BB97-7B5674875619",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.50",
+        "timestamp" : 1788650810.596
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "9A0DC27E-6C9D-4845-B3C8-91265AFDD68C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.43",
+        "timestamp" : 1788650803.637
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "AEB8159E-DC0D-437F-8A26-F1A3F6D22AAE",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.45",
+        "timestamp" : 1788650805.084
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "342F4623-5046-43B9-BDDB-B7A5B6B46FC0",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.38",
+        "timestamp" : 1788650798.248
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "01157DB5-A606-4F15-812F-D33E77FD9789",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.39",
+        "timestamp" : 1788650799.7
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "4E487AC1-D91C-4648-98EA-5645598E23FC",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.32",
+        "timestamp" : 1788650792.584
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "B8706C38-086C-40FE-8834-8B7FE2FDFFC9",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.34",
+        "timestamp" : 1788650794.026
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "3BB03712-ACD1-4AC4-8018-5AC5C9147052",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.26",
+        "timestamp" : 1788650786.608
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "FF451766-6B7C-4475-8E2A-BDD1DA6A03AE",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.26",
+        "timestamp" : 1788650786.992
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "1869DF94-A0FA-416A-82CD-FA50EF48CFE7",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.22",
+        "timestamp" : 1788650782.337
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "1CC62AA8-D193-4CE7-B4D9-9508139D2340",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.23",
+        "timestamp" : 1788650783.099
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "40395AFD-DBB4-4A8D-A0FF-27870FFF25B7",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.18",
+        "timestamp" : 1788650778.542
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "2B6BF26D-BA71-4530-82C1-8A92562FE76B",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.20",
+        "timestamp" : 1788650780.228
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "D5B6B861-9777-4D1C-80F8-84410D87EDC0",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.14",
+        "timestamp" : 1788650774.965
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "AB1ADD79-08C7-4837-A667-3F6D90591DCF",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.16",
+        "timestamp" : 1788650776.546
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "C4837691-FD5B-4B93-9714-43BAF835D979",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.11",
+        "timestamp" : 1788650771.759
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "3C961796-91DD-48E9-8AE4-1B0943DE382B",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.12",
+        "timestamp" : 1788650772.128
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "39C9ECCC-AA42-49EB-A81E-602518B1554D",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.09",
+        "timestamp" : 1788650769.908
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "129D9ECF-CEE1-4271-9A15-53714951A250",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.10",
+        "timestamp" : 1788650770.596
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "16830618-3D38-4999-AD77-163B5310F55C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.06",
+        "timestamp" : 1788650766.139
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "49E19303-EFFF-4E7B-ADF9-7748CBEC4411",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.07",
+        "timestamp" : 1788650767.917
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "9AB8031E-A483-4006-9D30-5B2182AE863A",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.26.03",
+        "timestamp" : 1788650763.173
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "1447EAD2-5192-4F11-B760-D6683132D3C2",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.26.04",
+        "timestamp" : 1788650764.725
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "4698450E-E27F-4255-BD38-2427B9C76582",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.25.59",
+        "timestamp" : 1788650759.511
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "C2359F58-D25E-44D0-BCA0-1854C3EA89C1.mp4",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Screen Recording 2026-09-05 at 19.25.52.mp4",
+        "timestamp" : 1788650752.528
+      }
+    ],
+    "testIdentifier" : "NavigationSmokeUITests/testAsymmetricSolidPublicLaunchUsesVisibleProjectionOracleAndColdCompleteSet()",
+    "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeUITests/NavigationSmokeUITests/testAsymmetricSolidPublicLaunchUsesVisibleProjectionOracleAndColdCompleteSet"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "46A79B87-B925-4FD1-8A31-95F9A1CE4667.txt",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "App UI hierarchy for com.zacrotech_0_754B6F2A-26B7-4CB3-818F-0C808AB1A392.NeuroForge",
+        "timestamp" : 1788651077.049
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "6C9D94AE-02F8-43F6-8461-C58D7FEF44A4",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.17",
+        "timestamp" : 1788651077.049
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "37F04FBC-66CF-4490-8B63-11C7A1B1C829",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.12",
+        "timestamp" : 1788651072.943
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "BF3D755B-7B23-4BC1-8E7B-13174A3F4D5F",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.13",
+        "timestamp" : 1788651073.23
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "37D3925D-EC87-455F-85A4-6205A6232726",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.08",
+        "timestamp" : 1788651068.978
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "723686C6-1365-4090-87F8-8C2C96C144F1",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.09",
+        "timestamp" : 1788651069.276
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "D688D420-2C72-48C7-BCF8-4DCC3DBE1B2D",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.04",
+        "timestamp" : 1788651064.688
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "217E160E-5BBD-4A6C-945A-2BA3A2B96DCE",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.04",
+        "timestamp" : 1788651064.983
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "93E7658B-837E-4E5F-945C-7B8275802C29",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.30.56",
+        "timestamp" : 1788651056.62
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "20B2A2B5-8376-423C-8F3D-BAB85822248A",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.30.57",
+        "timestamp" : 1788651057.454
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E50BFCEB-9665-4AB6-851B-CE97ABFA084C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.30.50",
+        "timestamp" : 1788651050.892
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "4F54AF27-0372-448B-97AB-4D7830CA1667",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.30.52",
+        "timestamp" : 1788651052.006
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "651EDF0E-A56B-4EC2-BA36-82C60986134C.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "cube-net-saved-complete-fold-en_0_66B14B10-9E7A-495A-8333-221ACDF52095.png",
+        "timestamp" : 1788651048.032
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "A6F23819-1B04-4534-856C-A1940D5DAB57",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.30.40",
+        "timestamp" : 1788651040.135
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "F477AD60-4DEC-4467-B937-D051F56BF216",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.30.40",
+        "timestamp" : 1788651040.976
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "09C2C59E-7C4A-4C9A-BCA8-B1F53F4CFD0B",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.30.33",
+        "timestamp" : 1788651033.483
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "0268E599-4922-4B41-8F55-207B907EF96C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.30.35",
+        "timestamp" : 1788651035.27
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "01F632D1-B4BB-4937-9DB7-DC8B076591A0",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.30.28",
+        "timestamp" : 1788651028.412
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "A01020F8-33D3-432C-B2E4-4D813F340DB2",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.30.30",
+        "timestamp" : 1788651030.263
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "3A505934-6300-486C-AD4F-69C359357A10.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "cube-net-completed-model-en_0_B9B8A2E9-B767-4837-A53E-89787F716EC2.png",
+        "timestamp" : 1788651025.346
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "D73BB629-16AD-4281-98D3-2E042332DABC",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.30.21",
+        "timestamp" : 1788651021.735
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "000038F5-8C3E-4658-9ECF-A41ED107D0CF",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.30.22",
+        "timestamp" : 1788651022.586
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E5D2F762-DCBC-4A7D-97A2-E3547E75558B.ips",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Crash Log 2026-09-05 at 19.30.21.ips",
+        "timestamp" : 1788651021.083
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "8B4BABAC-2B99-452E-9CAA-40D4C98969EF",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.30.16",
+        "timestamp" : 1788651016.933
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "584CCFA1-5554-41A4-8C28-4237EBE993A9",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.30.18",
+        "timestamp" : 1788651018.663
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "76ED1911-6A01-470D-9DBF-B3F36D7B524C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.30.12",
+        "timestamp" : 1788651012.119
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "46118558-3412-4DD9-8EB9-32AD4FCA739A",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.30.13",
+        "timestamp" : 1788651013.936
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "5C7773D1-6F8D-4666-B6D6-AF49EF5DFA11",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.30.06",
+        "timestamp" : 1788651006.442
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "7B0EE990-B7D5-4BF4-9A32-24264643E22F",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.30.06",
+        "timestamp" : 1788651006.742
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "41355D97-060B-4466-9E73-DCD392593D33",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.30.00",
+        "timestamp" : 1788651000.069
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "F8D13DC6-505E-45C3-AC7E-67A53A4D634C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.30.01",
+        "timestamp" : 1788651001.963
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "B9B8B1AB-8F2F-4195-9D93-10D764ECFC15",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.52",
+        "timestamp" : 1788650992.786
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "44FBEE3C-E2A8-45A0-98BC-37F8D2934E8F",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.29.53",
+        "timestamp" : 1788650993.64
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "3F0AF37F-EB10-4675-B443-EB0485ED7C60",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.47",
+        "timestamp" : 1788650987.2
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E36ADC59-F90E-49F0-BBA8-51B6BCB5F60C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.29.48",
+        "timestamp" : 1788650988.127
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "807B63D8-AAA6-4A13-87E0-2AEBAD3EF88F",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.40",
+        "timestamp" : 1788650980.366
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "2F3BC8B7-0E81-4893-9E16-DB10EB3E941A",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.29.42",
+        "timestamp" : 1788650982.189
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "07BCEC9B-B5F7-4450-8897-B27EB1C7478C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.34",
+        "timestamp" : 1788650974.143
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "C062EA24-1F2B-4CC7-B3E4-4F641C06D1CC",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.29.35",
+        "timestamp" : 1788650975.938
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "0AFEE0D5-6289-4E6F-8BB8-D3D1EC2584FF.txt",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "cube-net-visible-query-oracle_0_2EDE02A9-5FCA-4BCD-B927-D0C71983E19C.txt",
+        "timestamp" : 1788650971.389
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "8A270D6A-1CB3-4C8E-BE8B-76381C1D961E",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.25",
+        "timestamp" : 1788650965.393
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "79222AF3-2D74-456F-887E-4CDA7CDCD466",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.29.25",
+        "timestamp" : 1788650965.686
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "F9AA9DBB-5547-42E1-8DD6-6DB4A785C336",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.25",
+        "timestamp" : 1788650965.2
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "6A20A20B-A4F8-4BCD-A1EF-E29C19BC376A",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.21",
+        "timestamp" : 1788650961.395
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "F0D5D1D4-366C-472B-9A71-0178EDCF2BD1",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.20",
+        "timestamp" : 1788650960.04
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "21CA0AFF-A63B-45AA-982C-AB7A051E5755",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.29.20",
+        "timestamp" : 1788650960.334
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "AEF74A18-5B27-4A3C-B75F-C59E792E02D9",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.16",
+        "timestamp" : 1788650956.269
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "B4E5D0B6-8B9F-4220-94C4-7B6E3849D42E",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.29.17",
+        "timestamp" : 1788650957.932
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "C17AEA12-F790-47CD-8826-9CBF22922FAA",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.10",
+        "timestamp" : 1788650950.048
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "EC98540B-C20E-49F2-B3FA-2F222976BCF0",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.29.11",
+        "timestamp" : 1788650951.706
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "6C75F05A-8AC2-4714-9974-873E588EEA9B",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.03",
+        "timestamp" : 1788650943.426
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "20FBB678-E1AB-4011-B73F-75E753B0FF93",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.29.03",
+        "timestamp" : 1788650943.716
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "74BFABF9-A45A-43C3-BD65-209EC5CCDF29",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.29.01",
+        "timestamp" : 1788650941.71
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "3FFBADE1-5925-4BFF-AD8E-04DAF958CE21",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.29.02",
+        "timestamp" : 1788650942
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "64175031-C623-4227-8300-817FF3CD3BC9",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.58",
+        "timestamp" : 1788650938.219
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "C31F3583-79DD-4541-9FC4-AEF83ACA69EB",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.59",
+        "timestamp" : 1788650939.076
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "644D6D60-8074-45DF-BF8C-2BB0574E3878",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.54",
+        "timestamp" : 1788650934.472
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "D14F5C40-1229-439E-80E8-9998E6EEE8EE",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.55",
+        "timestamp" : 1788650935.423
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "091961D3-2B0E-4B57-99AE-2541D6EF6CCA",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.51",
+        "timestamp" : 1788650931.235
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "A68487E8-913D-4435-BF7B-E78EB8237995",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.51",
+        "timestamp" : 1788650931.53
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "77ECEF21-FCF8-4C1B-8658-00286C1D8E6F",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.46",
+        "timestamp" : 1788650926.579
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "4E00D1EE-A1D9-4399-832B-5F7EB71FD8AE",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.46",
+        "timestamp" : 1788650926.875
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "49BB4ADD-8582-4041-9320-50C22413C00B",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.44",
+        "timestamp" : 1788650924.296
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "F88F8C3D-6268-4385-BC68-5E482A44026B",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.44",
+        "timestamp" : 1788650924.588
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "F513B60E-B3EE-4690-9076-8C2F98378EF3",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.40",
+        "timestamp" : 1788650920.858
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "7952C4B6-8B38-4374-8F09-AFFC25B113CE",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.41",
+        "timestamp" : 1788650921.696
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "ECF0CBD5-D1E6-4FBD-A7A0-B28911048AC0",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.37",
+        "timestamp" : 1788650917.14
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "01BBEF74-3772-4C04-AEAF-A71152F54983",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.37",
+        "timestamp" : 1788650917.992
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "56E27166-399A-4D71-878B-CA72D530A80B",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.32",
+        "timestamp" : 1788650912.375
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "3F44987C-3F50-4908-9A95-7D902A7332EB",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.34",
+        "timestamp" : 1788650914.219
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "8B0DCA30-F8BB-440B-B3B8-FA842DF9E501",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.27",
+        "timestamp" : 1788650907.855
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "6CF94640-20C0-40DA-8194-3182A6730CB8",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.29",
+        "timestamp" : 1788650909.66
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "F8810506-C000-4B5F-8CEB-03C2A7F87A91",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.21",
+        "timestamp" : 1788650901.591
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "14A2261A-8E05-48AD-A1E1-0ED9CEB9C013",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.23",
+        "timestamp" : 1788650903.394
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "0B385110-7FD1-48FD-8009-0B6E54A1931A",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.15",
+        "timestamp" : 1788650895.389
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E2FBF679-E07A-44F6-B2F5-7D7D98C1AC19",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.17",
+        "timestamp" : 1788650897.189
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "6039F0B1-8938-48F0-AFA9-32DDD6225733",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.09",
+        "timestamp" : 1788650889.167
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "8BB04AF8-997A-443D-9EB6-EB81C4BDA1CD",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.28.10",
+        "timestamp" : 1788650890.973
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "15EC0077-6D5F-4FDC-A53B-FC899E219196.txt",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "App UI hierarchy for com.zacrotech_0_156F1375-BEAD-431F-B594-7199415636CD.NeuroForge",
+        "timestamp" : 1788650883.193
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "8F6AC796-E869-4287-8033-4C5BC2D02903",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.28.03",
+        "timestamp" : 1788650883.193
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "197AEF53-7E68-427A-B05E-F05489306116.txt",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Debug description for `\"session-resume\" Any`_0_BA6B314A-4B22-411A-9703-56601F748D3F.txt",
+        "timestamp" : 1788650882.977
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "855BCB7E-83A3-4FB8-805A-7622C8D1466B.txt",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Debug description for `\"session-resume\" Any`_0_D94B8284-D3E9-4A96-9320-92E69AFEF3E7.txt",
+        "timestamp" : 1788650882.054
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "26F96D91-86D6-47AE-96E2-04C148862FE5.txt",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Debug description for `\"session-resume\" Any`_0_EFCDBFA3-B58B-4EEA-85AB-238B9CF6DF25.txt",
+        "timestamp" : 1788650881.215
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "31E742A6-D51F-49F8-B793-9ED6DEF474B1.mp4",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Screen Recording 2026-09-05 at 19.27.49.mp4",
+        "timestamp" : 1788650869.603
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "FCDB3118-7109-443A-B58A-4A9C068697B0.txt",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Complete Issue Description.txt"
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "3CE77AF0-9344-4F22-A133-E135ADD2A951.txt",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "App UI hierarchy for com.zacrotech_0_D490B5E0-98EB-4376-9C4F-ECCDBFCF6E9A.NeuroForge",
+        "timestamp" : 1788651077.28
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "41A029FE-4D6E-4ED9-ACBB-543A8438DFF0",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.17",
+        "timestamp" : 1788651077.28
+      }
+    ],
+    "testIdentifier" : "NavigationSmokeUITests/testCubeNetRetainsPrintedGivensAcrossCameraAndCommittedFolding()",
+    "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeUITests/NavigationSmokeUITests/testCubeNetRetainsPrintedGivensAcrossCameraAndCommittedFolding"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E46FD52A-1248-4352-A639-B528170F4FC6.txt",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Response control reveal geometry_0_FF0AE063-A765-4F12-94F5-D28B3272ED70.txt",
+        "timestamp" : 1788651192.069
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "6961B64A-6E15-4D12-9727-ABBFD92D6857",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.33.10",
+        "timestamp" : 1788651190.24
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "928D04C5-D3C9-47D6-AE2B-64428B1B014E",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.33.11",
+        "timestamp" : 1788651191.497
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E4DBB775-6288-4B88-9E63-29DC7DE17AA7",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.33.06",
+        "timestamp" : 1788651186.687
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "6FF66962-9B48-46EA-8C9A-B05BB3592A7D",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.33.07",
+        "timestamp" : 1788651187.93
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "4A71A8CE-5F35-4C2A-8291-AEE06EC77787",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.33.03",
+        "timestamp" : 1788651183.188
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "A6632B53-6D00-4045-BAA0-7663AB37BDCD",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.33.04",
+        "timestamp" : 1788651184.447
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "5E5F5619-3275-460C-8346-E11AF8E796C2",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.59",
+        "timestamp" : 1788651179.499
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "4F6ED0C0-16E4-4899-96F2-FC4646710F46",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.33.00",
+        "timestamp" : 1788651180.751
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "9972AA0F-D710-4E78-A273-E1F64E0583FE",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.55",
+        "timestamp" : 1788651175.955
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "98940364-B366-4792-B9A2-2ACD3031DC39",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.57",
+        "timestamp" : 1788651177.206
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "1E67191D-4C87-49DD-B9CB-397ACF045A64",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.52",
+        "timestamp" : 1788651172.433
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "9AFB47C0-A5D2-4F30-8342-4C51B8373867",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.53",
+        "timestamp" : 1788651173.685
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "0140D3FA-B8B6-4C65-B6EF-CFFA3DCEC1A2",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.48",
+        "timestamp" : 1788651168.955
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "DF864C03-EC5D-409D-BC4A-5B320BC2C535",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.50",
+        "timestamp" : 1788651170.197
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "69E4C637-53CD-436F-8134-6A4FF56120B8",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.45",
+        "timestamp" : 1788651165.454
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "0D702C49-ACDE-430D-A1B0-4B193AD8F3F1",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.46",
+        "timestamp" : 1788651166.702
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "C995CAA1-FC77-4922-A2A8-30FADB58C4CC",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.42",
+        "timestamp" : 1788651162.105
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "806A279C-28F2-42DF-8447-613EB233C9D8",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.43",
+        "timestamp" : 1788651163.36
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "A1611908-3CE0-44A6-A3E9-8692261FFA13",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.38",
+        "timestamp" : 1788651158.916
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "91328384-6F87-4D1F-9AD3-69A2CDB78DA1",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.40",
+        "timestamp" : 1788651160.169
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "4FAE6747-41BC-4947-B4A5-09161D1158E6",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.35",
+        "timestamp" : 1788651155.272
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E6A1D69D-1699-47AE-883E-0D03C1BEB4FD",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.36",
+        "timestamp" : 1788651156.543
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "CA7176A4-8621-4E9E-B58B-FB56800C5B4A",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.32",
+        "timestamp" : 1788651152.272
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "19A0E95B-4F1B-4377-ADC9-50F2DBE41858",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.33",
+        "timestamp" : 1788651153.564
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "0FFED890-5B04-4E83-A591-71EF0B0CE9E8",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.30",
+        "timestamp" : 1788651150.579
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "10FE90FD-07FA-430E-B1C6-6B708852D7A6",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.29",
+        "timestamp" : 1788651149.119
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "94DF6195-8506-4E29-AA0E-6AC68756CCF5",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.29",
+        "timestamp" : 1788651149.508
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "68D7C3FD-9025-4FB8-8D97-8381B888C551",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.25",
+        "timestamp" : 1788651145.224
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "BC2BDFEF-A9BC-48A6-8579-6F3E31FC8068",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.26",
+        "timestamp" : 1788651146.07
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "62E3C8E2-84A3-4021-9D63-70DED5A1AE9B",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.21",
+        "timestamp" : 1788651141.351
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "004FCE1F-E9DF-4E38-9167-9E5E546E63EA",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.22",
+        "timestamp" : 1788651142.364
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "2371D649-D85C-4B3E-B092-2A977C036BE6",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.17",
+        "timestamp" : 1788651137.771
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "FC5759BC-4319-45FA-819C-6A9B349D11D7",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.19",
+        "timestamp" : 1788651139.327
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "BDAD09AF-690F-4B27-8358-EAF7D89D0276",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.13",
+        "timestamp" : 1788651133.77
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "CDB9F458-50E1-4DD6-B613-9848B8771B65",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.15",
+        "timestamp" : 1788651135.222
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "7C4F4F94-C5E2-4A4B-9328-56903F79BA3F",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.08",
+        "timestamp" : 1788651128.461
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "13513F6A-0739-4C12-8E28-0AC6269A1114",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.09",
+        "timestamp" : 1788651129.913
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "746F8D45-C50A-4607-8022-2242C467E9FA",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.32.02",
+        "timestamp" : 1788651122.983
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "DB5A7E0F-8630-4A0B-9A57-B20BA7268D6C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.32.04",
+        "timestamp" : 1788651124.436
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "86D36896-B04D-469B-96F8-D475578053BD",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.57",
+        "timestamp" : 1788651117.609
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "9CC3A44F-2295-497D-8EBA-C1C4064237B4",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.57",
+        "timestamp" : 1788651117.993
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "67E5195A-B8FF-4FA9-8255-B572C826A7B0",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.53",
+        "timestamp" : 1788651113.74
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "ADF9DFCC-746A-44B7-AAE0-63C74547F111",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.54",
+        "timestamp" : 1788651114.48
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "049E8F97-569F-4F9D-A05A-BEFFEFBEC029",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.50",
+        "timestamp" : 1788651110.173
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "6961DF3A-71AC-49CB-997B-D8F1FC0AEF2B",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.51",
+        "timestamp" : 1788651111.891
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E35FFE1E-907D-4757-9783-540913195FDE",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.46",
+        "timestamp" : 1788651106.222
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E7CAFC06-88B8-4422-8AEF-3FFA11197132",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.47",
+        "timestamp" : 1788651107.941
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "8C202334-E96C-46D7-9019-78870803E997",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.42",
+        "timestamp" : 1788651102.541
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "7D80FE8A-7587-4F32-87DF-10EE3FBAE503",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.44",
+        "timestamp" : 1788651104.006
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "32D085C0-04B0-4798-A6E6-8481E6BA1403",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.37",
+        "timestamp" : 1788651097.373
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "A8F9E5EA-ECDE-4BF4-AD76-F62A93956300",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.37",
+        "timestamp" : 1788651097.753
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "178C9273-C19A-4DA7-B438-4E5887B44C0F",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.35",
+        "timestamp" : 1788651095.537
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "DA7B61E1-690C-47D2-8F4B-3DBBA43702E0",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.36",
+        "timestamp" : 1788651096.226
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "0AF473DF-6194-44AC-9761-3BB0CB0F9E40",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.31",
+        "timestamp" : 1788651091.855
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "2041E1CC-C1BE-45E7-A2F6-65F560E05A18",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.33",
+        "timestamp" : 1788651093.639
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "0044EF52-2797-42F9-9B3E-6EC602EA5AB7",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "UI Snapshot 2026-09-05 at 19.31.28",
+        "timestamp" : 1788651088.856
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "7DC5B08A-3718-43E0-89FB-FC59FD29BA9C",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.30",
+        "timestamp" : 1788651090.409
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "0F35DD8B-1EE2-40C4-828C-076BB082094A",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Synthesized Event 2026-09-05 at 19.31.25",
+        "timestamp" : 1788651085.356
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "D10F729D-FD9C-420B-8B67-077C972BE262.mp4",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "Screen Recording 2026-09-05 at 19.31.17.mp4",
+        "timestamp" : 1788651077.826
+      }
+    ],
+    "testIdentifier" : "NavigationSmokeUITests/testFeasibleReconstructionPublicLaunchUsesCompleteFiniteOracleAndColdAnswerSet()",
+    "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeUITests/NavigationSmokeUITests/testFeasibleReconstructionPublicLaunchUsesCompleteFiniteOracleAndColdAnswerSet"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E8D1B349-EA95-43DD-9610-F5B478CC4438.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "generated-two-runs-cold-skip-explicit-end-en_0_6E62350B-5910-4171-9A24-8F0010DA4B07.png",
+        "timestamp" : 1788651292.36
+      }
+    ],
+    "testIdentifier" : "NavigationSmokeUITests/testGeneratedSetCreatesSeparateRunsAndRestoresSkippedRunThroughColdLaunch()",
+    "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeUITests/NavigationSmokeUITests/testGeneratedSetCreatesSeparateRunsAndRestoresSkippedRunThroughColdLaunch"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "41811F64-162B-4259-95AF-1DC4860847F7.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "weekly-chart-matching-original-answer-en_0_2E3CADD8-550D-4216-876E-117C420D1E0A.png",
+        "timestamp" : 1788651348.335
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "E5523930-E841-4A70-9AFC-B4421EB07147.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "weekly-chart-date-activity-count-credit-en_0_23A48273-856C-4492-B5F4-C8CAF14AD09D.png",
+        "timestamp" : 1788651341.826
+      }
+    ],
+    "testIdentifier" : "NavigationSmokeUITests/testWeeklyChartDataOpensExactSavedAnswerHistory()",
+    "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeUITests/NavigationSmokeUITests/testWeeklyChartDataOpensExactSavedAnswerHistory"
+  }
+]

@@ -1,0 +1,129 @@
+Building for debugging...
+[0/3] Write sources
+[1/3] Write swift-version--58304C5D6DBC2206.txt
+[3/6] Compiling NeuroForgeTests EditorialBandEvidenceTests.swift
+[4/6] Emitting module NeuroForgeTests
+[4/6] Write Objects.LinkFileList
+[5/6] Linking NeuroForgeAdaptivePolicyTestsPackageTests
+Build complete! (2.66s)
+Test Suite 'All tests' started at 2026-09-04 22:02:15.747.
+Test Suite 'NeuroForgeAdaptivePolicyTestsPackageTests.xctest' started at 2026-09-04 22:02:15.755.
+Test Suite 'EditorialBandEvidenceTests' started at 2026-09-04 22:02:15.755.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF02TimingConditionDoesNotAlterFrozenDemand]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF02TimingConditionDoesNotAlterFrozenDemand]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF03ColdStart]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF03ColdStart]' passed (0.001 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF04ExplicitHarderStart]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF04ExplicitHarderStart]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF05StrongTrajectory]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF05StrongTrajectory]' passed (0.005 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF06WeakTrajectory]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF06WeakTrajectory]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF07MixedTrajectory]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF07MixedTrajectory]' passed (0.004 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF08PartialUpBoundary]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF08PartialUpBoundary]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF09PartialDownBoundary]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF09PartialDownBoundary]' passed (0.002 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF10ZeroFlagsMatter]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF10ZeroFlagsMatter]' passed (0.004 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF11FixedBand]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF11FixedBand]' passed (0.014 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF12UpwardThrottle]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF12UpwardThrottle]' passed (0.006 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF13FoundationFloor]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF13FoundationFloor]' passed (0.002 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF14AssistedSequence]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF14AssistedSequence]' passed (0.002 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF15SkipsAreNotZeroCredit]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF15SkipsAreNotZeroCredit]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF16SparseNextBand]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF16SparseNextBand]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF17EmptyActivityAndADPF18StableTie]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF17EmptyActivityAndADPF18StableTie]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF19SelectedPathSurvivesCodableResume]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF19SelectedPathSurvivesCodableResume]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF20UserOverrideDoesNotResetLimits]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testADPF20UserOverrideDoesNotResetLimits]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF01SupportedBand]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF01SupportedBand]' passed (0.001 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF02OneStructureGaming]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF02OneStructureGaming]' passed (0.001 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF03SameItemGaming]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF03SameItemGaming]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF04OneSessionStreak]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF04OneSessionStreak]' passed (0.002 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF05ConfidenceInvariance]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF05ConfidenceInvariance]' passed (0.001 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF06InvitationReplay]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF06InvitationReplay]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF07CalibrationMinimumAndRetrospection]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF07CalibrationMinimumAndRetrospection]' passed (0.004 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF08PartialConfidenceUsesBinaryFullCredit]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF08PartialConfidenceUsesBinaryFullCredit]' passed (0.002 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF09EquivalentResponsesHaveIdenticalEvidence]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF09EquivalentResponsesHaveIdenticalEvidence]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF10And11ResumeTiming]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF10And11ResumeTiming]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF12ClockDoesNotMeasureActiveTime]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF12ClockDoesNotMeasureActiveTime]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF13DuplicateCommit]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF13DuplicateCommit]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF14QuarantineAndEVDF16Reinstatement]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF14QuarantineAndEVDF16Reinstatement]' passed (0.001 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF15FaultySiblingFamily]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF15FaultySiblingFamily]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF17PersonalSource]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF17PersonalSource]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF18LegacyCannotBecomeBandEvidence]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF18LegacyCannotBecomeBandEvidence]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF19ReplayCompleteStateEquality]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF19ReplayCompleteStateEquality]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF20UnobservedStrategyRemainsUnknown]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testEVDF20UnobservedStrategyRemainsUnknown]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testHistoricalCorrectionIsAppendOnlyAndRequiresValidSupersessionChain]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testHistoricalCorrectionIsAppendOnlyAndRequiresValidSupersessionChain]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testHistoricalPracticeRemainsVisibleWithoutManufacturingBandEvidence]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testHistoricalPracticeRemainsVisibleWithoutManufacturingBandEvidence]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testHistoricalSelfCheckDispositionIsIdempotentAndPreservesOriginal]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testHistoricalSelfCheckDispositionIsIdempotentAndPreservesOriginal]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testProtectedPresentationCapIncludesUnansweredSlotsAndReplayIsIdempotent]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testProtectedPresentationCapIncludesUnansweredSlotsAndReplayIsIdempotent]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testProtectedRecommendationsUseCorrectedEffectiveFlagsWithoutChangingOriginals]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testProtectedRecommendationsUseCorrectedEffectiveFlagsWithoutChangingOriginals]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testRuntimeWorkloadAdmitsOnlyTasksThatFitWithoutMinimumCountFloor]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testRuntimeWorkloadAdmitsOnlyTasksThatFitWithoutMinimumCountFloor]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testRuntimeWorkloadKeepsLegacyAdvisorySeparateFromReviewedDemand]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testRuntimeWorkloadKeepsLegacyAdvisorySeparateFromReviewedDemand]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH01ProtectedLeakageRejected]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH01ProtectedLeakageRejected]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH02SittingBudgetAndSCH03NoAutowrong]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH02SittingBudgetAndSCH03NoAutowrong]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH04CoverageCapAndLinkedSupplement]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH04CoverageCapAndLinkedSupplement]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH06AccessibleEquivalentHasNoAbilityPenaltyAndSCH07MissingForm]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH06AccessibleEquivalentHasNoAbilityPenaltyAndSCH07MissingForm]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH08IntervalAdvanceAndSCH09EarlyRepeat]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH08IntervalAdvanceAndSCH09EarlyRepeat]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH10FailureWaitsForIndependentRepairAndSCH11RepairLoop]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH10FailureWaitsForIndependentRepairAndSCH11RepairLoop]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH12ReviewBudget]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH12ReviewBudget]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH13OneMinuteReflection]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH13OneMinuteReflection]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH14And15MixedFamilyBalance]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH14And15MixedFamilyBalance]' passed (0.525 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH18SaveFailureDoesNotComplete]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testSCH18SaveFailureDoesNotComplete]' passed (0.000 seconds).
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testScorePayloadFailsClosedAndWindowBoundaries]' started.
+Test Case '-[NeuroForgeTests.EditorialBandEvidenceTests testScorePayloadFailsClosedAndWindowBoundaries]' passed (0.000 seconds).
+Test Suite 'EditorialBandEvidenceTests' passed at 2026-09-04 22:02:16.367.
+	 Executed 54 tests, with 0 failures (0 unexpected) in 0.608 (0.612) seconds
+Test Suite 'NeuroForgeAdaptivePolicyTestsPackageTests.xctest' passed at 2026-09-04 22:02:16.367.
+	 Executed 54 tests, with 0 failures (0 unexpected) in 0.608 (0.612) seconds
+Test Suite 'All tests' passed at 2026-09-04 22:02:16.367.
+	 Executed 54 tests, with 0 failures (0 unexpected) in 0.608 (0.620) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

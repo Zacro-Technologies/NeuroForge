@@ -400,30 +400,10 @@ struct NFAdaptiveAssessmentState: Codable, Equatable, Sendable {
         guard !completedItemIDs.contains(item.id) else { return self }
 
         let selectedState = selectedItemIDs.contains(item.id) ? self : appending(item)
-        let boundedCredit = NFStableDeterminism.clampedUnit(credit)
-        let currentTheta = selectedState.theta(for: item.dimension)
-        let currentUncertainty = selectedState.uncertainty(for: item.dimension)
-        let boundedDifficulty = min(0.999, max(0.001, item.difficulty))
-        let difficultyLogit = log(boundedDifficulty / (1 - boundedDifficulty))
-        let expected = 1 / (1 + exp(-(currentTheta - difficultyLogit)))
-        let stepSize = min(0.65, max(0.12, 0.55 * currentUncertainty))
-        let updatedDimensionTheta = min(4, max(-4, currentTheta + stepSize * (boundedCredit - expected)))
-
-        // Information is greatest near the current estimate and remains positive
-        // for off-target responses so every scorable item narrows uncertainty.
-        let responseInformation = max(
-            0.05,
-            item.expectedInformation * 4 * expected * (1 - expected)
-        )
-        let updatedDimensionInformation = selectedState.dimensionInformation[item.dimension, default: 0]
-            + responseInformation
-        let updatedDimensionUncertainty = max(0.08, 1 / sqrt(1 + updatedDimensionInformation))
-        var dimensionThetas = selectedState.dimensionTheta
-        dimensionThetas[item.dimension] = updatedDimensionTheta
-        var dimensionUncertainties = selectedState.dimensionUncertainty
-        dimensionUncertainties[item.dimension] = updatedDimensionUncertainty
-        var dimensionInformation = selectedState.dimensionInformation
-        dimensionInformation[item.dimension] = updatedDimensionInformation
+        guard credit.isFinite, (0...1).contains(credit) else { return selectedState }
+        let dimensionThetas = selectedState.dimensionTheta
+        let dimensionUncertainties = selectedState.dimensionUncertainty
+        let dimensionInformation = selectedState.dimensionInformation
         var dimensionCompleted = selectedState.dimensionCompletedCounts
         dimensionCompleted[item.dimension, default: 0] += 1
         var completedFormats = selectedState.dimensionFormatCompletedCounts
@@ -491,10 +471,9 @@ enum NFAssessmentSelectionEngine {
         exposureLedger: NFHoldoutExposureLedger,
         excludedLabs: Set<TrainingLab> = []
     ) -> NFAssessmentCandidateScore {
-        let targetDifficulty = 1 / (1 + exp(-state.theta(for: item.dimension)))
-        let information = item.expectedInformation
-            * max(0.15, state.uncertainty(for: item.dimension))
-            * exp(-2.4 * abs(item.difficulty - targetDifficulty))
+        // Editorial/legacy floats are not item-response parameters. This legacy
+        // fallback ranks coverage only; reviewed new forms use the V1 policy.
+        let information = 0.0
         let dimensionCoverage = 1 / Double(1 + state.dimensionExposureCounts[item.dimension, default: 0])
         let coverage = 1 / Double(1 + state.subskillExposureCounts[item.subskillID, default: 0])
         let formatDiversity = 1 / Double(
@@ -832,8 +811,7 @@ enum NFAssessmentEngine {
     static func initialAdaptiveState(
         selfReportedDifficulty: Double = 0.5
     ) -> NFAdaptiveAssessmentState {
-        let boundedDifficulty = min(0.999, max(0.001, selfReportedDifficulty))
-        let initialTheta = log(boundedDifficulty / (1 - boundedDifficulty))
+        let initialTheta = 0.0 // A starting preference cannot establish evidence.
         return NFAdaptiveAssessmentState(
             theta: initialTheta,
             uncertainty: 1,
@@ -853,23 +831,26 @@ enum NFAssessmentEngine {
         in session: NFAssessmentBlockSession,
         state: NFAdaptiveAssessmentState,
         activeElapsedSeconds: Int,
+        sittingBudgetSeconds: Int? = nil,
         exposureLedger: NFHoldoutExposureLedger = NFHoldoutExposureLedger(),
         excludedLabs: Set<TrainingLab> = []
     ) -> NFAssessmentNextStep {
         let elapsed = max(0, activeElapsedSeconds)
-        if elapsed >= session.maximumDurationSeconds {
+        let availableBudget = max(0, sittingBudgetSeconds ?? session.maximumDurationSeconds)
+        if state.completedScorableItems >= session.minimumScorableItems,
+           session.hasSufficientEvidence(in: state) {
+            // Legacy stop-code spelling is retained for archived receipts.
+            // Completion now reflects coverage, never fictitious item information.
+            return .stop(.targetInformationReached)
+        }
+        if elapsed >= availableBudget {
             return .stop(.maximumActiveDurationReached)
         }
         if state.completedScorableItems >= session.itemCap {
             return .stop(.itemCapReached)
         }
-        if state.completedScorableItems >= session.minimumScorableItems,
-           session.hasSufficientEvidence(in: state),
-           state.accumulatedInformation >= session.targetInformation {
-            return .stop(.targetInformationReached)
-        }
 
-        let remainingSeconds = session.maximumDurationSeconds - elapsed
+        let remainingSeconds = availableBudget - elapsed
         let eligible = session.candidatePool.filter {
             $0.block == session.definition.kind
                 && $0.role == session.phase.role
@@ -881,7 +862,10 @@ enum NFAssessmentEngine {
             return .stop(.candidatePoolExhausted)
         }
         let available = eligible.filter {
-            $0.estimatedDurationSeconds <= remainingSeconds
+            let estimate = NFEditorialWorkloadPolicy.runtimeEstimate(reviewedDemand: nil,
+                legacyExpectedResponseSeconds: Double($0.estimatedDurationSeconds), mode: .protectedCheck)
+            return NFEditorialWorkloadPolicy.admission(estimate: estimate,
+                remainingSeconds: Double(remainingSeconds), protected: true) == .fits
         }
         guard !available.isEmpty else {
             return .stop(.maximumActiveDurationReached)
@@ -1130,73 +1114,16 @@ enum NFAssessmentEngine {
 
 enum NFAssessmentDimensionReducer {
     static func reduce(_ attempts: [AttemptDTO]) -> [SkillSummary] {
-        NFAssessmentDimension.allCases.map { dimension in
-            let relevant = attempts
-                .filter {
-                    $0.assessmentDimension == dimension
-                        && $0.evidenceClass == .assessmentHoldout
-                        && $0.evidenceWeight > 0
-                }
-                .sorted { lhs, rhs in
-                    if lhs.submittedAt == rhs.submittedAt {
-                        return lhs.id.uuidString < rhs.id.uuidString
-                    }
-                    return lhs.submittedAt < rhs.submittedAt
-                }
-            let scored = relevant.compactMap { attempt -> (AttemptDTO, Double)? in
-                if dimension == .confidenceCalibration {
-                    guard let confidence = attempt.confidence else { return nil }
-                    return (attempt, 1 - abs(confidence.probability - attempt.credit))
-                }
-                return (attempt, attempt.credit)
-            }
-
-            var theta = 0.0
-            for (index, observation) in scored.enumerated() {
-                let expected = 1 / (1 + exp(-theta))
-                let step = max(0.08, 0.34 / sqrt(Double(index + 1)))
-                theta = min(3, max(-3, theta + step * (observation.1 - expected)))
-            }
-
-            let formats = Set(scored.compactMap { $0.0.assessmentFormat })
-            let hasRequiredCoverage = scored.count >= NFAssessmentCatalog.minimumBaselineItemsPerDimension
-                && formats.count >= NFAssessmentCatalog.minimumFormatsPerDimension
-            let status: EstimateStatus
-            if !hasRequiredCoverage {
-                status = .unassessed
-            } else if scored.count < 20 {
-                status = .developing
-            } else {
-                status = .stable
-            }
-
-            let totalWeight = scored.reduce(0) { $0 + $1.0.evidenceWeight }
-            let accuracy = totalWeight == 0 ? nil : scored.reduce(0) {
-                $0 + $1.0.credit * $1.0.evidenceWeight
-            } / totalWeight
-            let confidencePairs = relevant.compactMap { attempt -> (Double, Double)? in
-                guard let confidence = attempt.confidence else { return nil }
-                return (confidence.probability, attempt.credit)
-            }
-            let calibrationBias = confidencePairs.isEmpty ? nil : confidencePairs.reduce(0) {
-                $0 + $1.0 - $1.1
-            } / Double(confidencePairs.count)
-            let baseUncertainty = scored.isEmpty ? 1 : max(0.12, 1 / sqrt(Double(scored.count)))
-            let uncertainty = formats.count < NFAssessmentCatalog.minimumFormatsPerDimension
-                ? max(0.72, baseUncertainty)
-                : baseUncertainty
-
-            return SkillSummary(
-                id: dimension.skillID,
-                lab: dimension.lab,
-                theta: theta,
-                uncertainty: uncertainty,
-                evidenceCount: scored.count,
-                accuracy: accuracy,
-                status: status,
-                calibrationBias: calibrationBias,
-                lastTrained: scored.last?.0.submittedAt
-            )
+        let observations = attempts.compactMap(\.editorialObservation)
+        let evidence = EditorialBandEvidenceV1.reduce(observations, decisionDayOrdinal: observations.map(\.canonicalDayOrdinal).max() ?? 0)
+        return NFAssessmentDimension.allCases.map { dimension in
+            let ids = Set(observations.filter { $0.dimensionID == dimension.rawValue && $0.lane == .protectedCheck }.map(\.id))
+            let summaries = evidence.summaries.filter { $0.group.lane == .protectedCheck && $0.observationIDs.contains(where: ids.contains) }
+            let selected = summaries.count == 1 ? summaries.first : nil
+            return SkillSummary(id: dimension.skillID, lab: dimension.lab, theta: 0, uncertainty: 1,
+                evidenceCount: selected?.count ?? 0, accuracy: selected?.recentMeanCredit,
+                status: .unassessed, calibrationBias: nil,
+                lastTrained: observations.filter { ids.contains($0.id) }.map(\.occurredAt).max())
         }
     }
 }

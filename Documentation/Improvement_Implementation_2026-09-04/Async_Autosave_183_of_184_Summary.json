@@ -1,0 +1,58 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "00006020-000228AE0287401E",
+        "deviceName" : "My Mac",
+        "modelName" : "MacBook Pro",
+        "osBuildNumber" : "26A5425a",
+        "osVersion" : "27.0",
+        "platform" : "macOS"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 1,
+      "passedTests" : 183,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "NeuroForge · Built with macOS 27.0",
+  "expectedFailures" : 0,
+  "failedTests" : 1,
+  "finishTime" : 1788642838.638,
+  "passedTests" : 183,
+  "result" : "Failed",
+  "skippedTests" : 0,
+  "startTime" : 1788642671.623,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "XCTAssertEqual failed: (\"0\") is not equal to (\"4\")",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 139,
+      "testIdentifierString" : "GeneratedLifecycleParityTests/testAsyncGeneratedQueuedSelfCheckRevealKeepsReferenceBehindAcknowledgement()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/GeneratedLifecycleParityTests/testAsyncGeneratedQueuedSelfCheckRevealKeepsReferenceBehindAcknowledgement",
+      "testName" : "testAsyncGeneratedQueuedSelfCheckRevealKeepsReferenceBehindAcknowledgement()"
+    }
+  ],
+  "title" : "Test - NeuroForge",
+  "topInsights" : [
+    {
+      "category" : "Common Failures",
+      "impact" : "100% of failures",
+      "text" : "2 runs of 1 test failed with XCTAssertEqual failed: (\"0\") is not equal to (\"4\")"
+    },
+    {
+      "category" : "Longest Test Runs",
+      "impact" : "41% of duration",
+      "text" : "4 longest test runs with outlier durations exceeding 6.15s (three standard deviations)"
+    }
+  ],
+  "totalTestCount" : 184
+}

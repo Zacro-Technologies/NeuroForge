@@ -332,6 +332,13 @@ enum NFPrivateCloudStoreIdentityResolver {
             defaults: defaults,
             applicationSupportURL: supportURL
         )
+        try NFLocalSessionRepository.purgeAllApplicationState(
+            fileManager: fileManager,
+            applicationSupportURL: supportURL
+        )
+        try NFRestoreJournalLocation.purgeAllApplicationState(
+            fileManager: fileManager, applicationSupportURL: supportURL
+        )
 
         var removedInactiveNamespaceCount = 0
         let accountRoot = accountStoreRootURL(supportURL: supportURL)
@@ -420,6 +427,13 @@ enum NFPrivateCloudStoreIdentityResolver {
                 fileManager: fileManager,
                 defaults: defaults,
                 applicationSupportURL: supportURL
+            )
+            try NFLocalSessionRepository.purgeAllApplicationState(
+                fileManager: fileManager,
+                applicationSupportURL: supportURL
+            )
+            try NFRestoreJournalLocation.purgeAllApplicationState(
+                fileManager: fileManager, applicationSupportURL: supportURL
             )
 
             // The ModelContext cleanup normally removes these before staging.

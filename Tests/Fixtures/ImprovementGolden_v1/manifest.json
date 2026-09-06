@@ -1,0 +1,162 @@
+{
+  "containsRealUserData": false,
+  "creator": "regenerate.py",
+  "entries": [
+    {
+      "acceptedByRestore": true,
+      "bytes": 3315,
+      "expectedAttemptCount": 1,
+      "expectedChunkCount": 0,
+      "expectedDocumentCount": 0,
+      "path": "disputed-science-v18.json",
+      "sha256": "6ad8e6ec6df81e064f034f97fd7dd9f8d4d92871fd8bd93daff086497a51098f"
+    },
+    {
+      "acceptedByRestore": true,
+      "bytes": 3320,
+      "expectedAttemptCount": 1,
+      "expectedChunkCount": 0,
+      "expectedDocumentCount": 0,
+      "path": "external-self-check-v18.json",
+      "sha256": "4cd3b5ded31ca520cb069beaa999129850651c74c1881083b8e0b30b8867f190"
+    },
+    {
+      "acceptedByRestore": true,
+      "bytes": 1355,
+      "expectedAttemptCount": 0,
+      "expectedChunkCount": 0,
+      "expectedDocumentCount": 0,
+      "path": "fresh-v18.json",
+      "sha256": "bffb71ac0c2620d08e6dfb567d20d93795b51acb5909b0240733aacf3d40f2df"
+    },
+    {
+      "acceptedByRestore": false,
+      "bytes": 1355,
+      "expectedAttemptCount": 0,
+      "expectedChunkCount": 0,
+      "expectedDocumentCount": 0,
+      "path": "future-v99.json",
+      "sha256": "ab6d81e0e8f06bd8e7b266c44b4c446795b979fdd9e2e9e96037cbb86246fa42"
+    },
+    {
+      "acceptedByRestore": false,
+      "bytes": 428,
+      "expectedAttemptCount": null,
+      "expectedChunkCount": null,
+      "expectedDocumentCount": null,
+      "path": "history-10000.recipe.json",
+      "sha256": "7bb4a3688abe0967ddbb90727c3bafb9034649f0fae62a91cfb6a0e54a3d4d26"
+    },
+    {
+      "acceptedByRestore": false,
+      "bytes": 4871,
+      "expectedAttemptCount": 2,
+      "expectedChunkCount": 0,
+      "expectedDocumentCount": 0,
+      "path": "invalid-duplicate-attempt-v18.json",
+      "sha256": "b2453f2c41527048a852550bab8f83d6612b255b69f73464d2d1c719e7128df2"
+    },
+    {
+      "acceptedByRestore": false,
+      "bytes": 5694,
+      "expectedAttemptCount": 1,
+      "expectedChunkCount": 2,
+      "expectedDocumentCount": 2,
+      "path": "invalid-source-reference-v18.json",
+      "sha256": "610b2509182be76adcdf03a48d05641b7febe6021f4078f9595dbf7d92370f82"
+    },
+    {
+      "acceptedByRestore": true,
+      "bytes": 6978,
+      "expectedAttemptCount": 3,
+      "expectedChunkCount": 0,
+      "expectedDocumentCount": 0,
+      "path": "legacy-v14.json",
+      "sha256": "886128a15978accd23b39c9e1ce6df8402e6c7963aef0bf6a24cdc3a0ad75612"
+    },
+    {
+      "acceptedByRestore": true,
+      "bytes": 7006,
+      "expectedAttemptCount": 3,
+      "expectedChunkCount": 0,
+      "expectedDocumentCount": 0,
+      "path": "legacy-v15.json",
+      "sha256": "f4c84d2c6ced3d68e42be7c143156d86c16d11e2c48e4f9b656d3e3a615fc264"
+    },
+    {
+      "acceptedByRestore": true,
+      "bytes": 7035,
+      "expectedAttemptCount": 3,
+      "expectedChunkCount": 0,
+      "expectedDocumentCount": 0,
+      "path": "legacy-v16.json",
+      "sha256": "efb08065eb8d6c4e2cd8ad10101994423c5df8e0dea672bd6564762e82ba5d21"
+    },
+    {
+      "acceptedByRestore": true,
+      "bytes": 7035,
+      "expectedAttemptCount": 3,
+      "expectedChunkCount": 0,
+      "expectedDocumentCount": 0,
+      "path": "legacy-v17.json",
+      "sha256": "fd21c2b7176021fd25902d160f09ba884d91b1173102cc82dba53617379920c5"
+    },
+    {
+      "acceptedByRestore": true,
+      "bytes": 7035,
+      "expectedAttemptCount": 3,
+      "expectedChunkCount": 0,
+      "expectedDocumentCount": 0,
+      "path": "legacy-v18.json",
+      "sha256": "572f39f18f03ed8c5d8b031114fce3c1700a45f007ff531e0e4d4516fe08d652"
+    },
+    {
+      "acceptedByRestore": false,
+      "bytes": 33,
+      "expectedAttemptCount": null,
+      "expectedChunkCount": null,
+      "expectedDocumentCount": null,
+      "path": "malformed-truncated.json",
+      "sha256": "7538fe1e2783f5e7d6349fc32fc60446f78766e6d20aed0e750939fd5f672ae2"
+    },
+    {
+      "acceptedByRestore": false,
+      "bytes": 790,
+      "expectedAttemptCount": null,
+      "expectedChunkCount": null,
+      "expectedDocumentCount": null,
+      "path": "runtime-phases.recipe.json",
+      "sha256": "8c46605f7a0061347fd5ba2753620bed9dfe796a03ed03d2bffc6b3c08b899e2"
+    },
+    {
+      "acceptedByRestore": true,
+      "bytes": 5694,
+      "expectedAttemptCount": 1,
+      "expectedChunkCount": 2,
+      "expectedDocumentCount": 2,
+      "path": "source-duplicates-deleted-reference-v18.json",
+      "sha256": "f7e6812ebcd22dd5ce769342ca7857cf972348261b2005d9edc7e2fd75f9a3c0"
+    }
+  ],
+  "fixedSeed": 347811,
+  "fixedTimestamp": "2026-09-04T12:00:00Z",
+  "fixturePackageVersion": 1,
+  "gaps": [
+    "No historical binary SwiftData/CloudKit store is claimed.",
+    "No physical-device, VoiceOver, Pencil, performance percentile, or learning-effect claim.",
+    "Exact runtime phases are constructed through public runtime APIs in tests, never manufactured as old committed JSON.",
+    "The disputed science row intentionally has no original table; exact invalid interval geometry has independent policy tests."
+  ],
+  "invariants": [
+    "versions14–18 use the actual decoder and restore service",
+    "exact original raw response string preserved",
+    "legacy science without its original table is unverifiable, not counterfactually graded",
+    "external self-check remains personal-study history",
+    "duplicate source content does not erase distinct identities",
+    "deleted references in retained historical answers remain authentic",
+    "malformed/future/reference-invalid data cannot mutate destination",
+    "large history expands deterministically on demand"
+  ],
+  "provenance": "synthetic-created-from-declared-archive-schema",
+  "shippedStoreSnapshot": false
+}

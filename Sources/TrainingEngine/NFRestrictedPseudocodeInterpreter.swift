@@ -3,12 +3,12 @@ import Foundation
 /// A deliberately small, typed interpreter used to validate bundled debugging
 /// exercises. It executes only values and operations represented by this AST;
 /// user text and imported source code are never parsed or evaluated.
-enum NFPseudocodeValue: Equatable, Sendable {
+enum NFPseudocodeValue: Codable, Equatable, Sendable {
     case integer(Int)
     case boolean(Bool)
 }
 
-indirect enum NFPseudocodeExpression: Equatable, Sendable {
+indirect enum NFPseudocodeExpression: Codable, Equatable, Sendable {
     case value(NFPseudocodeValue)
     case variable(String)
     case inputCount
@@ -20,7 +20,7 @@ indirect enum NFPseudocodeExpression: Equatable, Sendable {
     case not(NFPseudocodeExpression)
 }
 
-indirect enum NFPseudocodeStatement: Equatable, Sendable {
+indirect enum NFPseudocodeStatement: Codable, Equatable, Sendable {
     case assign(name: String, expression: NFPseudocodeExpression)
     case ifThen(condition: NFPseudocodeExpression, body: [NFPseudocodeStatement])
     case whileLoop(condition: NFPseudocodeExpression, iterationLimit: Int, body: [NFPseudocodeStatement])
@@ -30,7 +30,7 @@ indirect enum NFPseudocodeStatement: Equatable, Sendable {
 /// Pure presentation skins over the restricted AST. A skin is never parsed
 /// back into executable code; the interpreter and scorer continue to consume
 /// only the typed tree above.
-enum NFPseudocodeDisplaySkin: String, CaseIterable, Sendable {
+enum NFPseudocodeDisplaySkin: String, Codable, CaseIterable, Sendable {
     case languageNeutral = "language-neutral"
     case pythonLike = "python-like"
     case javaScriptLike = "javascript-like"
@@ -173,6 +173,7 @@ enum NFPseudocodeRuntimeError: Error, Equatable, Sendable {
     case invalidIterationLimit
     case iterationLimitExceeded
     case operationBudgetExceeded
+    case integerOverflow
 }
 
 struct NFPseudocodeExecutionResult: Equatable, Sendable {
@@ -208,6 +209,62 @@ enum NFRestrictedPseudocodeInterpreter {
             variables: machine.variables,
             visitedInputIndices: machine.visitedInputIndices
         )
+    }
+
+    /// Uses the same evaluator and mutation semantics as execute; only the
+    /// bounded recorder is additional. No user-authored source is evaluated.
+    static func trace(_ statements: [NFPseudocodeStatement],
+                      initialVariables: [String: NFPseudocodeValue], inputCount: Int,
+                      skin: NFPseudocodeDisplaySkin) throws -> [NFCodeTraceStep] {
+        var machine = Machine(variables: initialVariables, inputCount: inputCount,
+            visitedInputIndices: [], remainingOperationBudget: 512)
+        var steps: [NFCodeTraceStep] = []
+        try traceRun(statements, machine: &machine, line: 1, skin: skin, steps: &steps)
+        let actual = try execute(statements, initialVariables: initialVariables, inputCount: inputCount, operationBudget: 512)
+        guard actual.variables == machine.variables, actual.visitedInputIndices == machine.visitedInputIndices else {
+            throw NFPseudocodeRuntimeError.operationBudgetExceeded
+        }
+        return steps
+    }
+
+    private static func traceRun(_ statements: [NFPseudocodeStatement], machine: inout Machine,
+                                 line firstLine: Int, skin: NFPseudocodeDisplaySkin,
+                                 steps: inout [NFCodeTraceStep]) throws {
+        var line = firstLine
+        for statement in statements {
+            try consumeOperation(machine: &machine)
+            switch statement {
+            case let .assign(name, expression):
+                machine.variables[name] = try evaluate(expression, machine: machine)
+                try appendTrace(line: line, machine: machine, steps: &steps)
+            case let .ifThen(condition, body):
+                let proceeds = try boolean(evaluate(condition, machine: machine))
+                try appendTrace(line: line, machine: machine, steps: &steps)
+                if proceeds { try traceRun(body, machine: &machine, line: line + 1, skin: skin, steps: &steps) }
+            case let .whileLoop(condition, limit, body):
+                guard limit > 0 else { throw NFPseudocodeRuntimeError.invalidIterationLimit }
+                var iterations = 0
+                while true {
+                    let proceeds = try boolean(evaluate(condition, machine: machine))
+                    try appendTrace(line: line, machine: machine, steps: &steps)
+                    if !proceeds { break }
+                    guard iterations < limit else { throw NFPseudocodeRuntimeError.iterationLimitExceeded }
+                    iterations += 1
+                    try traceRun(body, machine: &machine, line: line + 1, skin: skin, steps: &steps)
+                    try consumeOperation(machine: &machine)
+                }
+            case let .visitInput(expression):
+                let index = try integer(evaluate(expression, machine: machine))
+                guard (0..<machine.inputCount).contains(index) else { throw NFPseudocodeRuntimeError.inputIndexOutOfBounds(index) }
+                machine.visitedInputIndices.append(index)
+                try appendTrace(line: line, machine: machine, steps: &steps)
+            }
+            line += NFPseudocodeRenderer.render([statement], skin: skin).components(separatedBy: "\n").count
+        }
+    }
+    private static func appendTrace(line: Int, machine: Machine, steps: inout [NFCodeTraceStep]) throws {
+        guard steps.count < 128, machine.variables.count <= 16 else { throw NFPseudocodeRuntimeError.operationBudgetExceeded }
+        steps.append(NFCodeTraceStep(lineNumber: line, variables: machine.variables, visitedInputIndices: machine.visitedInputIndices))
     }
 
     private struct Machine {
@@ -269,9 +326,13 @@ enum NFRestrictedPseudocodeInterpreter {
         case .inputCount:
             return .integer(machine.inputCount)
         case let .add(lhs, rhs):
-            return .integer(try integer(evaluate(lhs, machine: machine)) + integer(evaluate(rhs, machine: machine)))
+            let (value, overflow) = try integer(evaluate(lhs, machine: machine)).addingReportingOverflow(integer(evaluate(rhs, machine: machine)))
+            guard !overflow else { throw NFPseudocodeRuntimeError.integerOverflow }
+            return .integer(value)
         case let .subtract(lhs, rhs):
-            return .integer(try integer(evaluate(lhs, machine: machine)) - integer(evaluate(rhs, machine: machine)))
+            let (value, overflow) = try integer(evaluate(lhs, machine: machine)).subtractingReportingOverflow(integer(evaluate(rhs, machine: machine)))
+            guard !overflow else { throw NFPseudocodeRuntimeError.integerOverflow }
+            return .integer(value)
         case let .lessThan(lhs, rhs):
             return .boolean(try integer(evaluate(lhs, machine: machine)) < integer(evaluate(rhs, machine: machine)))
         case let .lessThanOrEqual(lhs, rhs):

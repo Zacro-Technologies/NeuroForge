@@ -1,0 +1,60 @@
+{
+  "resultBundle": "/tmp/NeuroForge-improvement-ios/Logs/Test/Test-NeuroForgeUISmoke-2026.09.05_06-17-04--0400.xcresult",
+  "log": "/tmp/neuroforge-journal-capture-ordered-installed-ui.log",
+  "sourceInputSHA256": "bba69f981ebafbbf90225aea36d63402b58a28220a886f76998aad252551aca0",
+  "installedManifest": "../Journal_Capture_Ordered_UI_Installed_Manifest.json",
+  "testsRun": 23,
+  "testsPassed": 21,
+  "testsFailed": 2,
+  "elapsedSeconds": 1052.634,
+  "failedTests": [
+    "Japanese Q3 cold Continue did not open a session after one standard tap.",
+    "Weekly chart opened the correct scoped history, but the helper cached ScrollView index1 across the navigation transition."
+  ],
+  "captures": [
+    {
+      "file": "SE-quantitative-original-counts-visible.png",
+      "attachment": "74E57953-B2A7-4381-BEC0-E2B6FFC6FCAB.png",
+      "sha256": "91d42748c5f840e88dcd8b7674a84406275b438a00e9ae74294716404824d1ba",
+      "caption": "PASS: original observed counts 43 and 21 visibly render in the accessible table. This is the pre-data-overlay binary; the prediction/overlay interaction is not certified by this capture."
+    },
+    {
+      "file": "SE-weekly-chart-date-activity-count-credit.png",
+      "attachment": "669A4829-8819-47C8-899E-9D44A317F3E0.png",
+      "sha256": "2e4ef9643ee51be0cfb9d797a49d5b3f80f959f4687f0cad5733ae817cfe6af7",
+      "caption": "PARTIAL: actual Aug31/MentalMath/0%/1 scored answer row is readable. The following navigation reached correct scoped History in AX, but its stale index-bound scroll helper failed before opening the original detail."
+    },
+    {
+      "file": "SE-ordered-feedback-empty-footer-label-observation.png",
+      "attachment": "40F7AF51-39F5-48FB-A272-FABC1B42F1F8.png",
+      "sha256": "b9385c1c1dbfe6370e2f2f3a0294526a87394eb4eb74e5ce20852c06077c2dbb",
+      "caption": "VISUAL OBSERVATION: ordered feedback heading and explanation render, but the indigo Next pill has no visible label in this captured instant. The journey subsequently passed. Keep unresolved until fresh visual inspection, rather than inferring a cause."
+    },
+    {
+      "file": "SE-english-q3-latest-cold-feedback.png",
+      "attachment": "3878789A-7AF0-41CF-9ACB-CED30921AC0F.png",
+      "sha256": "c8a3f4d4a1724ae16567a8d4eb207b7942757a6a45055e42f54297412ccc0a85",
+      "caption": "PASS: English exact Q3 cold-restored feedback, original8×7 prompt and sticky Next. The entered17 is confirmed by the native test but is outside this captured viewport."
+    },
+    {
+      "file": "SE-energy-preview-before-apply-en.png",
+      "attachment": "6E69035F-7DA5-4E2B-8351-986B2D6607BF.png",
+      "sha256": "c22079833bb0d118c36478af3d03c46073b21382489da00698a00d5c521ba7c8",
+      "caption": "PASS: concise Energy preview title, Normal→Low, current remaining sections and Apply. The complete Cancel/cold-relaunch preference check passed."
+    },
+    {
+      "file": "SE-source-chooser-selection-search.png",
+      "attachment": "69E14ABF-0991-4F00-933D-B177471BA1B1.png",
+      "sha256": "2424ffc6c7d67c13c041b3402208a09059d8d23def93cc63245804c334cc2b5d",
+      "caption": "PASS: checked synthetic source remains selected after search/clear with preparation/local-origin status and Open source. The complete reopen/remove journey passed."
+    },
+    {
+      "file": "SE-japanese-continue-unacknowledged-0617.png",
+      "movie": "D349D551-A456-4ADA-9D9E-4A235A7B2565.mp4",
+      "frameAtSeconds": 49,
+      "sha256": "3c2114c2c98184e6fd1f1542bc89c826b2d563c6293bdb83235d2b9cbb357a43",
+      "caption": "FAILURE: Today retains visible Q3 Continue after one standard50ms center tap. No error or session presentation appears in the final AX hierarchy. The action callback was not instrumented, so the cause remains unresolved."
+    }
+  ],
+  "scope": "Actual inspected states from the correctly injected23-test binary. No complete weekly-chart/detail journey, Japanese continuation pass, new math/trace/data-overlay installed proof, native drag pass, or physical-device/manual VoiceOver certification is claimed."
+}

@@ -673,8 +673,11 @@ final class NFSystemIntegrationCoordinator {
 
     @discardableResult
     func deleteAllLocalData(store: AppStore) async throws -> NFLocalDataCleanupReceipt {
-        try await performLocalDataDeletion(store: store)
+        await willDeletePrivateData?()
+        return try await performLocalDataDeletion(store: store)
     }
+
+    var willDeletePrivateData: (@MainActor () async -> Void)?
 
     @discardableResult
     func deleteAllData(
@@ -699,6 +702,8 @@ final class NFSystemIntegrationCoordinator {
         guard let launchDurableStoreURL else {
             throw NFPrivateSyncDeletionError.completeDeletionStagingFailed
         }
+
+        await willDeletePrivateData?()
 
         let request = try await completeCloudDeletionRequester(
             launchPrivateCloudConfiguration.containerIdentifier
@@ -1202,7 +1207,7 @@ final class NFSystemIntegrationCoordinator {
 
     func deleteDocumentEverywhere(_ document: SourceDocumentRecord, store: AppStore) async throws {
         guard NFDocumentSyncPolicy(rawValue: document.syncPolicy) == .privateOriginal else {
-            try store.deleteDocument(document)
+            try await store.withLinkedRestoreArtifactDeletion { try store.deleteDocument(document) }
             return
         }
         guard let transport = privateDocumentTransport,
@@ -1219,7 +1224,7 @@ final class NFSystemIntegrationCoordinator {
         guard verification.allRequestsAreDurable else {
             throw NFPrivateSyncDeletionError.queuePersistenceFailed
         }
-        try store.deleteDocument(document)
+        try await store.withLinkedRestoreArtifactDeletion { try store.deleteDocument(document) }
         documentSyncStates[documentID] = .queued
         applyTransportSnapshot(snapshot)
 
@@ -1377,7 +1382,12 @@ final class NFSystemIntegrationCoordinator {
     ) async {
         for tombstone in await transport.receivedTombstones() {
             do {
-                _ = try store.applySyncedDocumentTombstone(tombstone)
+                // Ignore stale/nonparticipating tombstones without retiring
+                // backups; the actual eligible deletion still checks its gate.
+                if store.documents.contains(where: { $0.id == tombstone.documentID
+                    && NFDocumentSyncPolicy(rawValue: $0.syncPolicy) == .privateOriginal && tombstone.deletedAt >= $0.modifiedAt }) {
+                    _ = try await store.withLinkedRestoreArtifactDeletion { try store.applySyncedDocumentTombstone(tombstone) }
+                }
             } catch {
                 markDownloadedDocumentApplicationFailed()
             }
@@ -1512,26 +1522,8 @@ final class NFSystemIntegrationCoordinator {
 
     private func nextDueReviewDate(store: AppStore) -> Date? {
         let now = Date()
-        let states = Dictionary(grouping: store.standardizedAttempts, by: \.templateID).compactMap { templateID, records -> NFRetentionItemState? in
-            guard !templateID.isEmpty, let latest = records.max(by: { $0.submittedAt < $1.submittedAt }) else {
-                return nil
-            }
-            return NFRetentionItemState(
-                id: templateID,
-                templateFamily: templateID,
-                lab: TrainingLab(rawValue: latest.gameID) ?? .mentalMath,
-                lastReviewedAt: latest.submittedAt,
-                stabilityDays: max(0.5, 1 + Double(records.filter(\.isCorrect).count) * 0.6),
-                repetitions: records.count,
-                lapses: records.filter { !$0.isCorrect }.count,
-                exposedSeeds: Set(records.map(\.seed)),
-                lastRepresentationID: latest.responseFormatRaw
-            )
-        }
-        let dueDates = states.map {
-            NFRetentionScheduler.nextReviewDate(for: $0, after: $0.lastReviewedAt ?? now)
-        }
-        guard let earliest = dueDates.min() else { return nil }
+        let calendar = Calendar.current
+        guard let earliest = store.nextEffectiveReviewDate(at: now, calendar: calendar) else { return nil }
         return earliest <= now ? now.addingTimeInterval(120) : earliest
     }
 

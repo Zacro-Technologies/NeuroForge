@@ -1,0 +1,49 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "modelName" : "iPhone SE (3rd generation)",
+        "osBuildNumber" : "23F77",
+        "osVersion" : "26.5",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 1,
+      "passedTests" : 4,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "NeuroForgeUISmoke · Built with macOS 27.0",
+  "expectedFailures" : 0,
+  "failedTests" : 1,
+  "finishTime" : 1788645199.759,
+  "passedTests" : 4,
+  "result" : "Failed",
+  "skippedTests" : 0,
+  "startTime" : 1788644604.049,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "XCTAssertTrue failed",
+      "targetName" : "NeuroForgeUITests",
+      "testIdentifier" : 1,
+      "testIdentifierString" : "NavigationSmokeUITests/testGeneratedSetCreatesSeparateRunsAndRestoresSkippedRunThroughColdLaunch()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeUITests/NavigationSmokeUITests/testGeneratedSetCreatesSeparateRunsAndRestoresSkippedRunThroughColdLaunch",
+      "testName" : "testGeneratedSetCreatesSeparateRunsAndRestoresSkippedRunThroughColdLaunch()"
+    }
+  ],
+  "title" : "Test - NeuroForgeUISmoke",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 5
+}

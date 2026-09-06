@@ -41,33 +41,33 @@ enum NFShortcutAuthoringConfiguration {
         return url
     }
 
-    static func isSetupVerified(defaults: UserDefaults = .standard) -> Bool {
+    static func isSetupVerified(defaults: UserDefaults = NFAppPreferenceScope.defaults) -> Bool {
         defaults.bool(forKey: setupVerifiedDefaultsKey)
             && defaults.integer(forKey: setupVersionDefaultsKey) == workflowVersion
     }
 
-    static func markSetupVerified(defaults: UserDefaults = .standard) {
+    static func markSetupVerified(defaults: UserDefaults = NFAppPreferenceScope.defaults) {
         defaults.set(true, forKey: setupVerifiedDefaultsKey)
         defaults.set(workflowVersion, forKey: setupVersionDefaultsKey)
         markInstallPageVisited(defaults: defaults)
     }
 
-    static func clearSetupVerification(defaults: UserDefaults = .standard) {
+    static func clearSetupVerification(defaults: UserDefaults = NFAppPreferenceScope.defaults) {
         defaults.removeObject(forKey: setupVerifiedDefaultsKey)
         defaults.removeObject(forKey: setupVersionDefaultsKey)
     }
 
-    static func hasVisitedInstallPage(defaults: UserDefaults = .standard) -> Bool {
+    static func hasVisitedInstallPage(defaults: UserDefaults = NFAppPreferenceScope.defaults) -> Bool {
         defaults.bool(forKey: installPageVisitedDefaultsKey)
             && defaults.integer(forKey: installPageVisitedVersionDefaultsKey) == workflowVersion
     }
 
-    static func markInstallPageVisited(defaults: UserDefaults = .standard) {
+    static func markInstallPageVisited(defaults: UserDefaults = NFAppPreferenceScope.defaults) {
         defaults.set(true, forKey: installPageVisitedDefaultsKey)
         defaults.set(workflowVersion, forKey: installPageVisitedVersionDefaultsKey)
     }
 
-    static func clearInstallPageVisit(defaults: UserDefaults = .standard) {
+    static func clearInstallPageVisit(defaults: UserDefaults = NFAppPreferenceScope.defaults) {
         defaults.removeObject(forKey: installPageVisitedDefaultsKey)
         defaults.removeObject(forKey: installPageVisitedVersionDefaultsKey)
     }
@@ -77,7 +77,7 @@ enum NFShortcutAuthoringConfiguration {
     /// offline choices instead of repeatedly launching a stale Shortcut route.
     static func invalidateSetup(
         after reason: NFShortcutAuthoringSetupInvalidationReason,
-        defaults: UserDefaults = .standard
+        defaults: UserDefaults = NFAppPreferenceScope.defaults
     ) {
         switch reason {
         case .launchDeclined, .cancelled, .failed, .timedOut:
@@ -175,7 +175,7 @@ enum NFShortcutAuthoringCallbackCenter {
     @discardableResult
     static func acceptVerified(
         _ callback: NFShortcutAuthoringCallback,
-        defaults: UserDefaults = .standard
+        defaults: UserDefaults = NFAppPreferenceScope.defaults
     ) -> Bool {
         var callbacks = restore(defaults: defaults)
         let alreadyQueued = callbacks.contains {
@@ -206,7 +206,7 @@ enum NFShortcutAuthoringCallbackCenter {
         return true
     }
 
-    static func first(defaults: UserDefaults = .standard) -> NFShortcutAuthoringCallback? {
+    static func first(defaults: UserDefaults = NFAppPreferenceScope.defaults) -> NFShortcutAuthoringCallback? {
         restore(defaults: defaults).first
     }
 
@@ -214,7 +214,7 @@ enum NFShortcutAuthoringCallbackCenter {
     static func remove(
         requestID: UUID,
         callbackNonce: String,
-        defaults: UserDefaults = .standard
+        defaults: UserDefaults = NFAppPreferenceScope.defaults
     ) -> Bool {
         var callbacks = restore(defaults: defaults)
         guard let index = callbacks.firstIndex(where: {
@@ -225,11 +225,11 @@ enum NFShortcutAuthoringCallbackCenter {
         return true
     }
 
-    static func hasPending(defaults: UserDefaults = .standard) -> Bool {
+    static func hasPending(defaults: UserDefaults = NFAppPreferenceScope.defaults) -> Bool {
         !restore(defaults: defaults).isEmpty
     }
 
-    static func removeAll(defaults: UserDefaults = .standard) {
+    static func removeAll(defaults: UserDefaults = NFAppPreferenceScope.defaults) {
         defaults.removeObject(forKey: NFShortcutAuthoringConfiguration.callbackQueueDefaultsKey)
         clearLegacy(defaults: defaults)
     }

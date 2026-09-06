@@ -1,0 +1,1110 @@
+{
+  "schemaVersion": 1,
+  "source": "Documentation/Improvement_Spec_2026-09-04/02_Content_and_Scoring.md section 9",
+  "status": "Draft production inventory, not a review approval",
+  "familyCount": 58,
+  "families": [
+    {
+      "acceptanceSuite": "QA-F01",
+      "familyID": "mental.rapid-recall",
+      "currentActivity": "QA-F01 — `mental.rapid-recall`, Rapid Recall (v0)",
+      "baselineMechanism": "Numeric products with left 6–12 and right 7–12.",
+      "prerequisites": "Integer multiplication; inverse division for later forms.",
+      "requiredBandProgression": "B1: one-digit facts with optional reconstruction. B2: mixed multiplication/division facts without method cues. B3: signed and decimal-place facts with explicit prerequisites. B4: select/justify a fast reconstruction for unfamiliar related facts; do not turn this into an endurance timer.",
+      "requiredFamilyTests": "Exact fact oracle; inverse consistency; zero/sign/decimal boundaries; timing separated from accuracy; declared new substructures and same-fact exposure deduplication.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F02",
+      "familyID": "mental.compensation",
+      "currentActivity": "QA-F02 — `mental.compensation`, Compensation Lab (v1)",
+      "baselineMechanism": "Two-digit number times 9, 11, 19, or 21.",
+      "prerequisites": "Distributivity; round multiples.",
+      "requiredBandProgression": "B1: supplied nearby product. B2: choose add/subtract one group. B3: compare two useful nearby multipliers. B4: two-factor compensation with a bound check and independently checked intermediate steps.",
+      "requiredFamilyTests": "Both compensation directions; near-round boundaries; no cue in independent context; EX-C101; exact answers and valid alternative strategies.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Compensation solution expression replaced with essential product; explicit roles and unreviewed metadata.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F03",
+      "familyID": "mental.representation-relay",
+      "currentActivity": "QA-F03 — `mental.representation-relay`, Representation Relay (v2)",
+      "baselineMechanism": "Fraction to percent; mixed generator sometimes uses mg to g.",
+      "prerequisites": "Fractions; decimal place value; percent meaning.",
+      "requiredBandProgression": "B1: halves/quarters/decimals. B2: nonunit fractions and percentages above 100. B3: recurring rational forms under stated exact/rounded policy. B4: identify inconsistent linked representations in a table. Keep unit conversion a separately declared substructure.",
+      "requiredFamilyTests": "Exact rational equivalence; percent scale; units do not leak across substructures; equivalent fraction/decimal inputs; precision instruction matches scoring.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F04",
+      "familyID": "mental.scientific-notation",
+      "currentActivity": "QA-F04 — `mental.scientific-notation`, Scientific Notation Repair (v3)",
+      "baselineMechanism": "Normalize a two-digit coefficient by one decimal shift.",
+      "prerequisites": "Powers of ten; coefficient interval.",
+      "requiredBandProgression": "B1: one shift with shown place value. B2: positive/negative exponents and several shifts. B3: repair calculations combining coefficients and exponents. B4: compare magnitudes and detect cancellation/rounding issues under stated precision.",
+      "requiredFamilyTests": "Value-preserving normalization; coefficient bounds; zero policy; negative exponents; equivalent valid notation; difficulty request changes actual shifts/operations.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F05",
+      "familyID": "mental.missing-factor",
+      "currentActivity": "QA-F05 — `mental.missing-factor`, Missing Factor (v4)",
+      "baselineMechanism": "Solve integer box×multiplier=product.",
+      "prerequisites": "Multiplication/division.",
+      "requiredBandProgression": "B1: one inverse with fact-table numbers. B2: signed or decimal factors. B3: one unknown in a two-operation relation. B4: select the only solution satisfying a stated domain after inverse transformations.",
+      "requiredFamilyTests": "Unique solution/domain; zero multiplier rejected or deliberately classified; rational answers; forward substitution independent oracle; no invalid divide step.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F06",
+      "familyID": "mental.error-detective",
+      "currentActivity": "QA-F06 — `mental.error-detective`, Percent Error Detective (v5)",
+      "baselineMechanism": "Select the valid trace for one percentage of a base.",
+      "prerequisites": "Percent multiplier; meaning of whole.",
+      "requiredBandProgression": "B1: identify percent-to-decimal scale. B2: locate first error in an actual trace. B3: distinguish changed base in sequential discounts/increases. B4: audit a table with multiple plausible errors and repair only the first decisive one.",
+      "requiredFamilyTests": "Every trace step evaluated; first-error location; percentage-base changes; correct trace may use a different valid method; partial explanations do not pass contradictions.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F07",
+      "familyID": "mental.calculation-chain",
+      "currentActivity": "QA-F07 — `mental.calculation-chain`, Calculation Chain (v6)",
+      "baselineMechanism": "Add, multiply, subtract with small integers.",
+      "prerequisites": "Operation order; intermediate values.",
+      "requiredBandProgression": "B1: two visible steps. B2: three/four steps with optional scratchpad. B3: branches or inverse checks with rational values. B4: locate a wrong intermediate step in two competing traces while preserving dependency order.",
+      "requiredFamilyTests": "Interpreter/exact oracle; negative/rational states; diagnostic retry leaves original score; visible versus recalled intermediate demand declared; no memory-span efficacy claim.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F08",
+      "familyID": "mental.estimate-first",
+      "currentActivity": "QA-F08 — `mental.estimate-first`, Estimate First (v7)",
+      "baselineMechanism": "Fixed nearest-power estimate around 200×50 plus literal plausibility/exact fields.",
+      "prerequisites": "Rounding; multiplication; scale comparison.",
+      "requiredBandProgression": "B1: nearest stated power of ten. B2: useful one/two-significant-digit estimate before exact product. B3: compare bounds for a multistep expression. B4: choose an estimation strategy appropriate to error tolerance and explain whether a result can be ruled out.",
+      "requiredFamilyTests": "Estimate-mode tolerance; actual learner estimate/result plausibility relation; exact component separate; accepted aliases full credit; ambiguous “estimate” wording forbidden.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F09",
+      "familyID": "mental.tool-judgment",
+      "currentActivity": "QA-F09 — `mental.tool-judgment`, Mental or Machine? (v8)",
+      "baselineMechanism": "One repeated-conversion/audit-trail scenario with an obvious tool choice.",
+      "prerequisites": "Precision, repetition, consequence, auditability.",
+      "requiredBandProgression": "B1: one salient constraint. B2: trade precision against repetition. B3: choose among mental estimate, calculator, spreadsheet, or code for a concrete workflow. B4: propose a verification plan for a consequential calculation with conflicting constraints.",
+      "requiredFamilyTests": "Multiple defensible tools encoded or question narrowed; no blanket “code always wins”; actual costs/constraints stated; comparable distractor wording.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F10",
+      "familyID": "mental.strategy-duel",
+      "currentActivity": "QA-F10 — `mental.strategy-duel`, Strategy Duel (v9)",
+      "baselineMechanism": "Prefer round compensation or ×100÷4 over costly/incorrect options.",
+      "prerequisites": "Distributivity; factors; equivalent methods.",
+      "requiredBandProgression": "B1: compare valid and invalid methods. B2: compare two valid methods for a stated mental-work criterion. B3: choose under different exactness/working-memory constraints. B4: construct and verify an alternative method, then compare explicit operation counts or burdens.",
+      "requiredFamilyTests": "Do not mark a mathematically valid method numerically wrong; criterion for “efficient” stated; strategy and result scored separately; tie cases accepted.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F11",
+      "familyID": "spatial.coordinate-rotation",
+      "currentActivity": "QA-F11 — `spatial.coordinate-rotation`, Coordinate Rotation (v0)",
+      "baselineMechanism": "Always a 90° counterclockwise point rotation in the positive quadrant.",
+      "prerequisites": "Coordinates; direction; origin.",
+      "requiredBandProgression": "B1: one quarter-turn with axes. B2: clockwise/counterclockwise across all quadrants. B3: 180°/270° and non-origin centers. B4: compose translations and rotations or infer an unknown transform from enough correspondences.",
+      "requiredFamilyTests": "Seed-11 duplicate regression; axes/origin/symmetry points; distance preservation about center; active/passive convention; every option semantically unique.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Equivalent coordinate distractor corrected; semantic tuple duplicate item invalidation.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F12",
+      "familyID": "spatial.object-rotation",
+      "currentActivity": "QA-F12 — `spatial.object-rotation`, 3D Object Rotation (v1)",
+      "baselineMechanism": "Rotate a single coordinate triple about z; no labeled-face object task.",
+      "prerequisites": "3D axes; face normals; viewpoint.",
+      "requiredBandProgression": "B1: one labeled cube quarter-turn with teaching replay. B2: EX-C102 active rotation from an explicit viewpoint. B3: sequential rotations about different axes. B4: unfamiliar asymmetric object orientations with occlusion and no mirror substitution.",
+      "requiredFamilyTests": "Proper rotation oracle; handedness; fixed-axis normals; order noncommutativity; visual/accessible agreement; matched face labels rather than coordinate-only substitution.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Rotation viewpoint explicitly +z toward origin; coordinate representation still awaiting object task.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F13",
+      "familyID": "spatial.cross-section",
+      "currentActivity": "QA-F13 — `spatial.cross-section`, Cross-Section Puzzle (v2)",
+      "baselineMechanism": "Three elementary solid/parallel-or-central slice cases.",
+      "prerequisites": "Solid geometry; plane intersection.",
+      "requiredBandProgression": "B1: axis-aligned cube/cylinder/sphere slices. B2: translated planes and noncentral sphere radius changes. B3: oblique planes with permitted shapes derived geometrically. B4: infer or reject a proposed slice under multiple position/orientation constraints.",
+      "requiredFamilyTests": "Plane actually intersects solid; degeneracy/tangency distinguished; no “circle versus ellipse” ambiguity from inclusive definitions; independent geometry oracle; symmetry deduplication.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F14",
+      "familyID": "spatial.top-view",
+      "currentActivity": "QA-F14 — `spatial.top-view`, Top-View Decoder (v3)",
+      "baselineMechanism": "Select length and width of a rectangular block.",
+      "prerequisites": "Orthographic projection; occupied positions.",
+      "requiredBandProgression": "B1: footprint of a block. B2: stepped assemblies with hidden height. B3: choose between assemblies sharing one projection using a second view. B4: reconstruct all feasible arrangements or identify underdetermination from supplied projections.",
+      "requiredFamilyTests": "Real occupied-cell model; height does not incorrectly affect top footprint; occlusion; multiple valid reconstructions encoded; view orientation specified.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Accessible alternative preserves input dimensions without revealing the projection.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F15",
+      "familyID": "spatial.cube-net",
+      "currentActivity": "QA-F15 — `spatial.cube-net`, Cube-Net Puzzle (v4)",
+      "baselineMechanism": "Opposite-to-A query on a validated net.",
+      "prerequisites": "Face adjacency; folding; opposite normals.",
+      "requiredBandProgression": "B1: marked fold hints. B2: opposite-face query without hints. B3: adjacency/orientation relations after partial folds. B4: evaluate multiple face constraints or find an impossible proposed net/fold under explicit rules.",
+      "requiredFamilyTests": "All 11 free net shapes; fold collision/normal oracle; query-role/symmetry canonicalization; actual finite capacity audit; invalid nets never shown as valid; no label-only novelty.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F16",
+      "familyID": "spatial.vector-reflection",
+      "currentActivity": "QA-F16 — `spatial.vector-reflection`, Vector Reflection (v5)",
+      "baselineMechanism": "Reflect a positive coordinate pair across the y-axis.",
+      "prerequisites": "Coordinates; components; mirror line.",
+      "requiredBandProgression": "B1: reflection across a coordinate axis. B2: arbitrary quadrants and translated axis-aligned lines. B3: reflect across y=x or y=−x with clear geometry. B4: distinguish rotation/reflection compositions using orientation and fixed points.",
+      "requiredFamilyTests": "Axis/line fixed points; distance-to-line preservation; involution property; unique choices at symmetric coordinates; direction and units consistent.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Accessible alternative gives source vector and mirror line without solution.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F17",
+      "familyID": "quantitative.proportion",
+      "currentActivity": "QA-F17 — `quantitative.proportion`, Observed Proportion (v0)",
+      "baselineMechanism": "Part/whole percentage with one-decimal tolerance.",
+      "prerequisites": "Part/whole; percent.",
+      "requiredBandProgression": "B1: explicit full denominator. B2: derive total from complementary counts. B3: distinguish conditional from overall denominators. B4: compare rates across differently sized groups without confusing counts with rates.",
+      "requiredFamilyTests": "Totals/denominators; zero-total case excluded or declared undefined; rounding boundaries; fraction/percent distinction; denominator misconception feedback.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F18",
+      "familyID": "quantitative.fermi",
+      "currentActivity": "QA-F18 — `quantitative.fermi`, Fermi Estimate (v1)",
+      "baselineMechanism": "All four factors and multiplication formula are supplied.",
+      "prerequisites": "Multiplicative decomposition; units; plausible ranges.",
+      "requiredBandProgression": "B1: select correct factors from a list. B2: supply one justified missing factor range. B3: construct an explicit decomposition and range. B4: compare sensitivity and decide which additional measurement most reduces uncertainty.",
+      "requiredFamilyTests": "Dimension cancellation; factor independence assumptions stated; equivalent decompositions accepted; interval propagation; plausible assumptions reviewed, not exact-word graded; no false single “true” estimate.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F19",
+      "familyID": "quantitative.unit-bridge",
+      "currentActivity": "QA-F19 — `quantitative.unit-bridge`, Unit Bridge (v2)",
+      "baselineMechanism": "mm→m, sometimes in estimate/plausibility/exact fields.",
+      "prerequisites": "Metric prefixes; dimension preservation.",
+      "requiredBandProgression": "B1: one prefix conversion with fixed destination unit. B2: choose factor orientation. B3: squared/cubed units or compound rates. B4: reconcile mixed units in a multistep calculation and identify a dimensionally invalid model.",
+      "requiredFamilyTests": "Exponent applies to conversion factor; affine temperature conversions handled separately; quantity versus representation policy; exact rational values; unit omission according to control mode.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Conversion formula marked requested-hint only; unit notation/scoring boundary repaired.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F20",
+      "familyID": "quantitative.scaling",
+      "currentActivity": "QA-F20 — `quantitative.scaling`, Scaling Law (v3)",
+      "baselineMechanism": "Direct/inverse/square relation with factor 2 or 3.",
+      "prerequisites": "Proportionality; exponents.",
+      "requiredBandProgression": "B1: direct scaling. B2: distinguish direct/inverse. B3: power-law transformation from a stated exponent. B4: combine scale changes or identify insufficient data when proportionality is not given.",
+      "requiredFamilyTests": "Law-specific oracle; nonzero domains; negative/fractional factor policy; no multiplication shortcut for inverse cases; unchanged metadata cannot represent harder content.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F21",
+      "familyID": "quantitative.bayes",
+      "currentActivity": "QA-F21 — `quantitative.bayes`, Base-Rate Bayes (v4)",
+      "baselineMechanism": "Natural-frequency conditional probability in a narrow rate range.",
+      "prerequisites": "Two-way tables; conditional denominators.",
+      "requiredBandProgression": "B1: supplied positive-result counts. B2: EX-C103 complete table. B3: reconstruct counts from base rate and screen rates. B4: compare policies or posterior conclusions with explicit loss/uncertainty constraints.",
+      "requiredFamilyTests": "Reconciled cells; no zero conditional denominator; complements; rare-base-rate cases; exact-rational/rounding check; prior and conditional probabilities never conflated.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F22",
+      "familyID": "quantitative.expected-value",
+      "currentActivity": "QA-F22 — `quantitative.expected-value`, Expected Value (v5)",
+      "baselineMechanism": "Probability-weighted signed outcomes.",
+      "prerequisites": "Probability totals; weighted sums.",
+      "requiredBandProgression": "B1: two gains. B2: gains/losses and stated costs. B3: several outcomes with conditional branches. B4: compare expected value against a stated risk or resource constraint without claiming expected value uniquely determines preference.",
+      "requiredFamilyTests": "Probabilities sum to 1; costs not double-counted; signs; unreachable branches; alternate valid utility/risk choices when not specified; independent exact oracle.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F23",
+      "familyID": "quantitative.regression",
+      "currentActivity": "QA-F23 — `quantitative.regression`, Regression Detective (v6)",
+      "baselineMechanism": "Extreme first score and lower second score; fixed cautious interpretation.",
+      "prerequisites": "Sampling variability; selection; causal limits.",
+      "requiredBandProgression": "B1: identify extreme-based selection. B2: distinguish noise from evidence of permanent change. B3: compare repeated measurements with/without extreme selection. B4: assess intervention claims with a control group and explicitly modeled variation.",
+      "requiredFamilyTests": "Do not assert regression as the only cause; include improvements/declines and no-change cases; observed data support keyed claim; uncertainty and causal design kept separate.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F24",
+      "familyID": "quantitative.interval",
+      "currentActivity": "QA-F24 — `quantitative.interval`, Interval Inspector (v7)",
+      "baselineMechanism": "Generic “95% uncertainty interval” scope selection.",
+      "prerequisites": "Estimates; interval endpoints; procedure.",
+      "requiredBandProgression": "B1: read endpoints for a named quantity. B2: distinguish population observation intervals from mean-estimate intervals. B3: interpret confidence versus credible intervals under supplied definitions. B4: compare decision thresholds using an interval for the actual contrast and stated model.",
+      "requiredFamilyTests": "Interval type always explicit unless omission is the task; no overlap-significance shortcut; zero inclusion not equality; confidence not automatically parameter probability; source-backed wording review.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F25",
+      "familyID": "science.claim-evidence",
+      "currentActivity": "QA-F25 — `science.claim-evidence`, Claim–Evidence Bounds (v0)",
+      "baselineMechanism": "Changing means with the same descriptive/causal-limit evidence mapping.",
+      "prerequisites": "Observation versus inference; study design.",
+      "requiredBandProgression": "B1: support one descriptive claim. B2: distinguish descriptive and causal evidence. B3: match multiple claims to sufficient evidence bundles. B4: identify conflicts and revise scope across a bounded report with alternative explanations.",
+      "requiredFamilyTests": "Evidence is not a tautological restatement; alternative support bundles; treatment direction varies; no universal causal claim from means; actual design differences create variety.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F26",
+      "familyID": "science.confound",
+      "currentActivity": "QA-F26 — `science.confound`, Confound Hunter (v1)",
+      "baselineMechanism": "Baseline ability explicitly causes exposure and outcome.",
+      "prerequisites": "Directed causal graphs; temporal order.",
+      "requiredBandProgression": "B1: one clearly described common cause. B2: infer graph from a scenario. B3: distinguish confounder, mediator, and collider with supplied graph. B4: compare adjustment plans under a declared causal model.",
+      "requiredFamilyTests": "Graph paths and node roles oracle; no association-only definition of confounder; temporal/domain assumptions supplied; do not imply indiscriminate adjustment is safe.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F27",
+      "familyID": "science.next-experiment",
+      "currentActivity": "QA-F27 — `science.next-experiment`, Next Discriminating Experiment (v2)",
+      "baselineMechanism": "One intervention-versus-drift scenario; context supplies the best experiment.",
+      "prerequisites": "Hypotheses; predictions; controls.",
+      "requiredBandProgression": "B1: choose an observation with contrasting predictions. B2: choose independent manipulation/measurement. B3: compare realistic designs with partial strengths and costs. B4: choose a sequential experiment plan under explicit resource and identifiability constraints.",
+      "requiredFamilyTests": "No pre-answer key in context; prediction matrix validated; rival options genuinely discriminate some cases; impossibility/insufficient-control case; no universal uniquely “best” without criterion.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Solution-bearing context and prediction summary replaced with givens.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F28",
+      "familyID": "science.figure-uncertainty",
+      "currentActivity": "QA-F28 — `science.figure-uncertainty`, Figure Uncertainty Audit (v3)",
+      "baselineMechanism": "Variable means/raw values with sometimes contradictory overlap claims.",
+      "prerequisites": "Means; interval types; design scope.",
+      "requiredBandProgression": "B1: verify displayed geometry. B2: identify what an interval estimates. B3: EX-C104 contrast interval plus design. B4: audit model assumptions, paired/independent comparison, and practical threshold separately.",
+      "requiredFamilyTests": "All 266 current bad cases replaced/quarantined; data-summary agreement; touching/disjoint/overlap partitions; significance from specified analysis; no causal inference from interval geometry.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Numerically derived overlap/touching/disjoint geometry; intervals identified as supplied separate-mean summaries; no significance shortcut.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F29",
+      "familyID": "science.bias-repair",
+      "currentActivity": "QA-F29 — `science.bias-repair`, Bias Repair (v4)",
+      "baselineMechanism": "Select randomization, blinding, and replication over post-hoc exclusion.",
+      "prerequisites": "Assignment/measurement/selection bias.",
+      "requiredBandProgression": "B1: match a safeguard to one threat. B2: repair a two-threat design. B3: choose feasible safeguards with explicit ethical/practical constraints. B4: identify residual limitations after a partial repair and avoid overclaiming identification.",
+      "requiredFamilyTests": "Each safeguard targets the named threat; infeasible options not universally keyed; replication does not remove every bias; selecting all cannot earn full credit.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F30",
+      "familyID": "science.competing-predictions",
+      "currentActivity": "QA-F30 — `science.competing-predictions`, Competing Predictions (v5)",
+      "baselineMechanism": "Generic preference for evidence expected by one rival.",
+      "prerequisites": "Hypotheses; conditional predictions.",
+      "requiredBandProgression": "B1: match each model to a prediction. B2: select discriminating evidence from a table. B3: update relative support with a supplied likelihood model. B4: identify an observation that both models fail and propose a testable revision.",
+      "requiredFamilyTests": "Explicit hypotheses/data; predictions computed; evidence compatible with both does not settle comparison; numeric update if used independently verified; no hindsight-only model rewrite.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F31",
+      "familyID": "science.reviewer",
+      "currentActivity": "QA-F31 — `science.reviewer`, Reviewer Mode (v6)",
+      "baselineMechanism": "Fixed convenience-assignment and truncated-axis concerns.",
+      "prerequisites": "Design, visualization, reproducibility.",
+      "requiredBandProgression": "B1: find one documented flaw in a short report. B2: separate strengths from flaws. B3: rank threats to a stated conclusion. B4: propose a minimal revision and explain what remains unresolved.",
+      "requiredFamilyTests": "Real bounded report/figure; axis baseline context matters; transparency not marked as a flaw; severity criterion explicit; multiple defensible rankings accepted or avoided.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F32",
+      "familyID": "science.experiment-sequence",
+      "currentActivity": "QA-F32 — `science.experiment-sequence`, Experiment Sequence (v7)",
+      "baselineMechanism": "Order generic hypothesis/prediction/control/contrast steps under an experiment question.",
+      "prerequisites": "Experimental dependencies; measurement timing.",
+      "requiredBandProgression": "B1: order one concrete protocol chain. B2: parallel preparation steps and control checks. B3: insert a missing safeguard at a valid dependency point. B4: repair a branching protocol that cannot identify its target effect.",
+      "requiredFamilyTests": "Prompt asks the deliverable actually scored; DAG alternate orders; stateful timing dependencies; dangerous/unsupported real-world procedure content excluded from generic tasks.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F33",
+      "familyID": "science.paper-sprint",
+      "currentActivity": "QA-F33 — `science.paper-sprint`, Paper Sprint (v8)",
+      "baselineMechanism": "A preferred reading order without an abstract.",
+      "prerequisites": "Question/method/result/limitation distinction.",
+      "requiredBandProgression": "B1: identify fields in a short synthetic abstract. B2: extract numerical result and limitation. B3: separate authors' conclusion from supported claims. B4: compare two conflicting bounded abstracts and identify the missing methodological detail.",
+      "requiredFamilyTests": "Actual abstract included; every keyed extraction supported by text; no source hallucination; alternative accurate wording; reading strategy not misgraded as the only valid order.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F34",
+      "familyID": "logic.state-trace",
+      "currentActivity": "QA-F34 — `logic.state-trace`, State Trace (v0)",
+      "baselineMechanism": "Many numbers in one stale-derived-state program.",
+      "prerequisites": "Assignment; Boolean conditions; invariants.",
+      "requiredBandProgression": "B1: two assignments. B2: EX-C105 stale state. B3: conditional updates with different branch outcomes. B4: find a smallest counterexample or compare invariant-preserving updates across a finite state space.",
+      "requiredFamilyTests": "Independent AST execution; invariant timing; branches cover both paths; typed aliases full credit; display skins no new semantics; actual program structures required for quota.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Boolean/integer state parsing and accepted-state credit repaired.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F35",
+      "familyID": "logic.conditions",
+      "currentActivity": "QA-F35 — `logic.conditions`, Necessary or Sufficient? (v1)",
+      "baselineMechanism": "Divisibility by 4 versus evenness, with explanation before answer.",
+      "prerequisites": "Implication; converse; counterexample.",
+      "requiredBandProgression": "B1: supplied small truth/set examples. B2: classify necessary/sufficient/both/neither. B3: compound predicates with explicit domains. B4: construct a minimal counterexample to one direction or derive a weakest sufficient condition in a bounded domain.",
+      "requiredFamilyTests": "All four relation categories represented; vacuous truth/domain restrictions reviewed; no answer in context; truth-table/set oracle; alternative valid counterexamples.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Removed supplied converse counterexamples from context.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F36",
+      "familyID": "logic.counterexample",
+      "currentActivity": "QA-F36 — `logic.counterexample`, Counterexample Quest (v2)",
+      "baselineMechanism": "Fixed even-product claim and visible 2×3=6 solution.",
+      "prerequisites": "Premise; conclusion; universal quantifier.",
+      "requiredBandProgression": "B1: select a premise-true/conclusion-false case. B2: construct one in a bounded domain. B3: distinguish counterexample from a case outside domain. B4: find a minimal counterexample under an explicit order or repair the quantifier/condition.",
+      "requiredFamilyTests": "Premise true and conclusion false independently checked; zero/negative domain cases; minimality oracle; no visible keyed example; multiple correct constructions accepted.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Removed keyed 2×3=6 equation from independent stimulus.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F37",
+      "familyID": "logic.proof-builder",
+      "currentActivity": "QA-F37 — `logic.proof-builder`, Proof Builder (v3)",
+      "baselineMechanism": "One four-step parity proof.",
+      "prerequisites": "Definitions; algebra; dependency.",
+      "requiredBandProgression": "B1: strict short proof chain. B2: alternate independent derivation branches. B3: supply a missing justified step. B4: choose sufficient lemmas and assemble a dependency-valid proof with an explicit target and domain.",
+      "requiredFamilyTests": "DAG all topological orders; no cyclic proof; each inference locally valid; irrelevant lemma penalties declared; prose proof outside supported verifier becomes self-check.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Dependency DAG support, cycles rejected; completed derivation removed from pre-answer equation.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F38",
+      "familyID": "logic.invalid-step",
+      "currentActivity": "QA-F38 — `logic.invalid-step`, First Invalid Step (v4)",
+      "baselineMechanism": "Division-by-zero fallacy with divisor-zero cue.",
+      "prerequisites": "Algebra operation preconditions.",
+      "requiredBandProgression": "B1: explicit single invalid operation. B2: locate first invalid line in a trace. B3: distinguish valid cancellation from domain loss. B4: compare two purported proofs with conditional validity and repair the earliest unsupported step.",
+      "requiredFamilyTests": "Nonzero and zero branches; prior lines verified; first versus any invalid step differentiated; domain preservation; solution removed from independent preamble.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Removed divisor-zero solution from context.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F39",
+      "familyID": "logic.boundary-bug",
+      "currentActivity": "QA-F39 — `logic.boundary-bug`, Boundary Bug Hunt (v5)",
+      "baselineMechanism": "One loop always misses last element.",
+      "prerequisites": "Index ranges; empty/singleton cases.",
+      "requiredBandProgression": "B1: trace singleton boundary. B2: choose minimal failing input. B3: bugs dependent on value as well as size. B4: shrink a counterexample across a finite structured input domain under a declared minimization order.",
+      "requiredFamilyTests": "Empty/singleton/typical input execution; expected output defined, including zero-valued elements; minimality criterion; no test input outside declared domain; interpreter bounds.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Positive input domain made explicit and solution-bearing accessible description replaced.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F40",
+      "familyID": "logic.complexity",
+      "currentActivity": "QA-F40 — `logic.complexity`, Complexity Duel (v6)",
+      "baselineMechanism": "Linear scan versus ordered pair enumeration.",
+      "prerequisites": "Input size; operation counts.",
+      "requiredBandProgression": "B1: count concrete loop iterations. B2: infer linear/quadratic growth. B3: triangular, logarithmic, or composed loops with stated primitive costs. B4: compare asymptotic growth with finite-size constants and an explicit workload.",
+      "requiredFamilyTests": "Correct dominant term; loop bounds inclusive/exclusive; early exits and input assumptions; output-size misconception; do not equate asymptotic class with fastest at every n.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F41",
+      "familyID": "logic.loop-repair",
+      "currentActivity": "QA-F41 — `logic.loop-repair`, Loop Repair (v7)",
+      "baselineMechanism": "Choose index<count instead of count−1.",
+      "prerequisites": "Loop invariant; bounds; exact-once visitation.",
+      "requiredBandProgression": "B1: choose a safe bound. B2: repair start/bound/increment combinations. B3: preserve a data-dependent invariant across branches. B4: choose a minimal patch satisfying a reviewed test domain and explain a remaining limitation.",
+      "requiredFamilyTests": "Empty/singleton/multi-element tests; no duplicate/omitted visits; patch authority from interpreter; hidden tests meaningful rather than mirrored implementation; unsafe text never executed.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Accessible loop description states the program without its conclusion.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F42",
+      "familyID": "logic.calibration",
+      "currentActivity": "QA-F42 — `logic.calibration`, Confidence Calibration (v8)",
+      "baselineMechanism": "Pick 70/80/90% with small-sample caution.",
+      "prerequisites": "Frequencies; probability; uncertainty.",
+      "requiredBandProgression": "B1: compare stated confidence to an observed rate. B2: identify over/underconfidence in a supplied table. B3: compare groups with different sample sizes/uncertainty. B4: diagnose confidence changes under selection or shifting task mix using explicit data.",
+      "requiredFamilyTests": "No individual certainty inferred from 10 answers; comparable population stated; proper separation of evidence and preference; no always-50% strategy; adaptation calibration model remains separate.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F43",
+      "familyID": "retrieval.free-recall",
+      "currentActivity": "QA-F43 — `retrieval.free-recall`, Free Recall (v0)",
+      "baselineMechanism": "Self-check with three generic criteria.",
+      "prerequisites": "Prior exposure to a specific target.",
+      "requiredBandProgression": "B1: recall a short fact after learning. B2: recall a relationship and condition. B3: recall several linked elements without source cues. B4: reconstruct a bounded explanation including a limitation; still self-reported unless objectively constrained.",
+      "requiredFamilyTests": "Attempt-before-reveal; target-specific checklist; no 100% accuracy from “matched”; source/target identity; assistance/exposure provenance; unsupported prose never asserted objectively wrong.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Outcome selfReported; target-specific checklist adapter and optional reflection.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F44",
+      "familyID": "retrieval.precision-recall",
+      "currentActivity": "QA-F44 — `retrieval.precision-recall`, Precision Recall (v1)",
+      "baselineMechanism": "Exact-string short answer for any fact/computation.",
+      "prerequisites": "Relevant target knowledge; supported answer notation.",
+      "requiredBandProgression": "B1: constrained name/value. B2: EX-C106 odd/even relationship fields. B3: a formula/application with conditions. B4: distinguish closely related definitions using a required qualifier and a reviewed constrained response.",
+      "requiredFamilyTests": "Arithmetic-mean paraphrase; `2*x`/`4x`; case-sensitive F/f; label versus formula domain; unit-fixed numeric answers; unknown prose coverage routes honestly.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Explicit derivative/F/f/mean/scalar quantity response authorities.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F45",
+      "familyID": "retrieval.cloze",
+      "currentActivity": "QA-F45 — `retrieval.cloze`, Relationship Cloze (v2)",
+      "baselineMechanism": "Full question prefixed “Cloze reconstruction.”",
+      "prerequisites": "Learned relationship; context comprehension.",
+      "requiredBandProgression": "B1: one meaningful blank. B2: choose the omitted relation or condition. B3: multiple linked slots with unambiguous scope. B4: reconstruct a omitted causal/mathematical dependency from a bounded source excerpt.",
+      "requiredFamilyTests": "Actual omission; no multiple unconstrained completions; slot grammar/units; answer not elsewhere in excerpt; changed rendering retains target identity.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F46",
+      "familyID": "retrieval.teach-back",
+      "currentActivity": "QA-F46 — `retrieval.teach-back`, Teach It Back (v3)",
+      "baselineMechanism": "Self-check explanation with generic criteria.",
+      "prerequisites": "Learned entities, relationship, conditions.",
+      "requiredBandProgression": "B1: explain one relation simply. B2: include a necessary condition. B3: use a concrete example and counterexample. B4: explain the boundary of applicability to a peer in a bounded scenario.",
+      "requiredFamilyTests": "Unconstrained prose self-check only; explicit checklist; unsupported added scope flagged in reference; no enforced essay length; original attempt preserved after reveal.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "in progress",
+      "implementedCorrectiveScope": "Self-report authority and target-specific reference comparison.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F47",
+      "familyID": "retrieval.recognition",
+      "currentActivity": "QA-F47 — `retrieval.recognition`, Recognition Audit (v4)",
+      "baselineMechanism": "One canonical answer versus generic relationship statements.",
+      "prerequisites": "Target familiarity or source reading.",
+      "requiredBandProgression": "B1: distinguish plausible neighboring concepts. B2: choose correct direction/condition. B3: discriminate near-miss statements differing in one qualifier. B4: select a supported reconstruction from a bounded source with misleading but plausible alternatives.",
+      "requiredFamilyTests": "Comparable option grammar/length; target-specific misconception distractors; unique supported interpretation; no recognition-as-free-recall claim; source shown only when mode permits.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F48",
+      "familyID": "retrieval.repair-cycle",
+      "currentActivity": "QA-F48 — `retrieval.repair-cycle`, Retrieval Cycle Builder (v5)",
+      "baselineMechanism": "Fixed workflow order unrelated to each target.",
+      "prerequisites": "Attempt/review distinction; target knowledge if assessed.",
+      "requiredBandProgression": "B1: learn the explicit recall-review cycle as metacognitive practice. B2: locate a specific mismatch in a supplied attempt. B3: choose a targeted repair and make a closed-reference retry. B4: distinguish incomplete recall from an invalid source claim and plan the relevant follow-up.",
+      "requiredFamilyTests": "Generic workflow cannot count as target knowledge; actual discrepancy exists; retry is new linked attempt; valid workflow orders encoded; reference hidden again before retry.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F49",
+      "familyID": "retrieval.equation",
+      "currentActivity": "QA-F49 — `retrieval.equation`, Equation Reconstruction (v6)",
+      "baselineMechanism": "Generic E_source+C_stated→blank plus exact prose answer.",
+      "prerequisites": "Specific formula and symbol meanings.",
+      "requiredBandProgression": "B1: fill one term/coefficient. B2: reconstruct one side with units. B3: restore missing dependency/condition. B4: rebuild a reviewed derivation fragment while preserving domain and variable roles.",
+      "requiredFamilyTests": "Real target equation; F/f and function/multiplication distinction; restricted equivalence; domain exclusions; missing required asset disables form rather than generating generic equation.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F50",
+      "familyID": "retrieval.figure",
+      "currentActivity": "QA-F50 — `retrieval.figure`, Figure Interpretation (v7)",
+      "baselineMechanism": "Two-row table repeats the question.",
+      "prerequisites": "Reading the actual figure type.",
+      "requiredBandProgression": "B1: read a plotted value/label. B2: recover a supported trend. B3: relate a figure to the target equation or condition. B4: distinguish two plausible interpretations using uncertainty/design information explicitly supplied.",
+      "requiredFamilyTests": "Actual chart/table data required; axes/units/legend; accessible equivalent; claim bounded by data; no statistical shortcuts; paraphrase or structured response appropriate to task.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F51",
+      "familyID": "retrieval.source-filter",
+      "currentActivity": "QA-F51 — `retrieval.source-filter`, Source-Filter Trace (v8)",
+      "baselineMechanism": "Fixed pseudocode returns an obvious supported candidate.",
+      "prerequisites": "Source claims; Boolean filters; bounded trace.",
+      "requiredBandProgression": "B1: evaluate one claim against explicit source evidence. B2: trace changing candidate order and support states. B3: handle multiple supported/unsupported qualifiers. B4: repair a filter whose logic accepts an unsupported scope expansion.",
+      "requiredFamilyTests": "Actual source support relation; varied return position/no-result case; interpreter oracle; content evidence distinct from code-trace evidence; no opaque generic “supported” label answer cue.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F52",
+      "familyID": "transfer.sequence",
+      "currentActivity": "QA-F52 — `transfer.sequence`, Transfer Sequence (v0)",
+      "baselineMechanism": "Generic identify/represent/solve/check order.",
+      "prerequisites": "Familiar source method; target comprehension.",
+      "requiredBandProgression": "B1: map named source quantities. B2: order actual target-specific steps. B3: insert a needed assumption check before a risky transfer. B4: revise a partially valid plan where source and target dependencies differ.",
+      "requiredFamilyTests": "Real source/target pair; dependency-valid alternatives; transfer process distinct from target solution; no generic order counted as quantitative mastery.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F53",
+      "familyID": "transfer.conditions",
+      "currentActivity": "QA-F53 — `transfer.conditions`, Preserve Transfer Conditions (v1)",
+      "baselineMechanism": "Fixed select structure preservation and constraint recheck.",
+      "prerequisites": "Assumptions; units; mathematical roles.",
+      "requiredBandProgression": "B1: identify same/different units. B2: classify preserved versus changed assumptions. B3: determine whether a method remains applicable after one constraint changes. B4: identify the minimal additional information required to justify transfer.",
+      "requiredFamilyTests": "Every condition explicit; alternative sufficient bundles; cannot copy coefficients across units; insufficient-information answer where appropriate; no always-choose-cautious pattern.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F54",
+      "familyID": "transfer.rate",
+      "currentActivity": "QA-F54 — `transfer.rate`, Rate in a New Field (v2)",
+      "baselineMechanism": "Rate×time with only number/context changes; 986 bank slots.",
+      "prerequisites": "Constant rates; accumulation; units.",
+      "requiredBandProgression": "B1: identify rate/time in a new setting. B2: convert units before accumulation. B3: piecewise constant rates or nonzero initial quantity. B4: distinguish input flow, retained amount, and outflow under a supplied conservation model.",
+      "requiredFamilyTests": "Quantity target explicit; constant-rate assumption checked; piecewise exact integration; zero/time/unit boundaries; source/target structure metadata; strict bank family quota.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F55",
+      "familyID": "transfer.representation",
+      "currentActivity": "QA-F55 — `transfer.representation`, Table-to-Equation (v3)",
+      "baselineMechanism": "Four simple y=kx tables.",
+      "prerequisites": "Ratios; linear relations.",
+      "requiredBandProgression": "B1: direct proportionality table. B2: affine relation with intercept. B3: discriminate inverse/quadratic/linear forms from sufficient data. B4: identify underdetermination or select among a stated finite model class with noise/measurement assumptions.",
+      "requiredFamilyTests": "Enough data for uniqueness within declared model class; do not imply finite points identify a universal function; every row verified; equivalent equations accepted; ratio versus difference errors.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F56",
+      "familyID": "transfer.causal-map",
+      "currentActivity": "QA-F56 — `transfer.causal-map`, Causal Structure Map (v4)",
+      "baselineMechanism": "Fixed controller/regulation feedback evidence mapping.",
+      "prerequisites": "Directed graphs; feedback; delays.",
+      "requiredBandProgression": "B1: map node roles. B2: map direction and sign of edges. B3: compare delayed feedback structures across unfamiliar labels. B4: identify why an apparent analogy fails when an edge, delay, or external input differs.",
+      "requiredFamilyTests": "Graph isomorphism under permitted role mapping; direction/sign/delay preserved; surface labels insufficient; multiple valid maps encoded; no metaphor-only claim of causal identity.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F57",
+      "familyID": "transfer.interacting-variables",
+      "currentActivity": "QA-F57 — `transfer.interacting-variables`, Interacting-Variable Ratio (v5)",
+      "baselineMechanism": "Double numerator and halve denominator, six baseline values.",
+      "prerequisites": "Ratios; multiplicative changes.",
+      "requiredBandProgression": "B1: change one quantity. B2: simultaneous opposing changes. B3: map ratio roles across concentration/density/rate contexts with units. B4: infer a missing factor or identify when a denominator change violates a constant-quantity assumption.",
+      "requiredFamilyTests": "Nonzero denominator/domain; independent factor transformation; exact rational oracle; realistic conservation assumptions explicit; alternative units; varied transformations beyond always ×4.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    },
+    {
+      "acceptanceSuite": "QA-F58",
+      "familyID": "transfer.saturation",
+      "currentActivity": "QA-F58 — `transfer.saturation`, Saturation Check (v6)",
+      "baselineMechanism": "One generic “check linearity” answer.",
+      "prerequisites": "Linear accumulation; capacity/limits.",
+      "requiredBandProgression": "B1: identify a stated cap. B2: decide whether source linear rule applies within range. B3: EX-C107 retained versus delivered amount. B4: piecewise behavior with initial state, threshold, or multiple constraints explicitly supplied.",
+      "requiredFamilyTests": "Exact threshold equality; below/above cap; no unsupported universal linearity; retained/delivered distinction; boundary assumptions; transfer evidence only with eligible origin/exposure metadata.",
+      "reviewedBands": [],
+      "supportedEditorialBandClaim": null,
+      "implementationStatus": "specified",
+      "implementedCorrectiveScope": "Shared scorer/outcome/identity contracts only; family expansion remains to implement.",
+      "releaseBlockers": [
+        "Independent subject/editorial review for every admitted band and boundary",
+        "Required family-specific structures and assets",
+        "English/Japanese and accessibility equivalence review"
+      ],
+      "capacityForProposedReviewedEdition": 0
+    }
+  ]
+}

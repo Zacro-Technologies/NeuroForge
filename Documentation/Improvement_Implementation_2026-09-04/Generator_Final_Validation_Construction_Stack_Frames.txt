@@ -1,0 +1,239 @@
+Current built Mac Debug generator stack prologues
+Binary: /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib
+Binary SHA256: 840f9dafb76c9604b17cdc646d96c8cdc8a278ee81cdcc20e11529939e638ad2
+Source: production a94f7dd3 / 54cd410a (latter changes test fixtures only); exact source hashes retained separately.
+Counts show compiler frames, not peak stack instrumentation.
+
+static NeuroForge.NFFallbackExerciseGenerator.(buildCandidate in _3717C4C1F71A5AA83298DEBDFD9E9A58)(NeuroForge.NFExerciseGenerationRequest) throws -> NeuroForge.NFExercise
+
+/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+0000000000e53d30 <_$s10NeuroForge27NFFallbackExerciseGeneratorO14buildCandidate33_3717C4C1F71A5AA83298DEBDFD9E9A58LLyAA10NFExerciseVAA0P17GenerationRequestVKFZ>:
+  e53d30: a9be53fc     	stp	x28, x20, [sp, #-0x20]!
+  e53d34: a9017bfd     	stp	x29, x30, [sp, #0x10]
+  e53d38: 910043fd     	add	x29, sp, #0x10
+  e53d3c: 5282a609     	mov	w9, #0x1530             ; =5424
+  e53d40: f000d630     	adrp	x16, 0x291a000 <_write+0x291a000>
+  e53d44: f942aa10     	ldr	x16, [x16, #0x550]
+  e53d48: d63f0200     	blr	x16
+  e53d4c: d14007ff     	sub	sp, sp, #0x1, lsl #12   ; =0x1000
+  e53d50: d114c3ff     	sub	sp, sp, #0x530
+  e53d54: f90017e8     	str	x8, [sp, #0x28]
+  e53d58: f9001be0     	str	x0, [sp, #0x30]
+  e53d5c: f90027ff     	str	xzr, [sp, #0x48]
+  e53d60: aa0003e8     	mov	x8, x0
+  e53d64: f90027e8     	str	x8, [sp, #0x48]
+  e53d68: 910143e8     	add	x8, sp, #0x50
+  e53d6c: 9400002e     	bl	0xe53e24 <_$s10NeuroForge27NFFallbackExerciseGeneratorO9makeDraft33_3717C4C1F71A5AA83298DEBDFD9E9A58LLyAC0G0AELLVAA27NFExerciseGenerationRequestVKFZ>
+  e53d70: f9001ff5     	str	x21, [sp, #0x38]
+  e53d74: aa1503e8     	mov	x8, x21
+
+static NeuroForge.NFFallbackExerciseGenerator.(finishCandidate in _3717C4C1F71A5AA83298DEBDFD9E9A58)(_: NeuroForge.NFExerciseGenerationRequest, draft: NeuroForge.NFFallbackExerciseGenerator.(Draft in _3717C4C1F71A5AA83298DEBDFD9E9A58)) throws -> NeuroForge.NFExercise
+
+/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+0000000000e54134 <_$s10NeuroForge27NFFallbackExerciseGeneratorO15finishCandidate33_3717C4C1F71A5AA83298DEBDFD9E9A58LL_5draftAA10NFExerciseVAA0Q17GenerationRequestV_AC5DraftAELLVtKFZ>:
+  e54134: a9be53fc     	stp	x28, x20, [sp, #-0x20]!
+  e54138: a9017bfd     	stp	x29, x30, [sp, #0x10]
+  e5413c: 910043fd     	add	x29, sp, #0x10
+  e54140: 528cd609     	mov	w9, #0x66b0             ; =26288
+  e54144: d000d630     	adrp	x16, 0x291a000 <_write+0x291a000>
+  e54148: f942aa10     	ldr	x16, [x16, #0x550]
+  e5414c: d63f0200     	blr	x16
+  e54150: d1401bff     	sub	sp, sp, #0x6, lsl #12   ; =0x6000
+  e54154: d11ac3ff     	sub	sp, sp, #0x6b0
+  e54158: f90037e8     	str	x8, [sp, #0x68]
+  e5415c: f90043e0     	str	x0, [sp, #0x80]
+  e54160: f9003be1     	str	x1, [sp, #0x70]
+  e54164: f9003ff5     	str	x21, [sp, #0x78]
+  e54168: f9225bff     	str	xzr, [sp, #0x44b0]
+  e5416c: f92257ff     	str	xzr, [sp, #0x44a8]
+  e54170: f92253ff     	str	xzr, [sp, #0x44a0]
+  e54174: 91400fe0     	add	x0, sp, #0x3, lsl #12   ; =0x3000
+  e54178: 91204000     	add	x0, x0, #0x810
+
+static NeuroForge.NFFallbackExerciseGenerator.(assembleCandidate in _3717C4C1F71A5AA83298DEBDFD9E9A58)(_: NeuroForge.NFExerciseGenerationRequest, draft: NeuroForge.NFFallbackExerciseGenerator.(Draft in _3717C4C1F71A5AA83298DEBDFD9E9A58), effectiveSeed: Swift.UInt64) throws -> NeuroForge.NFExercise
+
+/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+0000000000e54f00 <_$s10NeuroForge27NFFallbackExerciseGeneratorO17assembleCandidate33_3717C4C1F71A5AA83298DEBDFD9E9A58LL_5draft13effectiveSeedAA10NFExerciseVAA0S17GenerationRequestV_AC5DraftAELLVs6UInt64VtKFZ>:
+  e54f00: f81a0ffc     	str	x28, [sp, #-0x60]!
+  e54f04: a9016bfb     	stp	x27, x26, [sp, #0x10]
+  e54f08: a90263f9     	stp	x25, x24, [sp, #0x20]
+  e54f0c: a9035bf7     	stp	x23, x22, [sp, #0x30]
+  e54f10: a9044ff4     	stp	x20, x19, [sp, #0x40]
+  e54f14: a9057bfd     	stp	x29, x30, [sp, #0x50]
+  e54f18: 910143fd     	add	x29, sp, #0x50
+  e54f1c: 5299a809     	mov	w9, #0xcd40             ; =52544
+  e54f20: d000d630     	adrp	x16, 0x291a000 <_write+0x291a000>
+  e54f24: f942aa10     	ldr	x16, [x16, #0x550]
+  e54f28: d63f0200     	blr	x16
+  e54f2c: d14033ff     	sub	sp, sp, #0xc, lsl #12   ; =0xc000
+  e54f30: d13503ff     	sub	sp, sp, #0xd40
+  e54f34: 910003f3     	mov	x19, sp
+  e54f38: 91403269     	add	x9, x19, #0xc, lsl #12  ; =0xc000
+  e54f3c: 91134129     	add	x9, x9, #0x4d0
+  e54f40: f9071a69     	str	x9, [x19, #0xe30]
+  e54f44: 91402e69     	add	x9, x19, #0xb, lsl #12  ; =0xb000
+
+static NeuroForge.NFFallbackExerciseGenerator.(semanticFingerprint in _3717C4C1F71A5AA83298DEBDFD9E9A58)(for: NeuroForge.NFExercise, draft: NeuroForge.NFFallbackExerciseGenerator.(Draft in _3717C4C1F71A5AA83298DEBDFD9E9A58)) -> Swift.String
+
+/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+0000000000e59470 <_$s10NeuroForge27NFFallbackExerciseGeneratorO19semanticFingerprint33_3717C4C1F71A5AA83298DEBDFD9E9A58LL3for5draftSSAA10NFExerciseV_AC5DraftAELLVtFZ>:
+  e59470: a9be4ff4     	stp	x20, x19, [sp, #-0x20]!
+  e59474: a9017bfd     	stp	x29, x30, [sp, #0x10]
+  e59478: 910043fd     	add	x29, sp, #0x10
+  e5947c: d12ec3ff     	sub	sp, sp, #0xbb0
+  e59480: f900f7e0     	str	x0, [sp, #0x1e8]
+  e59484: f900fbe1     	str	x1, [sp, #0x1f0]
+  e59488: f9023fff     	str	xzr, [sp, #0x478]
+  e5948c: f9023bff     	str	xzr, [sp, #0x470]
+  e59490: f9023fe0     	str	x0, [sp, #0x478]
+  e59494: f9023be1     	str	x1, [sp, #0x470]
+  e59498: 91202021     	add	x1, x1, #0x808
+  e5949c: 911823e0     	add	x0, sp, #0x608
+  e594a0: f900ffe0     	str	x0, [sp, #0x1f8]
+  e594a4: 52800908     	mov	w8, #0x48               ; =72
+  e594a8: aa0803e2     	mov	x2, x8
+  e594ac: f90103e2     	str	x2, [sp, #0x200]
+  e594b0: 945ab5c7     	bl	0x2506bcc <_write+0x2506bcc>
+  e594b4: f940ffe0     	ldr	x0, [sp, #0x1f8]
+
+static NeuroForge.NFFallbackExerciseGenerator.(makeContractMetadata in _3717C4C1F71A5AA83298DEBDFD9E9A58)(_: NeuroForge.NFExerciseGenerationRequest, draft: NeuroForge.NFFallbackExerciseGenerator.(Draft in _3717C4C1F71A5AA83298DEBDFD9E9A58), effectiveSeed: Swift.UInt64, generatorVersion: Swift.Int, fingerprint: Swift.String) -> NeuroForge.NFExerciseContractMetadata
+
+/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+0000000000e59a5c <_$s10NeuroForge27NFFallbackExerciseGeneratorO20makeContractMetadata33_3717C4C1F71A5AA83298DEBDFD9E9A58LL_5draft13effectiveSeed16generatorVersion11fingerprintAA010NFExercisegH0VAA0W17GenerationRequestV_AC5DraftAELLVs6UInt64VSiSStFZ>:
+  e59a5c: a9ba6ffc     	stp	x28, x27, [sp, #-0x60]!
+  e59a60: a90167fa     	stp	x26, x25, [sp, #0x10]
+  e59a64: a9025ff8     	stp	x24, x23, [sp, #0x20]
+  e59a68: a90357f6     	stp	x22, x21, [sp, #0x30]
+  e59a6c: a9044ff4     	stp	x20, x19, [sp, #0x40]
+  e59a70: a9057bfd     	stp	x29, x30, [sp, #0x50]
+  e59a74: 910143fd     	add	x29, sp, #0x50
+  e59a78: 529f7809     	mov	w9, #0xfbc0             ; =64448
+  e59a7c: b000d610     	adrp	x16, 0x291a000 <_write+0x291a000>
+  e59a80: f942aa10     	ldr	x16, [x16, #0x550]
+  e59a84: d63f0200     	blr	x16
+  e59a88: d1403fff     	sub	sp, sp, #0xf, lsl #12   ; =0xf000
+  e59a8c: d12f03ff     	sub	sp, sp, #0xbc0
+  e59a90: 91403be9     	add	x9, sp, #0xe, lsl #12   ; =0xe000
+  e59a94: 91034129     	add	x9, x9, #0xd0
+  e59a98: f90557e9     	str	x9, [sp, #0xaa8]
+  e59a9c: 91402be9     	add	x9, sp, #0xa, lsl #12   ; =0xa000
+  e59aa0: 910e8129     	add	x9, x9, #0x3a0
+
+static NeuroForge.NFFallbackExerciseGenerator.(makeDraft in _3717C4C1F71A5AA83298DEBDFD9E9A58)(NeuroForge.NFExerciseGenerationRequest) throws -> NeuroForge.NFFallbackExerciseGenerator.(Draft in _3717C4C1F71A5AA83298DEBDFD9E9A58)
+
+/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+0000000000e53e24 <_$s10NeuroForge27NFFallbackExerciseGeneratorO9makeDraft33_3717C4C1F71A5AA83298DEBDFD9E9A58LLyAC0G0AELLVAA27NFExerciseGenerationRequestVKFZ>:
+  e53e24: a9be53fc     	stp	x28, x20, [sp, #-0x20]!
+  e53e28: a9017bfd     	stp	x29, x30, [sp, #0x10]
+  e53e2c: 910043fd     	add	x29, sp, #0x10
+  e53e30: 528a7a09     	mov	w9, #0x53d0             ; =21456
+  e53e34: f000d630     	adrp	x16, 0x291a000 <_write+0x291a000>
+  e53e38: f942aa10     	ldr	x16, [x16, #0x550]
+  e53e3c: d63f0200     	blr	x16
+  e53e40: d14017ff     	sub	sp, sp, #0x5, lsl #12   ; =0x5000
+  e53e44: d10f43ff     	sub	sp, sp, #0x3d0
+  e53e48: d1004ba9     	sub	x9, x29, #0x12
+  e53e4c: f90033e9     	str	x9, [sp, #0x60]
+  e53e50: f90037e8     	str	x8, [sp, #0x68]
+  e53e54: f9003be0     	str	x0, [sp, #0x70]
+  e53e58: f9003ff5     	str	x21, [sp, #0x78]
+  e53e5c: f90ccbff     	str	xzr, [sp, #0x1990]
+  e53e60: f90cc7ff     	str	xzr, [sp, #0x1988]
+  e53e64: f90cc3ff     	str	xzr, [sp, #0x1980]
+  e53e68: 914007e0     	add	x0, sp, #0x1, lsl #12   ; =0x1000
+
+static NeuroForge.NFFallbackExerciseGenerator.(validateGenerationRequest in _3717C4C1F71A5AA83298DEBDFD9E9A58)(NeuroForge.NFExerciseGenerationRequest) throws -> ()
+
+/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+0000000000e5cd2c <_$s10NeuroForge27NFFallbackExerciseGeneratorO25validateGenerationRequest33_3717C4C1F71A5AA83298DEBDFD9E9A58LLyyAA010NFExercisegH0VKFZ>:
+  e5cd2c: a9be53fc     	stp	x28, x20, [sp, #-0x20]!
+  e5cd30: a9017bfd     	stp	x29, x30, [sp, #0x10]
+  e5cd34: 910043fd     	add	x29, sp, #0x10
+  e5cd38: 5280ec09     	mov	w9, #0x760              ; =1888
+  e5cd3c: 72a00029     	movk	w9, #0x1, lsl #16
+  e5cd40: d000d5f0     	adrp	x16, 0x291a000 <_write+0x291a000>
+  e5cd44: f942aa10     	ldr	x16, [x16, #0x550]
+  e5cd48: d63f0200     	blr	x16
+  e5cd4c: d14043ff     	sub	sp, sp, #0x10, lsl #12  ; =0x10000
+  e5cd50: d11d83ff     	sub	sp, sp, #0x760
+  e5cd54: 914043e8     	add	x8, sp, #0x10, lsl #12  ; =0x10000
+  e5cd58: 910e0108     	add	x8, x8, #0x380
+  e5cd5c: f9061fe8     	str	x8, [sp, #0xc38]
+  e5cd60: 914043e8     	add	x8, sp, #0x10, lsl #12  ; =0x10000
+  e5cd64: 9109f908     	add	x8, x8, #0x27e
+  e5cd68: f905e7e8     	str	x8, [sp, #0xbc8]
+  e5cd6c: 91403fe8     	add	x8, sp, #0xf, lsl #12   ; =0xf000
+  e5cd70: 91024108     	add	x8, x8, #0x90
+
+static NeuroForge.NFFallbackExerciseGenerator.(spatialDraft in _3717C4C1F71A5AA83298DEBDFD9E9A58)(request: NeuroForge.NFExerciseGenerationRequest, random: inout NeuroForge.(NFFallbackRandom in _3717C4C1F71A5AA83298DEBDFD9E9A58)) -> NeuroForge.NFFallbackExerciseGenerator.(Draft in _3717C4C1F71A5AA83298DEBDFD9E9A58)
+
+/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+0000000000e72b78 <_$s10NeuroForge27NFFallbackExerciseGeneratorO12spatialDraft33_3717C4C1F71A5AA83298DEBDFD9E9A58LL7request6randomAC0G0AELLVAA27NFExerciseGenerationRequestV_AA0C6RandomAELLVztFZ>:
+  e72b78: a9be4ff4     	stp	x20, x19, [sp, #-0x20]!
+  e72b7c: a9017bfd     	stp	x29, x30, [sp, #0x10]
+  e72b80: 910043fd     	add	x29, sp, #0x10
+  e72b84: 52901009     	mov	w9, #0x8080             ; =32896
+  e72b88: 9000d550     	adrp	x16, 0x291a000 <_write+0x291a000>
+  e72b8c: f942aa10     	ldr	x16, [x16, #0x550]
+  e72b90: d63f0200     	blr	x16
+  e72b94: d14023ff     	sub	sp, sp, #0x8, lsl #12   ; =0x8000
+  e72b98: d10203ff     	sub	sp, sp, #0x80
+  e72b9c: d101c3a9     	sub	x9, x29, #0x70
+  e72ba0: f900e7e9     	str	x9, [sp, #0x1c8]
+  e72ba4: 91400fe9     	add	x9, sp, #0x3, lsl #12   ; =0x3000
+  e72ba8: 9132a129     	add	x9, x9, #0xca8
+  e72bac: f900ebe9     	str	x9, [sp, #0x1d0]
+  e72bb0: 91400be9     	add	x9, sp, #0x2, lsl #12   ; =0x2000
+  e72bb4: 910de129     	add	x9, x9, #0x378
+  e72bb8: f9009fe9     	str	x9, [sp, #0x138]
+  e72bbc: 914007e9     	add	x9, sp, #0x1, lsl #12   ; =0x1000
+
+static NeuroForge.NFFallbackExerciseGenerator.(legacySpatialDraft in _3717C4C1F71A5AA83298DEBDFD9E9A58)(request: NeuroForge.NFExerciseGenerationRequest, variant: Swift.Int, random: inout NeuroForge.(NFFallbackRandom in _3717C4C1F71A5AA83298DEBDFD9E9A58)) -> NeuroForge.NFFallbackExerciseGenerator.(Draft in _3717C4C1F71A5AA83298DEBDFD9E9A58)
+
+/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+0000000000eac7a4 <_$s10NeuroForge27NFFallbackExerciseGeneratorO18legacySpatialDraft33_3717C4C1F71A5AA83298DEBDFD9E9A58LL7request7variant6randomAC0H0AELLVAA27NFExerciseGenerationRequestV_SiAA0C6RandomAELLVztFZ>:
+  eac7a4: a9ba6ffc     	stp	x28, x27, [sp, #-0x60]!
+  eac7a8: a90167fa     	stp	x26, x25, [sp, #0x10]
+  eac7ac: a9025ff8     	stp	x24, x23, [sp, #0x20]
+  eac7b0: a90357f6     	stp	x22, x21, [sp, #0x30]
+  eac7b4: a9044ff4     	stp	x20, x19, [sp, #0x40]
+  eac7b8: a9057bfd     	stp	x29, x30, [sp, #0x50]
+  eac7bc: 910143fd     	add	x29, sp, #0x50
+  eac7c0: 5286fe09     	mov	w9, #0x37f0             ; =14320
+  eac7c4: d000d370     	adrp	x16, 0x291a000 <_write+0x291a000>
+  eac7c8: f942aa10     	ldr	x16, [x16, #0x550]
+  eac7cc: d63f0200     	blr	x16
+  eac7d0: d1400fff     	sub	sp, sp, #0x3, lsl #12   ; =0x3000
+  eac7d4: d11fc3ff     	sub	sp, sp, #0x7f0
+  eac7d8: 910003f3     	mov	x19, sp
+  eac7dc: 91400e69     	add	x9, x19, #0x3, lsl #12  ; =0x3000
+  eac7e0: 911c1d29     	add	x9, x9, #0x707
+  eac7e4: f90d7e69     	str	x9, [x19, #0x1af8]
+  eac7e8: 91400669     	add	x9, x19, #0x1, lsl #12  ; =0x1000

@@ -1,0 +1,96 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "00006020-000228AE0287401E",
+        "deviceName": "My Mac",
+        "modelName": "MacBook Pro",
+        "osBuildNumber": "26A5425a",
+        "osVersion": "27.0",
+        "platform": "macOS"
+      },
+      "expectedFailures": 0,
+      "failedTests": 6,
+      "passedTests": 210,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "NeuroForge \u00b7 Built with macOS 27.0",
+  "expectedFailures": 0,
+  "failedTests": 6,
+  "finishTime": 1788641800.718,
+  "passedTests": 210,
+  "result": "Failed",
+  "skippedTests": 0,
+  "startTime": 1788641535.529,
+  "statistics": [],
+  "testFailures": [
+    {
+      "failureText": "XCTUnwrap failed: expected non-nil value of type \"NFEditorialSessionPin\"",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 86,
+      "testIdentifierString": "EditorialLiveControllerPersistenceTests/testActualDemonstratedInitialTargetPersistsAcrossLowerSuccessNextAndColdResume()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testActualDemonstratedInitialTargetPersistsAcrossLowerSuccessNextAndColdResume",
+      "testName": "testActualDemonstratedInitialTargetPersistsAcrossLowerSuccessNextAndColdResume()"
+    },
+    {
+      "failureText": "XCTUnwrap failed: expected non-nil value of type \"NFEditorialSessionPin\"",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 88,
+      "testIdentifierString": "EditorialLiveControllerPersistenceTests/testActualHistoricalDemonstrationRefreshPinsSameBandAndOriginalEvidenceAfterLongGap()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testActualHistoricalDemonstrationRefreshPinsSameBandAndOriginalEvidenceAfterLongGap",
+      "testName": "testActualHistoricalDemonstrationRefreshPinsSameBandAndOriginalEvidenceAfterLongGap()"
+    },
+    {
+      "failureText": "XCTUnwrap failed: expected non-nil value of type \"NFEditorialSessionPin\"",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 99,
+      "testIdentifierString": "EditorialLiveControllerPersistenceTests/testDemonstratedInitialTargetAcceptanceRejectsChangedEvidenceWithoutCursorPublication()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testDemonstratedInitialTargetAcceptanceRejectsChangedEvidenceWithoutCursorPublication",
+      "testName": "testDemonstratedInitialTargetAcceptanceRejectsChangedEvidenceWithoutCursorPublication()"
+    },
+    {
+      "failureText": "XCTUnwrap failed: expected non-nil value of type \"NFEditorialSessionPin\"",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 100,
+      "testIdentifierString": "EditorialLiveControllerPersistenceTests/testDemonstratedTargetShortageRefusesLaunchWithoutReplacingPriorBandOrConsumingInventory()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testDemonstratedTargetShortageRefusesLaunchWithoutReplacingPriorBandOrConsumingInventory",
+      "testName": "testDemonstratedTargetShortageRefusesLaunchWithoutReplacingPriorBandOrConsumingInventory()"
+    },
+    {
+      "failureText": "XCTUnwrap failed: expected non-nil value of type \"NFEditorialSessionPin\"",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 110,
+      "testIdentifierString": "EditorialLiveControllerPersistenceTests/testLegacyInitialControllerKeepsFrozenRecentTargetAndFutureVersionCannotLaunch()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testLegacyInitialControllerKeepsFrozenRecentTargetAndFutureVersionCannotLaunch",
+      "testName": "testLegacyInitialControllerKeepsFrozenRecentTargetAndFutureVersionCannotLaunch()"
+    },
+    {
+      "failureText": "XCTAssertNil failed: \"This saved question could not be verified. Your original answer is retained.\"",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 144,
+      "testIdentifierString": "EditorialLiveControllerPersistenceTests/testUnknownMixedPolicyIsRetainedReadOnlyAndCannotBecomeSingleFamilyAuthority()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testUnknownMixedPolicyIsRetainedReadOnlyAndCannotBecomeSingleFamilyAuthority",
+      "testName": "testUnknownMixedPolicyIsRetainedReadOnlyAndCannotBecomeSingleFamilyAuthority()"
+    }
+  ],
+  "title": "Test - NeuroForge",
+  "topInsights": [
+    {
+      "category": "Common Failures",
+      "impact": "83% of failures",
+      "text": "5 runs of 5 tests failed with XCTUnwrap failed: expected non-nil value of type \"NFEditorialSessionPin\""
+    },
+    {
+      "category": "Longest Test Runs",
+      "impact": "49% of duration",
+      "text": "6 longest test runs with outlier durations exceeding 6.35s (three standard deviations)"
+    }
+  ],
+  "totalTestCount": 216
+}

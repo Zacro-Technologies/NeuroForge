@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "recipe": "fallback14/schema11 netFoldingPolicyVersion1",
+  "freeHexominoProposals": 35,
+  "validFreeCubeNets": 11,
+  "invalidProposalsExplicitlyQuestioned": 24,
+  "retainedDeliveryForms": 469,
+  "retainedSemanticTargets": 417,
+  "queryRoles": {
+    "validity": 35,
+    "opposite": 52,
+    "adjacent": 52,
+    "direction": 110,
+    "constraints": 220
+  },
+  "partialFoldGivens": 110,
+  "reviewedAdmissions": 0,
+  "proposedFamilyQuota": 166,
+  "reviewedAdmissionDeficit": 166,
+  "actualMixedBankReachability": "Existing bank positions and signed manifest are unchanged. Actual reachable new query count is pending the detached factory test. Query classes are not new net topologies or an admitted balanced bank.",
+  "countMeaning": "Complementary opposite/all-adjacent forms share one face-relation target. Shape plus queried face role, fixed-axis arrow/normal, given hinge, or both explicit proposed constraints. Relabeling and planar symmetries collapse unoriented face queries; fixed-axis orientation questions retain their stated frame.",
+  "oracle": "All exact response sets, retained proposals and completed/partial face frames verified against exhaustive assignment of the 24 oriented faces of a closed cube using exact directed shared-edge endpoints; no generator fold recurrence used."
+}

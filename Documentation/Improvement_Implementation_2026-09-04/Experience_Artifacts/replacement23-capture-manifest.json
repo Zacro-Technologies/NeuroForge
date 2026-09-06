@@ -1,0 +1,33 @@
+{
+  "bundle": "/tmp/NeuroForge-improvement-ios/Logs/Test/Test-NeuroForgeUISmoke-2026.09.05_04-45-42--0400.xcresult",
+  "log": "/tmp/neuroforge-replacement-deferral-installed-ui.log",
+  "result": {
+    "executed": 23,
+    "passed": 18,
+    "failed": 5,
+    "seconds": 976.448
+  },
+  "scope": "Real installed app on isolated SE3 simulator; this run predates the feedback-lock fix and current native-iOS target adjustment. Native desktop close/quit is separate. No manual accessibility or physical-device certification.",
+  "captures": [
+    {
+      "file": "SE-data-table-reveal-overshoot-before-refinement.png",
+      "sha256": "e439c9ff193f797e5d14182fa5d58701b2ecf1dc283b2d8e346e5cc3a7ac29d6",
+      "caption": "Quantitative inspection selected the exact 21 observation outcome; the keyboard and scroll overshoot prevent the Data table control from remaining fully clear of the header. Test failed before table expansion."
+    },
+    {
+      "file": "SE-source-cold-resume-unacknowledged-press.png",
+      "sha256": "a4a32951ea31e211d4a8d0c1d2042779b6f5edc3737f29be86c08e6aae0a4223",
+      "caption": "Cold source review remains paused after a single 150 ms Resume press. Cause is unconfirmed; original recall is not shown or altered in this capture."
+    },
+    {
+      "file": "SE-transfer-lazy-prior-option-search-failure.png",
+      "sha256": "936136abf2b3c45d3a0ab7f6dcfa5a7425fedc764afe29445ba9838badb7bc87",
+      "caption": "First selected correct option is below the second requested option; the lazy earlier option is not materialized and the test searches downward. No Submit or finite End was reached."
+    },
+    {
+      "file": "SE-weekly-keyboard-done-visible-feedback.png",
+      "sha256": "48d941a291ad4b7cdbfef5d7b1ef3d8011be2d30572addb2b1538006ad7fd31e",
+      "caption": "Native keyboard Done commits the real numeric 0 response and shows Check the answer with 0% credit and expected 90. The chart journey stops on an outdated Incorrect heading assertion before chart navigation."
+    }
+  ]
+}

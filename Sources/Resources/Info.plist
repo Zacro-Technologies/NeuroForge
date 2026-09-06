@@ -92,5 +92,18 @@
         <string>UIInterfaceOrientationLandscapeLeft</string>
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.zacrotech.NeuroForge.ordered-response-step</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+            </array>
+            <key>UTTypeDescription</key>
+            <string>NeuroForge response step</string>
+        </dict>
+    </array>
 </dict>
 </plist>

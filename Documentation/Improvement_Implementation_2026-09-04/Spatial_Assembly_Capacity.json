@@ -1,0 +1,12 @@
+{
+  "policy": "spatialAssemblyPolicyVersion1",
+  "generatorVersion": 16,
+  "schemaVersion": 13,
+  "deliveryForms": 145,
+  "semanticTargets": 82,
+  "orientation": {"deliveryForms": 67, "semanticTargets": 4, "properOrientationsPerSource": 24, "sourceCubeCount": 5},
+  "reconstruction": {"deliveryForms": 78, "semanticTargets": 78, "heightAssignments": 256, "physicallyValidAssignments": 237, "targetCountsByFeasibleMultiplicity": {"0":32,"1":38,"2":3,"3":1,"4":3,"6":1}},
+  "reviewedAdmission": false,
+  "appTestsExecutedByAuthor": false,
+  "nativeVisualQAExecutedByAuthor": false
+}

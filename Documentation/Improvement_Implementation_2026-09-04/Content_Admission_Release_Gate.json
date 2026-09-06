@@ -1,0 +1,434 @@
+{
+  "schemaVersion": 1,
+  "status": "blocked pending production and independent content/signing review",
+  "fallbackGeneratorVersion": 4,
+  "fallbackTemplateVersion": 4,
+  "scoringVersion": 8,
+  "offlineQuestionBankVersion": 3,
+  "semanticFingerprintVersion": 2,
+  "signedManifestRegenerated": false,
+  "signedInventoryCoversCorrectiveBank": false,
+  "existingSignedDescriptorGateModified": false,
+  "note": "Zero is the exact count of new-spec independently approved contracts in this change, not absence of app questions. Existing corrective numerical practice floor is1000/lab. Retrieval family quotas in CON-014 total900, contradicting its1000 total/floor and125\u00d78 field allocation;100 required rendering slots remain unallocated by the specification. Admission fails closed; no quota was silently changed.",
+  "labs": [
+    {
+      "lab": "mentalMath",
+      "requiredReviewedSemanticContracts": 1000,
+      "approvedUnderNewSpecification": 0,
+      "exactApprovalDeficit": 1000,
+      "families": [
+        {
+          "familyID": "mental.rapid-recall",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "mental.compensation",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "mental.representation-relay",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "mental.scientific-notation",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "mental.missing-factor",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "mental.error-detective",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "mental.calculation-chain",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "mental.estimate-first",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "mental.tool-judgment",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "mental.strategy-duel",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        }
+      ],
+      "specifiedFamilyQuotaTotal": 1000,
+      "unallocatedRequiredSlots": 0
+    },
+    {
+      "lab": "spatial",
+      "requiredReviewedSemanticContracts": 1000,
+      "approvedUnderNewSpecification": 0,
+      "exactApprovalDeficit": 1000,
+      "families": [
+        {
+          "familyID": "spatial.coordinate-rotation",
+          "required": 167,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 167
+        },
+        {
+          "familyID": "spatial.object-rotation",
+          "required": 167,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 167
+        },
+        {
+          "familyID": "spatial.cross-section",
+          "required": 167,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 167
+        },
+        {
+          "familyID": "spatial.top-view",
+          "required": 167,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 167
+        },
+        {
+          "familyID": "spatial.cube-net",
+          "required": 166,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 166
+        },
+        {
+          "familyID": "spatial.vector-reflection",
+          "required": 166,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 166
+        }
+      ],
+      "specifiedFamilyQuotaTotal": 1000,
+      "unallocatedRequiredSlots": 0
+    },
+    {
+      "lab": "quantitative",
+      "requiredReviewedSemanticContracts": 1000,
+      "approvedUnderNewSpecification": 0,
+      "exactApprovalDeficit": 1000,
+      "families": [
+        {
+          "familyID": "quantitative.proportion",
+          "required": 125,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 125
+        },
+        {
+          "familyID": "quantitative.fermi",
+          "required": 125,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 125
+        },
+        {
+          "familyID": "quantitative.unit-bridge",
+          "required": 125,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 125
+        },
+        {
+          "familyID": "quantitative.scaling",
+          "required": 125,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 125
+        },
+        {
+          "familyID": "quantitative.bayes",
+          "required": 125,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 125
+        },
+        {
+          "familyID": "quantitative.expected-value",
+          "required": 125,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 125
+        },
+        {
+          "familyID": "quantitative.regression",
+          "required": 125,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 125
+        },
+        {
+          "familyID": "quantitative.interval",
+          "required": 125,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 125
+        }
+      ],
+      "specifiedFamilyQuotaTotal": 1000,
+      "unallocatedRequiredSlots": 0
+    },
+    {
+      "lab": "scientificReasoning",
+      "requiredReviewedSemanticContracts": 1000,
+      "approvedUnderNewSpecification": 0,
+      "exactApprovalDeficit": 1000,
+      "families": [
+        {
+          "familyID": "science.claim-evidence",
+          "required": 112,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 112
+        },
+        {
+          "familyID": "science.confound",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "science.next-experiment",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "science.figure-uncertainty",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "science.bias-repair",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "science.competing-predictions",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "science.reviewer",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "science.experiment-sequence",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "science.paper-sprint",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        }
+      ],
+      "specifiedFamilyQuotaTotal": 1000,
+      "unallocatedRequiredSlots": 0
+    },
+    {
+      "lab": "logicDebugging",
+      "requiredReviewedSemanticContracts": 1000,
+      "approvedUnderNewSpecification": 0,
+      "exactApprovalDeficit": 1000,
+      "families": [
+        {
+          "familyID": "logic.state-trace",
+          "required": 112,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 112
+        },
+        {
+          "familyID": "logic.conditions",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "logic.counterexample",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "logic.proof-builder",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "logic.invalid-step",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "logic.boundary-bug",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "logic.complexity",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "logic.loop-repair",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        },
+        {
+          "familyID": "logic.calibration",
+          "required": 111,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 111
+        }
+      ],
+      "specifiedFamilyQuotaTotal": 1000,
+      "unallocatedRequiredSlots": 0
+    },
+    {
+      "lab": "retrieval",
+      "requiredReviewedSemanticContracts": 1000,
+      "approvedUnderNewSpecification": 0,
+      "exactApprovalDeficit": 1000,
+      "families": [
+        {
+          "familyID": "retrieval.free-recall",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "retrieval.precision-recall",
+          "required": 160,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 160
+        },
+        {
+          "familyID": "retrieval.cloze",
+          "required": 140,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 140
+        },
+        {
+          "familyID": "retrieval.teach-back",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "retrieval.recognition",
+          "required": 120,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 120
+        },
+        {
+          "familyID": "retrieval.repair-cycle",
+          "required": 20,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 20
+        },
+        {
+          "familyID": "retrieval.equation",
+          "required": 140,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 140
+        },
+        {
+          "familyID": "retrieval.figure",
+          "required": 100,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 100
+        },
+        {
+          "familyID": "retrieval.source-filter",
+          "required": 20,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 20
+        }
+      ],
+      "specifiedFamilyQuotaTotal": 900,
+      "unallocatedRequiredSlots": 100,
+      "specificationContradiction": "CON-014 retrieval rendering quotas total 900; the claimed 1000 total and 125\u00d78 field quotas require 100 additional assignments. No allocation invented."
+    },
+    {
+      "lab": "transfer",
+      "requiredReviewedSemanticContracts": 1000,
+      "approvedUnderNewSpecification": 0,
+      "exactApprovalDeficit": 1000,
+      "families": [
+        {
+          "familyID": "transfer.sequence",
+          "required": 143,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 143
+        },
+        {
+          "familyID": "transfer.conditions",
+          "required": 143,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 143
+        },
+        {
+          "familyID": "transfer.rate",
+          "required": 143,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 143
+        },
+        {
+          "familyID": "transfer.representation",
+          "required": 143,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 143
+        },
+        {
+          "familyID": "transfer.causal-map",
+          "required": 143,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 143
+        },
+        {
+          "familyID": "transfer.interacting-variables",
+          "required": 143,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 143
+        },
+        {
+          "familyID": "transfer.saturation",
+          "required": 142,
+          "reviewedEligibleCapacity": 0,
+          "deficit": 142
+        }
+      ],
+      "specifiedFamilyQuotaTotal": 1000,
+      "unallocatedRequiredSlots": 0
+    }
+  ]
+}

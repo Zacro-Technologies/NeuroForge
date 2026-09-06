@@ -1,0 +1,2114 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project NeuroForge.xcodeproj -scheme NeuroForgeUISmoke -destination "platform=iOS Simulator,id=064C7C8F-D941-4D8C-9B55-958F4123AF02" -derivedDataPath /tmp/NeuroForge-improvement-ios CODE_SIGNING_ALLOWED=NO "-only-testing:NeuroForgeUITests/NavigationSmokeUITests/testWeeklyChartDataOpensExactSavedAnswerHistory" "-only-testing:NeuroForgeUITests/NavigationSmokeUITests/testSourceRecallColdRelaunchPreservesDraftReferenceAndNeutralResult" "-only-testing:NeuroForgeUITests/NavigationSmokeUITests/testQuantitativeNumberAndUnitShowFeedbackAndAdvance" "-only-testing:NeuroForgeUITests/NavigationSmokeUITests/testTransferMultipleSelectionsShowFeedbackAndEndAtFiniteCapacity" "-only-testing:NeuroForgeUITests/NavigationSmokeUITests/testLogicStateInputsAndInvariantShowFeedbackAndAdvance" test-without-building
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  SwiftMath: https://github.com/mgriebling/SwiftMath.git @ 1d2c908
+
+2026-09-05 05:28:13.889277-0400 NeuroForgeUITests-Runner[33952:3960001] [Default] Running tests...
+objc[33952]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x106828310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x1068c4398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-05 05:28:16.103.
+Test Suite 'NeuroForgeUITests.xctest' started at 2026-09-05 05:28:16.107.
+Test Suite 'NavigationSmokeUITests' started at 2026-09-05 05:28:16.107.
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testLogicStateInputsAndInvariantShowFeedbackAndAdvance]' started.
+    t =     0.00s Start Test at 2026-09-05 05:28:16.109
+    t =     0.67s Set Up
+    t =     0.68s Open com.zacrotech.NeuroForge
+    t =     0.68s     Launch com.zacrotech.NeuroForge
+2026-09-05 05:28:17.779 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-05 05:28:17.780 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     3.62s         Setting up automation session
+    t =     5.81s         Wait for com.zacrotech.NeuroForge to idle
+    t =     8.97s Waiting 15.0s for "universal-session" Any to exist
+    t =    10.01s     Checking `Expect predicate `existsNoRetry == 1` for object "universal-session" Any`
+    t =    10.01s         Checking existence of `"universal-session" Any`
+    t =    10.36s Waiting 3.0s for "session-resume" Any to exist
+    t =    11.40s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =    11.40s         Checking existence of `"session-resume" Any`
+    t =    11.53s         Capturing element debug description
+    t =    12.36s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =    12.36s         Checking existence of `"session-resume" Any`
+    t =    12.48s         Capturing element debug description
+    t =    13.36s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =    13.37s         Checking existence of `"session-resume" Any`
+    t =    13.48s         Capturing element debug description
+    t =    13.48s     Checking existence of `"session-resume" Any`
+    t =    13.59s Collecting debug information to assist test failure triage
+    t =    13.59s     Requesting snapshot of accessibility hierarchy for app with pid 33984
+    t =    13.75s Waiting 8.0s for "session-position" Any to exist
+    t =    14.78s     Checking `Expect predicate `existsNoRetry == 1` for object "session-position" Any`
+    t =    14.78s         Checking existence of `"session-position" Any`
+    t =    14.93s Find the "session-position" Any
+    t =    15.04s Waiting 8.0s for "session-prompt" Any to exist
+    t =    16.07s     Checking `Expect predicate `existsNoRetry == 1` for object "session-prompt" Any`
+    t =    16.07s         Checking existence of `"session-prompt" Any`
+    t =    16.20s Find the "session-prompt" Any
+    t =    16.34s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    16.41s Find the ScrollView (Element at index 0)
+    t =    16.54s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    16.60s Checking existence of `Keyboard (First Match)`
+    t =    16.71s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    16.78s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    16.85s Checking existence of `Button (First Match)`
+    t =    16.88s Find the Button (First Match)
+    t =    16.92s Checking existence of `"session-submit" Any`
+    t =    17.07s Find the "session-submit" Any
+    t =    17.20s Find the "session-submit" Button
+    t =    17.32s Checking existence of `"session-next" Any`
+    t =    17.44s Checking existence of `"ready must equal (count <= 7)" Button`
+    t =    17.47s Find the "ready must equal (count <= 7)" Button
+    t =    17.52s Checking existence of `"ready must equal (count <= 7)" Button`
+    t =    17.56s Find the "ready must equal (count <= 7)" Button
+    t =    17.60s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    17.67s Checking existence of `"ready must equal (count <= 7)" Button`
+    t =    17.70s Find the "ready must equal (count <= 7)" Button
+    t =    17.74s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 506.5) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 347.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    17.74s     Wait for com.zacrotech.NeuroForge to idle
+    t =    17.75s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    17.81s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    18.03s     Synthesize event
+    t =    18.03s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    18.09s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    18.15s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    18.20s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    18.26s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    19.59s     Wait for com.zacrotech.NeuroForge to idle
+    t =    19.59s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    19.67s Find the ScrollView (Element at index 0)
+    t =    19.73s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    19.80s Checking existence of `Keyboard (First Match)`
+    t =    19.92s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    19.99s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    20.06s Checking existence of `"ready must equal (count <= 7)" Button`
+    t =    20.09s Find the "ready must equal (count <= 7)" Button
+    t =    20.12s Checking existence of `"session-submit" Any`
+    t =    20.24s Find the "session-submit" Any
+    t =    20.35s Find the "session-submit" Button
+    t =    20.46s Checking existence of `"session-next" Any`
+    t =    20.57s Checking existence of `"ready must equal (count <= 7)" Button`
+    t =    20.60s Find the "ready must equal (count <= 7)" Button
+    t =    20.65s Find the "ready must equal (count <= 7)" Button
+    t =    20.69s Find the "ready must equal (count <= 7)" Button
+    t =    20.73s Checking existence of `"ready must equal (count <= 7)" Button`
+    t =    20.76s Find the "ready must equal (count <= 7)" Button
+    t =    20.80s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    20.87s Checking existence of `"ready must equal (count <= 7)" Button`
+    t =    20.90s Find the "ready must equal (count <= 7)" Button
+    t =    20.94s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 506.5) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 490.5) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    20.94s     Wait for com.zacrotech.NeuroForge to idle
+    t =    20.94s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    21.00s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    21.07s     Synthesize event
+    t =    21.07s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    21.13s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    21.19s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    21.25s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    21.31s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    21.94s     Wait for com.zacrotech.NeuroForge to idle
+    t =    23.38s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    23.46s Find the ScrollView (Element at index 0)
+    t =    23.53s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    23.59s Checking existence of `Keyboard (First Match)`
+    t =    23.70s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    23.76s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    23.82s Checking existence of `"ready must equal (count <= 7)" Button`
+    t =    23.86s Find the "ready must equal (count <= 7)" Button
+    t =    23.89s Checking existence of `"session-submit" Any`
+    t =    23.99s Find the "session-submit" Any
+    t =    24.09s Find the "session-submit" Button
+    t =    24.20s Checking existence of `"session-next" Any`
+    t =    24.31s Checking existence of `"ready must equal (count <= 7)" Button`
+    t =    24.34s Find the "ready must equal (count <= 7)" Button
+    t =    24.39s Find the "ready must equal (count <= 7)" Button
+    t =    24.42s Find the "ready must equal (count <= 7)" Button
+    t =    24.46s Tap "ready must equal (count <= 7)" Button
+    t =    24.46s     Wait for com.zacrotech.NeuroForge to idle
+    t =    24.63s     Find the "ready must equal (count <= 7)" Button
+    t =    24.67s     Check for interrupting elements affecting "ready must equal (count <= 7)" Button
+    t =    24.75s     Synthesize event
+    t =    25.05s     Wait for com.zacrotech.NeuroForge to idle
+    t =    26.79s Checking `Expect predicate `selected == 1` for object "ready must equal (count <= 7)" Button`
+    t =    26.80s     Find the "ready must equal (count <= 7)" Button
+    t =    26.84s Waiting 8.0s for "Response for count" TextField to exist
+    t =    27.88s     Checking `Expect predicate `existsNoRetry == 1` for object "Response for count" TextField`
+    t =    27.88s         Checking existence of `"Response for count" TextField`
+    t =    28.08s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    28.18s Find the ScrollView (Element at index 0)
+    t =    28.26s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    28.32s Checking existence of `Keyboard (First Match)`
+    t =    28.43s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    28.50s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    28.56s Checking existence of `"Response for count" TextField`
+    t =    28.66s Find the "Response for count" TextField
+    t =    28.75s Checking existence of `"session-submit" Any`
+    t =    28.85s Find the "session-submit" Any
+    t =    28.96s Find the "session-submit" Button
+    t =    29.07s Checking existence of `"session-next" Any`
+    t =    29.17s Checking existence of `"Response for count" TextField`
+    t =    29.26s Find the "Response for count" TextField
+    t =    29.37s Find the "Response for count" TextField
+    t =    29.47s Find the "Response for count" TextField
+    t =    29.57s Find the "Response for count" TextField
+    t =    29.68s Tap "Response for count" TextField
+    t =    29.68s     Wait for com.zacrotech.NeuroForge to idle
+    t =    29.68s     Find the "Response for count" TextField
+    t =    29.78s     Check for interrupting elements affecting "Response for count" TextField
+    t =    29.86s     Synthesize event
+    t =    30.15s     Wait for com.zacrotech.NeuroForge to idle
+    t =    31.14s Type '0' into "Response for count" TextField
+    t =    31.14s     Wait for com.zacrotech.NeuroForge to idle
+    t =    31.50s     Find the "Response for count" TextField
+    t =    31.62s     Check for interrupting elements affecting "Response for count" TextField
+    t =    31.70s     Synthesize event
+    t =    31.92s     Wait for com.zacrotech.NeuroForge to idle
+    t =    33.38s Checking `Expect predicate `value == "0"` for object "Response for count" TextField`
+    t =    33.38s     Find the "Response for count" TextField
+    t =    33.50s Type '
+' into "Response for count" TextField
+    t =    33.50s     Wait for com.zacrotech.NeuroForge to idle
+    t =    33.51s     Find the "Response for count" TextField
+    t =    33.62s     Check for interrupting elements affecting "Response for count" TextField
+    t =    33.71s     Synthesize event
+    t =    33.93s     Wait for com.zacrotech.NeuroForge to idle
+    t =    34.65s Waiting 8.0s for "Response for ready" TextField to exist
+    t =    35.69s     Checking `Expect predicate `existsNoRetry == 1` for object "Response for ready" TextField`
+    t =    35.69s         Checking existence of `"Response for ready" TextField`
+    t =    35.80s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    35.86s Find the ScrollView (Element at index 0)
+    t =    35.94s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    36.00s Checking existence of `Keyboard (First Match)`
+    t =    36.02s Find the Keyboard (First Match)
+    t =    36.04s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    36.12s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    36.20s Checking existence of `"Response for ready" TextField`
+    t =    36.34s Find the "Response for ready" TextField
+    t =    36.45s Checking existence of `"session-submit" Any`
+    t =    36.56s Find the "session-submit" Any
+    t =    36.70s Find the "session-submit" Button
+    t =    36.81s Checking existence of `"session-next" Any`
+    t =    36.93s Checking existence of `"Response for ready" TextField`
+    t =    37.04s Find the "Response for ready" TextField
+    t =    37.14s Find the "Response for ready" TextField
+    t =    37.25s Find the "Response for ready" TextField
+    t =    37.37s Find the "Response for ready" TextField
+    t =    37.47s Tap "Response for ready" TextField
+    t =    37.47s     Wait for com.zacrotech.NeuroForge to idle
+    t =    37.47s     Find the "Response for ready" TextField
+    t =    37.58s     Check for interrupting elements affecting "Response for ready" TextField
+    t =    37.67s     Synthesize event
+    t =    37.97s     Wait for com.zacrotech.NeuroForge to idle
+    t =    38.08s Type 'true' into "Response for ready" TextField
+    t =    38.08s     Wait for com.zacrotech.NeuroForge to idle
+    t =    38.09s     Find the "Response for ready" TextField
+    t =    38.21s     Check for interrupting elements affecting "Response for ready" TextField
+    t =    38.29s     Synthesize event
+    t =    38.56s     Wait for com.zacrotech.NeuroForge to idle
+    t =    39.84s Checking `Expect predicate `value == "true"` for object "Response for ready" TextField`
+    t =    39.85s     Find the "Response for ready" TextField
+    t =    39.96s Get all elements bound by index for: Descendants matching type TextField
+    t =    40.03s Find the TextField (Element at index 0)
+    t =    40.09s Find the TextField (Element at index 1)
+    t =    40.16s Get all elements bound by index for: Descendants matching type TextView
+    t =    40.22s Waiting 8.0s for "session-submit" Any to exist
+    t =    41.25s     Checking `Expect predicate `existsNoRetry == 1` for object "session-submit" Any`
+    t =    41.25s         Checking existence of `"session-submit" Any`
+    t =    41.39s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    41.45s Find the ScrollView (Element at index 0)
+    t =    41.53s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    41.59s Checking existence of `Keyboard (First Match)`
+    t =    41.60s Find the Keyboard (First Match)
+    t =    41.62s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    41.69s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    41.76s Checking existence of `"session-submit" Any`
+    t =    41.86s Find the "session-submit" Any
+    t =    41.98s Checking existence of `"session-submit" Button`
+    t =    42.09s Find the "session-submit" Button
+    t =    42.21s Find the "session-submit" Button
+    t =    42.32s Find the "session-submit" Button
+    t =    43.47s Checking `Expect predicate `enabled == 1` for object "session-submit" Button`
+    t =    43.47s     Find the "session-submit" Button
+    t =    43.61s Tap "session-submit" Button
+    t =    43.61s     Wait for com.zacrotech.NeuroForge to idle
+    t =    43.61s     Find the "session-submit" Button
+    t =    43.71s     Check for interrupting elements affecting "session-submit" Button
+    t =    43.79s     Synthesize event
+    t =    44.09s     Wait for com.zacrotech.NeuroForge to idle
+    t =    44.29s Waiting 8.0s for "session-next" Any to exist
+    t =    45.33s     Checking `Expect predicate `existsNoRetry == 1` for object "session-next" Any`
+    t =    45.34s         Checking existence of `"session-next" Any`
+    t =    45.48s Find the "session-position" ProgressIndicator
+    t =    45.58s Find the "session-prompt" Any
+    t =    45.68s Checking existence of `"Your answer" StaticText`
+    t =    45.79s Checking existence of `"Response for count" TextField`
+    t =    45.85s Find the "Response for count" TextField
+    t =    45.92s Find the "Response for count" TextField
+    t =    45.99s Checking existence of `"Response for ready" TextField`
+    t =    46.04s Find the "Response for ready" TextField
+    t =    46.11s Find the "Response for ready" TextField
+    t =    46.17s Waiting 8.0s for "session-feedback-title" Any to exist
+    t =    47.18s     Checking `Expect predicate `existsNoRetry == 1` for object "session-feedback-title" Any`
+    t =    47.18s         Checking existence of `"session-feedback-title" Any`
+    t =    47.30s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    47.36s Find the ScrollView (Element at index 0)
+    t =    47.43s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.48s Checking existence of `Keyboard (First Match)`
+    t =    47.60s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    47.66s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    47.72s Checking existence of `"session-feedback-title" Any`
+    t =    47.83s Find the "session-feedback-title" Any
+    t =    47.93s Checking existence of `"session-submit" Any`
+    t =    48.02s Checking existence of `"session-next" Any`
+    t =    48.12s Find the "session-next" Any
+    t =    48.23s Find the "session-next" Button
+    t =    48.33s Checking existence of `"session-feedback-title" StaticText`
+    t =    48.43s Find the "session-feedback-title" StaticText
+    t =    48.54s Find the "session-feedback-title" StaticText
+    t =    48.65s Checking existence of `"session-feedback-title" StaticText`
+    t =    48.76s Find the "session-feedback-title" StaticText
+    t =    48.87s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    48.95s Checking existence of `"session-feedback-title" StaticText`
+    t =    49.06s Find the "session-feedback-title" StaticText
+    t =    49.16s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 248.5) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 264.5) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    49.16s     Wait for com.zacrotech.NeuroForge to idle
+    t =    49.17s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.22s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    49.31s     Synthesize event
+    t =    49.31s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.36s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.42s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.47s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.53s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    50.16s     Wait for com.zacrotech.NeuroForge to idle
+    t =    51.29s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    51.37s Find the ScrollView (Element at index 0)
+    t =    51.44s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    51.49s Checking existence of `Keyboard (First Match)`
+    t =    51.59s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    51.66s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    51.72s Checking existence of `"session-feedback-title" StaticText`
+    t =    51.82s Find the "session-feedback-title" StaticText
+    t =    51.92s Checking existence of `"session-submit" Any`
+    t =    52.01s Checking existence of `"session-next" Any`
+    t =    52.11s Find the "session-next" Any
+    t =    52.22s Find the "session-next" Button
+    t =    52.32s Checking existence of `"session-feedback-title" StaticText`
+    t =    52.43s Find the "session-feedback-title" StaticText
+    t =    52.54s Find the "session-feedback-title" StaticText
+    t =    52.64s Find the "session-feedback-title" StaticText
+    t =    52.75s Find the "session-feedback-title" StaticText
+    t =    52.86s Find the "session-feedback-title" StaticText
+    t =    52.95s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    53.01s Find the ScrollView (Element at index 0)
+    t =    53.09s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    53.15s Checking existence of `Keyboard (First Match)`
+    t =    53.28s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    53.34s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    53.40s Checking existence of `"session-next" Any`
+    t =    53.50s Find the "session-next" Any
+    t =    53.61s Checking existence of `"session-next" Button`
+    t =    53.70s Find the "session-next" Button
+    t =    53.82s Find the "session-next" Button
+    t =    53.93s Find the "session-next" Button
+    t =    54.03s Find the "session-next" Button
+    t =    54.15s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    54.39s Added attachment named 'lab-response-feedback-logic.state-trace-en'
+    t =    54.39s Press "session-next" Button for 0.1 seconds
+    t =    54.39s     Wait for com.zacrotech.NeuroForge to idle
+    t =    54.40s     Find the "session-next" Button
+    t =    54.50s     Check for interrupting elements affecting "session-next" Button
+    t =    54.57s     Synthesize event
+    t =    54.95s     Wait for com.zacrotech.NeuroForge to idle
+    t =    55.98s Checking `Expect predicate `value == "2 / 5"` for object "session-position" ProgressIndicator`
+    t =    55.99s     Find the "session-position" ProgressIndicator
+    t =    56.11s Waiting 8.0s for "session-submit" Any to exist
+    t =    57.14s     Checking `Expect predicate `existsNoRetry == 1` for object "session-submit" Any`
+    t =    57.15s         Checking existence of `"session-submit" Any`
+    t =    57.28s Terminate com.zacrotech.NeuroForge:33984
+    t =    58.38s Tear Down
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testLogicStateInputsAndInvariantShowFeedbackAndAdvance]' passed (58.486 seconds).
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testQuantitativeNumberAndUnitShowFeedbackAndAdvance]' started.
+    t =     0.00s Start Test at 2026-09-05 05:29:14.597
+    t =     0.05s Set Up
+    t =     0.05s Open com.zacrotech.NeuroForge
+    t =     0.05s     Launch com.zacrotech.NeuroForge
+2026-09-05 05:29:14.671 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-05 05:29:14.671 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.49s         Setting up automation session
+    t =     1.87s         Wait for com.zacrotech.NeuroForge to idle
+    t =     5.83s Waiting 15.0s for "universal-session" Any to exist
+    t =     6.86s     Checking `Expect predicate `existsNoRetry == 1` for object "universal-session" Any`
+    t =     6.86s         Checking existence of `"universal-session" Any`
+    t =     7.20s Waiting 3.0s for "session-resume" Any to exist
+    t =     8.22s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =     8.22s         Checking existence of `"session-resume" Any`
+    t =     8.33s         Capturing element debug description
+    t =     9.24s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =     9.24s         Checking existence of `"session-resume" Any`
+    t =     9.36s         Capturing element debug description
+    t =    10.21s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =    10.21s         Checking existence of `"session-resume" Any`
+    t =    10.33s         Capturing element debug description
+    t =    10.33s     Checking existence of `"session-resume" Any`
+    t =    10.42s Collecting debug information to assist test failure triage
+    t =    10.42s     Requesting snapshot of accessibility hierarchy for app with pid 34312
+    t =    10.55s Waiting 8.0s for "session-position" Any to exist
+    t =    11.58s     Checking `Expect predicate `existsNoRetry == 1` for object "session-position" Any`
+    t =    11.58s         Checking existence of `"session-position" Any`
+    t =    11.69s Find the "session-position" Any
+    t =    11.78s Waiting 8.0s for "session-prompt" Any to exist
+    t =    12.81s     Checking `Expect predicate `existsNoRetry == 1` for object "session-prompt" Any`
+    t =    12.81s         Checking existence of `"session-prompt" Any`
+    t =    12.93s Find the "session-prompt" Any
+    t =    13.02s Waiting 8.0s for "session-numeric-answer" Any to exist
+    t =    14.03s     Checking `Expect predicate `existsNoRetry == 1` for object "session-numeric-answer" Any`
+    t =    14.04s         Checking existence of `"session-numeric-answer" Any`
+    t =    14.14s Checking existence of `"session-numeric-answer" Any`
+    t =    14.25s Find the "session-numeric-answer" Any
+    t =    14.36s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    14.42s Find the ScrollView (Element at index 0)
+    t =    14.49s Swipe up ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    14.49s     Wait for com.zacrotech.NeuroForge to idle
+    t =    14.49s     Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    14.55s     Check for interrupting elements affecting ScrollView
+    t =    14.63s     Synthesize event
+    t =    15.08s     Wait for com.zacrotech.NeuroForge to idle
+    t =    16.12s Checking existence of `"session-numeric-answer" TextField`
+    t =    16.23s Find the "session-numeric-answer" TextField
+    t =    16.33s Find the "session-numeric-answer" TextField
+    t =    16.43s Tap "session-numeric-answer" TextField
+    t =    16.43s     Wait for com.zacrotech.NeuroForge to idle
+    t =    16.43s     Find the "session-numeric-answer" TextField
+    t =    16.52s     Check for interrupting elements affecting "session-numeric-answer" TextField
+    t =    16.59s     Synthesize event
+    t =    16.89s     Wait for com.zacrotech.NeuroForge to idle
+    t =    17.21s Find the "session-numeric-answer" TextField
+    t =    17.42s Type '67.2' into "session-numeric-answer" TextField
+    t =    17.42s     Wait for com.zacrotech.NeuroForge to idle
+    t =    18.41s     Find the "session-numeric-answer" TextField
+    t =    18.53s     Check for interrupting elements affecting "session-numeric-answer" TextField
+    t =    18.60s     Synthesize event
+    t =    18.88s     Wait for com.zacrotech.NeuroForge to idle
+    t =    19.89s Checking `Expect predicate `value == "67.2"` for object "session-numeric-answer" TextField`
+    t =    19.89s     Find the "session-numeric-answer" TextField
+    t =    20.02s Checking existence of `"session-submit" Any`
+    t =    20.11s Find the "session-submit" Any
+    t =    20.22s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    20.28s Find the ScrollView (Element at index 0)
+    t =    20.34s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    20.39s Checking existence of `Keyboard (First Match)`
+    t =    20.41s Find the Keyboard (First Match)
+    t =    20.42s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    20.48s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    20.54s Checking existence of `"session-data-inspection" Button`
+    t =    20.64s Find the "session-data-inspection" Button
+    t =    20.74s Checking existence of `"session-submit" Any`
+    t =    20.88s Find the "session-submit" Any
+    t =    20.99s Find the "session-submit" Button
+    t =    21.11s Checking existence of `"session-next" Any`
+    t =    21.22s Checking existence of `"session-data-inspection" Button`
+    t =    21.32s Find the "session-data-inspection" Button
+    t =    21.45s Checking existence of `"session-data-inspection" Button`
+    t =    21.55s Find the "session-data-inspection" Button
+    t =    21.64s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    21.71s Checking existence of `"session-data-inspection" Button`
+    t =    21.79s Find the "session-data-inspection" Button
+    t =    21.89s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 201.9) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 320.1) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    21.89s     Wait for com.zacrotech.NeuroForge to idle
+    t =    21.89s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    21.94s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    22.01s     Synthesize event
+    t =    22.01s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    22.06s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    22.11s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    22.16s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    22.21s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    23.26s     Wait for com.zacrotech.NeuroForge to idle
+    t =    23.27s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    23.33s Find the ScrollView (Element at index 0)
+    t =    23.40s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    23.45s Checking existence of `Keyboard (First Match)`
+    t =    23.46s Find the Keyboard (First Match)
+    t =    23.48s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    23.54s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    23.60s Checking existence of `"session-data-inspection" Button`
+    t =    23.69s Find the "session-data-inspection" Button
+    t =    23.79s Checking existence of `"session-submit" Any`
+    t =    23.89s Find the "session-submit" Any
+    t =    23.98s Find the "session-submit" Button
+    t =    24.08s Checking existence of `"session-next" Any`
+    t =    24.18s Checking existence of `"session-data-inspection" Button`
+    t =    24.27s Find the "session-data-inspection" Button
+    t =    24.37s Find the "session-data-inspection" Button
+    t =    24.47s Checking existence of `"session-data-inspection" Button`
+    t =    24.56s Find the "session-data-inspection" Button
+    t =    24.67s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    24.73s Checking existence of `"session-data-inspection" Button`
+    t =    24.82s Find the "session-data-inspection" Button
+    t =    24.91s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 201.9) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 249.9) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    24.91s     Wait for com.zacrotech.NeuroForge to idle
+    t =    24.91s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    24.96s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    25.03s     Synthesize event
+    t =    25.03s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    25.09s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    25.14s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    25.19s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    25.24s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    25.98s     Wait for com.zacrotech.NeuroForge to idle
+    t =    25.98s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    26.05s Find the ScrollView (Element at index 0)
+    t =    26.12s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    26.17s Checking existence of `Keyboard (First Match)`
+    t =    26.18s Find the Keyboard (First Match)
+    t =    26.20s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    26.26s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    26.32s Checking existence of `"session-data-inspection" Button`
+    t =    26.41s Find the "session-data-inspection" Button
+    t =    26.50s Checking existence of `"session-submit" Any`
+    t =    26.60s Find the "session-submit" Any
+    t =    26.69s Find the "session-submit" Button
+    t =    26.84s Checking existence of `"session-next" Any`
+    t =    27.00s Checking existence of `"session-data-inspection" Button`
+    t =    27.11s Find the "session-data-inspection" Button
+    t =    27.22s Find the "session-data-inspection" Button
+    t =    27.32s Checking existence of `"session-data-inspection" Button`
+    t =    27.41s Find the "session-data-inspection" Button
+    t =    27.50s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    27.56s Checking existence of `"session-data-inspection" Button`
+    t =    27.65s Find the "session-data-inspection" Button
+    t =    27.75s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 201.9) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 217.9) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    27.75s     Wait for com.zacrotech.NeuroForge to idle
+    t =    27.75s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    27.81s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    27.87s     Synthesize event
+    t =    27.88s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    27.92s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    27.98s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    28.03s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    28.08s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    28.70s     Wait for com.zacrotech.NeuroForge to idle
+    t =    28.70s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    28.76s Find the ScrollView (Element at index 0)
+    t =    28.83s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    28.88s Checking existence of `Keyboard (First Match)`
+    t =    28.89s Find the Keyboard (First Match)
+    t =    28.91s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    28.97s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    29.04s Checking existence of `"session-data-inspection" Button`
+    t =    29.13s Find the "session-data-inspection" Button
+    t =    29.22s Checking existence of `"session-submit" Any`
+    t =    29.32s Find the "session-submit" Any
+    t =    29.45s Find the "session-submit" Button
+    t =    29.57s Checking existence of `"session-next" Any`
+    t =    29.67s Checking existence of `"session-data-inspection" Button`
+    t =    29.78s Find the "session-data-inspection" Button
+    t =    29.90s Find the "session-data-inspection" Button
+    t =    30.01s Find the "session-data-inspection" Button
+    t =    30.11s Tap "session-data-inspection" Button
+    t =    30.11s     Wait for com.zacrotech.NeuroForge to idle
+    t =    30.11s     Find the "session-data-inspection" Button
+    t =    30.20s     Check for interrupting elements affecting "session-data-inspection" Button
+    t =    30.28s     Synthesize event
+    t =    30.58s     Wait for com.zacrotech.NeuroForge to idle
+    t =    30.88s Waiting 5.0s for "Does not meet" Button to exist
+    t =    31.90s     Checking `Expect predicate `existsNoRetry == 1` for object "Does not meet" Button`
+    t =    31.90s         Checking existence of `"Does not meet" Button`
+    t =    32.03s Find the "Does not meet" Button
+    t =    32.15s Tap "Does not meet" Button
+    t =    32.15s     Wait for com.zacrotech.NeuroForge to idle
+    t =    32.15s     Find the "Does not meet" Button
+    t =    32.25s     Check for interrupting elements affecting "Does not meet" Button
+    t =    32.33s     Synthesize event
+    t =    32.63s     Wait for com.zacrotech.NeuroForge to idle
+    t =    34.18s Waiting 5.0s for "session-data-inspected-point" Any to exist
+    t =    35.21s     Checking `Expect predicate `existsNoRetry == 1` for object "session-data-inspected-point" Any`
+    t =    35.22s         Checking existence of `"session-data-inspected-point" Any`
+    t =    35.34s Find the "session-data-inspected-point" Any
+    t =    35.45s Find the "session-data-inspected-point" StaticText
+    t =    35.56s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    35.62s Find the ScrollView (Element at index 0)
+    t =    35.69s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    35.74s Checking existence of `Keyboard (First Match)`
+    t =    35.75s Find the Keyboard (First Match)
+    t =    35.77s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    35.84s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    35.90s Checking existence of `"session-data-table" Button`
+    t =    36.00s Find the "session-data-table" Button
+    t =    36.10s Checking existence of `"session-submit" Any`
+    t =    36.20s Find the "session-submit" Any
+    t =    36.31s Find the "session-submit" Button
+    t =    36.41s Checking existence of `"session-next" Any`
+    t =    36.52s Checking existence of `"session-data-table" Button`
+    t =    36.62s Find the "session-data-table" Button
+    t =    36.74s Find the "session-data-table" Button
+    t =    36.85s Checking existence of `"session-data-table" Button`
+    t =    36.95s Find the "session-data-table" Button
+    t =    37.06s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    37.13s Checking existence of `"session-data-table" Button`
+    t =    37.23s Find the "session-data-table" Button
+    t =    37.34s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 201.9) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 244.4) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    37.34s     Wait for com.zacrotech.NeuroForge to idle
+    t =    37.34s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    37.40s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    37.48s     Synthesize event
+    t =    37.48s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    37.54s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    37.59s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    37.65s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    37.70s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    38.44s     Wait for com.zacrotech.NeuroForge to idle
+    t =    38.45s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    38.51s Find the ScrollView (Element at index 0)
+    t =    38.58s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    38.64s Checking existence of `Keyboard (First Match)`
+    t =    38.65s Find the Keyboard (First Match)
+    t =    38.67s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    38.74s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    38.80s Checking existence of `"session-data-table" Button`
+    t =    38.90s Find the "session-data-table" Button
+    t =    39.00s Checking existence of `"session-submit" Any`
+    t =    39.10s Find the "session-submit" Any
+    t =    39.21s Find the "session-submit" Button
+    t =    39.31s Checking existence of `"session-next" Any`
+    t =    39.42s Checking existence of `"session-data-table" Button`
+    t =    39.52s Find the "session-data-table" Button
+    t =    39.63s Find the "session-data-table" Button
+    t =    39.73s Checking existence of `"session-data-table" Button`
+    t =    39.83s Find the "session-data-table" Button
+    t =    39.94s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    40.00s Checking existence of `"session-data-table" Button`
+    t =    40.10s Find the "session-data-table" Button
+    t =    40.20s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 201.9) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 217.9) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    40.20s     Wait for com.zacrotech.NeuroForge to idle
+    t =    40.21s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    40.26s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    40.34s     Synthesize event
+    t =    40.34s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    40.39s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    40.44s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    40.50s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    40.55s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    41.18s     Wait for com.zacrotech.NeuroForge to idle
+    t =    42.63s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    42.69s Find the ScrollView (Element at index 0)
+    t =    42.77s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    42.82s Checking existence of `Keyboard (First Match)`
+    t =    42.84s Find the Keyboard (First Match)
+    t =    42.85s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    42.92s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    42.99s Checking existence of `"session-data-table" Button`
+    t =    43.09s Find the "session-data-table" Button
+    t =    43.19s Checking existence of `"session-submit" Any`
+    t =    43.30s Find the "session-submit" Any
+    t =    43.41s Find the "session-submit" Button
+    t =    43.52s Checking existence of `"session-next" Any`
+    t =    43.63s Checking existence of `"session-data-table" Button`
+    t =    43.73s Find the "session-data-table" Button
+    t =    43.85s Find the "session-data-table" Button
+    t =    43.96s Find the "session-data-table" Button
+    t =    44.06s Tap "session-data-table" Button
+    t =    44.06s     Wait for com.zacrotech.NeuroForge to idle
+    t =    44.06s     Find the "session-data-table" Button
+    t =    44.16s     Check for interrupting elements affecting "session-data-table" Button
+    t =    44.24s     Synthesize event
+    t =    44.54s     Wait for com.zacrotech.NeuroForge to idle
+    t =    44.54s Waiting 5.0s for Any (First Match) to exist
+    t =    45.55s     Checking `Expect predicate `existsNoRetry == 1` for object Any (First Match)`
+    t =    45.55s         Checking existence of `Any (First Match)`
+    t =    45.60s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    45.67s Find the ScrollView (Element at index 0)
+    t =    45.74s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    45.80s Checking existence of `Keyboard (First Match)`
+    t =    45.81s Find the Keyboard (First Match)
+    t =    45.83s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    45.90s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    45.96s Checking existence of `Any (First Match)`
+    t =    46.00s Find the Any (First Match)
+    t =    46.05s Checking existence of `"session-submit" Any`
+    t =    46.17s Find the "session-submit" Any
+    t =    46.28s Find the "session-submit" Button
+    t =    46.39s Checking existence of `"session-next" Any`
+    t =    46.50s Checking existence of `"session-data-table" StaticText`
+    t =    46.55s Find the "session-data-table" StaticText
+    t =    46.61s Find the "session-data-table" StaticText
+    t =    46.67s Find the "session-data-table" StaticText
+    t =    46.72s Checking existence of `"session-data-table" StaticText`
+    t =    46.77s Find the "session-data-table" StaticText
+    t =    46.82s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    46.89s Checking existence of `"session-data-table" StaticText`
+    t =    46.94s Find the "session-data-table" StaticText
+    t =    46.98s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 320.1) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 270.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    46.98s     Wait for com.zacrotech.NeuroForge to idle
+    t =    46.99s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.05s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    47.12s     Synthesize event
+    t =    47.12s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.18s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.24s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.30s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.36s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    48.10s     Wait for com.zacrotech.NeuroForge to idle
+    t =    48.11s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    48.17s Find the ScrollView (Element at index 0)
+    t =    48.25s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    48.30s Checking existence of `Keyboard (First Match)`
+    t =    48.31s Find the Keyboard (First Match)
+    t =    48.33s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    48.40s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    48.46s Checking existence of `"session-data-table" StaticText`
+    t =    48.51s Find the "session-data-table" StaticText
+    t =    48.55s Checking existence of `"session-submit" Any`
+    t =    48.66s Find the "session-submit" Any
+    t =    48.77s Find the "session-submit" Button
+    t =    48.88s Checking existence of `"session-next" Any`
+    t =    48.99s Checking existence of `"session-data-table" StaticText`
+    t =    49.03s Find the "session-data-table" StaticText
+    t =    49.09s Find the "session-data-table" StaticText
+    t =    49.14s Find the "session-data-table" StaticText
+    t =    49.19s Checking existence of `"session-data-table" StaticText`
+    t =    49.23s Find the "session-data-table" StaticText
+    t =    49.29s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    49.36s Checking existence of `"session-data-table" StaticText`
+    t =    49.40s Find the "session-data-table" StaticText
+    t =    49.45s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 320.1) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 304.1) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    49.45s     Wait for com.zacrotech.NeuroForge to idle
+    t =    49.45s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.51s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    49.58s     Synthesize event
+    t =    49.59s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.64s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.70s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.76s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.82s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    50.45s     Wait for com.zacrotech.NeuroForge to idle
+    t =    51.90s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    51.97s Find the ScrollView (Element at index 0)
+    t =    52.04s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    52.10s Checking existence of `Keyboard (First Match)`
+    t =    52.12s Find the Keyboard (First Match)
+    t =    52.14s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    52.20s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    52.27s Checking existence of `"session-data-table" StaticText`
+    t =    52.32s Find the "session-data-table" StaticText
+    t =    52.37s Checking existence of `"session-submit" Any`
+    t =    52.48s Find the "session-submit" Any
+    t =    52.59s Find the "session-submit" Button
+    t =    52.71s Checking existence of `"session-next" Any`
+    t =    52.82s Checking existence of `"session-data-table" StaticText`
+    t =    52.86s Find the "session-data-table" StaticText
+    t =    52.92s Find the "session-data-table" StaticText
+    t =    52.97s Find the "session-data-table" StaticText
+    t =    53.02s Find the "session-numeric-answer" TextField
+    t =    53.12s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    53.29s Added attachment named 'quantitative-original-count-inspection-table-en'
+    t =    53.29s Waiting 8.0s for "Unit" TextField to exist
+    t =    54.30s     Checking `Expect predicate `existsNoRetry == 1` for object "Unit" TextField`
+    t =    54.31s         Checking existence of `"Unit" TextField`
+    t =    54.42s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    54.48s Find the ScrollView (Element at index 0)
+    t =    54.56s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    54.61s Checking existence of `Keyboard (First Match)`
+    t =    54.63s Find the Keyboard (First Match)
+    t =    54.65s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    54.71s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    54.78s Checking existence of `"Unit" TextField`
+    t =    54.88s Find the "Unit" TextField
+    t =    54.98s Checking existence of `"session-submit" Any`
+    t =    55.09s Find the "session-submit" Any
+    t =    55.20s Find the "session-submit" Button
+    t =    55.31s Checking existence of `"session-next" Any`
+    t =    55.42s Checking existence of `"Unit" TextField`
+    t =    55.53s Find the "Unit" TextField
+    t =    55.65s Checking existence of `"Unit" TextField`
+    t =    55.75s Find the "Unit" TextField
+    t =    55.85s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    55.92s Checking existence of `"Unit" TextField`
+    t =    56.02s Find the "Unit" TextField
+    t =    56.12s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 320.1) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 201.9) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    56.12s     Wait for com.zacrotech.NeuroForge to idle
+    t =    56.12s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    56.18s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    56.26s     Synthesize event
+    t =    56.26s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    56.32s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    56.37s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    56.43s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    56.49s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    57.52s     Wait for com.zacrotech.NeuroForge to idle
+    t =    57.53s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    57.59s Find the ScrollView (Element at index 0)
+    t =    57.66s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    57.72s Checking existence of `Keyboard (First Match)`
+    t =    57.73s Find the Keyboard (First Match)
+    t =    57.75s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    57.82s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    57.88s Checking existence of `"Unit" TextField`
+    t =    57.98s Find the "Unit" TextField
+    t =    58.08s Checking existence of `"session-submit" Any`
+    t =    58.19s Find the "session-submit" Any
+    t =    58.30s Find the "session-submit" Button
+    t =    58.41s Checking existence of `"session-next" Any`
+    t =    58.52s Checking existence of `"Unit" TextField`
+    t =    58.62s Find the "Unit" TextField
+    t =    58.75s Find the "Unit" TextField
+    t =    58.86s Find the "Unit" TextField
+    t =    58.97s Checking existence of `"Unit" TextField`
+    t =    59.08s Find the "Unit" TextField
+    t =    59.19s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    59.25s Checking existence of `"Unit" TextField`
+    t =    59.35s Find the "Unit" TextField
+    t =    59.46s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 320.1) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 297.1) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    59.46s     Wait for com.zacrotech.NeuroForge to idle
+    t =    59.46s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    59.52s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    59.60s     Synthesize event
+    t =    59.60s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    59.65s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    59.71s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    59.77s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    59.83s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    60.49s     Wait for com.zacrotech.NeuroForge to idle
+    t =    60.50s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    60.57s Find the ScrollView (Element at index 0)
+    t =    60.65s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    60.71s Checking existence of `Keyboard (First Match)`
+    t =    60.72s Find the Keyboard (First Match)
+    t =    60.74s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    60.81s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    60.87s Checking existence of `"Unit" TextField`
+    t =    60.97s Find the "Unit" TextField
+    t =    61.07s Checking existence of `"session-submit" Any`
+    t =    61.18s Find the "session-submit" Any
+    t =    61.30s Find the "session-submit" Button
+    t =    61.41s Checking existence of `"session-next" Any`
+    t =    61.51s Checking existence of `"Unit" TextField`
+    t =    61.61s Find the "Unit" TextField
+    t =    61.72s Find the "Unit" TextField
+    t =    61.83s Find the "Unit" TextField
+    t =    61.94s Checking existence of `"Unit" TextField`
+    t =    62.04s Find the "Unit" TextField
+    t =    62.18s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    62.25s Checking existence of `"Unit" TextField`
+    t =    62.35s Find the "Unit" TextField
+    t =    62.45s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 320.1) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 304.1) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    62.45s     Wait for com.zacrotech.NeuroForge to idle
+    t =    62.45s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    62.51s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    62.58s     Synthesize event
+    t =    62.59s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    62.64s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    62.70s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    62.76s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    62.82s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    63.44s     Wait for com.zacrotech.NeuroForge to idle
+    t =    64.89s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    64.96s Find the ScrollView (Element at index 0)
+    t =    65.04s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    65.11s Checking existence of `Keyboard (First Match)`
+    t =    65.12s Find the Keyboard (First Match)
+    t =    65.14s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    65.21s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    65.27s Checking existence of `"Unit" TextField`
+    t =    65.38s Find the "Unit" TextField
+    t =    65.51s Checking existence of `"session-submit" Any`
+    t =    65.64s Find the "session-submit" Any
+    t =    65.75s Find the "session-submit" Button
+    t =    65.87s Checking existence of `"session-next" Any`
+    t =    65.98s Checking existence of `"Unit" TextField`
+    t =    66.09s Find the "Unit" TextField
+    t =    66.22s Find the "Unit" TextField
+    t =    66.34s Find the "Unit" TextField
+    t =    66.45s Find the "Unit" TextField
+    t =    66.56s Tap "Unit" TextField
+    t =    66.56s     Wait for com.zacrotech.NeuroForge to idle
+    t =    66.56s     Find the "Unit" TextField
+    t =    66.66s     Check for interrupting elements affecting "Unit" TextField
+    t =    66.74s     Synthesize event
+    t =    67.04s     Wait for com.zacrotech.NeuroForge to idle
+    t =    67.28s Type '%' into "Unit" TextField
+    t =    67.28s     Wait for com.zacrotech.NeuroForge to idle
+    t =    68.20s     Find the "Unit" TextField
+    t =    68.33s     Check for interrupting elements affecting "Unit" TextField
+    t =    68.42s     Synthesize event
+    t =    68.64s     Wait for com.zacrotech.NeuroForge to idle
+    t =    69.65s Checking `Expect predicate `value == "%"` for object "Unit" TextField`
+    t =    69.65s     Find the "Unit" TextField
+    t =    69.76s Get all elements bound by index for: Descendants matching type TextField
+    t =    69.82s Find the TextField (Element at index 0)
+    t =    69.89s Find the TextField (Element at index 1)
+    t =    69.95s Get all elements bound by index for: Descendants matching type TextView
+    t =    70.01s Waiting 8.0s for "session-submit" Any to exist
+    t =    71.02s     Checking `Expect predicate `existsNoRetry == 1` for object "session-submit" Any`
+    t =    71.02s         Checking existence of `"session-submit" Any`
+    t =    71.15s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    71.21s Find the ScrollView (Element at index 0)
+    t =    71.29s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    71.35s Checking existence of `Keyboard (First Match)`
+    t =    71.36s Find the Keyboard (First Match)
+    t =    71.38s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    71.45s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    71.51s Checking existence of `"session-submit" Any`
+    t =    71.62s Find the "session-submit" Any
+    t =    71.73s Checking existence of `"session-submit" Button`
+    t =    71.83s Find the "session-submit" Button
+    t =    71.95s Find the "session-submit" Button
+    t =    72.07s Find the "session-submit" Button
+    t =    73.21s Checking `Expect predicate `enabled == 1` for object "session-submit" Button`
+    t =    73.21s     Find the "session-submit" Button
+    t =    73.33s Tap "session-submit" Button
+    t =    73.33s     Wait for com.zacrotech.NeuroForge to idle
+    t =    73.34s     Find the "session-submit" Button
+    t =    73.45s     Check for interrupting elements affecting "session-submit" Button
+    t =    73.53s     Synthesize event
+    t =    73.83s     Wait for com.zacrotech.NeuroForge to idle
+    t =    73.98s Waiting 8.0s for "session-next" Any to exist
+    t =    74.99s     Checking `Expect predicate `existsNoRetry == 1` for object "session-next" Any`
+    t =    74.99s         Checking existence of `"session-next" Any`
+    t =    75.10s Find the "session-position" ProgressIndicator
+    t =    75.20s Find the "session-prompt" Any
+    t =    75.30s Checking existence of `"Your answer" StaticText`
+    t =    75.40s Checking existence of `"session-numeric-answer" TextField`
+    t =    75.46s Find the "session-numeric-answer" TextField
+    t =    75.52s Find the "session-numeric-answer" TextField
+    t =    75.58s Checking existence of `"Unit" TextField`
+    t =    75.63s Find the "Unit" TextField
+    t =    75.70s Find the "Unit" TextField
+    t =    75.76s Waiting 8.0s for "session-feedback-title" Any to exist
+    t =    76.76s     Checking `Expect predicate `existsNoRetry == 1` for object "session-feedback-title" Any`
+    t =    76.76s         Checking existence of `"session-feedback-title" Any`
+    t =    76.87s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    76.93s Find the ScrollView (Element at index 0)
+    t =    77.00s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    77.05s Checking existence of `Keyboard (First Match)`
+    t =    77.16s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    77.23s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    77.29s Checking existence of `"session-feedback-title" Any`
+    t =    77.40s Find the "session-feedback-title" Any
+    t =    77.51s Checking existence of `"session-submit" Any`
+    t =    77.62s Checking existence of `"session-next" Any`
+    t =    77.72s Find the "session-next" Any
+    t =    77.83s Find the "session-next" Button
+    t =    77.94s Checking existence of `"session-feedback-title" StaticText`
+    t =    78.04s Find the "session-feedback-title" StaticText
+    t =    78.16s Find the "session-feedback-title" StaticText
+    t =    78.27s Find the "session-feedback-title" StaticText
+    t =    78.37s Find the "session-feedback-title" StaticText
+    t =    78.49s Find the "session-feedback-title" StaticText
+    t =    78.60s Find the "session-feedback-title" StaticText
+    t =    78.72s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    78.78s Find the ScrollView (Element at index 0)
+    t =    78.85s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    78.91s Checking existence of `Keyboard (First Match)`
+    t =    79.02s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    79.09s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    79.15s Checking existence of `"session-next" Any`
+    t =    79.26s Find the "session-next" Any
+    t =    79.36s Checking existence of `"session-next" Button`
+    t =    79.46s Find the "session-next" Button
+    t =    79.58s Find the "session-next" Button
+    t =    79.68s Find the "session-next" Button
+    t =    79.80s Find the "session-next" Button
+    t =    79.91s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    80.08s Added attachment named 'lab-response-feedback-quantitative.proportion-en'
+    t =    80.08s Press "session-next" Button for 0.1 seconds
+    t =    80.08s     Wait for com.zacrotech.NeuroForge to idle
+    t =    80.08s     Find the "session-next" Button
+    t =    80.19s     Check for interrupting elements affecting "session-next" Button
+    t =    80.26s     Synthesize event
+    t =    80.64s     Wait for com.zacrotech.NeuroForge to idle
+    t =    81.76s Checking `Expect predicate `value == "2 / 5"` for object "session-position" ProgressIndicator`
+    t =    81.77s     Find the "session-position" ProgressIndicator
+    t =    81.88s Waiting 8.0s for "session-submit" Any to exist
+    t =    82.89s     Checking `Expect predicate `existsNoRetry == 1` for object "session-submit" Any`
+    t =    82.89s         Checking existence of `"session-submit" Any`
+    t =    83.02s Terminate com.zacrotech.NeuroForge:34312
+    t =    84.11s Tear Down
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testQuantitativeNumberAndUnitShowFeedbackAndAdvance]' passed (84.220 seconds).
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testSourceRecallColdRelaunchPreservesDraftReferenceAndNeutralResult]' started.
+    t =     0.00s Start Test at 2026-09-05 05:30:38.820
+    t =     0.05s Set Up
+    t =     0.05s Open com.zacrotech.NeuroForge
+    t =     0.05s     Launch com.zacrotech.NeuroForge
+2026-09-05 05:30:38.904 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-05 05:30:38.904 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.50s         Setting up automation session
+    t =     1.98s         Wait for com.zacrotech.NeuroForge to idle
+    t =     4.66s Waiting 15.0s for "destination-today" Any to exist
+    t =     5.66s     Checking `Expect predicate `existsNoRetry == 1` for object "destination-today" Any`
+    t =     5.66s         Checking existence of `"destination-today" Any`
+    t =     5.92s Tap "Sources" Button
+    t =     5.92s     Wait for com.zacrotech.NeuroForge to idle
+    t =     5.93s     Find the "Sources" Button
+    t =     5.97s     Check for interrupting elements affecting "Sources" Button
+    t =     6.00s     Synthesize event
+    t =     6.30s     Wait for com.zacrotech.NeuroForge to idle
+    t =     8.28s Checking existence of `Button (First Match)`
+    t =     8.34s Find the Button (First Match)
+    t =     8.41s Get all elements bound by index for: Descendants matching type ScrollView
+    t =     8.44s Find the ScrollView (Element at index 0)
+    t =     8.48s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =     8.48s     Wait for com.zacrotech.NeuroForge to idle
+    t =     8.49s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =     8.52s     Check for interrupting elements affecting ScrollView
+    t =     8.56s     Synthesize event
+    t =     9.02s     Wait for com.zacrotech.NeuroForge to idle
+    t =    10.84s Checking existence of `"UI Study Source.txt, 86 bytes · Sep 5, 2026, Index ready, Offline questions allowed, Ready offline" Button`
+    t =    10.89s Find the "UI Study Source.txt, 86 bytes · Sep 5, 2026, Index ready, Offline questions allowed, Ready offline" Button
+    t =    10.96s Tap "UI Study Source.txt, 86 bytes · Sep 5, 2026, Index ready, Offline questions allowed, Ready offline" Button
+    t =    10.96s     Wait for com.zacrotech.NeuroForge to idle
+    t =    10.96s     Find the "UI Study Source.txt, 86 bytes · Sep 5, 2026, Index ready, Offline questions allowed, Ready offline" Button
+    t =    11.02s     Check for interrupting elements affecting "UI Study Source.txt, 86 bytes · Sep 5, 2026, Index ready, Offline questions allowed, Ready offline" Button
+    t =    11.06s     Synthesize event
+    t =    11.37s     Wait for com.zacrotech.NeuroForge to idle
+    t =    11.50s Checking existence of `"Review from memory" Button`
+    t =    11.60s Find the "Review from memory" Button
+    t =    11.70s Find the "Review from memory" Button
+    t =    11.77s Tap "Review from memory" Button
+    t =    11.77s     Wait for com.zacrotech.NeuroForge to idle
+    t =    12.48s     Find the "Review from memory" Button
+    t =    12.52s     Check for interrupting elements affecting "Review from memory" Button
+    t =    12.57s     Synthesize event
+    t =    12.87s     Wait for com.zacrotech.NeuroForge to idle
+    t =    13.44s Waiting 10.0s for "universal-session" Any to exist
+    t =    14.47s     Checking `Expect predicate `existsNoRetry == 1` for object "universal-session" Any`
+    t =    14.49s         Checking existence of `"universal-session" Any`
+    t =    14.62s Waiting 3.0s for "session-resume" Any to exist
+    t =    15.65s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =    15.66s         Checking existence of `"session-resume" Any`
+    t =    15.72s         Capturing element debug description
+    t =    16.64s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =    16.64s         Checking existence of `"session-resume" Any`
+    t =    16.70s         Capturing element debug description
+    t =    17.62s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =    17.62s         Checking existence of `"session-resume" Any`
+    t =    17.68s         Capturing element debug description
+    t =    17.68s     Checking existence of `"session-resume" Any`
+    t =    17.74s Collecting debug information to assist test failure triage
+    t =    17.74s     Requesting snapshot of accessibility hierarchy for app with pid 34706
+    t =    17.88s Waiting 8.0s for "session-prompt" Any to exist
+    t =    18.89s     Checking `Expect predicate `existsNoRetry == 1` for object "session-prompt" Any`
+    t =    18.91s         Checking existence of `"session-prompt" Any`
+    t =    18.99s Find the "session-prompt" Any
+    t =    19.04s Find the "session-position" Any
+    t =    19.10s Checking existence of `"A triangle has three sides. This synthetic source is used only for navigation testing." StaticText`
+    t =    19.16s Waiting 8.0s for TextView (First Match) to exist
+    t =    20.16s     Checking `Expect predicate `existsNoRetry == 1` for object TextView (First Match)`
+    t =    20.17s         Checking existence of `TextView (First Match)`
+    t =    20.22s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    20.26s Find the ScrollView (Element at index 0)
+    t =    20.39s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    20.44s Checking existence of `Keyboard (First Match)`
+    t =    20.57s Find the ScrollView at {{0.0, 164.5}, {375.0, 502.5}}
+    t =    20.73s Find the ScrollView at {{0.0, 164.5}, {375.0, 502.5}}
+    t =    20.87s Checking existence of `TextView (First Match)`
+    t =    20.96s Find the TextView (First Match)
+    t =    21.00s Checking existence of `"session-submit" Any`
+    t =    21.05s Find the "session-submit" Any
+    t =    21.12s Find the "session-submit" Button
+    t =    21.18s Checking existence of `"session-next" Any`
+    t =    21.25s Checking existence of `"Your answer from memory" TextView`
+    t =    21.32s Find the "Your answer from memory" TextView
+    t =    21.43s Find the "Your answer from memory" TextView
+    t =    21.49s Find the "Your answer from memory" TextView
+    t =    21.55s Find the "Your answer from memory" TextView
+    t =    21.61s Tap "Your answer from memory" TextView
+    t =    21.61s     Wait for com.zacrotech.NeuroForge to idle
+    t =    21.61s     Find the "Your answer from memory" TextView
+    t =    21.66s     Check for interrupting elements affecting "Your answer from memory" TextView
+    t =    21.83s     Synthesize event
+    t =    22.17s     Wait for com.zacrotech.NeuroForge to idle
+    t =    22.50s Type 'A triangle has thr...' into "Your answer from memory" TextView
+    t =    22.50s     Wait for com.zacrotech.NeuroForge to idle
+    t =    23.76s     Find the "Your answer from memory" TextView
+    t =    23.86s     Check for interrupting elements affecting "Your answer from memory" TextView
+    t =    23.94s     Synthesize event
+    t =    24.60s     Wait for com.zacrotech.NeuroForge to idle
+    t =    25.85s Checking `Expect predicate `value == "A triangle has three sides."` for object "Your answer from memory" TextView`
+    t =    25.85s     Find the "Your answer from memory" TextView
+    t =    25.91s Find the "Pause session" Button
+    t =    26.00s Tap "pause.fill" Button
+    t =    26.00s     Wait for com.zacrotech.NeuroForge to idle
+    t =    26.00s     Find the "pause.fill" Button
+    t =    26.06s     Check for interrupting elements affecting "pause.fill" Button
+    t =    26.12s     Synthesize event
+    t =    26.42s     Wait for com.zacrotech.NeuroForge to idle
+    t =    27.21s Waiting 5.0s for "session-save-close" Any to exist
+    t =    28.22s     Checking `Expect predicate `existsNoRetry == 1` for object "session-save-close" Any`
+    t =    28.23s         Checking existence of `"session-save-close" Any`
+    t =    28.28s Tap "session-save-close" Any
+    t =    28.28s     Wait for com.zacrotech.NeuroForge to idle
+    t =    28.28s     Find the "session-save-close" Any
+    t =    28.33s     Check for interrupting elements affecting "session-save-close" Button
+    t =    28.38s     Synthesize event
+    t =    28.67s     Wait for com.zacrotech.NeuroForge to idle
+    t =    29.17s Waiting 8.0s for "Review from memory" Button to exist
+    t =    30.18s     Checking `Expect predicate `existsNoRetry == 1` for object "Review from memory" Button`
+    t =    30.19s         Checking existence of `"Review from memory" Button`
+    t =    30.24s Terminate com.zacrotech.NeuroForge:34706
+    t =    31.29s Open com.zacrotech.NeuroForge
+    t =    31.29s     Launch com.zacrotech.NeuroForge
+2026-09-05 05:31:10.119 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-05 05:31:10.119 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    31.72s         Setting up automation session
+    t =    33.03s         Wait for com.zacrotech.NeuroForge to idle
+    t =    35.62s Waiting 15.0s for "continue-session" Any to exist
+    t =    36.63s     Checking `Expect predicate `existsNoRetry == 1` for object "continue-session" Any`
+    t =    36.63s         Checking existence of `"continue-session" Any`
+    t =    36.79s Checking existence of `"continue-session" Any`
+    t =    36.83s Find the "continue-session" Any
+    t =    36.88s Tap "continue-session" Button
+    t =    36.88s     Wait for com.zacrotech.NeuroForge to idle
+    t =    36.88s     Find the "continue-session" Button
+    t =    36.92s     Check for interrupting elements affecting "continue-session" Button
+    t =    36.96s     Synthesize event
+    t =    37.25s     Wait for com.zacrotech.NeuroForge to idle
+    t =    37.45s Waiting 8.0s for "universal-session" Any to exist
+    t =    38.49s     Checking `Expect predicate `existsNoRetry == 1` for object "universal-session" Any`
+    t =    38.49s         Checking existence of `"universal-session" Any`
+    t =    38.61s Waiting 3.0s for "session-resume" Any to exist
+    t =    39.62s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =    39.62s         Checking existence of `"session-resume" Any`
+    t =    39.68s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    39.85s Added attachment named 'interruption-paused-session-before-explicit-resume'
+    t =    39.85s Find the "session-resume" Any
+    t =    39.92s Press "session-resume" Button for 0.1 seconds
+    t =    39.92s     Wait for com.zacrotech.NeuroForge to idle
+    t =    39.92s     Find the "session-resume" Button
+    t =    39.97s     Check for interrupting elements affecting "session-resume" Button
+    t =    40.01s     Synthesize event
+    t =    40.39s     Wait for com.zacrotech.NeuroForge to idle
+    t =    41.40s Checking `Expect predicate `exists == 0` for object "session-resume" Button`
+    t =    41.41s     Checking existence of `"session-resume" Button`
+    t =    41.48s Find the "session-prompt" Any
+    t =    41.53s Find the "session-position" Any
+    t =    41.58s Waiting 8.0s for TextView (First Match) to exist
+    t =    42.59s     Checking `Expect predicate `existsNoRetry == 1` for object TextView (First Match)`
+    t =    42.59s         Checking existence of `TextView (First Match)`
+    t =    42.62s Find the TextView (First Match)
+    t =    42.66s Checking existence of `"A triangle has three sides. This synthetic source is used only for navigation testing." StaticText`
+    t =    42.71s Waiting 8.0s for "session-submit" Any to exist
+    t =    43.72s     Checking `Expect predicate `existsNoRetry == 1` for object "session-submit" Any`
+    t =    43.72s         Checking existence of `"session-submit" Any`
+    t =    43.77s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    43.80s Find the ScrollView (Element at index 0)
+    t =    43.85s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    43.87s Checking existence of `Keyboard (First Match)`
+    t =    43.96s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    44.00s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    44.04s Checking existence of `"session-submit" Any`
+    t =    44.09s Find the "session-submit" Any
+    t =    44.13s Checking existence of `"session-submit" Button`
+    t =    44.18s Find the "session-submit" Button
+    t =    44.25s Find the "session-submit" Button
+    t =    44.30s Find the "session-submit" Button
+    t =    45.39s Checking `Expect predicate `enabled == 1` for object "session-submit" Button`
+    t =    45.39s     Find the "session-submit" Button
+    t =    45.46s Tap "session-submit" Button
+    t =    45.46s     Wait for com.zacrotech.NeuroForge to idle
+    t =    45.46s     Find the "session-submit" Button
+    t =    45.51s     Check for interrupting elements affecting "session-submit" Button
+    t =    45.56s     Synthesize event
+    t =    45.87s     Wait for com.zacrotech.NeuroForge to idle
+    t =    45.87s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    45.91s Find the ScrollView (Element at index 0)
+    t =    45.95s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    45.99s Checking existence of `Keyboard (First Match)`
+    t =    46.09s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    46.13s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    46.17s Checking existence of `"A triangle has three sides. This synthetic source is used only for navigation testing." StaticText`
+    t =    46.22s Find the "A triangle has three sides. This synthetic source is used only for navigation testing." StaticText
+    t =    46.27s Checking existence of `"session-submit" Any`
+    t =    46.32s Find the "session-submit" Any
+    t =    46.37s Find the "session-submit" Button
+    t =    46.42s Checking existence of `"session-next" Any`
+    t =    46.47s Checking existence of `"A triangle has three sides. This synthetic source is used only for navigation testing." StaticText`
+    t =    46.52s Find the "A triangle has three sides. This synthetic source is used only for navigation testing." StaticText
+    t =    46.58s Find the "A triangle has three sides. This synthetic source is used only for navigation testing." StaticText
+    t =    46.63s Find the "A triangle has three sides. This synthetic source is used only for navigation testing." StaticText
+    t =    46.69s Find the "Your answer from memory" TextView
+    t =    46.71s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    46.74s Find the ScrollView (Element at index 0)
+    t =    46.79s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    46.82s Checking existence of `Keyboard (First Match)`
+    t =    46.91s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    46.95s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    46.99s Checking existence of `"Not yet" Button`
+    t =    47.04s Find the "Not yet" Button
+    t =    47.08s Checking existence of `"session-submit" Any`
+    t =    47.13s Find the "session-submit" Any
+    t =    47.18s Find the "session-submit" Button
+    t =    47.23s Checking existence of `"session-next" Any`
+    t =    47.28s Checking existence of `"Not yet" Button`
+    t =    47.33s Find the "Not yet" Button
+    t =    47.38s Checking existence of `"Not yet" Button`
+    t =    47.43s Find the "Not yet" Button
+    t =    47.48s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    47.52s Checking existence of `"Not yet" Button`
+    t =    47.56s Find the "Not yet" Button
+    t =    47.61s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 506.5) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 289.5) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    47.61s     Wait for com.zacrotech.NeuroForge to idle
+    t =    47.61s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.64s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    47.69s     Synthesize event
+    t =    47.69s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.72s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.75s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.78s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.82s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.24s     Wait for com.zacrotech.NeuroForge to idle
+    t =    49.24s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    49.28s Find the ScrollView (Element at index 0)
+    t =    49.33s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    49.36s Checking existence of `Keyboard (First Match)`
+    t =    49.45s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    49.49s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    49.53s Checking existence of `"Not yet" Button`
+    t =    49.58s Find the "Not yet" Button
+    t =    49.62s Checking existence of `"session-submit" Any`
+    t =    49.67s Find the "session-submit" Any
+    t =    49.72s Find the "session-submit" Button
+    t =    49.78s Checking existence of `"session-next" Any`
+    t =    49.82s Checking existence of `"Not yet" Button`
+    t =    49.87s Find the "Not yet" Button
+    t =    49.93s Find the "Not yet" Button
+    t =    49.99s Find the "Not yet" Button
+    t =    50.05s Checking existence of `"Not yet" Button`
+    t =    50.10s Find the "Not yet" Button
+    t =    50.15s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    50.19s Checking existence of `"Not yet" Button`
+    t =    50.24s Find the "Not yet" Button
+    t =    50.29s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 506.5) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 490.5) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    50.29s     Wait for com.zacrotech.NeuroForge to idle
+    t =    50.29s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    50.33s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    50.37s     Synthesize event
+    t =    50.37s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    50.40s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    50.44s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    50.47s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    50.50s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    51.10s     Wait for com.zacrotech.NeuroForge to idle
+    t =    52.56s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    52.60s Find the ScrollView (Element at index 0)
+    t =    52.64s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    52.67s Checking existence of `Keyboard (First Match)`
+    t =    52.76s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    52.80s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    52.84s Checking existence of `"Not yet" Button`
+    t =    52.89s Find the "Not yet" Button
+    t =    52.93s Checking existence of `"session-submit" Any`
+    t =    52.98s Find the "session-submit" Any
+    t =    53.03s Find the "session-submit" Button
+    t =    53.08s Checking existence of `"session-next" Any`
+    t =    53.13s Checking existence of `"Not yet" Button`
+    t =    53.18s Find the "Not yet" Button
+    t =    53.23s Find the "Not yet" Button
+    t =    53.28s Find the "Not yet" Button
+    t =    53.33s Checking existence of `"Not yet" Button`
+    t =    53.38s Find the "Not yet" Button
+    t =    53.43s Tap "Not yet" Button
+    t =    53.43s     Wait for com.zacrotech.NeuroForge to idle
+    t =    53.43s     Find the "Not yet" Button
+    t =    53.48s     Check for interrupting elements affecting "Not yet" Button
+    t =    53.53s     Synthesize event
+    t =    53.82s     Wait for com.zacrotech.NeuroForge to idle
+    t =    54.84s Checking `Expect predicate `selected == 1` for object "Not yet" Button`
+    t =    54.85s     Find the "Not yet" Button
+    t =    54.91s Waiting 8.0s for "session-submit" Any to exist
+    t =    55.95s     Checking `Expect predicate `existsNoRetry == 1` for object "session-submit" Any`
+    t =    55.95s         Checking existence of `"session-submit" Any`
+    t =    56.01s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    56.04s Find the ScrollView (Element at index 0)
+    t =    56.09s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    56.12s Checking existence of `Keyboard (First Match)`
+    t =    56.21s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    56.25s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    56.29s Checking existence of `"session-submit" Any`
+    t =    56.34s Find the "session-submit" Any
+    t =    56.38s Checking existence of `"session-submit" Button`
+    t =    56.43s Find the "session-submit" Button
+    t =    56.49s Find the "session-submit" Button
+    t =    56.54s Find the "session-submit" Button
+    t =    57.66s Checking `Expect predicate `enabled == 1` for object "session-submit" Button`
+    t =    57.66s     Find the "session-submit" Button
+    t =    57.73s Tap "session-submit" Button
+    t =    57.73s     Wait for com.zacrotech.NeuroForge to idle
+    t =    57.73s     Find the "session-submit" Button
+    t =    57.78s     Check for interrupting elements affecting "session-submit" Button
+    t =    57.83s     Synthesize event
+    t =    58.12s     Wait for com.zacrotech.NeuroForge to idle
+    t =    58.12s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    58.17s Find the ScrollView (Element at index 0)
+    t =    58.22s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    58.26s Checking existence of `Keyboard (First Match)`
+    t =    58.36s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    58.41s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    58.44s Checking existence of `"session-feedback-title" Any`
+    t =    58.50s Find the "session-feedback-title" Any
+    t =    58.55s Checking existence of `"session-submit" Any`
+    t =    58.60s Checking existence of `"session-next" Any`
+    t =    58.65s Find the "session-next" Any
+    t =    58.71s Find the "session-next" Button
+    t =    58.76s Checking existence of `"session-feedback-title" StaticText`
+    t =    58.81s Find the "session-feedback-title" StaticText
+    t =    58.88s Find the "session-feedback-title" StaticText
+    t =    58.94s Checking existence of `"session-feedback-title" StaticText`
+    t =    59.00s Find the "session-feedback-title" StaticText
+    t =    59.06s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    59.10s Checking existence of `"session-feedback-title" StaticText`
+    t =    59.15s Find the "session-feedback-title" StaticText
+    t =    59.20s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 248.5) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 264.5) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    59.20s     Wait for com.zacrotech.NeuroForge to idle
+    t =    59.21s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    59.24s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    59.32s     Synthesize event
+    t =    59.32s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    59.35s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    59.39s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    59.42s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    59.46s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    60.08s     Wait for com.zacrotech.NeuroForge to idle
+    t =    61.54s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    61.58s Find the ScrollView (Element at index 0)
+    t =    61.63s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    61.66s Checking existence of `Keyboard (First Match)`
+    t =    61.76s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    61.80s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    61.85s Checking existence of `"session-feedback-title" StaticText`
+    t =    61.90s Find the "session-feedback-title" StaticText
+    t =    61.95s Checking existence of `"session-submit" Any`
+    t =    62.00s Checking existence of `"session-next" Any`
+    t =    62.06s Find the "session-next" Any
+    t =    62.11s Find the "session-next" Button
+    t =    62.17s Checking existence of `"session-feedback-title" StaticText`
+    t =    62.23s Find the "session-feedback-title" StaticText
+    t =    62.29s Find the "session-feedback-title" StaticText
+    t =    62.35s Find the "session-feedback-title" StaticText
+    t =    62.41s Find the "session-feedback-title" StaticText
+    t =    62.46s Checking existence of `"Incorrect" StaticText`
+    t =    62.50s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    62.64s Added attachment named 'source-exact-recall-cold-resume-neutral-feedback-en'
+    t =    62.65s Checking existence of `"session-save-close" Any`
+    t =    62.70s Waiting 5.0s for Button (First Match) to exist
+    t =    63.76s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    63.76s         Checking existence of `Button (First Match)`
+    t =    63.78s Tap Button (First Match)
+    t =    63.78s     Wait for com.zacrotech.NeuroForge to idle
+    t =    63.78s     Find the Button (First Match)
+    t =    63.79s     Check for interrupting elements affecting "pause.fill" Button
+    t =    63.85s     Synthesize event
+    t =    64.15s     Wait for com.zacrotech.NeuroForge to idle
+    t =    64.15s Waiting 5.0s for "session-save-close" Any to exist
+    t =    65.22s     Checking `Expect predicate `existsNoRetry == 1` for object "session-save-close" Any`
+    t =    65.23s         Checking existence of `"session-save-close" Any`
+    t =    65.28s Tap "session-save-close" Any
+    t =    65.28s     Wait for com.zacrotech.NeuroForge to idle
+    t =    65.28s     Find the "session-save-close" Any
+    t =    65.32s     Check for interrupting elements affecting "session-save-close" Button
+    t =    65.37s     Synthesize event
+    t =    65.66s     Wait for com.zacrotech.NeuroForge to idle
+    t =    66.10s Waiting 8.0s for "destination-today" Any to exist
+    t =    67.15s     Checking `Expect predicate `existsNoRetry == 1` for object "destination-today" Any`
+    t =    67.15s         Checking existence of `"destination-today" Any`
+    t =    67.20s Terminate com.zacrotech.NeuroForge:35001
+    t =    68.30s Open com.zacrotech.NeuroForge
+    t =    68.30s     Launch com.zacrotech.NeuroForge
+2026-09-05 05:31:47.154 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-05 05:31:47.155 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    68.75s         Setting up automation session
+    t =    69.85s         Wait for com.zacrotech.NeuroForge to idle
+    t =    72.42s Waiting 15.0s for "continue-session" Any to exist
+    t =    73.47s     Checking `Expect predicate `existsNoRetry == 1` for object "continue-session" Any`
+    t =    73.47s         Checking existence of `"continue-session" Any`
+    t =    73.62s Checking existence of `"continue-session" Any`
+    t =    73.67s Find the "continue-session" Any
+    t =    73.72s Tap "continue-session" Button
+    t =    73.72s     Wait for com.zacrotech.NeuroForge to idle
+    t =    73.72s     Find the "continue-session" Button
+    t =    73.76s     Check for interrupting elements affecting "continue-session" Button
+    t =    73.79s     Synthesize event
+    t =    74.09s     Wait for com.zacrotech.NeuroForge to idle
+    t =    74.34s Waiting 8.0s for "universal-session" Any to exist
+    t =    75.39s     Checking `Expect predicate `existsNoRetry == 1` for object "universal-session" Any`
+    t =    75.39s         Checking existence of `"universal-session" Any`
+    t =    75.46s Waiting 3.0s for "session-resume" Any to exist
+    t =    76.48s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =    76.48s         Checking existence of `"session-resume" Any`
+    t =    76.54s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    76.69s Added attachment named 'interruption-paused-session-before-explicit-resume'
+    t =    76.69s Find the "session-resume" Any
+    t =    76.79s Press "session-resume" Button for 0.1 seconds
+    t =    76.79s     Wait for com.zacrotech.NeuroForge to idle
+    t =    76.80s     Find the "session-resume" Button
+    t =    76.88s     Check for interrupting elements affecting "session-resume" Button
+    t =    76.95s     Synthesize event
+    t =    77.35s     Wait for com.zacrotech.NeuroForge to idle
+    t =    78.36s Checking `Expect predicate `exists == 0` for object "session-resume" Button`
+    t =    78.37s     Checking existence of `"session-resume" Button`
+    t =    78.45s Find the "session-prompt" Any
+    t =    78.51s Find the "session-position" Any
+    t =    78.57s Waiting 8.0s for "session-next" Any to exist
+    t =    79.62s     Checking `Expect predicate `existsNoRetry == 1` for object "session-next" Any`
+    t =    79.62s         Checking existence of `"session-next" Any`
+    t =    79.70s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    79.74s Find the ScrollView (Element at index 0)
+    t =    79.80s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    79.84s Checking existence of `Keyboard (First Match)`
+    t =    80.00s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    80.05s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    80.10s Checking existence of `"session-feedback-title" StaticText`
+    t =    80.17s Find the "session-feedback-title" StaticText
+    t =    80.22s Checking existence of `"session-submit" Any`
+    t =    80.28s Checking existence of `"session-next" Any`
+    t =    80.34s Find the "session-next" Any
+    t =    80.41s Find the "session-next" Button
+    t =    80.48s Checking existence of `"session-feedback-title" StaticText`
+    t =    80.54s Find the "session-feedback-title" StaticText
+    t =    80.62s Find the "session-feedback-title" StaticText
+    t =    80.69s Checking existence of `"session-feedback-title" StaticText`
+    t =    80.75s Find the "session-feedback-title" StaticText
+    t =    80.82s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    80.86s Checking existence of `"session-feedback-title" StaticText`
+    t =    80.92s Find the "session-feedback-title" StaticText
+    t =    80.98s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 248.5) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 264.5) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    80.98s     Wait for com.zacrotech.NeuroForge to idle
+    t =    80.98s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    81.02s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    81.07s     Synthesize event
+    t =    81.07s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    81.11s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    81.15s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    81.18s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    81.22s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    81.85s     Wait for com.zacrotech.NeuroForge to idle
+    t =    83.31s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    83.38s Find the ScrollView (Element at index 0)
+    t =    83.45s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    83.49s Checking existence of `Keyboard (First Match)`
+    t =    83.60s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    83.66s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    83.70s Checking existence of `"session-feedback-title" StaticText`
+    t =    83.77s Find the "session-feedback-title" StaticText
+    t =    83.83s Checking existence of `"session-submit" Any`
+    t =    83.89s Checking existence of `"session-next" Any`
+    t =    83.96s Find the "session-next" Any
+    t =    84.05s Find the "session-next" Button
+    t =    84.16s Checking existence of `"session-feedback-title" StaticText`
+    t =    84.22s Find the "session-feedback-title" StaticText
+    t =    84.31s Find the "session-feedback-title" StaticText
+    t =    84.39s Find the "session-feedback-title" StaticText
+    t =    84.47s Find the "session-feedback-title" StaticText
+    t =    84.53s Terminate com.zacrotech.NeuroForge:35141
+    t =    85.55s Tear Down
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testSourceRecallColdRelaunchPreservesDraftReferenceAndNeutralResult]' passed (85.697 seconds).
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testTransferMultipleSelectionsShowFeedbackAndEndAtFiniteCapacity]' started.
+    t =     0.00s Start Test at 2026-09-05 05:32:04.520
+    t =     0.05s Set Up
+2026-09-05 05:32:04.609 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-05 05:32:04.609 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.06s Open com.zacrotech.NeuroForge
+    t =     0.06s     Launch com.zacrotech.NeuroForge
+    t =     0.72s         Setting up automation session
+    t =     3.36s         Wait for com.zacrotech.NeuroForge to idle
+    t =     7.26s Waiting 15.0s for "universal-session" Any to exist
+    t =     8.31s     Checking `Expect predicate `existsNoRetry == 1` for object "universal-session" Any`
+    t =     8.31s         Checking existence of `"universal-session" Any`
+    t =     8.79s Waiting 3.0s for "session-resume" Any to exist
+    t =     9.86s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =     9.87s         Checking existence of `"session-resume" Any`
+    t =    10.02s         Capturing element debug description
+    t =    10.88s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =    10.88s         Checking existence of `"session-resume" Any`
+    t =    11.09s         Capturing element debug description
+    t =    11.79s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =    11.79s         Checking existence of `"session-resume" Any`
+    t =    11.94s         Capturing element debug description
+    t =    11.94s     Checking existence of `"session-resume" Any`
+    t =    12.07s Collecting debug information to assist test failure triage
+    t =    12.07s     Requesting snapshot of accessibility hierarchy for app with pid 35368
+    t =    12.24s Waiting 8.0s for "session-position" Any to exist
+    t =    13.31s     Checking `Expect predicate `existsNoRetry == 1` for object "session-position" Any`
+    t =    13.31s         Checking existence of `"session-position" Any`
+    t =    13.42s Find the "session-position" Any
+    t =    13.54s Waiting 8.0s for "session-prompt" Any to exist
+    t =    14.61s     Checking `Expect predicate `existsNoRetry == 1` for object "session-prompt" Any`
+    t =    14.61s         Checking existence of `"session-prompt" Any`
+    t =    14.73s Find the "session-prompt" Any
+    t =    14.83s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    14.89s Find the ScrollView (Element at index 0)
+    t =    15.01s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    15.06s Checking existence of `Keyboard (First Match)`
+    t =    15.17s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    15.24s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    15.30s Checking existence of `"Verify that the original constraints still hold in the new field." Button`
+    t =    15.40s Find the "Verify that the original constraints still hold in the new field." Button
+    t =    15.51s Checking existence of `"session-submit" Any`
+    t =    15.61s Find the "session-submit" Any
+    t =    15.72s Find the "session-submit" Button
+    t =    15.83s Checking existence of `"session-next" Any`
+    t =    15.93s Checking existence of `"Verify that the original constraints still hold in the new field." Button`
+    t =    16.03s Find the "Verify that the original constraints still hold in the new field." Button
+    t =    16.14s Find the "Verify that the original constraints still hold in the new field." Button
+    t =    16.25s Find the "Verify that the original constraints still hold in the new field." Button
+    t =    16.36s Checking existence of `"Verify that the original constraints still hold in the new field." Button`
+    t =    16.46s Find the "Verify that the original constraints still hold in the new field." Button
+    t =    16.56s Tap "Verify that the original constraints still hold in the new field." Button
+    t =    16.56s     Wait for com.zacrotech.NeuroForge to idle
+    t =    16.57s     Find the "Verify that the original constraints still hold in the new field." Button
+    t =    16.66s     Check for interrupting elements affecting "Verify that the original constraints still hold in the new field." Button
+    t =    16.80s     Synthesize event
+    t =    17.12s     Wait for com.zacrotech.NeuroForge to idle
+    t =    18.19s Checking `Expect predicate `selected == 1` for object "Verify that the original constraints still hold in the new field." Button`
+    t =    18.19s     Find the "Verify that the original constraints still hold in the new field." Button
+    t =    18.30s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    18.35s Find the ScrollView (Element at index 0)
+    t =    18.42s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    18.46s Checking existence of `Keyboard (First Match)`
+    t =    18.57s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    18.63s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    18.68s Checking existence of `"Preserve the underlying quantities while changing their labels." Button`
+    t =    18.78s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    18.87s Checking existence of `"session-submit" Any`
+    t =    18.97s Find the "session-submit" Any
+    t =    19.07s Find the "session-submit" Button
+    t =    19.18s Checking existence of `"session-next" Any`
+    t =    19.29s Checking existence of `"Preserve the underlying quantities while changing their labels." Button`
+    t =    19.39s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    19.51s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    19.61s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    19.72s Checking existence of `"Preserve the underlying quantities while changing their labels." Button`
+    t =    19.82s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    19.92s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    19.98s Checking existence of `"Preserve the underlying quantities while changing their labels." Button`
+    t =    20.07s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    20.17s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 506.5) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 407.5) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    20.17s     Wait for com.zacrotech.NeuroForge to idle
+    t =    20.18s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    20.23s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    20.30s     Synthesize event
+    t =    20.30s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    20.35s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    20.40s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    20.45s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    20.50s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    21.45s     Wait for com.zacrotech.NeuroForge to idle
+    t =    21.45s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    21.51s Find the ScrollView (Element at index 0)
+    t =    21.57s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    21.63s Checking existence of `Keyboard (First Match)`
+    t =    21.74s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    21.80s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    21.86s Checking existence of `"Preserve the underlying quantities while changing their labels." Button`
+    t =    21.96s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    22.06s Checking existence of `"session-submit" Any`
+    t =    22.17s Find the "session-submit" Any
+    t =    22.29s Find the "session-submit" Button
+    t =    22.39s Checking existence of `"session-next" Any`
+    t =    22.50s Checking existence of `"Preserve the underlying quantities while changing their labels." Button`
+    t =    22.59s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    22.70s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    22.81s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    22.92s Checking existence of `"Preserve the underlying quantities while changing their labels." Button`
+    t =    23.04s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    23.17s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    23.25s Checking existence of `"Preserve the underlying quantities while changing their labels." Button`
+    t =    23.37s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    23.47s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 506.5) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 490.5) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    23.47s     Wait for com.zacrotech.NeuroForge to idle
+    t =    23.47s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    23.53s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    23.60s     Synthesize event
+    t =    23.60s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    23.65s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    23.71s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    23.76s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    23.83s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    24.46s     Wait for com.zacrotech.NeuroForge to idle
+    t =    25.91s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    25.98s Find the ScrollView (Element at index 0)
+    t =    26.05s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    26.10s Checking existence of `Keyboard (First Match)`
+    t =    26.23s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    26.30s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    26.36s Checking existence of `"Preserve the underlying quantities while changing their labels." Button`
+    t =    26.49s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    26.59s Checking existence of `"session-submit" Any`
+    t =    26.69s Find the "session-submit" Any
+    t =    26.90s Find the "session-submit" Button
+    t =    27.04s Checking existence of `"session-next" Any`
+    t =    27.21s Checking existence of `"Preserve the underlying quantities while changing their labels." Button`
+    t =    27.34s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    27.44s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    27.55s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    27.66s Checking existence of `"Preserve the underlying quantities while changing their labels." Button`
+    t =    27.76s Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    27.88s Tap "Preserve the underlying quantities while changing their labels." Button
+    t =    27.88s     Wait for com.zacrotech.NeuroForge to idle
+    t =    27.88s     Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    27.99s     Check for interrupting elements affecting "Preserve the underlying quantities while changing their labels." Button
+    t =    28.12s     Synthesize event
+    t =    28.43s     Wait for com.zacrotech.NeuroForge to idle
+    t =    29.44s Checking `Expect predicate `selected == 1` for object "Preserve the underlying quantities while changing their labels." Button`
+    t =    29.45s     Find the "Preserve the underlying quantities while changing their labels." Button
+    t =    29.58s Get all elements bound by index for: Descendants matching type TextField
+    t =    29.64s Get all elements bound by index for: Descendants matching type TextView
+    t =    29.69s Waiting 8.0s for "session-submit" Any to exist
+    t =    30.72s     Checking `Expect predicate `existsNoRetry == 1` for object "session-submit" Any`
+    t =    30.73s         Checking existence of `"session-submit" Any`
+    t =    30.84s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    30.90s Find the ScrollView (Element at index 0)
+    t =    30.98s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    31.03s Checking existence of `Keyboard (First Match)`
+    t =    31.14s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    31.21s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    31.27s Checking existence of `"session-submit" Any`
+    t =    31.38s Find the "session-submit" Any
+    t =    31.48s Checking existence of `"session-submit" Button`
+    t =    31.58s Find the "session-submit" Button
+    t =    31.72s Find the "session-submit" Button
+    t =    31.83s Find the "session-submit" Button
+    t =    32.96s Checking `Expect predicate `enabled == 1` for object "session-submit" Button`
+    t =    32.96s     Find the "session-submit" Button
+    t =    33.09s Tap "session-submit" Button
+    t =    33.09s     Wait for com.zacrotech.NeuroForge to idle
+    t =    33.09s     Find the "session-submit" Button
+    t =    33.19s     Check for interrupting elements affecting "session-submit" Button
+    t =    33.27s     Synthesize event
+    t =    33.57s     Wait for com.zacrotech.NeuroForge to idle
+    t =    33.86s Waiting 8.0s for "session-next" Any to exist
+    t =    34.93s     Checking `Expect predicate `existsNoRetry == 1` for object "session-next" Any`
+    t =    34.93s         Checking existence of `"session-next" Any`
+    t =    35.04s Find the "session-position" ProgressIndicator
+    t =    35.14s Find the "session-prompt" Any
+    t =    35.24s Checking existence of `"Your answer" StaticText`
+    t =    35.33s Waiting 8.0s for "session-feedback-title" Any to exist
+    t =    36.36s     Checking `Expect predicate `existsNoRetry == 1` for object "session-feedback-title" Any`
+    t =    36.36s         Checking existence of `"session-feedback-title" Any`
+    t =    36.46s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    36.51s Find the ScrollView (Element at index 0)
+    t =    36.58s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    36.63s Checking existence of `Keyboard (First Match)`
+    t =    36.74s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    36.80s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    36.85s Checking existence of `"session-feedback-title" Any`
+    t =    36.94s Find the "session-feedback-title" Any
+    t =    37.03s Checking existence of `"session-submit" Any`
+    t =    37.12s Checking existence of `"session-next" Any`
+    t =    37.21s Find the "session-next" Any
+    t =    37.31s Find the "session-next" Button
+    t =    37.41s Checking existence of `"session-feedback-title" StaticText`
+    t =    37.51s Find the "session-feedback-title" StaticText
+    t =    37.61s Find the "session-feedback-title" StaticText
+    t =    37.71s Checking existence of `"session-feedback-title" StaticText`
+    t =    37.80s Find the "session-feedback-title" StaticText
+    t =    37.90s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    37.96s Checking existence of `"session-feedback-title" StaticText`
+    t =    38.05s Find the "session-feedback-title" StaticText
+    t =    38.14s Press Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 248.5) for 0.1 seconds, then drag to Target Application 'com.zacrotech.NeuroForge'[0.00, 0.00] -> (187.5, 264.5) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    38.14s     Wait for com.zacrotech.NeuroForge to idle
+    t =    38.14s     Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    38.19s     Check for interrupting elements affecting "NeuroForge" Application
+    t =    38.25s     Synthesize event
+    t =    38.25s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    38.30s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    38.35s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    38.39s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    38.44s         Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    39.06s     Wait for com.zacrotech.NeuroForge to idle
+    t =    40.51s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    40.56s Find the ScrollView (Element at index 0)
+    t =    40.62s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    40.66s Checking existence of `Keyboard (First Match)`
+    t =    40.76s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    40.81s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    40.87s Checking existence of `"session-feedback-title" StaticText`
+    t =    40.95s Find the "session-feedback-title" StaticText
+    t =    41.05s Checking existence of `"session-submit" Any`
+    t =    41.14s Checking existence of `"session-next" Any`
+    t =    41.23s Find the "session-next" Any
+    t =    41.33s Find the "session-next" Button
+    t =    41.44s Checking existence of `"session-feedback-title" StaticText`
+    t =    41.53s Find the "session-feedback-title" StaticText
+    t =    41.63s Find the "session-feedback-title" StaticText
+    t =    41.72s Find the "session-feedback-title" StaticText
+    t =    41.81s Find the "session-feedback-title" StaticText
+    t =    41.92s Find the "session-feedback-title" StaticText
+    t =    42.01s Find the "session-feedback-title" StaticText
+    t =    42.10s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    42.15s Find the ScrollView (Element at index 0)
+    t =    42.21s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    42.26s Checking existence of `Keyboard (First Match)`
+    t =    42.36s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    42.42s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    42.48s Checking existence of `"session-next" Any`
+    t =    42.57s Find the "session-next" Any
+    t =    42.66s Checking existence of `"session-next" Button`
+    t =    42.74s Find the "session-next" Button
+    t =    42.84s Find the "session-next" Button
+    t =    42.93s Find the "session-next" Button
+    t =    43.02s Find the "session-next" Button
+    t =    43.11s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    43.28s Added attachment named 'lab-response-feedback-transfer.conditions-en'
+    t =    43.29s Press "session-next" Button for 0.1 seconds
+    t =    43.29s     Wait for com.zacrotech.NeuroForge to idle
+    t =    43.29s     Find the "session-next" Button
+    t =    43.38s     Check for interrupting elements affecting "session-next" Button
+    t =    43.45s     Synthesize event
+    t =    43.83s     Wait for com.zacrotech.NeuroForge to idle
+    t =    43.83s Waiting 8.0s for "session-next-unavailable" Any to exist
+    t =    44.90s     Checking `Expect predicate `existsNoRetry == 1` for object "session-next-unavailable" Any`
+    t =    44.91s         Checking existence of `"session-next-unavailable" Any`
+    t =    45.02s Find the "session-next-unavailable" Any
+    t =    45.12s Find the "session-position" ProgressIndicator
+    t =    45.23s Find the "session-prompt" Any
+    t =    45.34s Find the "session-feedback-title" StaticText
+    t =    45.44s Find the "session-next" Button
+    t =    45.54s Checking existence of `Alert (First Match)`
+    t =    45.63s Checking existence of `"Save interrupted" Alert`
+    t =    45.72s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    45.78s Find the ScrollView (Element at index 0)
+    t =    45.84s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    45.89s Checking existence of `Keyboard (First Match)`
+    t =    46.02s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    46.08s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    46.13s Checking existence of `"session-next-unavailable" StaticText`
+    t =    46.22s Find the "session-next-unavailable" StaticText
+    t =    46.32s Checking existence of `"session-submit" Any`
+    t =    46.41s Checking existence of `"session-next" Any`
+    t =    46.50s Find the "session-next" Any
+    t =    46.60s Find the "session-next" Button
+    t =    46.70s Checking existence of `"session-next-unavailable" StaticText`
+    t =    46.79s Find the "session-next-unavailable" StaticText
+    t =    46.89s Find the "session-next-unavailable" StaticText
+    t =    46.99s Find the "session-next-unavailable" StaticText
+    t =    47.09s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    47.14s Find the ScrollView (Element at index 0)
+    t =    47.20s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    47.26s Checking existence of `Keyboard (First Match)`
+    t =    47.36s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    47.42s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    47.48s Checking existence of `"session-end-unavailable" Any`
+    t =    47.57s Find the "session-end-unavailable" Any
+    t =    47.66s Checking existence of `"session-end-unavailable" Button`
+    t =    47.76s Find the "session-end-unavailable" Button
+    t =    47.86s Find the "session-end-unavailable" Button
+    t =    47.96s Find the "session-end-unavailable" Button
+    t =    48.05s Find the "session-end-unavailable" Button
+    t =    48.15s Find the "session-end-unavailable" Button
+    t =    48.24s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    48.38s Added attachment named 'finite-capacity-retains-feedback-transfer.conditions-en'
+    t =    48.38s Tap "session-end-unavailable" Button
+    t =    48.38s     Wait for com.zacrotech.NeuroForge to idle
+    t =    48.38s     Find the "session-end-unavailable" Button
+    t =    48.48s     Check for interrupting elements affecting "session-end-unavailable" Button
+    t =    48.55s     Synthesize event
+    t =    48.85s     Wait for com.zacrotech.NeuroForge to idle
+    t =    49.13s Waiting 8.0s for "Ended after 1 of 5 questions" StaticText to exist
+    t =    50.15s     Checking `Expect predicate `existsNoRetry == 1` for object "Ended after 1 of 5 questions" StaticText`
+    t =    50.15s         Checking existence of `"Ended after 1 of 5 questions" StaticText`
+    t =    50.23s Terminate com.zacrotech.NeuroForge:35368
+    t =    51.31s Tear Down
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testTransferMultipleSelectionsShowFeedbackAndEndAtFiniteCapacity]' passed (51.387 seconds).
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testWeeklyChartDataOpensExactSavedAnswerHistory]' started.
+    t =     0.00s Start Test at 2026-09-05 05:32:55.907
+    t =     0.04s Set Up
+    t =     0.04s Open com.zacrotech.NeuroForge
+    t =     0.04s     Launch com.zacrotech.NeuroForge
+2026-09-05 05:32:55.969 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-05 05:32:55.969 xcodebuild[33933:3959643] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.48s         Setting up automation session
+    t =     1.88s         Wait for com.zacrotech.NeuroForge to idle
+    t =     4.91s Waiting 15.0s for "universal-session" Any to exist
+    t =     5.92s     Checking `Expect predicate `existsNoRetry == 1` for object "universal-session" Any`
+    t =     5.92s         Checking existence of `"universal-session" Any`
+    t =     6.25s Waiting 3.0s for "session-resume" Any to exist
+    t =     7.27s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =     7.27s         Checking existence of `"session-resume" Any`
+    t =     7.38s         Capturing element debug description
+    t =     8.33s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =     8.33s         Checking existence of `"session-resume" Any`
+    t =     8.42s         Capturing element debug description
+    t =     9.25s     Checking `Expect predicate `existsNoRetry == 1` for object "session-resume" Any`
+    t =     9.25s         Checking existence of `"session-resume" Any`
+    t =     9.36s         Capturing element debug description
+    t =     9.36s     Checking existence of `"session-resume" Any`
+    t =     9.45s Collecting debug information to assist test failure triage
+    t =     9.45s     Requesting snapshot of accessibility hierarchy for app with pid 35641
+    t =     9.57s Waiting 8.0s for "session-prompt" Any to exist
+    t =    10.57s     Checking `Expect predicate `existsNoRetry == 1` for object "session-prompt" Any`
+    t =    10.57s         Checking existence of `"session-prompt" Any`
+    t =    10.67s Find the "session-prompt" Any
+    t =    10.75s Waiting 8.0s for "session-numeric-answer" Any to exist
+    t =    11.82s     Checking `Expect predicate `existsNoRetry == 1` for object "session-numeric-answer" Any`
+    t =    11.83s         Checking existence of `"session-numeric-answer" Any`
+    t =    11.93s Checking existence of `"session-numeric-answer" Any`
+    t =    12.04s Find the "session-numeric-answer" Any
+    t =    12.19s Find the "session-numeric-answer" TextField
+    t =    12.29s Tap "session-numeric-answer" TextField
+    t =    12.29s     Wait for com.zacrotech.NeuroForge to idle
+    t =    12.30s     Find the "session-numeric-answer" TextField
+    t =    12.38s     Check for interrupting elements affecting "session-numeric-answer" TextField
+    t =    12.48s     Synthesize event
+    t =    12.78s     Wait for com.zacrotech.NeuroForge to idle
+    t =    13.09s Find the "session-numeric-answer" TextField
+    t =    13.22s Type '0' into "session-numeric-answer" TextField
+    t =    13.22s     Wait for com.zacrotech.NeuroForge to idle
+    t =    13.84s     Find the "session-numeric-answer" TextField
+    t =    13.93s     Check for interrupting elements affecting "session-numeric-answer" TextField
+    t =    14.01s     Synthesize event
+    t =    14.23s     Wait for com.zacrotech.NeuroForge to idle
+    t =    15.32s Checking `Expect predicate `value == "0"` for object "session-numeric-answer" TextField`
+    t =    15.32s     Find the "session-numeric-answer" TextField
+    t =    15.42s Checking existence of `"session-submit" Any`
+    t =    15.51s Find the "session-submit" Any
+    t =    15.61s Waiting 5.0s for "Done" Button to exist
+    t =    16.61s     Checking `Expect predicate `existsNoRetry == 1` for object "Done" Button`
+    t =    16.61s         Checking existence of `"Done" Button`
+    t =    16.82s Find the "Done" Button
+    t =    16.92s Tap "Done" Button
+    t =    16.92s     Wait for com.zacrotech.NeuroForge to idle
+    t =    16.92s     Find the "Done" Button
+    t =    17.01s     Check for interrupting elements affecting "Done" Button
+    t =    17.08s     Found 1 interrupting element:
+    t =    17.08s         Find the "universal-session" Alert
+    t =    17.14s "universal-session" Alert from Target Application 'com.zacrotech.NeuroForge'
+    t =    17.14s     Invoking UI interruption monitors for "universal-session" Alert from Target Application 'com.zacrotech.NeuroForge'
+    t =    17.14s         Find the "universal-session" Alert
+    t =    17.19s         Checking existence of `Button (Elements matching predicate 'userTestingAttributes CONTAINS "cancel-button"')`
+    t =    17.25s         Get all elements bound by accessibility element for: Elements matching predicate 'userTestingAttributes CONTAINS "default-button"'
+    t =    17.30s         Checking existence of `Button (Elements matching predicate 'label CONTAINS[d] "Don’t" OR label CONTAINS "Cancel"')`
+    t =    17.39s         Requesting snapshot of accessibility hierarchy for app with pid 35641
+    t =    17.49s         Find: Descendants matching type Alert
+    t =    17.49s         Find: Identity Binding
+    t =    17.56s         Requesting snapshot of accessibility hierarchy for app with pid 35641
+    t =    17.66s         Find: Descendants matching type Alert
+    t =    17.66s         Find: Identity Binding
+    t =    17.67s         Requesting snapshot of accessibility hierarchy for app with pid 35641
+    t =    17.77s         Find: Descendants matching type Alert
+    t =    17.77s         Requesting snapshot of accessibility hierarchy for app with pid 35641
+    t =    17.88s Default interruption handler not attempting to dismiss alert: unable to find any qualified button in Attributes: Alert, 0x106c3af80, {{-187.5, -191.5}, {780.0, 1080.0}}, identifier: 'universal-session'
+Element subtree:
+ →Alert, 0x106c3af80, {{-187.5, -191.5}, {780.0, 1080.0}}, identifier: 'universal-session'
+    Button, 0x106c3b0c0, {{20.0, 32.0}, {44.0, 44.0}}, identifier: 'pause.fill', label: 'Pause session'
+    Image, 0x106c3b200, {{74.0, 35.0}, {38.0, 38.0}}, identifier: 'function', label: 'Function'
+    StaticText, 0x106c3b340, {{122.0, 35.5}, {49.0, 14.5}}, label: 'Practice'
+    StaticText, 0x106c3b480, {{122.0, 52.0}, {141.5, 20.5}}, label: 'Numerical control'
+    StaticText, 0x106c3b5c0, {{20.0, 97.0}, {31.0, 18.0}}, label: '1 / 5'
+    StaticText, 0x106c3b700, {{59.0, 98.8}, {50.5, 14.5}}, label: 'Untimed session'
+    Button, 0x106c3b840, {{117.5, 99.0}, {38.5, 14.5}}, label: 'Timing'
+      Button, 0x106c3b980, {{117.5, 99.0}, {38.5, 14.5}}
+        StaticText, 0x106c3bac0, {{117.5, 98.8}, {38.5, 14.5}}, label: 'Timing'
+    Button, 0x106c3bc00, {{215.0, 84.0}, {44.0, 44.0}}, identifier: 'session-header-save-close', label: 'Save and close session'
+    Button, 0x106c3bd40, {{263.0, 84.0}, {44.0, 44.0}}, identifier: 'square.and.pencil', label: 'Open scratchpad'
+    Button, 0x106c3be80, {{311.0, 84.0}, {44.0, 44.0}}, label: 'Session controls'
+      Button, 0x115394000, {{311.0, 84.0}, {44.0, 44.0}}
+        Image, 0x115394140, {{311.0, 84.0}, {44.0, 44.0}}, identifier: 'ellipsis.circle', label: 'More'
+    ProgressIndicator, 0x115394280, {{20.0, 138.0}, {335.0, 4.0}}, identifier: 'session-position', label: 'Session progress', value: 1 / 5
+      ProgressIndicator, 0x1153943c0, {{20.0, 128.0}, {335.0, 24.0}}, value: 0%
+    ScrollView, 0x115394500, {{0.0, 154.5}, {375.0, 512.5}}
+      Other, 0x115394640, {{0.0, -2.5}, {375.0, 539.0}}
+        StaticText, 0x115394780, {{24.0, 21.5}, {119.0, 26.5}}, label: 'Mental Math'
+          Image, 0x1153948c0, {{35.5, 30.5}, {17.5, 9.0}}, identifier: 'function', label: 'Function'
+          StaticText, 0x115394a00, {{59.5, 27.5}, {73.5, 14.5}}, label: 'Mental Math'
+        StaticText, 0x115394b40, {{24.0, 68.0}, {327.0, 39.0}}, label: 'General STEM. Accuracy is authoritative; speed is recorded separately.'
+        StaticText, 0x115394c80, {{38.0, 140.5}, {189.5, 19.0}}, label: 'Enter the exact integer.'
+        Other, 0x115394dc0, {{24.0, 193.0}, {286.5, 26.5}}, identifier: 'session-prompt', label: 'Rapid recall: what is 10 × 9?'
+          StaticText, 0x115394f00, {{24.0, 193.0}, {286.5, 26.5}}, label: 'Rapid recall: what is 10 × 9?'
+        Other, 0x115395040, {{24.0, 239.5}, {327.0, 52.0}}, label: '10 times 9'
+          Other, 0x115395180, {{36.0, 254.5}, {60.0, 22.0}}, label: '10 times 9'
+            Other, 0x1153952c0, {{36.0, 254.5}, {60.0, 22.0}}
+        TextField, 0x115395400, {{24.0, 311.5}, {327.0, 44.0}}, identifier: 'session-numeric-answer', placeholderValue: 'Value', value: 0, Keyboard Focused
+        Button, 0x115395540, {{24.0, 375.5}, {327.0, 28.5}}, label: 'Confidence (optional)'
+          StaticText, 0x115395680, {{24.0, 375.5}, {327.0, 28.5}}, label: 'Confidence (optional)'
+          Image, 0x1153957c0, {{343.0, 384.0}, {7.0, 12.0}}, identifier: 'collapsed'
+        Button, 0x115395900, {{24.0, 424.0}, {100.5, 34.5}}, label: 'Use a hint'
+        Button, 0x115395a40, {{132.5, 424.0}, {146.0, 34.5}}, label: 'Skip — no score'
+        StaticText, 0x115395b80, {{24.0, 478.5}, {292.0, 34.0}}, label: 'Confidence is optional. Your answer determines the result.'
+      Other, 0x115395cc0, {{342.0, 154.5}, {30.0, 197.0}}, label: 'Vertical scroll bar, 3 pages', value: 46%
+        Other, 0x115395e00, {{369.0, 191.0}, {3.0, 110.0}}
+      Other, 0x115395f40, {{342.0, 154.5}, {30.0, 197.0}}, label: 'Vertical scroll bar, 3 pages', value: 46%
+        Other, 0x115396080, {{369.0, 191.0}, {3.0, 110.0}}
+    Button, 0x1153961c0, {{98.5, 371.5}, {178.0, 50.5}}, identifier: 'session-submit', label: 'Submit response'
+Path to element:
+ →Application, 0x106c5f200, pid: 35641, label: 'NeuroForge'
+  ↳Window (Main), 0x106c5cf00, {{0.0, 0.0}, {375.0, 667.0}}
+   ↳Other, 0x106c3abc0, {{0.0, 0.0}, {375.0, 667.0}}
+    ↳Other, 0x106c3ad00, {{0.0, 0.0}, {375.0, 667.0}}
+     ↳Other, 0x106c3ae40, {{0.0, 0.0}, {375.0, 667.0}}
+      ↳Alert, 0x106c3af80, {{-187.5, -191.5}, {780.0, 1080.0}}, identifier: 'universal-session'
+Query chain:
+ →Find: Target Application 'com.zacrotech.NeuroForge'
+  Output: {
+    Application, 0x1153d5f40, pid: 35641, label: 'NeuroForge'
+  }
+  ↪︎Find: Descendants matching type Alert
+    Output: {
+      Alert, 0x1153caa80, {{-187.5, -191.5}, {780.0, 1080.0}}, identifier: 'universal-session'
+    }
+    ↪︎Find: Identity Binding
+      Output: {
+        Alert, 0x1153b2940, {{-187.5, -191.5}, {780.0, 1080.0}}, identifier: 'universal-session'
+      }
+.
+    t =    17.88s         Find the "universal-session" Alert
+    t =    17.93s         Find the "universal-session" Alert
+    t =    17.98s No monitors handled UI interruption, checking to see if element still exists...
+    t =    17.99s             Checking existence of `"universal-session" Alert`
+    t =    18.04s Did not handle the interruption, but will attempt to continue…
+    t =    18.04s     Synthesize event
+    t =    18.35s     Wait for com.zacrotech.NeuroForge to idle
+    t =    18.41s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    18.47s Find the ScrollView (Element at index 0)
+    t =    18.54s Find the Target Application 'com.zacrotech.NeuroForge'
+    t =    18.59s Checking existence of `Keyboard (First Match)`
+    t =    18.60s Find the Keyboard (First Match)
+    t =    18.62s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    18.69s Find the ScrollView at {{0.0, 154.5}, {375.0, 512.5}}
+    t =    18.74s Checking existence of `"session-feedback-title" Any`
+    t =    18.83s Find the "session-feedback-title" Any
+    t =    18.91s Checking existence of `"session-submit" Any`
+    t =    19.00s Checking existence of `"session-next" Any`
+    t =    19.08s Find the "session-next" Any
+    t =    19.17s Find the "session-next" Button
+    t =    19.25s Checking existence of `"session-feedback-title" StaticText`
+    t =    19.33s Find the "session-feedback-title" StaticText
+    t =    19.43s Find the "session-feedback-title" StaticText
+    t =    19.51s Find the "session-feedback-title" StaticText
+    t =    19.60s Find the "session-feedback-title" StaticText
+    t =    19.69s Checking existence of `"session-save-close" Any`
+    t =    19.77s Waiting 5.0s for Button (First Match) to exist
+    t =    20.77s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    20.77s         Checking existence of `Button (First Match)`
+    t =    20.79s Tap Button (First Match)
+    t =    20.79s     Wait for com.zacrotech.NeuroForge to idle
+    t =    20.79s     Find the Button (First Match)
+    t =    20.81s     Check for interrupting elements affecting "pause.fill" Button
+    t =    20.87s     Synthesize event
+    t =    21.16s     Wait for com.zacrotech.NeuroForge to idle
+    t =    21.16s Waiting 5.0s for "session-save-close" Any to exist
+    t =    22.17s     Checking `Expect predicate `existsNoRetry == 1` for object "session-save-close" Any`
+    t =    22.17s         Checking existence of `"session-save-close" Any`
+    t =    22.26s Tap "session-save-close" Any
+    t =    22.26s     Wait for com.zacrotech.NeuroForge to idle
+    t =    22.26s     Find the "session-save-close" Any
+    t =    22.33s     Check for interrupting elements affecting "session-save-close" Button
+    t =    22.39s     Synthesize event
+    t =    22.68s     Wait for com.zacrotech.NeuroForge to idle
+    t =    23.12s Waiting 8.0s for "destination-today" Any to exist
+    t =    24.17s     Checking `Expect predicate `existsNoRetry == 1` for object "destination-today" Any`
+    t =    24.17s         Checking existence of `"destination-today" Any`
+    t =    24.24s Tap "Progress" Button
+    t =    24.24s     Wait for com.zacrotech.NeuroForge to idle
+    t =    24.24s     Find the "Progress" Button
+    t =    24.30s     Check for interrupting elements affecting "chart.line.uptrend.xyaxis" Button
+    t =    24.35s     Synthesize event
+    t =    24.64s     Wait for com.zacrotech.NeuroForge to idle
+    t =    26.28s Waiting 8.0s for "progress-section-picker" Any to exist
+    t =    27.28s     Checking `Expect predicate `existsNoRetry == 1` for object "progress-section-picker" Any`
+    t =    27.28s         Checking existence of `"progress-section-picker" Any`
+    t =    27.37s Tap "Overview" Button
+    t =    27.37s     Wait for com.zacrotech.NeuroForge to idle
+    t =    27.37s     Find the "Overview" Button
+    t =    27.42s     Check for interrupting elements affecting "Overview" Button
+    t =    27.45s     Synthesize event
+    t =    27.75s     Wait for com.zacrotech.NeuroForge to idle
+    t =    28.58s Checking existence of `Button (First Match)`
+    t =    28.66s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    28.69s Find the ScrollView (Element at index 0)
+    t =    28.73s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    28.73s     Wait for com.zacrotech.NeuroForge to idle
+    t =    28.73s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    28.77s     Check for interrupting elements affecting ScrollView
+    t =    28.80s     Synthesize event
+    t =    29.27s     Wait for com.zacrotech.NeuroForge to idle
+    t =    31.38s Checking existence of `Button (First Match)`
+    t =    31.48s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    31.53s Find the ScrollView (Element at index 0)
+    t =    31.58s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    31.58s     Wait for com.zacrotech.NeuroForge to idle
+    t =    31.97s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    32.02s     Check for interrupting elements affecting ScrollView
+    t =    32.08s     Synthesize event
+    t =    32.54s     Wait for com.zacrotech.NeuroForge to idle
+    t =    34.65s Checking existence of `Button (First Match)`
+    t =    34.77s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    34.83s Find the ScrollView (Element at index 0)
+    t =    34.90s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    34.90s     Wait for com.zacrotech.NeuroForge to idle
+    t =    34.90s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    34.95s     Check for interrupting elements affecting ScrollView
+    t =    35.02s     Synthesize event
+    t =    35.49s     Wait for com.zacrotech.NeuroForge to idle
+    t =    37.65s Checking existence of `Button (First Match)`
+    t =    37.93s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    37.99s Find the ScrollView (Element at index 0)
+    t =    38.09s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    38.09s     Wait for com.zacrotech.NeuroForge to idle
+    t =    38.09s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    38.14s     Check for interrupting elements affecting ScrollView
+    t =    38.22s     Synthesize event
+    t =    38.70s     Wait for com.zacrotech.NeuroForge to idle
+    t =    39.42s Checking existence of `Button (First Match)`
+    t =    39.57s Find the Button (First Match)
+    t =    39.68s Tap "Explore details, Skill map, confidence, answer history, and common errors" Button
+    t =    39.68s     Wait for com.zacrotech.NeuroForge to idle
+    t =    39.68s     Find the "Explore details, Skill map, confidence, answer history, and common errors" Button
+    t =    39.74s     Check for interrupting elements affecting "Explore details, Skill map, confidence, answer history, and common errors" Button
+    t =    39.82s     Synthesize event
+    t =    40.13s     Wait for com.zacrotech.NeuroForge to idle
+    t =    40.27s Checking existence of `"View weekly chart data" Button`
+    t =    40.48s Find the "View weekly chart data" Button
+    t =    40.70s Swipe down ScrollView (First Match)
+    t =    40.70s     Wait for com.zacrotech.NeuroForge to idle
+    t =    40.71s     Find the ScrollView (First Match)
+    t =    40.76s     Check for interrupting elements affecting ScrollView
+    t =    40.86s     Synthesize event
+    t =    41.35s     Wait for com.zacrotech.NeuroForge to idle
+    t =    43.44s Checking existence of `"View weekly chart data" Button`
+    t =    43.59s Find the "View weekly chart data" Button
+    t =    43.74s Checking existence of `"View weekly chart data" Button`
+    t =    43.86s Find the "View weekly chart data" Button
+    t =    44.00s Tap "View weekly chart data" Button
+    t =    44.00s     Wait for com.zacrotech.NeuroForge to idle
+    t =    44.00s     Find the "View weekly chart data" Button
+    t =    44.12s     Check for interrupting elements affecting "View weekly chart data" Button
+    t =    44.22s     Synthesize event
+    t =    44.53s     Wait for com.zacrotech.NeuroForge to idle
+    t =    44.55s Checking existence of `Button (First Match)`
+    t =    44.71s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    44.79s Find the ScrollView (Element at index 0)
+    t =    44.89s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    44.89s     Wait for com.zacrotech.NeuroForge to idle
+    t =    45.82s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    45.88s     Check for interrupting elements affecting ScrollView
+    t =    45.93s     Synthesize event
+    t =    46.43s     Wait for com.zacrotech.NeuroForge to idle
+    t =    48.59s Checking existence of `Button (First Match)`
+    t =    48.96s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    49.05s Find the ScrollView (Element at index 0)
+    t =    49.23s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    49.23s     Wait for com.zacrotech.NeuroForge to idle
+    t =    49.36s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    49.44s     Check for interrupting elements affecting ScrollView
+    t =    49.61s     Synthesize event
+    t =    50.10s     Wait for com.zacrotech.NeuroForge to idle
+    t =    52.27s Checking existence of `Button (First Match)`
+    t =    52.46s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    52.55s Find the ScrollView (Element at index 0)
+    t =    52.66s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    52.66s     Wait for com.zacrotech.NeuroForge to idle
+    t =    52.66s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    52.74s     Check for interrupting elements affecting ScrollView
+    t =    52.83s     Synthesize event
+    t =    53.29s     Wait for com.zacrotech.NeuroForge to idle
+    t =    55.38s Checking existence of `Button (First Match)`
+    t =    55.52s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    55.58s Find the ScrollView (Element at index 0)
+    t =    55.65s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    55.65s     Wait for com.zacrotech.NeuroForge to idle
+    t =    55.66s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    55.72s     Check for interrupting elements affecting ScrollView
+    t =    55.79s     Synthesize event
+    t =    56.25s     Wait for com.zacrotech.NeuroForge to idle
+    t =    58.35s Checking existence of `Button (First Match)`
+    t =    58.48s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    58.54s Find the ScrollView (Element at index 0)
+    t =    58.61s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    58.61s     Wait for com.zacrotech.NeuroForge to idle
+    t =    58.81s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    58.88s     Check for interrupting elements affecting ScrollView
+    t =    58.94s     Synthesize event
+    t =    59.40s     Wait for com.zacrotech.NeuroForge to idle
+    t =    61.50s Checking existence of `Button (First Match)`
+    t =    61.55s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    61.57s Find the ScrollView (Element at index 0)
+    t =    61.60s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    61.60s     Wait for com.zacrotech.NeuroForge to idle
+    t =    61.60s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    61.62s     Check for interrupting elements affecting ScrollView
+    t =    61.65s     Synthesize event
+    t =    62.11s     Wait for com.zacrotech.NeuroForge to idle
+    t =    63.07s Checking existence of `Button (First Match)`
+    t =    63.20s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    63.26s Find the ScrollView (Element at index 0)
+    t =    63.32s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    63.32s     Wait for com.zacrotech.NeuroForge to idle
+    t =    63.32s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    63.38s     Check for interrupting elements affecting ScrollView
+    t =    63.51s     Synthesize event
+    t =    63.98s     Wait for com.zacrotech.NeuroForge to idle
+    t =    64.47s Checking existence of `Button (First Match)`
+    t =    64.62s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    64.78s Find the ScrollView (Element at index 0)
+    t =    64.91s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    64.91s     Wait for com.zacrotech.NeuroForge to idle
+    t =    64.91s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    64.98s     Check for interrupting elements affecting ScrollView
+    t =    65.06s     Synthesize event
+    t =    65.53s     Wait for com.zacrotech.NeuroForge to idle
+    t =    66.02s Checking existence of `Button (First Match)`
+    t =    66.15s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    66.20s Find the ScrollView (Element at index 0)
+    t =    66.27s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    66.27s     Wait for com.zacrotech.NeuroForge to idle
+    t =    66.27s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    66.33s     Check for interrupting elements affecting ScrollView
+    t =    66.39s     Synthesize event
+    t =    66.85s     Wait for com.zacrotech.NeuroForge to idle
+    t =    67.34s Checking existence of `Button (First Match)`
+    t =    67.46s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    67.52s Find the ScrollView (Element at index 0)
+    t =    67.59s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    67.59s     Wait for com.zacrotech.NeuroForge to idle
+    t =    67.60s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    67.65s     Check for interrupting elements affecting ScrollView
+    t =    67.72s     Synthesize event
+    t =    68.18s     Wait for com.zacrotech.NeuroForge to idle
+    t =    68.67s Checking existence of `Button (First Match)`
+    t =    68.79s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    68.85s Find the ScrollView (Element at index 0)
+    t =    68.91s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    68.91s     Wait for com.zacrotech.NeuroForge to idle
+    t =    68.91s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    68.97s     Check for interrupting elements affecting ScrollView
+    t =    69.03s     Synthesize event
+    t =    69.49s     Wait for com.zacrotech.NeuroForge to idle
+    t =    69.95s Checking existence of `Button (First Match)`
+    t =    70.07s Get all elements bound by index for: Descendants matching type ScrollView
+    t =    70.13s Find the ScrollView (Element at index 0)
+    t =    70.20s Swipe up ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    70.20s     Wait for com.zacrotech.NeuroForge to idle
+    t =    70.20s     Find the ScrollView at {{0.0, 0.0}, {375.0, 667.0}}
+    t =    70.27s     Check for interrupting elements affecting ScrollView
+    t =    70.33s     Synthesize event
+    t =    70.80s     Wait for com.zacrotech.NeuroForge to idle
+    t =    71.29s Checking existence of `Button (First Match)`
+/Users/takamimarsh/Developer/Projects/Zacro Tech/NeuroForge/UITests/NavigationSmokeUITests.swift:344: error: -[NeuroForgeUITests.NavigationSmokeUITests testWeeklyChartDataOpensExactSavedAnswerHistory] : XCTAssertTrue failed
+    t =    72.37s Tear Down
+Test Case '-[NeuroForgeUITests.NavigationSmokeUITests testWeeklyChartDataOpensExactSavedAnswerHistory]' failed (72.785 seconds).
+Test Suite 'NavigationSmokeUITests' failed at 2026-09-05 05:34:08.693.
+	 Executed 5 tests, with 1 failure (0 unexpected) in 352.576 (352.586) seconds
+Test Suite 'NeuroForgeUITests.xctest' failed at 2026-09-05 05:34:08.695.
+	 Executed 5 tests, with 1 failure (0 unexpected) in 352.576 (352.588) seconds
+Test Suite 'Selected tests' failed at 2026-09-05 05:34:08.695.
+	 Executed 5 tests, with 1 failure (0 unexpected) in 352.576 (352.593) seconds
+2026-09-05 05:44:09.518 xcodebuild[33933:3959724]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Timed out after 600.0 seconds while waiting for a response from the invoked process
+2026-09-05 05:44:09.608 xcodebuild[33933:3959643] [MT] IDETestOperationsObserverDebug: 958.930 elapsed -- Testing started completed.
+2026-09-05 05:44:09.608 xcodebuild[33933:3959643] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-05 05:44:09.608 xcodebuild[33933:3959643] [MT] IDETestOperationsObserverDebug: 958.930 sec, +958.930 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/NeuroForge-improvement-ios/Logs/Test/Test-NeuroForgeUISmoke-2026.09.05_05-28-09--0400.xcresult
+
+Failing tests:
+	NavigationSmokeUITests.testWeeklyChartDataOpensExactSavedAnswerHistory()
+
+** TEST EXECUTE FAILED **
+
+Testing started

@@ -1,6 +1,6 @@
-# TestFlight and App Review notes — 1.0.0 (4)
+# TestFlight and App Review notes — 1.0.0 (5)
 
-## Build 4 catalog update
+## Build 5 catalog update
 
 - Expands the bundled offline catalog to 7,000 canonical questions: 1,000 in
   each of the seven top-level training labs.
@@ -8,6 +8,13 @@
   without replacement, including across consecutive launches.
 - Keeps adaptive Question Writer population fail-closed until the expanded
   catalog is independently approved and included in a signed release inventory.
+
+## Internal TestFlight upload record
+
+App Store Connect accepted build `1.0.0` (`5`) for TestFlight processing on
+2026-09-03 at 22:10:52 EDT. This records the internal upload only; it does not
+authorize external beta distribution or App Review submission, and it does not
+replace the signed-device and CloudKit gates below.
 
 These notes describe the current release-candidate UI. Do not attach them to a
 submission until the signed-device and CloudKit gates at the end have passed.

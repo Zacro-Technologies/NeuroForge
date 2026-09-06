@@ -6,13 +6,40 @@ import PencilKit
 import UIKit
 #endif
 
+/// The dashboard consumes derived authority; immutable raw confidence remains
+/// available only in the original answer detail.
+struct NFHistoryCalibrationSummary: Equatable, Sendable {
+    let eligibleCount: Int
+    let matchingCount: Int
+    var fraction: Double? { eligibleCount == 0 ? nil : Double(matchingCount) / Double(eligibleCount) }
+
+    init(attempts: [AttemptDTO]) {
+        let eligible = attempts.filter { $0.confidence != nil && !$0.wasSkipped && $0.evidenceWeight > 0 }
+        eligibleCount = eligible.count
+        matchingCount = eligible.filter { attempt in
+            guard let confidence = attempt.confidence else { return false }
+            return (confidence.probability >= 0.5) == attempt.correct
+        }.count
+    }
+}
+
 struct ProgressDashboardView: View {
     @Environment(AppStore.self) private var store
-    @State private var selectedSkill: TrainingLab?
+    @Environment(NFNavigationState.self) private var navigation
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.scenePhase) private var scenePhase
+    @AppStorage("nf.progress.section") private var selectedSection = "Overview"
     @State private var filters = NFProgressFilters()
     @State private var showsFilters = false
     @State private var showsProgressDetails = false
     @State private var showsMethodology = false
+    @State private var correctionSaveError = false
+    @State private var dashboardProjection = NFProgressDashboardProjection()
+    @State private var dashboardClock = NFProgressDashboardClock(capturedAt: Date(), calendar: .current)
+    @State private var publishedDashboardRequest: NFProgressDashboardRequest?
+    @State private var inspectedWeek: Date?
+    @State private var weeklyChartDataPage = 0
 
     private var hasAnyStandardizedHistory: Bool {
         !store.standardizedAttempts.isEmpty
@@ -23,11 +50,11 @@ struct ProgressDashboardView: View {
     }
 
     private var filteredAttempts: [AttemptRecord] {
-        store.standardizedAttempts.filter { filters.includes($0) }
+        store.standardizedAttempts.filter { filters.includes($0, at: dashboardClock.capturedAt, calendar: dashboardClock.calendar) }
     }
 
     private var filteredSummaries: [SkillSummary] {
-        AdaptiveEngine.reduce(filteredAttempts.map(\.dto))
+        dashboardSnapshot?.summaries ?? []
     }
 
     private var assessedCount: Int {
@@ -43,65 +70,48 @@ struct ProgressDashboardView: View {
     }
 
     private var totalEvidence: Int {
-        filteredAttempts.filter { !$0.wasSkipped && $0.evidenceWeight > 0 }.count
+        dashboardSnapshot?.totalEvidence ?? 0
     }
 
     private var personalPracticeCount: Int {
         store.attempts.filter {
-            filters.includes($0)
+            filters.includes($0, at: dashboardClock.capturedAt, calendar: dashboardClock.calendar)
                 && !$0.wasSkipped
                 && $0.evidenceClassRaw == EvidenceClass.documentPractice.rawValue
         }.count
     }
 
+    private var isDashboardActive: Bool { scenePhase == .active && selectedSection == "Overview" }
+
+    private var dashboardRequest: NFProgressDashboardRequest {
+        store.progressDashboardRequest(filters: filters, clock: dashboardClock,
+            section: selectedSection, isActive: isDashboardActive)
+    }
+
+    /// The body withholds an old result as soon as its inputs change, even before
+    /// SwiftUI starts the replacement task. A late worker cannot reattach it.
+    private var dashboardSnapshot: NFProgressDashboardSnapshot? {
+        guard isDashboardActive, publishedDashboardRequest == dashboardRequest else { return nil }
+        return dashboardProjection.snapshot
+    }
+
+    private func refreshDashboardClock() {
+        dashboardClock = dashboardClock.refreshing(isActive: isDashboardActive, at: Date(), calendar: .current)
+    }
+
     private var errorPatterns: [NFErrorPattern] {
-        var grouped: [String: (count: Int, last: Date?)] = [:]
-
-        for attempt in filteredAttempts where !attempt.isCorrect && !attempt.wasSkipped && attempt.evidenceWeight > 0 {
-            guard let code = store.effectiveErrorCode(for: attempt) else { continue }
-            let existing = grouped[code]
-            grouped[code] = (
-                count: (existing?.count ?? 0) + 1,
-                last: max(existing?.last ?? .distantPast, attempt.submittedAt)
-            )
-        }
-
-        return grouped
-            .map { NFErrorPattern(code: $0.key, count: $0.value.count, last: $0.value.last) }
-            .sorted { lhs, rhs in
-                lhs.count == rhs.count ? lhs.code < rhs.code : lhs.count > rhs.count
-            }
-    }
-
-    private var insightSnapshot: NFProgressInsightSnapshot {
-        NFProgressInsightEngine.makeSnapshot(
-            at: Date(),
-            attempts: filteredAttempts,
-            errorCodeOverrides: store.attemptReflections.reduce(into: [UUID: String]()) { result, reflection in
-                guard result[reflection.attemptID] == nil,
-                      let code = reflection.selectedErrorCodeRaw else { return }
-                result[reflection.attemptID] = code
-            }
-        )
-    }
-
-    private var consistencySnapshot: NFConsistencySnapshot {
-        NFConsistencyEngine.makeSnapshot(
-            at: Date(),
-            attempts: store.standardizedAttempts,
-            trainingDays: store.profileSnapshot.trainingDays,
-            trackingStartDate: store.profile?.createdAt
-        )
+        Dictionary(grouping: dashboardSnapshot?.patterns ?? [], by: \.code).map { code, patterns in
+            NFErrorPattern(code: code, count: patterns.reduce(0) { $0 + $1.evidenceAttemptIDs.count },
+                last: patterns.map(\.lastObservedAt).max())
+        }.sorted { $0.count == $1.count ? $0.code < $1.code : $0.count > $1.count }
     }
 
     private var mentalMathMetrics: [NFMentalMathMetricKind: NFMentalMathMetricResult] {
-        NFMentalMathMetricReducer.reduce(
-            NFMentalMathProgressAdapter.observations(from: filteredAttempts)
-        )
+        dashboardSnapshot?.mentalMathMetrics ?? [:]
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: Binding(get: { navigation.progress }, set: { navigation.progress = $0 })) {
             ZStack {
                 AppBackground()
                 ScrollView {
@@ -111,11 +121,26 @@ struct ProgressDashboardView: View {
                             eyebrow: "Personal learning",
                             subtitle: "See what is improving and what is worth practicing next."
                         )
+                        Picker("Progress section", selection: $selectedSection) {
+                            Text("Overview").tag("Overview")
+                            Text("Review").tag("Review")
+                            Text("History").tag("History")
+                        }
+                        .pickerStyle(.segmented)
+                        .accessibilityIdentifier("progress-section-picker")
+                        if selectedSection == "Overview" {
+                        correctionNotice
+                        if dashboardSnapshot == nil {
+                            ProgressView("Updating progress…").frame(maxWidth: .infinity, minHeight: 100)
+                                .accessibilityIdentifier("progress-projection-loading")
+                        } else {
                         overviewHero
-                        forgeJourneyCard
+                        historicalPracticeCard
+                        if let progress = dashboardSnapshot?.forge { forgeJourneyCard(progress) }
                         prioritySection
                         weeklyTrendCard
-                        consistencyCard
+                        if let consistency = dashboardSnapshot?.consistency { consistencyCard(consistency) }
+                        }
                         DisclosureGroup(isExpanded: $showsFilters) {
                             progressFiltersCard
                                 .padding(.top, 12)
@@ -124,9 +149,9 @@ struct ProgressDashboardView: View {
                                 .font(.headline)
                         }
                         .nfCard(cornerRadius: 18, padding: 16)
+                        if dashboardSnapshot != nil {
                         DisclosureGroup(isExpanded: $showsProgressDetails) {
                             VStack(alignment: .leading, spacing: 24) {
-                                deterministicInsightsCard
                                 evidenceChannelsCard
                                 mentalMathMetricsCard
                                 skillMap
@@ -145,6 +170,7 @@ struct ProgressDashboardView: View {
                             }
                         }
                         .nfCard(cornerRadius: 18, padding: 16)
+                        }
                         DisclosureGroup(isExpanded: $showsMethodology) {
                             methodologyNote
                                 .padding(.top, 10)
@@ -153,16 +179,106 @@ struct ProgressDashboardView: View {
                                 .font(.subheadline.weight(.semibold))
                         }
                         .padding(.horizontal, 4)
+                        } else if selectedSection == "Review" {
+                            NFReviewQueueView()
+                        } else {
+                            NavigationLink(value: NFProgressRoute.history(nil)) {
+                                Label("Open answer history", systemImage: "clock.arrow.circlepath")
+                                    .frame(maxWidth: .infinity, minHeight: 44)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            ForEach(Array(store.attempts.prefix(12))) { attempt in
+                                NavigationLink(value: NFProgressRoute.attempt(attempt.id)) {
+                                    NFAttemptHistoryRow(attempt: NFReadOnlyAttemptSnapshot(attempt: attempt))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            if store.attempts.isEmpty {
+                                Text("Your completed answers will appear here.").foregroundStyle(.secondary)
+                            }
+                        }
                     }
                     .padding(20)
                     .frame(maxWidth: 980)
                     .frame(maxWidth: .infinity)
                 }
             }
-            .navigationTitle("Progress")
-            .navigationDestination(item: $selectedSkill) { lab in
-                SkillDetailView(lab: lab, filters: $filters)
+            .task(id: dashboardRequest) {
+                let request = dashboardRequest
+                publishedDashboardRequest = nil
+                guard request.isActive else { dashboardProjection.cancel(); return }
+                let input = store.progressDashboardInput(filters: request.filters, clock: request.clock)
+                await dashboardProjection.update(input)
+                guard !Task.isCancelled, request == dashboardRequest else { return }
+                publishedDashboardRequest = request
             }
+            .task(id: isDashboardActive) {
+                guard isDashboardActive else { return }
+                // Foreground entry is immediate. While visible, a bounded tick
+                // also catches rolling cutoffs and clock changes without writes.
+                while !Task.isCancelled {
+                    refreshDashboardClock()
+                    do { try await Task.sleep(for: .seconds(NFProgressDashboardClock.maximumRefreshInterval)) }
+                    catch { return }
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .NSCalendarDayChanged)) { _ in refreshDashboardClock() }
+            .onReceive(NotificationCenter.default.publisher(for: .NSSystemTimeZoneDidChange)) { _ in refreshDashboardClock() }
+            .onReceive(NotificationCenter.default.publisher(for: NSLocale.currentLocaleDidChangeNotification)) { _ in refreshDashboardClock() }
+            #if os(iOS)
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in refreshDashboardClock() }
+            #endif
+            .onDisappear { dashboardProjection.cancel(); publishedDashboardRequest = nil }
+            .navigationTitle("Progress")
+            .navigationDestination(for: NFProgressRoute.self) { route in
+                NFProgressRouteView(route: route, filters: $filters)
+            }
+        }
+    }
+
+    @ViewBuilder private var correctionNotice: some View {
+        if !store.unacknowledgedCorrections.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Label("A progress explanation was updated", systemImage: "info.circle").font(.headline)
+                Text("Your original answers are unchanged. Review the affected answers to see why their contribution to progress changed.")
+                DisclosureGroup("Affected answers") {
+                    ForEach(store.unacknowledgedCorrections) { correction in
+                        if let id = UUID(uuidString: correction.attemptID) {
+                            NavigationLink(value: NFProgressRoute.attempt(id)) {
+                                Text(LocalizedStringKey(correction.reason))
+                            }.frame(minHeight: 44)
+                        }
+                    }
+                }
+                Button("Dismiss update") {
+                    do { try store.acknowledgeCorrections(); correctionSaveError = false }
+                    catch { correctionSaveError = true }
+                }.buttonStyle(.bordered)
+                if correctionSaveError { Text("We couldn't save this yet. Your answer is still here.").foregroundStyle(.secondary) }
+            }.nfCard()
+        }
+    }
+
+    @ViewBuilder private var historicalPracticeCard: some View {
+        let history = store.historicalPracticeSummaries
+            .filter { $0.legacyCount > 0 }
+        if !history.isEmpty {
+            DisclosureGroup("Historical practice") {
+                Text("Earlier practice is preserved here. It is separate from reviewed challenge-band evidence.").font(.subheadline)
+                ForEach(history, id: \.labID) { summary in
+                    if let lab = TrainingLab(rawValue: summary.labID) {
+                        NavigationLink(value: NFProgressRoute.history(lab)) {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(lab.title).font(.headline)
+                                Text(NFAppLocalization.formattedAnswerCount(summary.legacyCount))
+                                if let mean = summary.legacyMeanCredit {
+                                    LabeledContent("Historical mean credit", value: mean.formatted(.percent.precision(.fractionLength(0))))
+                                }
+                            }
+                        }
+                    }
+                }
+            }.nfCard()
         }
     }
 
@@ -170,7 +286,10 @@ struct ProgressDashboardView: View {
         let hasOnlyPersonalPractice = totalEvidence == 0 && personalPracticeCount > 0
         let isFilteredEmpty = hasAnyStandardizedHistory && !hasMatchingStandardizedHistory
         let hasMatchingUnscoredActivity = hasMatchingStandardizedHistory && totalEvidence == 0
-        return HStack(spacing: 24) {
+        let layout = dynamicTypeSize.isAccessibilitySize || horizontalSizeClass == .compact
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 16))
+            : AnyLayout(HStackLayout(spacing: 24))
+        return layout {
             ZStack {
                 Circle()
                     .stroke(NFTheme.indigo.opacity(0.12), lineWidth: 12)
@@ -201,7 +320,7 @@ struct ProgressDashboardView: View {
                         ? "Matching activity has no scored evidence."
                      : hasOnlyPersonalPractice
                         ? "Your practice history is growing."
-                        : totalEvidence == 0 ? "Your skill map starts unassessed." : "Your skill map is taking shape.")
+                        : totalEvidence == 0 ? "Practice reveals your next steps." : "Your skill map is taking shape.")
                     .font(.system(.title2, design: .rounded, weight: .bold))
                 Text(isFilteredEmpty
                      ? "Your saved history is still available. Change or clear the active filters to include it."
@@ -233,8 +352,7 @@ struct ProgressDashboardView: View {
         .nfCard(cornerRadius: 26)
     }
 
-    private var forgeJourneyCard: some View {
-        let progress = store.forgeProgress
+    private func forgeJourneyCard(_ progress: NFForgeProgressSnapshot) -> some View {
         return VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 16) {
                 ZStack {
@@ -292,7 +410,7 @@ struct ProgressDashboardView: View {
             }
 
             Label(
-                "Forge XP celebrates completed practice and breadth. It is separate from accuracy, transfer, retention, and skill evidence.",
+                "Practice XP acknowledges completed practice and breadth. It is separate from accuracy, transfer, retention, and skill evidence.",
                 systemImage: "checkmark.shield.fill"
             )
             .font(.footnote)
@@ -346,10 +464,11 @@ struct ProgressDashboardView: View {
     }
 
     private var weeklyTrendCard: some View {
-        let points = NFWeeklyProgressPoint.make(from: filteredAttempts)
+        let points = dashboardSnapshot?.weeklyPoints ?? []
+        let inspected = NFWeeklyProgressPoint.inspect(at: inspectedWeek, in: points)
         return VStack(alignment: .leading, spacing: 12) {
             NFSectionHeader(
-                "Weekly performance by module",
+                "Weekly practice by activity",
                 subtitle: "Scored answers in the selected filters."
             )
             if points.isEmpty {
@@ -400,25 +519,39 @@ struct ProgressDashboardView: View {
                     }
                 }
                 .chartXAxis { AxisMarks(values: .stride(by: .weekOfYear)) }
+                .chartXSelection(value: $inspectedWeek)
                 .frame(height: 260)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(NFWeeklyProgressPoint.accessibilitySummary(for: points))
 
+                Text("Select a point to inspect the saved answers behind it.")
+                    .font(.caption).foregroundStyle(.secondary)
+                ForEach(inspected) { point in
+                    NFProgressPointInspection(date: point.week, activity: point.lab.shortTitle,
+                        sampleCount: point.count, value: point.credit,
+                        onShowHistory: { navigation.progress.append(.chartHistory(point.attemptIDs)) })
+                }
+
                 DisclosureGroup("View weekly chart data") {
+                    let page = min(weeklyChartDataPage, max(0, (points.count - 1) / 50))
                     VStack(alignment: .leading, spacing: 8) {
-                        ForEach(points) { point in
-                            HStack(alignment: .firstTextBaseline) {
-                                Text(NFAppLocalization.formattedDate(point.week, date: .abbreviated, time: .omitted))
-                                Text(point.lab.shortTitle)
-                                    .foregroundStyle(.secondary)
-                                Spacer(minLength: 12)
-                                Text(point.credit, format: .percent.precision(.fractionLength(0)))
-                                    .font(.body.monospacedDigit())
-                                Text(NFAppLocalization.formattedAnswerCount(point.count))
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                        ForEach(Array(points.dropFirst(page * 50).prefix(50))) { point in
+                            Button {
+                                navigation.progress.append(.chartHistory(point.attemptIDs))
+                            } label: {
+                                NFProgressChartDataRow(date: point.week, activity: point.lab.shortTitle,
+                                    sampleCount: point.count, value: point.credit)
                             }
-                            .accessibilityElement(children: .combine)
+                            .accessibilityHint("View matching history")
+                        }
+                        HStack {
+                            Button("Previous page") { weeklyChartDataPage = max(0, page - 1) }
+                                .disabled(page == 0)
+                            Spacer()
+                            Text("Page \(page + 1)").font(.caption)
+                            Spacer()
+                            Button("Next page") { weeklyChartDataPage = page + 1 }
+                                .disabled((page + 1) * 50 >= points.count)
                         }
                     }
                     .padding(.top, 8)
@@ -456,8 +589,7 @@ struct ProgressDashboardView: View {
         }
     }
 
-    private var consistencyCard: some View {
-        let snapshot = consistencySnapshot
+    private func consistencyCard(_ snapshot: NFConsistencySnapshot) -> some View {
         return VStack(alignment: .leading, spacing: 14) {
             NFSectionHeader(
                 "Consistency",
@@ -499,74 +631,6 @@ struct ProgressDashboardView: View {
         .nfCard()
     }
 
-    private var deterministicInsightsCard: some View {
-        let insights = insightSnapshot
-        return VStack(alignment: .leading, spacing: 14) {
-            NFSectionHeader(
-                "Patterns worth noticing",
-                subtitle: "Based on your scored practice."
-            )
-
-            insightSection(
-                title: "Strengths",
-                empty: "Complete a little more varied practice to reveal strengths.",
-                insights: Array(insights.strengths.prefix(3)),
-                symbol: "checkmark.seal.fill",
-                foregroundColor: NFTheme.mintForeground
-            )
-            insightSection(
-                title: "Confidence to revisit",
-                empty: "No repeated high-confidence mistakes in this view.",
-                insights: Array(insights.overconfidenceHotspots.prefix(3)),
-                symbol: "gauge.with.dots.needle.67percent",
-                foregroundColor: NFTheme.amberForeground
-            )
-            insightSection(
-                title: "Reviews due",
-                empty: "Nothing is due for review.",
-                insights: Array(insights.reviewsDue.prefix(4)),
-                symbol: "clock.arrow.circlepath",
-                foregroundColor: NFTheme.cyanForeground
-            )
-        }
-        .nfCard()
-    }
-
-    @ViewBuilder
-    private func insightSection(
-        title: String,
-        empty: String,
-        insights: [NFProgressInsight],
-        symbol: String,
-        foregroundColor: Color
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label {
-                Text(LocalizedStringKey(title))
-            } icon: {
-                Image(systemName: symbol)
-            }
-                .font(.headline)
-                .foregroundStyle(foregroundColor)
-            if insights.isEmpty {
-                Text(LocalizedStringKey(empty)).font(.footnote).foregroundStyle(.secondary)
-            } else {
-                ForEach(insights) { insight in
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(insight.title).font(.subheadline.weight(.semibold))
-                        Text(insight.detail).font(.footnote).foregroundStyle(.secondary)
-                        Text("Based on \(NFAppLocalization.formattedAnswerCount(insight.evidenceAttemptIDs.count))")
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                    }
-                    .padding(10)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 12))
-                }
-            }
-        }
-    }
-
     private func consistencyColor(_ status: NFConsistencyDayStatus) -> Color {
         switch status {
         case .active: NFTheme.mint
@@ -588,22 +652,16 @@ struct ProgressDashboardView: View {
     }
 
     private var evidenceChannelsCard: some View {
-        let personal = store.attempts.filter { filters.includes($0) && $0.evidenceClassRaw == EvidenceClass.documentPractice.rawValue }
-        let scorable = filteredAttempts.filter { !$0.wasSkipped && $0.evidenceWeight > 0 }
-        let assessment = scorable.filter { $0.evidenceClassRaw == EvidenceClass.assessmentHoldout.rawValue }
-        let practice = scorable.filter { $0.evidenceClassRaw == EvidenceClass.practice.rawValue }
-        let transfer = scorable.filter {
-            $0.evidenceClassRaw == EvidenceClass.nearTransfer.rawValue || $0.evidenceClassRaw == EvidenceClass.appliedTransfer.rawValue
-        }
-        let retention = scorable.filter { $0.evidenceClassRaw == EvidenceClass.retention.rawValue }
+        let personalCount = personalPracticeCount
+        let counts = dashboardSnapshot?.categories ?? [:]
         return VStack(alignment: .leading, spacing: 13) {
             NFSectionHeader("Kinds of practice", subtitle: "See where your completed questions came from.")
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 180), spacing: 10)], spacing: 10) {
-                EvidenceChannelMetric(title: "Practice", count: practice.count, symbol: "repeat", foregroundColor: NFTheme.indigoForeground)
-                EvidenceChannelMetric(title: "Transfer", count: transfer.count, symbol: "arrow.triangle.swap", foregroundColor: NFTheme.roseForeground)
-                EvidenceChannelMetric(title: "Retention", count: retention.count, symbol: "clock.arrow.circlepath", foregroundColor: NFTheme.mintForeground)
-                EvidenceChannelMetric(title: "Protected assessment", count: assessment.count, symbol: "lock.shield.fill", foregroundColor: NFTheme.cyanForeground)
-                EvidenceChannelMetric(title: "Personal AI/source", count: personal.count, symbol: "apple.intelligence", foregroundColor: NFTheme.amberForeground)
+                EvidenceChannelMetric(title: "Practice", count: counts[.practice, default: 0], symbol: "repeat", foregroundColor: NFTheme.indigoForeground)
+                EvidenceChannelMetric(title: "Transfer", count: counts[.nearTransfer, default: 0] + counts[.appliedTransfer, default: 0], symbol: "arrow.triangle.swap", foregroundColor: NFTheme.roseForeground)
+                EvidenceChannelMetric(title: "Retention", count: counts[.retention, default: 0], symbol: "clock.arrow.circlepath", foregroundColor: NFTheme.mintForeground)
+                EvidenceChannelMetric(title: "Protected assessment", count: counts[.assessmentHoldout, default: 0], symbol: "lock.shield.fill", foregroundColor: NFTheme.cyanForeground)
+                EvidenceChannelMetric(title: "Personal AI/source", count: personalCount, symbol: "apple.intelligence", foregroundColor: NFTheme.amberForeground)
             }
         }
     }
@@ -613,7 +671,7 @@ struct ProgressDashboardView: View {
         return VStack(alignment: .leading, spacing: 14) {
             NFSectionHeader(
                 "Mental-math details",
-                subtitle: "Accuracy, speed, strategy, retention, and transfer stay separate."
+                subtitle: "Practice details appear when the saved question provides enough context."
             )
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 210), spacing: 10)], spacing: 10) {
                 ForEach(NFMentalMathMetricKind.allCases, id: \.rawValue) { kind in
@@ -649,7 +707,7 @@ struct ProgressDashboardView: View {
 
     private func mentalMathMetricTitle(_ kind: NFMentalMathMetricKind) -> String {
         switch kind {
-        case .independentAccuracy: NFAppLocalization.localized("Independent accuracy", locale: NFAppLocalization.preferredLocale, comment: "Independent mental-math progress metric.")
+        case .independentAccuracy: NFAppLocalization.localized("Practice accuracy", locale: NFAppLocalization.preferredLocale, comment: "Descriptive accuracy from eligible saved mental-math practice; reviewed independence is not inferred.")
         case .retrievalFluency: NFAppLocalization.localized("Retrieval fluency", locale: NFAppLocalization.preferredLocale, comment: "Independent mental-math progress metric for eligible accurate timed recall.")
         case .strategyFlexibility: NFAppLocalization.localized("Strategy flexibility", locale: NFAppLocalization.preferredLocale, comment: "Independent mental-math progress metric for valid strategy variety.")
         case .estimationError: NFAppLocalization.localized("Estimation error", locale: NFAppLocalization.preferredLocale, comment: "Independent mental-math progress metric; lower error is better.")
@@ -721,7 +779,7 @@ struct ProgressDashboardView: View {
                 VStack(spacing: 10) {
                     ForEach(filteredSummaries) { summary in
                         Button {
-                            selectedSkill = summary.lab
+                            navigation.progress.append(.skill(summary.lab))
                         } label: {
                             SkillRow(summary: summary)
                         }
@@ -733,18 +791,15 @@ struct ProgressDashboardView: View {
     }
 
     private var calibrationCard: some View {
-        let confidenceAttempts = filteredAttempts.filter { $0.confidenceRaw != nil && !$0.wasSkipped && $0.evidenceWeight > 0 }
-        let calibrated = confidenceAttempts.filter { attempt in
-            guard let confidence = attempt.confidenceRaw.flatMap(ConfidenceLevel.init(rawValue:)) else { return false }
-            return (confidence.probability >= 0.5) == attempt.isCorrect
-        }.count
-        let fraction = confidenceAttempts.isEmpty ? 0 : Double(calibrated) / Double(confidenceAttempts.count)
+        let calibration = dashboardSnapshot?.calibration ?? .init(attempts: [])
+        let calibrated = calibration.matchingCount
+        let fraction = calibration.fraction ?? 0
 
         return HStack(spacing: 20) {
             Gauge(value: fraction) {
                 Text("Calibration")
             } currentValueLabel: {
-                Text(confidenceAttempts.isEmpty ? "—" : fraction.formatted(.percent.precision(.fractionLength(0))))
+                Text(calibration.eligibleCount == 0 ? "—" : fraction.formatted(.percent.precision(.fractionLength(0))))
                     .font(.headline.monospacedDigit())
             }
             .gaugeStyle(.accessoryCircularCapacity)
@@ -755,9 +810,9 @@ struct ProgressDashboardView: View {
                 Text("Confidence calibration")
                     .font(.headline)
                 Text(
-                    confidenceAttempts.isEmpty
+                    calibration.eligibleCount == 0
                         ? "Answer a few questions to see how confidence matches accuracy."
-                        : "Confidence matched accuracy for \(calibrated) of \(NFAppLocalization.formattedAnswerCount(confidenceAttempts.count))."
+                        : "Confidence matched accuracy for \(calibrated) of \(NFAppLocalization.formattedAnswerCount(calibration.eligibleCount))."
                 )
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -781,7 +836,9 @@ struct ProgressDashboardView: View {
     private var errorPatternsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             NFSectionHeader("Common error patterns", subtitle: "Use these patterns to decide what to revisit.")
-            if errorPatterns.isEmpty {
+            if dashboardProjection.isLoading {
+                ProgressView().accessibilityLabel("Common error patterns")
+            } else if errorPatterns.isEmpty {
                 Text("No repeated mistakes yet.").foregroundStyle(.secondary).nfCard(cornerRadius: 16, padding: 14)
             } else {
                 ForEach(Array(errorPatterns.prefix(5))) { pattern in
@@ -910,11 +967,12 @@ enum NFProgressPeriod: String, CaseIterable, Identifiable {
         }
     }
 
-    var cutoff: Date? {
-        let calendar = Calendar.current
-        return switch self {
-        case .currentWeek: calendar.dateInterval(of: .weekOfYear, for: Date())?.start
-        case .fourWeeks: calendar.date(byAdding: .day, value: -28, to: Date())
+    var cutoff: Date? { cutoff(at: Date(), calendar: .current) }
+
+    func cutoff(at date: Date, calendar: Calendar) -> Date? {
+        switch self {
+        case .currentWeek: calendar.dateInterval(of: .weekOfYear, for: date)?.start
+        case .fourWeeks: calendar.date(byAdding: .day, value: -28, to: date)
         case .allTime: nil
         }
     }
@@ -935,7 +993,7 @@ enum NFProgressTimingFilter: String, CaseIterable, Identifiable {
     }
 }
 
-struct NFProgressFilters {
+struct NFProgressFilters: Equatable {
     var period: NFProgressPeriod = .fourWeeks
     var lab: TrainingLab?
     var inputMode: String?
@@ -948,8 +1006,8 @@ struct NFProgressFilters {
         period != .allTime || lab != nil || inputMode != nil || timing != .all || domain != nil
     }
 
-    func includes(_ attempt: AttemptRecord) -> Bool {
-        if let cutoff = period.cutoff, attempt.submittedAt < cutoff { return false }
+    func includes(_ attempt: AttemptRecord, at date: Date = Date(), calendar: Calendar = .current) -> Bool {
+        if let cutoff = period.cutoff(at: date, calendar: calendar), attempt.submittedAt < cutoff { return false }
         if let lab, attempt.gameID != lab.rawValue { return false }
         if let inputMode, attempt.inputModeRaw != inputMode { return false }
         switch timing {
@@ -973,37 +1031,106 @@ struct NFProgressFilters {
     }
 }
 
-struct NFWeeklyProgressPoint: Identifiable {
+/// Immutable, effective observations are the only inputs to public scored charts.
+/// Duplicate identities count once; conflicting identities and invalid values are
+/// omitted as a whole, so input order cannot decide which result is displayed.
+enum NFProgressEvidenceProjection {
+    static func eligible(_ observations: [AttemptDTO], at date: Date = Date()) -> [AttemptDTO] {
+        validUnique(observations, at: date).filter {
+            $0.evidenceClass != .assessmentHoldout && $0.evidenceClass != .nearTransfer
+        }
+    }
+
+    /// Counts disclose activity coverage only; restricted per-item scores are
+    /// never returned to the chart or inspection renderer through this API.
+    static func categoryCounts(_ observations: [AttemptDTO], at date: Date = Date()) -> [EvidenceClass: Int] {
+        Dictionary(grouping: validUnique(observations, at: date), by: \.evidenceClass).mapValues(\.count)
+    }
+
+    private static func validUnique(_ observations: [AttemptDTO], at date: Date) -> [AttemptDTO] {
+        Dictionary(grouping: observations, by: \.id).values.compactMap { copies in
+            guard let first = copies.first, copies.allSatisfy({ equivalent(first, $0) }),
+                  !first.wasSkipped, first.evidenceClass != .documentPractice,
+                  !["selfcheck", "sourceselfcheck", "selfreported", "revealed", "solutionrevealed"].contains(
+                    first.responseFormatRaw?.lowercased().filter { $0.isLetter || $0.isNumber } ?? ""),
+                  first.credit.isFinite, (0...1).contains(first.credit),
+                  first.evidenceWeight.isFinite, first.evidenceWeight > 0,
+                  first.submittedAt.timeIntervalSinceReferenceDate.isFinite,
+                  first.submittedAt <= date else { return nil }
+            return first
+        }.sorted { $0.submittedAt == $1.submittedAt
+            ? $0.id.uuidString < $1.id.uuidString : $0.submittedAt < $1.submittedAt }
+    }
+
+    private static func equivalent(_ lhs: AttemptDTO, _ rhs: AttemptDTO) -> Bool {
+        lhs.id == rhs.id && lhs.itemID == rhs.itemID && lhs.alternateFormID == rhs.alternateFormID
+            && lhs.skillID == rhs.skillID && lhs.skillWeights == rhs.skillWeights && lhs.lab == rhs.lab
+            && lhs.credit == rhs.credit && lhs.correct == rhs.correct
+            && lhs.evidenceWeight == rhs.evidenceWeight && lhs.evidenceClass == rhs.evidenceClass
+            && lhs.submittedAt == rhs.submittedAt && lhs.wasSkipped == rhs.wasSkipped
+            && lhs.responseFormatRaw == rhs.responseFormatRaw && lhs.hintCount == rhs.hintCount
+            && lhs.wasTimed == rhs.wasTimed && lhs.confidence == rhs.confidence
+            && lhs.interruptionCount == rhs.interruptionCount && lhs.accommodationFlags == rhs.accommodationFlags
+    }
+}
+
+@MainActor
+extension AppStore {
+    func chartHistoryRecords<IDs: Collection>(from records: [AttemptRecord], matching ids: IDs) -> [AttemptRecord] where IDs.Element == UUID {
+        let membership = Set(ids)
+        return records.filter { membership.contains($0.id) }
+    }
+
+    func publicPracticeChartObservations(from records: [AttemptRecord]) -> [AttemptDTO] {
+        let protectedIDs = Set(records.filter {
+            historyPresentation(for: .init(attempt: $0)).source == .protectedAssessment
+        }.map(\.id))
+        return records.filter { !protectedIDs.contains($0.id) }.map(effectiveAttemptDTO)
+    }
+}
+
+struct NFWeeklyProgressPoint: Identifiable, Sendable {
     let week: Date
     let lab: TrainingLab
     let credit: Double
     let count: Int
+    let attemptIDs: [UUID]
 
     var id: String { "\(week.timeIntervalSinceReferenceDate)|\(lab.rawValue)" }
 
     static func make(from attempts: [AttemptRecord], calendar: Calendar = .current) -> [NFWeeklyProgressPoint] {
-        let eligible = attempts.filter { !$0.wasSkipped && $0.evidenceWeight > 0 }
+        make(from: attempts.filter { NFReadOnlyAttemptSnapshot(attempt: $0).source != .protectedAssessment }.map(\.dto), calendar: calendar)
+    }
+
+    static func make(from observations: [AttemptDTO], calendar: Calendar = .current,
+                     at date: Date = Date()) -> [NFWeeklyProgressPoint] {
+        let eligible = NFProgressEvidenceProjection.eligible(observations, at: date)
         let grouped = Dictionary(grouping: eligible) { attempt in
             let week = calendar.dateInterval(of: .weekOfYear, for: attempt.submittedAt)?.start
                 ?? calendar.startOfDay(for: attempt.submittedAt)
-            let lab = TrainingLab(rawValue: attempt.gameID) ?? .mentalMath
-            return "\(week.timeIntervalSinceReferenceDate)|\(lab.rawValue)"
+            return "\(week.timeIntervalSinceReferenceDate)|\(attempt.lab.rawValue)"
         }
         return grouped.compactMap { _, records in
             guard let first = records.first else { return nil }
             let week = calendar.dateInterval(of: .weekOfYear, for: first.submittedAt)?.start
                 ?? calendar.startOfDay(for: first.submittedAt)
-            let lab = TrainingLab(rawValue: first.gameID) ?? .mentalMath
-            let available = records.reduce(0) { $0 + max(0, $1.evidenceWeight) }
-            guard available > 0 else { return nil }
-            let earned = records.reduce(0) {
-                $0 + min(1, max(0, $1.deterministicCredit)) * max(0, $1.evidenceWeight)
-            }
-            return NFWeeklyProgressPoint(week: week, lab: lab, credit: earned / available, count: records.count)
+            // Scale weights before summing to avoid overflow on retained legacy values.
+            guard let scale = records.map(\.evidenceWeight).max(), scale > 0 else { return nil }
+            let available = records.reduce(0) { $0 + $1.evidenceWeight / scale }
+            let earned = records.reduce(0) { $0 + $1.credit * ($1.evidenceWeight / scale) }
+            guard available.isFinite, available > 0, earned.isFinite else { return nil }
+            return NFWeeklyProgressPoint(week: week, lab: first.lab, credit: earned / available,
+                count: records.count, attemptIDs: records.map(\.id))
         }.sorted {
             if $0.week != $1.week { return $0.week < $1.week }
             return $0.lab.rawValue < $1.lab.rawValue
         }
+    }
+
+    static func inspect(at date: Date?, in points: [NFWeeklyProgressPoint]) -> [NFWeeklyProgressPoint] {
+        guard let date, date.timeIntervalSinceReferenceDate.isFinite,
+              let nearest = points.min(by: { abs($0.week.timeIntervalSince(date)) < abs($1.week.timeIntervalSince(date)) }) else { return [] }
+        return points.filter { $0.week == nearest.week }
     }
 
     static func accessibilitySummary(for points: [NFWeeklyProgressPoint]) -> String {
@@ -1041,7 +1168,8 @@ struct NFWeeklyProgressPoint: Identifiable {
                     : NFAppLocalization.localized("down", locale: NFAppLocalization.preferredLocale, comment: "Chart trend direction.")
                 changeText = "\(direction) \(abs(change).formatted(.percent.precision(.fractionLength(0))))"
             }
-            return "\(lab.shortTitle): \(last.credit.formatted(.percent.precision(.fractionLength(0)))) latest, \(changeText)"
+            return NFAppLocalization.localized("\(lab.shortTitle): \(last.credit.formatted(.percent.precision(.fractionLength(0)))) latest, \(changeText)",
+                locale: NFAppLocalization.preferredLocale, comment: "Accessible weekly series summary: activity, latest value, descriptive change.")
         }
         let answerCount = NFAppLocalization.formattedScoredAnswerCount(
             points.reduce(0) { $0 + $1.count }
@@ -1120,57 +1248,47 @@ struct NFAbilityEvidenceSnapshot {
 
     let lab: TrainingLab
     let attempts: [AttemptRecord]
+    let observations: [AttemptDTO]
 
-    init(lab: TrainingLab, attempts: [AttemptRecord]) {
+    init(lab: TrainingLab, attempts: [AttemptRecord], effectiveObservations: [AttemptDTO]? = nil,
+         at date: Date = Date()) {
         self.lab = lab
-        self.attempts = attempts.filter { attempt in
-            !attempt.wasSkipped
-                && attempt.evidenceWeight > 0
-                && EvidenceClass(rawValue: attempt.evidenceClassRaw) != .documentPractice
-                && Self.attributedWeight(of: attempt, to: lab) > 0
-        }
+        let inputIDs = Set(attempts.map(\.id))
+        observations = NFProgressEvidenceProjection.eligible(effectiveObservations ?? attempts.filter {
+            NFReadOnlyAttemptSnapshot(attempt: $0).source != .protectedAssessment
+        }.map(\.dto), at: date)
+            .filter { inputIDs.contains($0.id) && Self.attributedWeight(of: $0, to: lab) > 0 }
+        let eligibleIDs = Set(observations.map(\.id))
+        var seen: Set<UUID> = []
+        self.attempts = attempts.filter { eligibleIDs.contains($0.id) && seen.insert($0.id).inserted }
     }
 
-    var evidenceCount: Int { attempts.count }
-
-    var credit: Double? {
-        metric(for: Set(EvidenceClass.allCases.filter { $0 != .documentPractice })).credit
-    }
-
-    var lastTrained: Date? {
-        attempts.map(\.submittedAt).max()
-    }
-
+    var evidenceCount: Int { observations.count }
+    var credit: Double? { metric(for: Set(EvidenceClass.allCases.filter { $0 != .documentPractice })).credit }
+    var lastTrained: Date? { observations.map(\.submittedAt).max() }
     var status: EstimateStatus {
-        AdaptiveEngine.reduce(attempts.map(\.dto)).first(where: { $0.lab == lab })?.status
-            ?? .unassessed
+        AdaptiveEngine.reduce(observations).first(where: { $0.lab == lab })?.status ?? .unassessed
     }
 
     func metric(for classes: Set<EvidenceClass>) -> Metric {
-        let matching = attempts.filter {
-            classes.contains(EvidenceClass(rawValue: $0.evidenceClassRaw) ?? .practice)
-        }
-        let available = matching.reduce(0.0) { result, attempt in
-            result + max(0, attempt.evidenceWeight) * Self.attributedWeight(of: attempt, to: lab)
-        }
-        guard available > 0 else { return Metric(credit: nil, count: 0) }
-        let earned = matching.reduce(0.0) { result, attempt in
-            let evidence = max(0, attempt.evidenceWeight) * Self.attributedWeight(of: attempt, to: lab)
-            return result + min(1, max(0, attempt.deterministicCredit)) * evidence
-        }
+        let matching = observations.filter { classes.contains($0.evidenceClass) }
+        guard let scale = matching.map(\.evidenceWeight).max(), scale > 0 else { return Metric(credit: nil, count: 0) }
+        let available = matching.reduce(0.0) { $0 + ($1.evidenceWeight / scale) * Self.attributedWeight(of: $1, to: lab) }
+        let earned = matching.reduce(0.0) { $0 + $1.credit * ($1.evidenceWeight / scale) * Self.attributedWeight(of: $1, to: lab) }
+        guard available.isFinite, available > 0, earned.isFinite else { return Metric(credit: nil, count: 0) }
         return Metric(credit: earned / available, count: matching.count)
     }
 
     static func attributedWeight(of attempt: AttemptRecord, to lab: TrainingLab) -> Double {
-        if let direct = attempt.skillWeights[lab.skillID], direct > 0 {
-            return direct
-        }
-        guard let dimension = attempt.dto.assessmentDimension,
-              dimension != .confidenceCalibration,
-              dimension.lab == lab else {
-            return 0
-        }
-        return attempt.skillWeights[dimension.skillID] ?? 1
+        attributedWeight(of: attempt.dto, to: lab)
+    }
+
+    static func attributedWeight(of attempt: AttemptDTO, to lab: TrainingLab) -> Double {
+        if let direct = attempt.skillWeights[lab.skillID], direct.isFinite, direct > 0 { return direct }
+        guard let dimension = attempt.assessmentDimension, dimension != .confidenceCalibration,
+              dimension.lab == lab else { return 0 }
+        let weight = attempt.skillWeights[dimension.skillID] ?? 1
+        return weight.isFinite && weight > 0 ? weight : 0
     }
 }
 
@@ -1309,15 +1427,19 @@ private struct EvidenceBand: View {
 
 private struct SkillDetailView: View {
     @Environment(AppStore.self) private var store
+    @Environment(NFNavigationState.self) private var navigation
     let lab: TrainingLab
     @Binding var filters: NFProgressFilters
+    @State private var inspectedAnswerIndex: Int?
+    @State private var chartDataPage = 0
 
     private var filteredAttempts: [AttemptRecord] {
         store.standardizedAttempts.filter { filters.includes($0) }
     }
 
     private var evidenceSnapshot: NFAbilityEvidenceSnapshot {
-        NFAbilityEvidenceSnapshot(lab: lab, attempts: filteredAttempts)
+        NFAbilityEvidenceSnapshot(lab: lab, attempts: filteredAttempts,
+            effectiveObservations: store.publicPracticeChartObservations(from: filteredAttempts))
     }
 
     private var historyAttempts: [AttemptRecord] {
@@ -1339,12 +1461,12 @@ private struct SkillDetailView: View {
     private var improvementClaim: NFImprovementClaim? {
         NFImprovementClaimEngine.strongestClaim(
             for: lab,
-            attempts: evidenceSnapshot.attempts.map(\.dto)
+            attempts: evidenceSnapshot.attempts.map(store.effectiveAttemptDTO)
         )
     }
 
     private var points: [EvidencePoint] {
-        EvidencePoint.make(from: evidenceSnapshot.attempts)
+        EvidencePoint.make(from: evidenceSnapshot.observations, attributedTo: lab)
     }
 
     private var speedEvidence: NFSpeedEvidence {
@@ -1387,8 +1509,8 @@ private struct SkillDetailView: View {
                     }
 
                     HStack(spacing: 12) {
-                        DetailMetric(value: evidenceSnapshot.credit.map { $0.formatted(.percent.precision(.fractionLength(0))) } ?? "—", label: "Earned credit")
-                        DetailMetric(value: "\(evidenceSnapshot.evidenceCount)", label: "Scored answers")
+                        DetailMetric(value: evidenceSnapshot.credit.map { $0.formatted(.percent.precision(.fractionLength(0))) } ?? "—", label: "Practice credit")
+                        DetailMetric(value: "\(evidenceSnapshot.evidenceCount)", label: "Scored practice")
                         DetailMetric(value: evidenceSnapshot.lastTrained.map { NFAppLocalization.formattedDate($0, date: .abbreviated, time: .omitted) } ?? "Not yet", label: "Last trained")
                     }
 
@@ -1409,21 +1531,15 @@ private struct SkillDetailView: View {
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
                             EvidenceCoverageRow(label: "Training", detail: metric(for: .practice), symbol: "repeat", color: NFTheme.indigoForeground)
-                            EvidenceCoverageRow(label: "Near transfer", detail: metric(for: .nearTransfer), symbol: "arrow.left.arrow.right", color: NFTheme.cyanForeground)
                             EvidenceCoverageRow(label: "Applied transfer", detail: metric(for: .appliedTransfer), symbol: "arrow.triangle.swap", color: NFTheme.roseForeground)
                             EvidenceCoverageRow(label: "Delayed retention", detail: metric(for: .retention), symbol: "clock.arrow.circlepath", color: NFTheme.mintForeground)
-                            EvidenceCoverageRow(label: "Protected assessment", detail: metric(for: .assessmentHoldout), symbol: "lock.shield.fill", color: NFTheme.cyanForeground)
+                            Text("Protected checks appear in skill summaries; their individual results are not plotted.")
+                                .font(.footnote).foregroundStyle(.secondary)
                         }
                         .nfCard()
                     }
 
-                    NavigationLink {
-                        NFAttemptHistoryView(
-                            attempts: historyAttempts,
-                            title: "\(lab.shortTitle) answer history",
-                            subtitle: "Exact saved prompts and responses under the active dashboard filters."
-                        )
-                    } label: {
+                    NavigationLink(value: NFProgressRoute.history(lab)) {
                         HStack(spacing: 14) {
                             NFIconTile(symbol: "list.bullet.rectangle.portrait", color: NFTheme.indigo, size: 46)
                             VStack(alignment: .leading, spacing: 3) {
@@ -1505,7 +1621,7 @@ private struct SkillDetailView: View {
                 } else {
                     Text(speedEvidence.status == .unavailableUntimed
                          ? "Untimed answers count toward accuracy, not speed."
-                         : "Complete at least \(NFAppLocalization.formattedAnswerCount(NFSpeedEvidenceEngine.minimumEligibleAttempts)) with correct, uninterrupted timed responses. You have \(NFAppLocalization.formattedAnswerCount(speedEvidence.eligibleCount)).")
+                         : "These saved answers do not include the complete timing and task context needed for a speed estimate.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -1519,12 +1635,14 @@ private struct SkillDetailView: View {
     private var transferGapCard: some View {
         let practice = creditMetric(for: [.practice])
         let transfer = creditMetric(for: [.nearTransfer, .appliedTransfer])
-        if practice.count >= 3, transfer.count >= 3, practice.credit - transfer.credit >= 0.15 {
+        if practice.count >= 3, transfer.count >= 3 {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "arrow.triangle.swap").foregroundStyle(NFTheme.amberForeground)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Transfer gap is visible").font(.headline)
-                    Text("Practice credit is \(practice.credit.formatted(.percent.precision(.fractionLength(0)))) while unfamiliar transfer is \(transfer.credit.formatted(.percent.precision(.fractionLength(0)))). Gains are currently limited to more familiar mechanics; the app will keep measuring transfer separately.")
+                    Text("Results by practice type").font(.headline)
+                    Text("Practice \(practice.credit.formatted(.percent.precision(.fractionLength(0)))) · Transfer tasks \(transfer.credit.formatted(.percent.precision(.fractionLength(0))))")
+                        .font(.subheadline)
+                    Text("These question sets may differ in difficulty and support. Their averages do not establish transfer of learning.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -1621,25 +1739,39 @@ private struct SkillDetailView: View {
                     }
                 }
                 .chartXAxisLabel("Answer")
+                .chartXSelection(value: $inspectedAnswerIndex)
                 .frame(height: 280)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(EvidencePoint.accessibilitySummary(for: points))
 
+                Text("Select a point to inspect the saved answers behind it.")
+                    .font(.caption).foregroundStyle(.secondary)
+                ForEach(points.filter { $0.index == inspectedAnswerIndex }) { point in
+                    NFProgressPointInspection(date: point.date, activity: point.series,
+                        sampleCount: point.attemptIDs.count, value: point.accuracy,
+                        onShowHistory: { navigation.progress.append(.chartHistory(Array(point.attemptIDs))) })
+                }
+
                 DisclosureGroup("View performance chart data") {
+                    let page = min(chartDataPage, max(0, (points.count - 1) / 50))
                     VStack(alignment: .leading, spacing: 8) {
-                        ForEach(points) { point in
-                            HStack(alignment: .firstTextBaseline) {
-                                Text(NFAppLocalization.formattedDate(point.date, date: .abbreviated, time: .shortened))
-                                Text(point.series)
-                                    .foregroundStyle(.secondary)
-                                Spacer(minLength: 12)
-                                Text(point.accuracy, format: .percent.precision(.fractionLength(0)))
-                                    .font(.body.monospacedDigit())
-                                Text("after \(point.index)")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                        ForEach(Array(points.dropFirst(page * 50).prefix(50))) { point in
+                            Button {
+                                navigation.progress.append(.chartHistory(Array(point.attemptIDs)))
+                            } label: {
+                                NFProgressChartDataRow(date: point.date, activity: point.series,
+                                    sampleCount: point.index, value: point.accuracy)
                             }
-                            .accessibilityElement(children: .combine)
+                            .accessibilityHint("View matching history")
+                        }
+                        HStack {
+                            Button("Previous page") { chartDataPage = max(0, page - 1) }
+                                .disabled(page == 0)
+                            Spacer()
+                            Text("Page \(page + 1)").font(.caption)
+                            Spacer()
+                            Button("Next page") { chartDataPage = page + 1 }
+                                .disabled((page + 1) * 50 >= points.count)
                         }
                     }
                     .padding(.top, 8)
@@ -1703,39 +1835,102 @@ private struct EvidenceCoverageRow: View {
     }
 }
 
-private struct EvidencePoint: Identifiable {
+private struct NFProgressChartDataRow: View {
+    let date: Date
+    let activity: String
+    let sampleCount: Int
+    let value: Double
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(NFAppLocalization.formattedDate(date, date: .abbreviated, time: .omitted))
+                .font(.caption).foregroundStyle(.secondary)
+            Text(activity).font(.subheadline.weight(.semibold))
+            HStack {
+                Text(value, format: .percent.precision(.fractionLength(0)))
+                    .font(.body.monospacedDigit())
+                Spacer(minLength: 12)
+                Text(NFAppLocalization.formattedScoredAnswerCount(sampleCount))
+                    .font(.caption).foregroundStyle(.secondary)
+                Image(systemName: "chevron.right").accessibilityHidden(true)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+private struct NFProgressPointInspection: View {
+    let date: Date
+    let activity: String
+    let sampleCount: Int
+    let value: Double
+    let onShowHistory: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(NFAppLocalization.formattedDate(date, date: .abbreviated, time: .omitted))
+                .font(.caption).foregroundStyle(.secondary)
+            Text(activity).font(.headline)
+            Text(value, format: .percent.precision(.fractionLength(0)))
+                .font(.title3.monospacedDigit())
+            Text(NFAppLocalization.formattedScoredAnswerCount(sampleCount))
+                .font(.subheadline)
+            Button(action: onShowHistory) {
+                Label("View matching history", systemImage: "clock.arrow.circlepath")
+            }
+            .accessibilityIdentifier("progress-point-history")
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .contain)
+    }
+}
+
+struct EvidencePoint: Identifiable {
     let id: UUID
     let index: Int
     let accuracy: Double
     let series: String
     let date: Date
+    private let seriesAttemptIDs: [UUID]
+    var attemptIDs: ArraySlice<UUID> { seriesAttemptIDs.prefix(index) }
 
-    static func make(from attempts: [AttemptRecord]) -> [EvidencePoint] {
-        let sorted = attempts
-            .filter { !$0.wasSkipped && $0.evidenceWeight > 0 }
-            .sorted { $0.submittedAt < $1.submittedAt }
+    static func make(from observations: [AttemptDTO], attributedTo lab: TrainingLab? = nil,
+                     at date: Date = Date()) -> [EvidencePoint] {
+        let sorted = NFProgressEvidenceProjection.eligible(observations, at: date).filter { attempt in
+            guard let lab else { return true }
+            return NFAbilityEvidenceSnapshot.attributedWeight(of: attempt, to: lab) > 0
+        }
         let classes: [(EvidenceClass, String)] = [
-            (.practice, "Training"),
-            (.nearTransfer, "Near transfer"),
-            (.appliedTransfer, "Applied transfer"),
-            (.retention, "Delayed retention"),
-            (.assessmentHoldout, "Protected assessment")
+            (.practice, "Training"), (.nearTransfer, "Near transfer"), (.appliedTransfer, "Applied transfer"),
+            (.retention, "Delayed retention"), (.assessmentHoldout, "Protected assessment")
         ]
         return classes.flatMap { evidenceClass, title in
-            let matching = sorted.filter { EvidenceClass(rawValue: $0.evidenceClassRaw) == evidenceClass }
+            let matching = sorted.filter { $0.evidenceClass == evidenceClass }
+            // All points share one immutable buffer; each stores only a prefix
+            // boundary. Copying a growing IDs array here would be quadratic.
+            let seriesIDs = matching.map(\.id)
+            var scale = 0.0
             var earnedCredit = 0.0
             var availableEvidence = 0.0
-            return matching.enumerated().map { offset, attempt in
-                let weight = max(0, attempt.evidenceWeight)
-                earnedCredit += min(1, max(0, attempt.deterministicCredit)) * weight
+            return matching.enumerated().compactMap { offset, attempt -> EvidencePoint? in
+                if attempt.evidenceWeight > scale {
+                    let adjustment = scale / attempt.evidenceWeight
+                    earnedCredit *= adjustment
+                    availableEvidence *= adjustment
+                    scale = attempt.evidenceWeight
+                }
+                let attribution = lab.map { NFAbilityEvidenceSnapshot.attributedWeight(of: attempt, to: $0) } ?? 1
+                let weight = (attempt.evidenceWeight / scale) * attribution
+                earnedCredit += attempt.credit * weight
                 availableEvidence += weight
-                return EvidencePoint(
-                    id: attempt.id,
-                    index: offset + 1,
-                    accuracy: earnedCredit / availableEvidence,
-                    series: NFAppLocalization.localizedCatalogValue(title),
-                    date: attempt.submittedAt
-                )
+                guard availableEvidence > 0, availableEvidence.isFinite, earnedCredit.isFinite else { return nil }
+                return EvidencePoint(id: attempt.id, index: offset + 1, accuracy: earnedCredit / availableEvidence,
+                    series: NFAppLocalization.localizedCatalogValue(title), date: attempt.submittedAt,
+                    seriesAttemptIDs: seriesIDs)
             }
         }
     }
@@ -1765,7 +1960,8 @@ private struct EvidencePoint: Identifiable {
                     : NFAppLocalization.localized("down", locale: NFAppLocalization.preferredLocale, comment: "Chart trend direction.")
                 comparison = "\(direction) \(abs(change).formatted(.percent.precision(.fractionLength(0))))"
             }
-            return "\(name): \(last.accuracy.formatted(.percent.precision(.fractionLength(0)))) after \(NFAppLocalization.formattedAnswerCount(last.index)), \(comparison)"
+            return NFAppLocalization.localized("\(name): \(last.accuracy.formatted(.percent.precision(.fractionLength(0)))) after \(NFAppLocalization.formattedAnswerCount(last.index)), \(comparison)",
+                locale: NFAppLocalization.preferredLocale, comment: "Accessible cumulative series summary: practice type, value, count, descriptive change.")
         }
         return NFAppLocalization.localized(
             "Earned credit by practice type from \(NFAppLocalization.formattedDate(firstDate, date: .abbreviated, time: .omitted)) through \(NFAppLocalization.formattedDate(lastDate, date: .abbreviated, time: .omitted)). \(series.joined(separator: "; ")).",
@@ -1781,6 +1977,7 @@ enum NFAttemptHistoryResult: String, CaseIterable, Identifiable {
     case partial
     case incorrect
     case skipped
+    case revealed
 
     var id: String { rawValue }
     var title: String {
@@ -1790,6 +1987,7 @@ enum NFAttemptHistoryResult: String, CaseIterable, Identifiable {
         case .partial: NFAppLocalization.localized("Partial credit", locale: NFAppLocalization.preferredLocale, comment: "Answer-history result filter.")
         case .incorrect: NFAppLocalization.localized("Incorrect", locale: NFAppLocalization.preferredLocale, comment: "Answer-history result filter.")
         case .skipped: NFAppLocalization.localized("Skipped", locale: NFAppLocalization.preferredLocale, comment: "Answer-history result filter.")
+        case .revealed: NFAppLocalization.localized("Solution viewed — no score", locale: NFAppLocalization.preferredLocale, comment: "Answer-history result for an explicitly revealed solution.")
         }
     }
 }
@@ -1856,15 +2054,66 @@ enum NFAttemptHistorySource: String, CaseIterable, Identifiable {
     }
 }
 
+/// A read-only amendment to an immutable historical result. Dismissed notices
+/// are deliberately not an input: acknowledging a notice cannot erase a repair.
+struct NFHistoryCorrectionPresentation: Equatable {
+    let correctedCredit: Double?
+    let excludesAccuracy: Bool
+    let isSelfReported: Bool
+    let excludedScopes: Set<NFHistoricalCorrectionScope>
+    let confirmedAssistance: Bool
+    let reasons: [String]
+
+    static func make(attemptID: UUID, dispositions: [NFHistoricalPracticeDispositionRecord],
+                     corrections: [NFHistoricalContentCorrectionRecommendation], activeIDs: [String]?) -> Self? {
+        let identity = attemptID.uuidString
+        let candidates = dispositions.filter { $0.attemptID == identity && $0.policyVersion == NFHistoricalPracticeProjection.policyVersion }
+            .sorted {
+                if $0.revision != $1.revision { return $0.revision < $1.revision }
+                if $0.occurredAt != $1.occurredAt { return $0.occurredAt < $1.occurredAt }
+                return $0.id < $1.id
+            }
+        var latest: NFHistoricalPracticeDispositionRecord?
+        var seen: Set<String> = []
+        for candidate in candidates where seen.insert(candidate.id).inserted {
+            guard candidate.supersedesDispositionID == latest?.id else { continue }
+            latest = candidate
+        }
+        let active = corrections.filter { record in
+            record.originalAttemptID == identity && record.policyVersion == NFContentCorrectionPolicy.historicalPolicyVersion
+                && (activeIDs.map { $0.contains(record.id) } ?? true)
+                && record.disposition != .quarantineForReview && record.disposition != .legacyUncalibrated
+        }
+        let scopes = Set(active.flatMap(\.excludedScopes))
+        let selfReported = latest?.disposition == .personalStudy || active.contains { $0.disposition == .selfReported }
+        let excluded = scopes.contains(.accuracy) || selfReported
+            || latest.map { [.excludedContentCorrection, .excludedInvalidScore].contains($0.disposition) } == true
+        let credits = Set(active.compactMap(\.correctedCredit).filter { $0.isFinite && (0...1).contains($0) })
+        let retainedCredit = latest.flatMap(\.correctedDerivedCredit).flatMap { $0.isFinite && (0...1).contains($0) ? $0 : nil }
+        let correctedCredit = excluded || credits.count > 1 ? nil : (retainedCredit ?? (credits.count == 1 ? credits.first : nil))
+        var reasons: [String] = []
+        if let latest, latest.disposition != .editorialEvidence, !latest.reason.isEmpty { reasons.append(latest.reason) }
+        for record in active where !record.rationale.isEmpty && !reasons.contains(record.rationale) { reasons.append(record.rationale) }
+        guard excluded || correctedCredit != nil || !scopes.isEmpty else { return nil }
+        return Self(correctedCredit: correctedCredit, excludesAccuracy: excluded || credits.count > 1,
+            isSelfReported: selfReported, excludedScopes: scopes,
+            confirmedAssistance: active.contains { $0.disposition == .assistedEvidence }, reasons: reasons)
+    }
+}
+
 /// Immutable, read-only copy of the durable answer fields already exposed by
 /// AppStore. Review UI never regenerates or re-scores an attempt.
 struct NFReadOnlyAttemptSnapshot: Identifiable {
     let id: UUID
+    let sessionID: UUID
     let lab: TrainingLab
     let submittedAt: Date
     let prompt: String
     let response: String
-    let correctAnswer: String
+    let rawResponse: String
+    private let requiresTypedResponse: Bool
+    let selfCheckRating: NFSelfCheckRating?
+    private let recordedCorrectAnswer: String
     let result: NFAttemptHistoryResult
     let deterministicCredit: Double
     let wasTimed: Bool
@@ -1872,23 +2121,43 @@ struct NFReadOnlyAttemptSnapshot: Identifiable {
     let hintCount: Int
     let accommodationCount: Int
     let confidence: ConfidenceLevel?
-    let source: NFAttemptHistorySource
+    private let recordedSource: NFAttemptHistorySource
     let evidenceClass: EvidenceClass
     let templateID: String
     let scoringVersion: Int
     let validationVersion: Int
     let inputMode: String
     let sessionSource: SessionSource?
+    private(set) var correction: NFHistoryCorrectionPresentation? = nil
+    private var protectedSnapshot = false
+    var source: NFAttemptHistorySource { protectedSnapshot ? .protectedAssessment : recordedSource }
+    var correctAnswer: String { source == .protectedAssessment ? "" : recordedCorrectAnswer }
 
     init(attempt: AttemptRecord) {
         id = attempt.id
+        sessionID = attempt.sessionID
         lab = TrainingLab(rawValue: attempt.gameID) ?? .mentalMath
         submittedAt = attempt.submittedAt
         prompt = attempt.prompt
-        response = attempt.response
-        correctAnswer = attempt.correctAnswerText
+        rawResponse = attempt.response
+        requiresTypedResponse = attempt.scoringVersion >= 8 && ["numeric", "singleChoice", "multipleChoice",
+            "orderedSteps", "shortText", "selfCheck", "claimEvidence", "logicState"].contains(attempt.responseFormatRaw)
+        let protectedReceipt = [EvidenceClass.assessmentHoldout.rawValue, EvidenceClass.nearTransfer.rawValue].contains(attempt.evidenceClassRaw)
+            || attempt.assessmentBlockRaw != nil || attempt.errorCode == "protected_evaluator_unavailable"
+            || attempt.sessionSourceRaw == SessionSource.baseline.rawValue
+            || attempt.sessionSourceRaw == SessionSource.reassessment.rawValue
+        response = NFResponsePresentation.text(attempt.response, requiresTypedEnvelope: requiresTypedResponse)
+        if !protectedReceipt, case .selfCheck(let submission) = NFResponsePresentation.decode(attempt.response) {
+            selfCheckRating = submission.rating
+        } else { selfCheckRating = nil }
+        recordedCorrectAnswer = protectedReceipt ? "" : attempt.correctAnswerText
         deterministicCredit = min(1, max(0, attempt.deterministicCredit))
-        if attempt.wasSkipped {
+        if protectedReceipt || selfCheckRating != nil {
+            // No objective result is available to disclose or use in Correct/Wrong filters.
+            result = .all
+        } else if attempt.responseFormatRaw == "revealed" || attempt.errorCode == "solution_revealed" {
+            result = .revealed
+        } else if attempt.wasSkipped {
             result = .skipped
         } else if attempt.isCorrect || deterministicCredit >= 0.999 {
             result = .correct
@@ -1906,14 +2175,14 @@ struct NFReadOnlyAttemptSnapshot: Identifiable {
             .count
         confidence = attempt.confidenceRaw.flatMap(ConfidenceLevel.init(rawValue:))
         evidenceClass = EvidenceClass(rawValue: attempt.evidenceClassRaw) ?? .practice
-        if evidenceClass == .assessmentHoldout {
-            source = .protectedAssessment
+        if protectedReceipt {
+            recordedSource = .protectedAssessment
         } else if evidenceClass == .documentPractice
                     || attempt.generationID != nil
                     || !attempt.sourceDocumentIDsRaw.isEmpty {
-            source = .personal
+            recordedSource = .personal
         } else {
-            source = .appPractice
+            recordedSource = .appPractice
         }
         templateID = attempt.templateID
         scoringVersion = max(0, attempt.scoringVersion)
@@ -1922,9 +2191,71 @@ struct NFReadOnlyAttemptSnapshot: Identifiable {
         sessionSource = SessionSource(rawValue: attempt.sessionSourceRaw)
     }
 
-    var resultTitle: String { result.title }
+    var resultTitle: String {
+        if source == .protectedAssessment { return NFAppLocalization.localizedCatalogValue("Answer saved", locale: NFAppLocalization.preferredLocale) }
+        if let selfCheckRating { return NFResponsePresentation.ratingTitle(selfCheckRating) }
+        if correction?.isSelfReported == true { return NFAppLocalization.localizedCatalogValue("Self-check saved", locale: NFAppLocalization.preferredLocale) }
+        if correction?.excludesAccuracy == true { return NFAppLocalization.localizedCatalogValue("Excluded from accuracy", locale: NFAppLocalization.preferredLocale) }
+        return effectiveResult.title
+    }
+
+    var originalResultTitle: String {
+        if source == .protectedAssessment { return NFAppLocalization.localizedCatalogValue("Answer saved", locale: NFAppLocalization.preferredLocale) }
+        if let selfCheckRating { return NFResponsePresentation.ratingTitle(selfCheckRating) }
+        return result.title
+    }
+
+    var effectiveResult: NFAttemptHistoryResult {
+        guard source != .protectedAssessment, selfCheckRating == nil else { return .all }
+        if correction?.excludesAccuracy == true { return .all }
+        guard let credit = correction?.correctedCredit else { return result }
+        return credit >= 1 ? .correct : (credit > 0 ? .partial : .incorrect)
+    }
+    var effectiveCredit: Double { correction?.correctedCredit ?? deterministicCredit }
+    var hasDisputedKey: Bool { correction?.excludesAccuracy == true && correction?.isSelfReported != true }
+    var effectiveWasTimed: Bool { wasTimed && correction?.excludedScopes.contains(.cleanSpeed) != true }
+
+    func applyingHistoricalCorrections(dispositions: [NFHistoricalPracticeDispositionRecord],
+                                      corrections: [NFHistoricalContentCorrectionRecommendation], activeIDs: [String]?,
+                                      protectedSnapshot: Bool = false) -> Self {
+        var copy = self
+        copy.protectedSnapshot = self.protectedSnapshot || protectedSnapshot
+        // Protection is checked before any correction text/key or derived result
+        // is constructed for a user-facing or accessibility presentation.
+        copy.correction = copy.source == .protectedAssessment ? nil : NFHistoryCorrectionPresentation.make(
+            attemptID: id, dispositions: dispositions, corrections: corrections, activeIDs: activeIDs)
+        return copy
+    }
+
+    func readableResponse(exercise: NFExercise?) -> String {
+        NFResponsePresentation.text(rawResponse,
+            exercise: source == .protectedAssessment || exercise?.assessmentProtected == true ? nil : exercise,
+            requiresTypedEnvelope: requiresTypedResponse)
+    }
+
+    func reviewExplanation(exercise: NFExercise?) -> String {
+        guard source != .protectedAssessment, exercise?.assessmentProtected != true else {
+            return NFAppLocalization.localizedCatalogValue("Your results appear after this block. Practice this skill with a fresh question.", locale: NFAppLocalization.preferredLocale)
+        }
+        if let selfCheckRating { return NFResponsePresentation.ratingTitle(selfCheckRating) }
+        if correction?.isSelfReported == true { return resultTitle }
+        if let exercise {
+            // An invalidated key has no newly endorsed explanation. The view
+            // labels this exact historical text as disputed before showing it.
+            let outcome = hasDisputedKey ? result : effectiveResult
+            return outcome == .correct ? exercise.feedback.correctExplanation : exercise.feedback.retryExplanation
+        }
+        return NFAppLocalization.localizedCatalogValue("The original teaching explanation is unavailable in this older answer.", locale: NFAppLocalization.preferredLocale)
+    }
 
     var timingTitle: String {
+        if correction?.excludedScopes.contains(.cleanSpeed) == true {
+            return NFAppLocalization.localizedCatalogValue("Timing evidence unavailable", locale: NFAppLocalization.preferredLocale)
+        }
+        return originalTimingTitle
+    }
+
+    var originalTimingTitle: String {
         let duration = NFAppLocalization.formattedSeconds(activeDurationSeconds)
         return wasTimed
             ? NFAppLocalization.localized("Timed · \(duration)", locale: NFAppLocalization.preferredLocale, comment: "Answer-history timing value.")
@@ -1932,6 +2263,15 @@ struct NFReadOnlyAttemptSnapshot: Identifiable {
     }
 
     var supportTitle: String {
+        if correction?.confirmedAssistance == true {
+            return NFAppLocalization.localizedCatalogValue("Assisted practice", locale: NFAppLocalization.preferredLocale)
+        }
+        if correction?.excludedScopes.contains(.independentEvidence) == true || correction?.excludesAccuracy == true {
+            return NFAppLocalization.localizedCatalogValue("Independent evidence unavailable", locale: NFAppLocalization.preferredLocale)
+        }
+        if result == .revealed {
+            return NFAppLocalization.localizedCatalogValue("Solution viewed", locale: NFAppLocalization.preferredLocale)
+        }
         if hintCount == 0 && accommodationCount == 0 {
             return NFAppLocalization.localized("Independent", locale: NFAppLocalization.preferredLocale, comment: "Answer-history support level.")
         }
@@ -1948,7 +2288,10 @@ struct NFReadOnlyAttemptSnapshot: Identifiable {
         return NFAppLocalization.localized("Accessibility support", locale: NFAppLocalization.preferredLocale, comment: "Answer-history support level without exposing private setting identifiers.")
     }
 
-    var usedSupport: Bool { hintCount > 0 || accommodationCount > 0 }
+    var usedSupport: Bool { result == .revealed || hintCount > 0 || accommodationCount > 0 || correction?.confirmedAssistance == true
+        || correction?.excludedScopes.contains(.independentEvidence) == true || correction?.excludesAccuracy == true }
+
+    var hasObjectiveResult: Bool { effectiveResult == .correct || effectiveResult == .partial || effectiveResult == .incorrect }
 
     var confidenceTitle: String {
         confidence?.title
@@ -2026,11 +2369,12 @@ struct NFReadOnlyAttemptSnapshot: Identifiable {
     var explanation: String {
         if source == .protectedAssessment {
             return NFAppLocalization.localized(
-                "The detailed key is intentionally withheld for protected skill-check content. Your recorded result and earned credit are shown above.",
+                "Your results appear after this block. Practice this skill with a fresh question.",
                 locale: NFAppLocalization.preferredLocale,
                 comment: "Answer-history explanation for protected assessment content."
             )
         }
+        if let correction { return correction.reasons.joined(separator: "\n\n") }
         let key = correctAnswer.isEmpty
             ? NFAppLocalization.localized("No additional saved answer key is available for this content version.", locale: NFAppLocalization.preferredLocale, comment: "Answer-history explanation when no saved key exists.")
             : NFAppLocalization.localized("Saved scoring key: \(correctAnswer)", locale: NFAppLocalization.preferredLocale, comment: "Answer-history explanation containing the exact saved scoring key.")
@@ -2042,7 +2386,21 @@ struct NFReadOnlyAttemptSnapshot: Identifiable {
     }
 }
 
+extension AppStore {
+    func historyPresentation(for original: NFReadOnlyAttemptSnapshot) -> NFReadOnlyAttemptSnapshot {
+        _ = localSessionRevision
+        return original.applyingHistoricalCorrections(dispositions: evidenceDispositions,
+            corrections: localSessions.archive.contentCorrections ?? [],
+            activeIDs: localSessions.archive.activeContentCorrectionIDs?[original.id.uuidString],
+            protectedSnapshot: localSessions.archive.snapshots.first { $0.attemptID == original.id }?.exercise.assessmentProtected == true
+                || localSessions.archive.unavailableHistorySnapshots?.contains(where: {
+                    $0.attemptID == original.id && $0.reason == .protectedContent
+                }) == true || localSessions.archive.withheldProtectedConflictAttemptIDs?.contains(original.id) == true)
+    }
+}
+
 struct NFAttemptHistoryView: View {
+    @Environment(AppStore.self) private var store
     let attempts: [NFReadOnlyAttemptSnapshot]
     let title: String
     let subtitle: String
@@ -2079,14 +2437,14 @@ struct NFAttemptHistoryView: View {
     }
 
     private var filteredAttempts: [NFReadOnlyAttemptSnapshot] {
-        attempts.filter { attempt in
+        attempts.map { store.historyPresentation(for: $0) }.filter { attempt in
             if let cutoff = period.cutoff, attempt.submittedAt < cutoff { return false }
             if let activity, attempt.lab != activity { return false }
-            if result != .all, attempt.result != result { return false }
+            if result != .all, attempt.effectiveResult != result { return false }
             switch timing {
             case .all: break
-            case .timed where !attempt.wasTimed: return false
-            case .untimed where attempt.wasTimed: return false
+            case .timed where !attempt.effectiveWasTimed: return false
+            case .untimed where attempt.effectiveWasTimed: return false
             default: break
             }
             switch support {
@@ -2108,7 +2466,7 @@ struct NFAttemptHistoryView: View {
             let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
             if !query.isEmpty,
                !attempt.prompt.localizedCaseInsensitiveContains(query),
-               !attempt.response.localizedCaseInsensitiveContains(query) {
+               !attempt.readableResponse(exercise: attempt.source == .protectedAssessment ? nil : store.exerciseSnapshot(for: attempt.id)).localizedCaseInsensitiveContains(query) {
                 return false
             }
             return true
@@ -2181,9 +2539,7 @@ struct NFAttemptHistoryView: View {
                         .frame(maxWidth: .infinity, minHeight: 260)
                     } else {
                         ForEach(filteredAttempts) { attempt in
-                            NavigationLink {
-                                NFAttemptReviewDetailView(attempt: attempt)
-                            } label: {
+                            NavigationLink(value: NFProgressRoute.attempt(attempt.id)) {
                                 NFAttemptHistoryRow(attempt: attempt)
                             }
                             .buttonStyle(.plain)
@@ -2196,6 +2552,9 @@ struct NFAttemptHistoryView: View {
             }
         }
         .navigationTitle("Answer history")
+        .navigationDestination(for: NFProgressRoute.self) { route in
+            NFProgressRouteView(route: route, filters: .constant(NFProgressFilters()))
+        }
         .searchable(text: $searchText, prompt: "Search saved prompts and answers")
     }
 
@@ -2247,27 +2606,33 @@ struct NFAttemptHistoryView: View {
 }
 
 private struct NFAttemptHistoryRow: View {
+    @Environment(AppStore.self) private var store
     let attempt: NFReadOnlyAttemptSnapshot
+    private var presented: NFReadOnlyAttemptSnapshot { store.historyPresentation(for: attempt) }
+    private var permittedExercise: NFExercise? {
+        guard presented.source != .protectedAssessment else { return nil }
+        return store.exerciseSnapshot(for: presented.id)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .firstTextBaseline) {
-                Text(NFAppLocalization.formattedDate(attempt.submittedAt, date: .abbreviated, time: .shortened))
+                Text(NFAppLocalization.formattedDate(presented.submittedAt, date: .abbreviated, time: .shortened))
                     .font(.caption.weight(.semibold))
-                Text(attempt.activityTitle)
+                Text(presented.activityTitle)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Spacer(minLength: 8)
-                Label(attempt.source.title, systemImage: attempt.source.symbol)
+                Label(presented.source.title, systemImage: presented.source.symbol)
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(attempt.source == .personal ? NFTheme.amberForeground : NFTheme.indigoForeground)
+                    .foregroundStyle(presented.source == .personal ? NFTheme.amberForeground : NFTheme.indigoForeground)
             }
 
-            Text(attempt.prompt.isEmpty ? "Prompt unavailable in this saved version" : attempt.prompt)
+            Text(presented.prompt.isEmpty ? "Prompt unavailable in this saved version" : presented.prompt)
                 .font(.headline)
                 .lineLimit(3)
                 .multilineTextAlignment(.leading)
-            Text("Answer: \(attempt.response.isEmpty ? "No response saved" : attempt.response)")
+            Text(presented.readableResponse(exercise: permittedExercise))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
@@ -2287,24 +2652,87 @@ private struct NFAttemptHistoryRow: View {
 
     @ViewBuilder
     private var metadata: some View {
-        Text(attempt.resultTitle).foregroundStyle(resultColor)
-        Text(attempt.timingTitle)
-        Text(attempt.supportTitle)
-        Text("Confidence: \(attempt.confidenceTitle)")
+        Text(presented.resultTitle).foregroundStyle(resultColor)
+        Text(presented.timingTitle)
+        Text(presented.supportTitle)
+        Text("Confidence: \(presented.confidenceTitle)")
     }
 
     private var resultColor: Color {
-        switch attempt.result {
+        if presented.source == .protectedAssessment || presented.selfCheckRating != nil { return .secondary }
+        return switch presented.effectiveResult {
         case .correct: NFTheme.mintForeground
         case .partial: NFTheme.amberForeground
         case .incorrect: NFTheme.roseForeground
-        case .skipped, .all: .secondary
+        case .skipped, .revealed, .all: .secondary
         }
     }
 }
 
 struct NFAttemptReviewDetailView: View {
+    @Environment(AppStore.self) private var store
     let attempt: NFReadOnlyAttemptSnapshot
+    private var presented: NFReadOnlyAttemptSnapshot { store.historyPresentation(for: attempt) }
+    private var permittedExercise: NFExercise? {
+        guard presented.source != .protectedAssessment else { return nil }
+        return store.exerciseSnapshot(for: presented.id)
+    }
+    private var savedTransferRelationship: NFTransferRelationshipDraft? {
+        NFTransferRelationshipHistoryProjection.make(exercise: permittedExercise,
+            draft: store.localSessions.archive.snapshots.first(where: { $0.attemptID == presented.id })?.transferRelationship,
+            isProtected: presented.source == .protectedAssessment)?.draft
+    }
+    private var savedScienceStudy: NFScienceStudyDraft? {
+        NFScienceStudyHistoryProjection.make(exercise: permittedExercise,
+            draft: store.localSessions.archive.snapshots.first(where: { $0.attemptID == presented.id })?.scienceStudy,
+            isProtected: presented.source == .protectedAssessment)?.draft
+    }
+    private var savedDataInspection: NFDataInspectionHistoryProjection? {
+        guard presented.source != .protectedAssessment else { return nil }
+        return NFDataInspectionHistoryProjection.make(exercise: permittedExercise,
+            draft: store.localSessions.archive.snapshots.first { $0.attemptID == presented.id }?.dataInspection,
+            isProtected: presented.source == .protectedAssessment)
+    }
+    private var hasUnavailableDataInspection: Bool {
+        guard presented.source != .protectedAssessment else { return false }
+        return store.localSessions.archive.snapshots.first { $0.attemptID == presented.id }?.dataInspection != nil
+            && savedDataInspection == nil
+    }
+    private var hasUnavailableTrace: Bool {
+        guard presented.source != .protectedAssessment else { return false }
+        return store.localSessions.archive.snapshots.first { $0.attemptID == presented.id }?.traceInspection != nil && savedTrace == nil
+    }
+    private var savedLadderHintCount: Int? {
+        guard !hasUnavailableDataInspection, !hasUnavailableMathWorking, !hasUnavailableTrace else { return nil }
+        return max(0, presented.hintCount - (savedTrace == nil ? 0 : 1) - (savedDataInspection?.draft.supportCount ?? 0))
+    }
+    private var hasUnavailableMathWorking: Bool {
+        guard presented.source != .protectedAssessment, let exercise = permittedExercise,
+              let work = store.localSessions.archive.snapshots.first(where: { $0.attemptID == presented.id })?.mathWork else { return false }
+        return !work.isCompatible(with: exercise)
+    }
+    private var savedMathWork: NFMathWorkDraft? {
+        guard presented.source != .protectedAssessment, let exercise = permittedExercise,
+              let work = store.localSessions.archive.snapshots.first(where: { $0.attemptID == presented.id })?.mathWork,
+              work.isCompatible(with: exercise) else { return nil }
+        return work
+    }
+    private var snapshotUnavailableReason: String? {
+        guard presented.source != .protectedAssessment else { return nil }
+        return store.historySnapshotUnavailableReason(for: presented.id)
+    }
+    private var savedTrace: NFTraceInspectionDraft? {
+        guard let exercise = permittedExercise,
+              let value = store.localSessions.archive.snapshots.first(where: { $0.attemptID == presented.id })?.traceInspection,
+              value.isValid(for: exercise) else { return nil }
+        return value
+    }
+    @State private var showsReport = false
+    private var savedExpectedAnswer: String? {
+        guard presented.source != .protectedAssessment else { return nil }
+        if let exercise = permittedExercise { return NFResponsePresentation.expectedAnswer(for: exercise) }
+        return presented.correctAnswer.isEmpty ? nil : presented.correctAnswer
+    }
 
     var body: some View {
         ZStack {
@@ -2314,34 +2742,192 @@ struct NFAttemptReviewDetailView: View {
                     NFSectionHeader(
                         "Saved answer",
                         eyebrow: "READ-ONLY",
-                        subtitle: NFAppLocalization.formattedDate(attempt.submittedAt, date: .complete, time: .shortened)
+                        subtitle: NFAppLocalization.formattedDate(presented.submittedAt, date: .complete, time: .shortened)
                     )
 
                     VStack(alignment: .leading, spacing: 10) {
-                        LabeledContent("Activity", value: attempt.activityTitle)
-                        LabeledContent("Result", value: attempt.resultTitle)
-                        LabeledContent("Earned credit", value: attempt.deterministicCredit.formatted(.percent.precision(.fractionLength(0))))
-                        LabeledContent("Timing", value: attempt.timingTitle)
-                        LabeledContent("Support", value: attempt.supportTitle)
-                        LabeledContent("Confidence", value: attempt.confidenceTitle)
-                        LabeledContent("Input", value: attempt.inputMode)
-                        LabeledContent("Version", value: attempt.contentVersionTitle)
+                        if let original = store.attempts.first(where: { $0.id == presented.id }),
+                           let scope = store.generatedRunSummary(sessionID: original.sessionID) {
+                            Text(scope).font(.subheadline).foregroundStyle(.secondary)
+                        }
+                        LabeledContent("Activity", value: presented.activityTitle)
+                        LabeledContent("Result", value: presented.resultTitle)
+                        if presented.hasObjectiveResult {
+                            LabeledContent("Earned credit", value: presented.effectiveCredit.formatted(.percent.precision(.fractionLength(0))))
+                        }
+                        LabeledContent("Timing", value: presented.timingTitle)
+                        LabeledContent("Support", value: presented.supportTitle)
+                        LabeledContent("Confidence", value: presented.confidenceTitle)
+                        LabeledContent("Input", value: presented.inputMode)
+
                     }
                     .nfCard()
 
-                    reviewTextCard(title: "Prompt — exact saved text", text: attempt.prompt, symbol: "questionmark.bubble.fill")
-                    reviewTextCard(title: "Your answer — exact saved response", text: attempt.response, symbol: "text.bubble.fill")
+                    if presented.source != .protectedAssessment, let correction = presented.correction {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Label("Result correction", systemImage: "info.circle").font(.headline)
+                            LabeledContent("Original result", value: presented.originalResultTitle)
+                            if presented.selfCheckRating == nil && !correction.isSelfReported {
+                                LabeledContent("Original credit", value: presented.deterministicCredit.formatted(.percent.precision(.fractionLength(0))))
+                            }
+                            ForEach(correction.reasons, id: \.self) { reason in
+                                Text(LocalizedStringKey(reason)).foregroundStyle(.secondary).textSelection(.enabled)
+                            }
+                        }
+                        .nfCard()
+                    }
 
+                    if let reason = snapshotUnavailableReason {
+                        Label {
+                            Text(verbatim: NFAppLocalization.localizedCatalogValue(reason, locale: NFAppLocalization.preferredLocale))
+                        } icon: {
+                            Image(systemName: "exclamationmark.triangle")
+                        }
+                        .foregroundStyle(.secondary)
+                        .nfCard()
+                        .accessibilityIdentifier("history-snapshot-unavailable")
+                    }
+
+                    reviewTextCard(title: "Prompt — exact saved text", text: presented.prompt, symbol: "questionmark.bubble.fill")
+                    if presented.source != .protectedAssessment, let exercise = permittedExercise, !exercise.assessmentProtected {
+                        NFHistoryStimulusView(exercise: exercise, attemptID: presented.id, sessionID: presented.sessionID)
+                    }
+                    reviewTextCard(title: "Your saved answer", text: presented.readableResponse(exercise: permittedExercise), symbol: "text.bubble.fill")
+                    if let saved = savedTransferRelationship, let exercise = permittedExercise {
+                        NFTransferSavedRelationshipView(exercise: exercise, draft: saved).nfCard()
+                        NFTransferRelationshipDebriefView(exercise: exercise)
+                    }
+                    if let graph = NFGraphConstructionHistoryProjection.make(exercise: permittedExercise,
+                        response: NFResponsePresentation.decode(presented.rawResponse), isProtected: presented.source == .protectedAssessment) {
+                        NFGraphConstructionFeedbackView(projection: graph, showsPlot: true)
+                    }
+                    if let saved = savedScienceStudy, let exercise = permittedExercise {
+                        NFScienceSavedEvidenceView(exercise: exercise, draft: saved).nfCard()
+                        if let response = try? JSONDecoder().decode(NFExerciseResponse.self, from: Data(presented.rawResponse.utf8)) {
+                            NFScienceStudyFeedbackView(exercise: exercise, response: response)
+                        }
+                    }
+                    if let inspection = savedDataInspection {
+                        VStack(alignment: .leading, spacing: 12) {
+                            if let prediction = inspection.draft.firstPrediction {
+                                LabeledContent("Prediction saved before explanation (%)", value: prediction.value)
+                            } else if !inspection.draft.predictionText.isEmpty {
+                                LabeledContent("Your prediction draft (%)", value: inspection.draft.predictionText)
+                            }
+                            if let point = inspection.explanation.data.inspect(id: inspection.draft.selectedPointID) {
+                                LabeledContent("Saved displayed outcome", value: point.label)
+                                Text("\(point.originalValue) observations")
+                            }
+                            NFDataDenominatorExplanationView(explanation: inspection.explanation)
+                            if inspection.draft.overlayRevealed {
+                                Text("Denominator explanation used").font(.caption).foregroundStyle(.secondary)
+                            }
+                        }.nfCard().accessibilityIdentifier("history-original-data-prediction")
+                    } else if hasUnavailableDataInspection {
+                        Text("Saved data inspection is unavailable in this version. Your original answer remains saved.")
+                            .foregroundStyle(.secondary).accessibilityIdentifier("history-data-inspection-unavailable")
+                    }
+                    if hasUnavailableMathWorking {
+                        Text("Saved calculation working is unavailable in this version. The original answer remains saved.")
+                            .foregroundStyle(.secondary).accessibilityIdentifier("history-math-working-unavailable")
+                    }
+                    if let work = savedMathWork {
+                        VStack(alignment: .leading, spacing: 10) {
+                            if let estimate = work.lockedEstimate {
+                                LabeledContent("Estimate saved before exact work", value: estimate)
+                            }
+                            ForEach(Array(work.workingValues.enumerated()), id: \.offset) { index, value in
+                                if !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                    LabeledContent("Your value after step \(index + 1)", value: value)
+                                }
+                            }
+                        }.nfCard().accessibilityIdentifier("history-original-math-working")
+                    }
+
+
+                    if let trace = savedTrace, let exercise = permittedExercise,
+                       let projection = NFCodeTraceProjection.make(exercise: exercise) {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Label("Execution inspection", systemImage: "forward.frame").font(.headline)
+                            Text("First prediction before inspection").font(.subheadline.bold())
+                            Text(NFResponsePresentation.text(trace.prediction, exercise: exercise)).textSelection(.enabled)
+                            ForEach(Array((trace.statePredictions ?? []).enumerated()), id: \.offset) { _, prediction in
+                                Text("Prediction before step \(prediction.step)").font(.subheadline.bold())
+                                Text(prediction.values.keys.sorted().map { "\($0): \(prediction.values[$0] ?? "")" }.joined(separator: ", "))
+                                    .font(.body.monospaced()).textSelection(.enabled)
+                            }
+                            NFCodeTraceView(projection: projection, draft: trace,
+                                canInspect: false, predictionIsReady: false, perform: { _ in })
+                        }.nfCard().accessibilityIdentifier("history-code-trace")
+                    }
+
+                    if let expected = savedExpectedAnswer {
+                        if presented.hasDisputedKey {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("This original key is retained for the audit trail and is not endorsed as a valid answer.")
+                                    .foregroundStyle(.secondary)
+                                reviewTextCard(title: "Original scoring key — disputed", text: expected, symbol: "exclamationmark.triangle")
+                            }
+                        } else {
+                            reviewTextCard(title: "Expected answer", text: expected, symbol: "checkmark.seal")
+                        }
+                    }
                     VStack(alignment: .leading, spacing: 8) {
-                        Label("Scoring explanation", systemImage: "checkmark.seal.fill")
+                        Label(LocalizedStringKey(presented.hasDisputedKey ? "Original explanation — disputed" : "Explanation"),
+                              systemImage: presented.hasDisputedKey ? "exclamationmark.triangle" : "checkmark.seal.fill")
                             .font(.headline)
-                        Text(attempt.explanation)
+                        if presented.hasDisputedKey {
+                            Text("This original explanation is retained for the audit trail and is not endorsed as valid feedback.")
+                                .foregroundStyle(.secondary)
+                        }
+                        Text(savedExplanation)
                             .foregroundStyle(.secondary)
                             .textSelection(.enabled)
                     }
                     .nfCard()
 
-                    Label(attempt.privacyNote, systemImage: attempt.source.symbol)
+                    if presented.source != .protectedAssessment, (savedLadderHintCount ?? 1) > 0 {
+                        let support = NFHistoryContextProjection.make(exercise: permittedExercise,
+                            hintCount: savedLadderHintCount ?? 0, isProtected: false, mathWork: savedMathWork)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Label("Hints used", systemImage: "lightbulb").font(.headline)
+                            ForEach(Array(support.usedHints.enumerated()), id: \.offset) { index, hint in
+                                if !hint.isEmpty {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Hint \(index + 1)").font(.subheadline.bold())
+                                        Text(hint).textSelection(.enabled)
+                                    }
+                                }
+                            }
+                            if support.hasUnavailableHints || savedLadderHintCount == nil {
+                                Text("The original text of some used hints was not retained.").foregroundStyle(.secondary)
+                            }
+                        }.nfCard().accessibilityIdentifier("history-used-hints")
+                    }
+
+                    NFAttemptAnnotationView(attemptID: presented.id)
+
+                    HStack {
+                        Button("Practice this skill") {
+                            _ = store.beginSession(lab: presented.lab, source: .focused, evidenceClass: .practice, requestedItemCount: 5, isTimed: false)
+                        }.buttonStyle(.borderedProminent)
+                        if presented.source != .protectedAssessment && permittedExercise != nil {
+                            Button("Report item") { showsReport = true }.buttonStyle(.bordered)
+                        }
+                    }
+
+                    DisclosureGroup("Technical details") {
+                        LabeledContent("Version", value: presented.contentVersionTitle)
+                        if presented.source != .protectedAssessment {
+                            if presented.correction != nil {
+                                LabeledContent("Timing", value: presented.originalTimingTitle)
+                            }
+                            Text(presented.rawResponse).font(.footnote.monospaced()).textSelection(.enabled)
+                        }
+                    }
+                    .nfCard()
+
+                    Label(presented.privacyNote, systemImage: presented.source.symbol)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .nfCard(cornerRadius: 16, padding: 12)
@@ -2353,11 +2939,23 @@ struct NFAttemptReviewDetailView: View {
             }
         }
         .navigationTitle("Answer review")
+        .sheet(isPresented: $showsReport) {
+            if presented.source != .protectedAssessment, let exercise = permittedExercise, !exercise.assessmentProtected {
+                ReportExerciseView(exercise: exercise, assessmentDescriptorID: nil)
+            }
+        }
+    }
+
+    private var savedExplanation: String {
+        if let reason = snapshotUnavailableReason {
+            return NFAppLocalization.localizedCatalogValue(reason, locale: NFAppLocalization.preferredLocale)
+        }
+        return presented.reviewExplanation(exercise: permittedExercise)
     }
 
     private func reviewTextCard(title: String, text: String, symbol: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label(title, systemImage: symbol)
+            Label(LocalizedStringKey(title), systemImage: symbol)
                 .font(.headline)
             Text(text.isEmpty ? "No text was saved for this field." : text)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -2369,6 +2967,7 @@ struct NFAttemptReviewDetailView: View {
 
 struct NFCompletedTodayReviewView: View {
     @Environment(\.dismiss) private var dismiss
+    @State private var path: [NFProgressRoute] = []
     let plan: DailyPlan
     let chapters: [NFCompletedChapterSnapshot]
     let focusedBlockID: String?
@@ -2405,7 +3004,7 @@ struct NFCompletedTodayReviewView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ZStack {
                 AppBackground()
                 ScrollView {
@@ -2442,6 +3041,9 @@ struct NFCompletedTodayReviewView: View {
                     .frame(maxWidth: 860)
                     .frame(maxWidth: .infinity)
                 }
+            }
+            .navigationDestination(for: NFProgressRoute.self) { route in
+                NFProgressRouteView(route: route, filters: .constant(NFProgressFilters()))
             }
             .navigationTitle("Completed review")
             .toolbar {
@@ -2481,9 +3083,7 @@ struct NFCompletedTodayReviewView: View {
                     .padding(.vertical, 8)
             } else {
                 ForEach(chapter.attempts.sorted(by: { $0.submittedAt < $1.submittedAt })) { attempt in
-                    NavigationLink {
-                        NFAttemptReviewDetailView(attempt: attempt)
-                    } label: {
+                    NavigationLink(value: NFProgressRoute.attempt(attempt.id)) {
                         NFAttemptHistoryRow(attempt: attempt)
                     }
                     .buttonStyle(.plain)
@@ -2503,7 +3103,8 @@ struct NFCompletedTodayReviewView: View {
 
     @ViewBuilder
     private func completedScratchpad(_ storedValue: String?) -> some View {
-        let payload = NFScratchpadPayload.decode(storedValue ?? "")
+        let inspection = NFScratchpadInspection.inspect(storedValue ?? "")
+        if let payload = inspection.payload, inspection.canEdit {
         if payload.hasNotes {
             Text(payload.notes)
                 .foregroundStyle(.secondary)
@@ -2511,7 +3112,7 @@ struct NFCompletedTodayReviewView: View {
         }
         #if os(iOS)
         if payload.hasDrawing {
-            NFScratchpadDrawingPreview(drawingData: payload.drawingData)
+            NFScratchpadDrawingPreview(drawingData: payload.drawingData, originalStoredValue: inspection.originalStoredValue)
         }
         #else
         if payload.hasDrawing {
@@ -2524,12 +3125,16 @@ struct NFCompletedTodayReviewView: View {
             Text("No scratchpad content was retained in the completed checkpoint.")
                 .foregroundStyle(.secondary)
         }
+        } else {
+            NFScratchpadRecoveryView(storedValue: inspection.originalStoredValue)
+        }
     }
 }
 
 #if os(iOS)
 private struct NFScratchpadDrawingPreview: View {
     let drawingData: Data
+    let originalStoredValue: String
 
     var body: some View {
         Group {
@@ -2541,18 +3146,17 @@ private struct NFScratchpadDrawingPreview: View {
                     .padding(8)
                     .background(.white, in: RoundedRectangle(cornerRadius: 10))
             } else {
-                Label("A scratchpad drawing was retained, but its preview is unavailable.", systemImage: "scribble.variable")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                NFScratchpadRecoveryView(storedValue: originalStoredValue)
             }
         }
-        .accessibilityElement(children: .ignore)
+        .accessibilityElement(children: .contain)
         .accessibilityLabel("Retained scratchpad drawing")
     }
 
     private var previewImage: UIImage? {
-        guard let drawing = try? PKDrawing(data: drawingData), !drawing.bounds.isEmpty else { return nil }
-        return drawing.image(from: drawing.bounds.insetBy(dx: -12, dy: -12), scale: 2)
+        guard let drawing = NFScratchpadDrawingSafety.decode(drawingData),
+              let plan = NFScratchpadGeometryPolicy.previewPlan(for: drawing.bounds) else { return nil }
+        return drawing.image(from: plan.rect, scale: plan.scale)
     }
 }
 #endif
@@ -2564,4 +3168,76 @@ struct NFCompletedChapterSnapshot: Identifiable {
     let scratchpad: String?
 
     var id: String { block.id }
+}
+
+struct NFProgressRouteView: View {
+    @Environment(AppStore.self) private var store
+    let route: NFProgressRoute
+    @Binding var filters: NFProgressFilters
+
+    var body: some View {
+        switch route {
+        case .skill(let lab): SkillDetailView(lab: lab, filters: $filters)
+        case .history(let lab):
+            NFAttemptHistoryView(
+                attempts: store.attempts.filter { lab == nil || ($0.gameID == lab?.rawValue && filters.includes($0)) },
+                title: "History", subtitle: "Find a prior answer and its explanation."
+            )
+        case .chartHistory(let ids):
+            NFAttemptHistoryView(attempts: store.chartHistoryRecords(from: store.attempts, matching: ids),
+                title: "History", subtitle: "Saved answers represented by this chart point.")
+        case .attempt(let id):
+            if let attempt = store.attempts.first(where: { $0.id == id }) {
+                NFAttemptReviewDetailView(attempt: NFReadOnlyAttemptSnapshot(attempt: attempt))
+            } else {
+                ContentUnavailableView("Saved answer unavailable", systemImage: "doc.questionmark", description: Text("This answer may have been deleted. Return to History to choose another answer."))
+            }
+        }
+    }
+}
+
+/// Includes physical-store reloads, private correction/deletion transactions,
+/// filters and the day boundary. Raw count/ID equality cannot mask changed rows.
+struct NFProgressDashboardRequest: Equatable {
+    let reloadID: UUID
+    let archiveRevision: UInt64?
+    let filters: NFProgressFilters
+    let clock: NFProgressDashboardClock
+    let section: String
+    let isActive: Bool
+}
+
+/// One coherent wall-clock/calendar input for row filtering and all reducers.
+/// Calendar equality includes week rules, not only the date's midnight boundary.
+struct NFProgressDashboardClock: Equatable, Sendable {
+    static let maximumRefreshInterval = 60.0
+    let capturedAt: Date
+    let calendar: Calendar
+
+    func refreshing(isActive: Bool, at date: Date, calendar: Calendar) -> Self {
+        guard isActive else { return self }
+        return .init(capturedAt: date, calendar: calendar)
+    }
+}
+
+@MainActor
+extension AppStore {
+    func progressDashboardRequest(filters: NFProgressFilters, clock: NFProgressDashboardClock,
+        section: String = "Overview", isActive: Bool = true) -> NFProgressDashboardRequest {
+        .init(reloadID: progressReloadID, archiveRevision: localSessions.archive.transactionRevision,
+            filters: filters, clock: clock, section: section, isActive: isActive)
+    }
+
+    func progressDashboardInput(filters: NFProgressFilters, clock: NFProgressDashboardClock) -> NFProgressDashboardInput {
+        let records = standardizedAttempts.filter { filters.includes($0, at: clock.capturedAt, calendar: clock.calendar) }
+        return .init(effectiveAttempts: records.map(effectiveAttemptDTO),
+            publicAttempts: publicPracticeChartObservations(from: records),
+            diagnostics: records.map { progressDiagnosticObservation(for: $0) },
+            capturedAt: clock.capturedAt, calendar: clock.calendar,
+            engagement: .init(activities: attempts.map(NFImmutableAttemptRecordSnapshot.init),
+                completions: sessionCheckpoints.map { .init(sessionID: $0.sessionID, isComplete: $0.isComplete, updatedAt: $0.updatedAt) },
+                trainingDays: profileSnapshot.trainingDays, trackingStartDate: profile?.createdAt,
+                excludedLabs: profile?.excludeVisualSpatial == true ? [.spatial, .transfer] : [.transfer]),
+            mentalMathInputs: mentalMathProgressInputs(from: records))
+    }
 }

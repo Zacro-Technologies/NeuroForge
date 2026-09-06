@@ -1,0 +1,17 @@
+NF_CONTENT_QA equivalent response=["3 · exact": "9648", "2 · plausibility": "yes", "1 · estimate": "10000"] isCorrect=true credit=0.6666666666666666 canonicalCredit=1.0
+NF_CONTENT_QA actualBank lab=transfer count=1000 lastCandidate=9620 families=constraint-shift.linearity=1; cross-context.conditions=1; cross-context.sequence=1; field-shift.causal-structure=1; field-shift.rate-product=986; interacting-variables.ratio=6; representation.table-to-equation=4 invalidIntervals=0
+NF_CONTENT_QA actualBank lab=logicDebugging count=1000 lastCandidate=9355 families=calibration.observed-frequency=3; conditions.divisibility=1; counterexample.even-product=1; debug.boundary-last-element=1; debug.complexity-comparison=1; debug.repair-loop-bound=1; proof.first-invalid-division=1; proof.order-odd-sum=1; trace.stale-derived-state=990 invalidIntervals=0
+NF_CONTENT_QA actualBank lab=scientificReasoning count=1000 lastCandidate=5636 families=claim.evidence.bounds=557; competing-hypotheses.prediction=1; data-forensics.uncertainty=436; design.discriminating-sequence=1; design.identify-confound=1; design.next-discriminating-experiment=1; design.repair-bias=1; paper-sprint.structure=1; reviewer-mode.method-figure=1 invalidIntervals=266
+NF_CONTENT_QA actualBank lab=retrieval count=1000 lastCandidate=8480 families=cloze.relationship=103; code-tracing.source-filter=101; equation-reconstruction=104; explain-concept.self-check=116; figure-interpretation=121; free-recall.self-check=120; reconstruction.ordered-cycle=101; short-answer=111; source-supported.recognition=123 invalidIntervals=0
+NF_CONTENT_QA spatial prompt=Point P is at (10, 10). Where is P after a 90° counterclockwise rotation about the origin? duplicatedAnswer=(-10, 10) ids=["correct", "distractor.2"]
+NF_CONTENT_QA identical spatial answers keyedCredit=1.0 otherCredit=0.0
+NF_CONTENT_QA calculus prompt=Answer from memory: If F prime equals f, what is the definite integral of f from a to b? expected=F(b) minus F(a) incorrectInput=f(b)-f(a) accepted=true
+NF_CONTENT_QA science prompt=A synthetic figure shows group A mean 21 and group B mean 32 with overlapping uncertainty intervals. Which claim is strongest? A=[18, 26] B=[27, 35] keyed=Group B has the higher observed mean, but overlapping uncertainty prevents a definitive effect claim from this figure alone. credit=1.0
+NF_CONTENT_QA retrieval target=general.arithmetic-mean prompt=Answer from memory: How is the arithmetic mean of a finite set of numbers calculated? input=Sum all observations then divide by their count expected=Add the values and divide by the number of values isCorrect=false credit=0.0
+NF_CONTENT_QA retrieval target=mathematics.square-derivative prompt=Answer from memory: What is the derivative of x squared with respect to x? input=2*x expected=2x isCorrect=false credit=0.0
+NF_CONTENT_QA retrieval target=mathematics.monomial-derivative-2-2 prompt=Answer from memory: What is the derivative with respect to x of 2x^2? input=4x expected=4x^1 isCorrect=false credit=0.0
+	 Executed 6 tests, with 0 failures (0 unexpected) in 36.374 (36.381) seconds
+QA_CONFIRMED difficulty: identical prompt, answer schema, representations and ID at targetDifficulty 0.2 and 0.9; only overall metadata differs. Prompt: Normalize 36 × 10^4 into scientific notation.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 36.380 (36.389) seconds
+	 Executed 7 tests, with 0 failures (0 unexpected) in 36.380 (36.390) seconds
+** TEST SUCCEEDED **

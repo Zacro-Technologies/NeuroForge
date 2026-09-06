@@ -1,0 +1,46 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "modelName" : "iPhone SE (3rd generation)",
+        "osBuildNumber" : "23F77",
+        "osVersion" : "26.5",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 0,
+      "passedTests" : 13,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "NeuroForgeNativeInput · Built with macOS 27.0",
+  "expectedFailures" : 0,
+  "failedTests" : 0,
+  "finishTime" : 1788649257.565,
+  "passedTests" : 13,
+  "result" : "Passed",
+  "skippedTests" : 0,
+  "startTime" : 1788649132.163,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+
+  ],
+  "title" : "Test - NeuroForgeNativeInput",
+  "topInsights" : [
+    {
+      "category" : "Longest Test Runs",
+      "impact" : "32% of duration",
+      "text" : "1 longest test run with outlier durations exceeding 0.27s (three standard deviations)"
+    }
+  ],
+  "totalTestCount" : 13
+}

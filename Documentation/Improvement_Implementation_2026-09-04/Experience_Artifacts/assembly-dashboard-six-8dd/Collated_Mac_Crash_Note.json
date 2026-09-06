@@ -1,0 +1,24 @@
+{
+  "incident": "744B6F62-CBF9-4C61-9745-C563E46A7F05",
+  "procName": "NeuroForge",
+  "procPath": "/private/tmp/*/NeuroForge.app/Contents/MacOS/NeuroForge",
+  "osVersion": {
+    "train": "macOS 27.0",
+    "build": "26A5425a",
+    "releaseType": "User"
+  },
+  "procLaunch": "2026-09-05 19:30:08.1344 -0400",
+  "captureTime": "2026-09-05 19:30:15.0688 -0400",
+  "exception": {
+    "codes": "0x0000000000000002, 0x000000016f897ff8",
+    "message": "Thread stack size exceeded",
+    "rawCodes": [
+      2,
+      6166249464
+    ],
+    "type": "EXC_BAD_ACCESS",
+    "signal": "SIGBUS",
+    "subtype": "KERN_PROTECTION_FAILURE at 0x000000016f897ff8"
+  },
+  "faultingThread": 9
+}

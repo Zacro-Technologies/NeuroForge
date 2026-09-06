@@ -155,15 +155,16 @@ struct ProgressAnnotationsCard: View {
             Button("Cancel", role: .cancel) { annotationPendingDeletion = nil }
             Button("Delete", role: .destructive) {
                 guard let annotationPendingDeletion else { return }
-                do {
-                    try store.deleteProgressAnnotation(annotationPendingDeletion)
-                    errorMessage = nil
-                } catch {
-                    errorMessage = NFAppLocalization.localized(
-                        "The annotation was not deleted. Try again."
-                    )
+                Task { @MainActor in
+                    do {
+                        try await store.withLinkedRestoreArtifactDeletion { try store.deleteProgressAnnotation(annotationPendingDeletion) }
+                        errorMessage = nil
+                        self.annotationPendingDeletion = nil
+                    } catch {
+                        errorMessage = (error as? NFRestoreLinkedDeletionError)?.errorDescription
+                            ?? NFAppLocalization.localized("The annotation was not deleted. Try again.")
+                    }
                 }
-                self.annotationPendingDeletion = nil
             }
         } message: {
             Text("This removes only the private note and date range. Training history is unchanged.")

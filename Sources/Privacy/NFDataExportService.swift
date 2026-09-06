@@ -16,15 +16,19 @@ enum NFDataExportError: Error, LocalizedError {
 
 @MainActor
 enum NFDataExportService {
-    static let archiveVersion = 17
-    static let oldestRestorableArchiveVersion = 14
+    nonisolated static let archiveVersion = 18
+    nonisolated static let oldestRestorableArchiveVersion = 14
     static let generatedQuestionsSchemaVersion = 1
     static let reviewHistorySchemaVersion = 1
     private static let exportFolderPrefix = "NeuroForge-Export-"
 
     static func makeExports(from store: AppStore) throws -> [URL] {
-        try removePreparedExports(olderThan: Date().addingTimeInterval(-86_400))
-        let folder = FileManager.default.temporaryDirectory
+        let temporaryDirectory = store.temporaryArtifactsRootURL ?? FileManager.default.temporaryDirectory
+        do {
+            try FileManager.default.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true)
+        } catch { throw NFDataExportError.couldNotCreateFolder }
+        try removePreparedExports(olderThan: Date().addingTimeInterval(-86_400), temporaryDirectory: temporaryDirectory)
+        let folder = temporaryDirectory
             .appending(path: "\(exportFolderPrefix)\(UUID().uuidString)", directoryHint: .isDirectory)
         do {
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
@@ -44,7 +48,7 @@ enum NFDataExportService {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
         encoder.dateEncodingStrategy = .iso8601
-        try encoder.encode(archive).write(to: archiveURL, options: secureWritingOptions)
+        try protectedPortableData(encoder.encode(archive)).write(to: archiveURL, options: secureWritingOptions)
         try Data(makeSummaryCSV(store).utf8).write(to: summaryURL, options: secureWritingOptions)
         try encoder.encode(makeGeneratedQuestionsExport(store)).write(
             to: generatedQuestionsURL,
@@ -118,6 +122,429 @@ enum NFDataExportService {
         // macOS app still uses an atomic write inside its private container.
         [.atomic]
         #endif
+    }
+
+    struct ProtectedReceipt: Codable, Equatable, Sendable {
+        var schemaVersion = 1
+        let evaluatorReference: String
+        let recoveryState: String
+    }
+
+    /// Portable archives expose an opaque protected receipt, never the local
+    /// evaluator's per-item inputs. The same allowlists run on legacy imports
+    /// before their permissive Codable adapters can revive hidden fields.
+    nonisolated static func protectedPortableData(_ data: Data, forRestore: Bool = false) throws -> Data {
+        guard var archive = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return data }
+        func rows(_ key: String) -> [[String: Any]] { archive[key] as? [[String: Any]] ?? [] }
+        func protected(_ row: [String: Any]) -> Bool { portableProtectedRow(row) }
+        func identity(_ value: Any?) -> String { (value as? String ?? "").lowercased() }
+        func allow(_ row: [String: Any], _ keys: String) -> [String: Any] {
+            let allowed = Set(keys.split(separator: " ").map(String.init))
+            return row.filter { allowed.contains($0.key) }
+        }
+        func receipt(_ row: [String: Any]) -> [String: Any] {
+            ["schemaVersion": 1, "evaluatorReference": row["assessmentDescriptorID"] as? String ?? row["itemID"] as? String ?? row["sessionID"] as? String ?? "unavailable",
+             "recoveryState": "evaluatorUnavailable"]
+        }
+        let graph = portableLearningGraph(archive["localLearning"] as? [String: Any] ?? [:],
+            attempts: rows("attempts"), checkpoints: rows("sessionCheckpoints"))
+        let sessions = graph.sessions, protectedAttempts = graph.attempts, protectedItemIDs = graph.items
+        func protectedQuestion(_ row: [String: Any]) -> Bool {
+            let exercise = row["authoritativeExercise"] as? [String: Any] ?? [:]
+            return protected(row) || protected(exercise)
+                || protectedItemIDs.contains(row["id"] as? String ?? "")
+                || protectedItemIDs.contains(exercise["id"] as? String ?? "")
+        }
+        if archive["localLearning"] != nil { archive["localLearning"] = graph.local }
+        archive["attempts"] = rows("attempts").map { row in
+            guard protectedAttempts.contains(identity(row["id"])) else { return row }
+            var safe = allow(row, "id sessionID itemID templateID seed lab skillID skillWeights domainContext transferBrief spatialDifficultyParameters prompt response confidence shownAt submittedAt activeDurationSeconds evidenceClass sessionSource scoringVersion deviceID generationID sourceDocumentIDs sourceChunkIDs responseFormat wasSkipped validationVersion assessmentBlock planID planBlockID hintCount inputMode interruptionCount revisionCount accommodationFlags wasTimed assessmentDescriptorID assessmentTemplateFamily assessmentFormat assessmentMechanicID assessmentSubskillID assessmentSeed assessmentCycle")
+            safe["protectedReceipt"] = receipt(row)
+            if forRestore {
+                // Legacy storage has mandatory scalar fields. These neutral
+                // placeholders have no authority and never count as incorrect.
+                safe["correctAnswer"] = ""; safe["isCorrect"] = false
+                safe["deterministicCredit"] = 0; safe["evidenceWeight"] = 0
+                safe["errorCode"] = "protected_evaluator_unavailable"
+            }
+            return safe
+        }
+        archive["sessionCheckpoints"] = rows("sessionCheckpoints").map { row in
+            guard protected(row) || sessions.contains(identity(row["sessionID"])) else { return row }
+            var safe = allow(row, "id sessionID lab source seed currentIndex itemCount response scratchpad evidenceClass updatedAt isComplete assessmentDescriptorIDs assessmentEvents planID planBlockID recommendationRationale hasCommittedCurrentItem assessmentBlock assessmentCycle activeDurationSeconds assessmentStopReason")
+            safe["protectedReceipt"] = receipt(row)
+            if forRestore { safe["results"] = [String](); safe["credits"] = [String]() }
+            return safe
+        }
+        archive["attemptReflections"] = rows("attemptReflections").map { row in
+            guard protectedAttempts.contains(identity(row["attemptID"])) else { return row }
+            var safe = allow(row, "id attemptID note createdAt policyVersion")
+            safe["trigger"] = "protectedReceipt"
+            return safe
+        }
+        archive["quarantinedReports"] = rows("quarantinedReports").map { row in
+            let diagnostic = row["authoredDiagnostic"] as? [String: Any]
+            let exercise = diagnostic?["authoritativeExercise"] as? [String: Any] ?? [:]
+            guard row["assessmentDescriptorID"] is String || protectedItemIDs.contains(row["itemID"] as? String ?? "") || protected(exercise) else { return row }
+            var safe = allow(row, "id itemID templateID prompt reason note createdAt status seed generatorVersion provenanceSummary sourceIDs sourceChunkIDs assessmentDescriptorID")
+            safe["diagnosticPayloadState"] = "protectedReceipt"
+            safe["diagnosticDigest"] = ""; safe["diagnosticPayloadBytes"] = 0
+            return safe
+        }
+        archive["aiGenerations"] = rows("aiGenerations").map { generation in
+            var safe = generation
+            let questions = generation["questions"] as? [[String: Any]] ?? []
+            let withheld = questions.filter(protectedQuestion)
+            safe["questions"] = questions.filter { !protectedQuestion($0) }
+            if !withheld.isEmpty {
+                safe["protectedQuestionReferences"] = withheld.map { receipt(["itemID": $0["id"] as? String ?? "unavailable"]) }
+            }
+            return safe
+        }
+        if var local = archive["localLearning"] as? [String: Any] {
+            local["sessions"] = (local["sessions"] as? [[String: Any]] ?? []).map { run in
+                var safe = run
+                var checkpoint = run["checkpoint"] as? [String: Any] ?? [:]
+                var request = run["request"] as? [String: Any] ?? [:]
+                let descriptor = checkpoint["descriptor"] as? [String: Any] ?? [:]
+                let exercise = checkpoint["exercise"] as? [String: Any] ?? [:]
+                let isProtected = sessions.contains(identity(run["id"]))
+                    || protectedAttempts.contains(identity(checkpoint["attemptID"]))
+                    || protectedAttempts.contains(identity(checkpoint["committedAttemptID"]))
+                    || protected(request) || protected(exercise) || (descriptor["role"] as? String).map { $0 != "practice" } == true || checkpoint["exercise"] == nil || checkpoint["exercise"] is NSNull
+                guard isProtected else { return run }
+                checkpoint = allow(checkpoint, "schemaVersion slotID attemptID index itemCount phase exerciseDigest descriptor response confidence scratchpad hintCount solutionRevealed referenceRevealed selfCheckRating committedAttemptID assessmentDescriptorIDs assessmentEvents cumulativeActiveDuration itemActiveDuration assessmentPracticeDuration interruptionCount revisionCount inputModality semanticExclusions shownAt endedEarly scorerVersion")
+                // Required empty containers carry no evaluator input and keep
+                // old local-envelope decoding compatible without loosening it.
+                checkpoint["correctness"] = [Bool](); checkpoint["credits"] = [Double](); checkpoint["reflectionNote"] = ""
+                request = allow(request, "id lab source seed localeIdentifier requestedMinutes preferredMentalMathKind evidenceClass field topic recommendationRationale targetDifficulty requestedItemCount offlineQuestionOrdinals startingIndex assessmentBlock reassessmentCycle planID planBlockID isTimed timingCondition resumeSessionID resumedAssessmentDescriptorIDs resumedAssessmentEvents resumedResponsePayload resumedScratchpad resumeCurrentItemWasCommitted resumedActiveDurationSeconds resumedAssessmentPracticeDurationSeconds mechanicID retentionItemIDs retentionTargets transferBrief quarantinedItemIDs quarantinedAssessmentDescriptorIDs localSessionID ordinaryDelivery repairOriginAttemptID repairSemanticExclusions")
+                request.removeValue(forKey: "localCheckpoint")
+                request["resumedResults"] = [Bool](); request["resumedCredits"] = [Double]()
+                request.removeValue(forKey: "resumedPendingReflectionAttemptID")
+                request.removeValue(forKey: "resumedReflectionTrigger")
+                request.removeValue(forKey: "resumedSelectedReflectionCode")
+                request["resumedReflectionNote"] = ""
+                // Presentation embellishments can contain decisive steps.
+                request["presentationEnhancements"] = [String: Any]()
+                request["retentionTargets"] = [Any]()
+                safe["request"] = request; safe["checkpoint"] = checkpoint; safe["status"] = "migrationRecovery"
+                return safe
+            }
+            local["snapshots"] = (local["snapshots"] as? [[String: Any]] ?? []).filter {
+                !protectedAttempts.contains(identity($0["attemptID"])) && !protected($0["exercise"] as? [String: Any] ?? [:])
+            }
+            local["savedSets"] = (local["savedSets"] as? [[String: Any]] ?? []).compactMap { set -> [String: Any]? in
+                var safe = set
+                if var result = set["result"] as? [String: Any] {
+                    let original = result["questions"] as? [[String: Any]] ?? []
+                    let questions = original.filter { !protectedQuestion($0) }
+                    // An empty typed saved set is not a writable recovery set.
+                    if !original.isEmpty && questions.isEmpty { return nil }
+                    result["questions"] = questions
+                    safe["result"] = result
+                }
+                return safe
+            }
+            let privateRuns = portablePrivateRuns(local["privateStudyRuns"] as? [[String: Any]] ?? [], protectedItems: protectedItemIDs)
+            local["privateStudyRuns"] = privateRuns.rows
+            local["unavailablePrivateRunIDs"] = Array(Set((local["unavailablePrivateRunIDs"] as? [String] ?? []) + privateRuns.unavailable)).sorted()
+            local["evidenceDispositions"] = (local["evidenceDispositions"] as? [[String: Any]] ?? []).map { row in
+                guard protectedAttempts.contains(identity(row["attemptID"])) else { return row }
+                var safe = allow(row, "id attemptID revision policyVersion occurredAt disposition supersedesDispositionID")
+                safe["reason"] = "Protected response retained; evaluator unavailable."
+                return safe
+            }
+            archive["localLearning"] = local
+        }
+        return try JSONSerialization.data(withJSONObject: archive, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
+    }
+
+    nonisolated private static func portableProtectedRow(_ row: [String: Any]) -> Bool {
+        (row["protectedReceipt"] != nil && !(row["protectedReceipt"] is NSNull))
+            || row["assessmentProtected"] as? Bool == true
+            || ["baseline", "assessmentHoldout"].contains(row["purpose"] as? String ?? "")
+            || ["assessmentHoldout", "nearTransfer"].contains(row["evidenceClass"] as? String ?? row["evidenceClassRaw"] as? String ?? "")
+            || ["baseline", "reassessment"].contains(row["sessionSource"] as? String ?? row["sessionSourceRaw"] as? String ?? row["source"] as? String ?? "")
+            || row["errorCode"] as? String == "protected_evaluator_unavailable"
+            || (row["assessmentBlock"] != nil && !(row["assessmentBlock"] is NSNull))
+            || (row["assessmentBlockRaw"] != nil && !(row["assessmentBlockRaw"] is NSNull))
+    }
+
+    /// Preserve only anonymous reservation positions after removing a protected
+    /// run. Snapshot aliases propagate restriction to every referring run: a
+    /// second ordinary label never makes the same evaluator payload portable.
+    nonisolated private static func portableLearningGraph(_ original: [String: Any],
+        attempts: [[String: Any]], checkpoints: [[String: Any]]) ->
+        (local: [String: Any], attempts: Set<String>, sessions: Set<String>, items: Set<String>) {
+        func id(_ value: Any?) -> String { (value as? String ?? "").lowercased() }
+        func object(_ value: Any?) -> [String: Any] { value as? [String: Any] ?? [:] }
+        func rows(_ value: Any?) -> [[String: Any]] { value as? [[String: Any]] ?? [] }
+        let supportedKeys = Set("schemaVersion sessions snapshots savedSets privateStudyRuns evidenceDispositions contentCorrections attemptConflicts withheldProtectedConflictAttemptIDs activeContentCorrectionIDs selectionLedger transactionRevision offlineRotationLedger rotationMigration fixedLaunchReceipts adaptiveItemReceipts editorialOverrideCommands retiredOrdinaryDrafts deletedAdaptiveRunIDs deletedFixedLaunchCommandIDs dismissedCorrectionIDs unavailablePrivateRunIDs unavailableHistorySnapshots".split(separator: " ").map(String.init))
+        var local = original.filter { supportedKeys.contains($0.key) }
+        var protectedAttempts = Set((original["withheldProtectedConflictAttemptIDs"] as? [String] ?? []).map { $0.lowercased() })
+        protectedAttempts.formUnion(rows(original["unavailableHistorySnapshots"]).filter {
+            $0["reason"] as? String == "protectedContent"
+        }.map { id($0["attemptID"]) })
+        var protectedSessions = Set((attempts + checkpoints).filter(portableProtectedRow).map { id($0["sessionID"]) })
+        var protectedItems = Set<String>()
+        for snapshot in rows(original["snapshots"]) where portableProtectedRow(object(snapshot["exercise"])) {
+            protectedAttempts.insert(id(snapshot["attemptID"]))
+            protectedItems.insert(object(snapshot["exercise"])["id"] as? String ?? "")
+        }
+        for conflict in rows(original["attemptConflicts"]) {
+            let left = object(conflict["original"]), right = object(conflict["proposed"])
+            if portableProtectedRow(left) || portableProtectedRow(right)
+                || portableProtectedRow(object(conflict["originalExercise"])) || portableProtectedRow(object(conflict["proposedExercise"])) {
+                protectedAttempts.insert(id(conflict["attemptID"]))
+                protectedSessions.formUnion([id(left["sessionID"]), id(right["sessionID"])])
+                for exercise in [object(conflict["originalExercise"]), object(conflict["proposedExercise"])] {
+                    if let item = exercise["id"] as? String, !item.isEmpty { protectedItems.insert(item) }
+                }
+            }
+        }
+        let runs = rows(original["sessions"])
+        let retired = object(original["retiredOrdinaryDrafts"])
+        for run in runs {
+            let checkpoint = object(run["checkpoint"]), descriptor = object(checkpoint["descriptor"])
+            if portableProtectedRow(object(run["request"])) || portableProtectedRow(object(checkpoint["exercise"]))
+                || (descriptor["role"] as? String).map({ $0 != "practice" }) == true {
+                protectedSessions.insert(id(run["id"]))
+            }
+        }
+        for row in attempts where portableProtectedRow(row) { protectedAttempts.insert(id(row["id"])) }
+        let rawLedger = object(original["selectionLedger"])
+        var ledger: NFSelectionReservationLedger?
+        if rawLedger["schemaVersion"] as? Int == 1 {
+            ledger = portableDecode(NFSelectionReservationLedger.self, object: rawLedger)
+        }
+        var fingerprintRuns: [String: Set<String>] = [:]
+        var runFingerprints: [String: Set<String>] = [:]
+        var runAttempts: [String: Set<String>] = [:]
+        var blockedFingerprints = Set<String>()
+        var fingerprintItems: [String: String] = [:]
+        if let ledger {
+            for snapshot in ledger.snapshots.values {
+                let digest = NFReservationSnapshot.digest(snapshot.payload)
+                guard snapshot.payload.count <= NFSelectionReservationPolicy.maximumSnapshotBytes,
+                      snapshot.digest == digest,
+                      let payload = try? JSONSerialization.jsonObject(with: snapshot.payload),
+                      let exercise = portableDecode(NFExercise.self, object: payload),
+                      NFExerciseSchemaValidator.supportsExerciseSchemaVersion(exercise.schemaVersion),
+                      let canonical = portableObject(exercise), portableKnownKeys(payload, canonical),
+                      !portableProtectedRow(object(payload)) else {
+                    blockedFingerprints.formUnion([snapshot.digest, digest])
+                    continue
+                }
+                fingerprintItems[snapshot.digest] = exercise.id; fingerprintItems[digest] = exercise.id
+                if protectedItems.contains(exercise.id) { blockedFingerprints.formUnion([snapshot.digest, digest]) }
+            }
+            for (key, slot) in ledger.slots {
+                let run = id(slot.runID)
+                runAttempts[run, default: []].insert(id(slot.attemptID))
+                guard key == slot.id, let owner = ledger.runs[slot.runID], owner.id == slot.runID,
+                      owner.slotIDs.contains(slot.id), let snapshot = NFSelectionReservationPolicy.snapshot(for: slot, in: ledger),
+                      slot.snapshotDigest == snapshot.digest else { protectedSessions.insert(run); continue }
+                let fingerprints: Set<String> = [snapshot.digest, NFReservationSnapshot.digest(snapshot.payload)]
+                runFingerprints[run, default: []].formUnion(fingerprints)
+                for fingerprint in fingerprints { fingerprintRuns[fingerprint, default: []].insert(run) }
+            }
+        } else if original["selectionLedger"] != nil && !(original["selectionLedger"] is NSNull) {
+            // Unknown or malformed payload graphs cannot be copied as opaque
+            // base64. Keep supported anonymous scope state only, never runs.
+            protectedSessions.formUnion(runs.map { id($0["id"]) })
+            protectedSessions.formUnion(object(rawLedger["runs"]).keys.map { $0.lowercased() })
+            for slot in object(rawLedger["slots"]).values.map(object) {
+                protectedAttempts.insert(id(slot["attemptID"]))
+                protectedSessions.insert(id(slot["runID"]))
+            }
+            if rawLedger["schemaVersion"] as? Int == 1 {
+                var anonymous = NFSelectionReservationLedger()
+                for (key, value) in object(rawLedger["scopes"]) {
+                    if let scope = portableDecode(NFReservationScopeState.self, object: value) { anonymous.scopes[key] = scope }
+                }
+                ledger = anonymous
+            }
+        }
+        // Close both attempt/session links and shared snapshot aliases. Every
+        // iteration adds an identity; imported case differences cannot evade it.
+        protectedAttempts.remove(""); protectedSessions.remove("")
+        var changed = true
+        while changed {
+            let before = (protectedAttempts.count, protectedSessions.count, blockedFingerprints.count, protectedItems.count)
+            for snapshot in rows(original["snapshots"]) {
+                let exercise = object(snapshot["exercise"]), itemID = exercise["id"] as? String ?? ""
+                if protectedAttempts.contains(id(snapshot["attemptID"])), !itemID.isEmpty { protectedItems.insert(itemID) }
+                if protectedItems.contains(itemID), !id(snapshot["attemptID"]).isEmpty { protectedAttempts.insert(id(snapshot["attemptID"])) }
+            }
+            for run in runs {
+                let checkpoint = object(run["checkpoint"])
+                if protectedItems.contains(object(checkpoint["exercise"])["id"] as? String ?? "") { protectedSessions.insert(id(run["id"])) }
+                if (!id(checkpoint["attemptID"]).isEmpty && protectedAttempts.contains(id(checkpoint["attemptID"])))
+                    || (!id(checkpoint["committedAttemptID"]).isEmpty && protectedAttempts.contains(id(checkpoint["committedAttemptID"]))) {
+                    protectedSessions.insert(id(run["id"]))
+                }
+                if protectedSessions.contains(id(run["id"])) {
+                    let item = object(checkpoint["exercise"])["id"] as? String ?? ""
+                    if !item.isEmpty { protectedItems.insert(item) }
+                    protectedAttempts.formUnion([id(checkpoint["attemptID"]), id(checkpoint["committedAttemptID"])].filter { !$0.isEmpty })
+                }
+            }
+            for value in retired.values.map(object) {
+                let checkpoint = object(value["checkpoint"])
+                if protectedAttempts.contains(id(checkpoint["attemptID"])) { protectedSessions.insert(id(value["sessionID"])) }
+                if protectedSessions.contains(id(value["sessionID"])), !id(checkpoint["attemptID"]).isEmpty { protectedAttempts.insert(id(checkpoint["attemptID"])) }
+            }
+            for row in attempts {
+                if protectedAttempts.contains(id(row["id"])) { protectedSessions.insert(id(row["sessionID"])) }
+                if protectedSessions.contains(id(row["sessionID"])), !id(row["id"]).isEmpty { protectedAttempts.insert(id(row["id"])) }
+            }
+            for (run, ids) in runAttempts {
+                if !ids.isDisjoint(with: protectedAttempts) { protectedSessions.insert(run) }
+                if protectedSessions.contains(run) { protectedAttempts.formUnion(ids) }
+            }
+            for run in protectedSessions { blockedFingerprints.formUnion(runFingerprints[run] ?? []) }
+            for fingerprint in blockedFingerprints {
+                protectedSessions.formUnion(fingerprintRuns[fingerprint] ?? [])
+                if let item = fingerprintItems[fingerprint] { protectedItems.insert(item) }
+            }
+            changed = before != (protectedAttempts.count, protectedSessions.count, blockedFingerprints.count, protectedItems.count)
+        }
+        protectedAttempts.remove(""); protectedSessions.remove(""); protectedItems.remove("")
+        for row in attempts where protectedAttempts.contains(id(row["id"])) { protectedItems.insert(row["itemID"] as? String ?? "") }
+        if var safe = ledger {
+            let removedRuns = Set(safe.runs.keys.filter { protectedSessions.contains(id($0)) })
+            let retainedSlotIDs = Set(safe.slots.values.filter { !protectedSessions.contains(id($0.runID)) }.map(\.id))
+            safe.runs = safe.runs.filter { !removedRuns.contains($0.key) }
+            safe.slots = safe.slots.filter { retainedSlotIDs.contains($0.key) }
+            safe.decisions = safe.decisions.filter { !protectedSessions.contains(id($0.value.command.runID))
+                && $0.value.acceptedSlotIDs.allSatisfy(retainedSlotIDs.contains) }
+            safe.exposures = safe.exposures.filter { retainedSlotIDs.contains($0.value.slotID) && !protectedSessions.contains(id($0.value.runID)) }
+            safe.outcomes = safe.outcomes.filter { retainedSlotIDs.contains($0.value.slotID) && !protectedSessions.contains(id($0.value.runID)) }
+            let retainedSnapshots = safe.slots.values.compactMap { NFSelectionReservationPolicy.snapshot(for: $0, in: safe) }
+            safe.snapshots = safe.snapshots.filter { retainedSnapshots.contains($0.value) && !blockedFingerprints.contains($0.value.digest) }
+            safe.legacyReservationOwners = safe.legacyReservationOwners.filter { !protectedSessions.contains(id($0.value)) }
+            safe.legacyPlans = safe.legacyPlans.filter { safe.legacyReservationOwners[$0.key] != nil }
+            if var encoded = portableObject(safe) as? [String: Any] {
+                var exposures = encoded["exposures"] as? [String: [String: Any]] ?? [:]
+                let originals = rawLedger["exposures"] as? [String: [String: Any]] ?? [:]
+                for key in exposures.keys {
+                    // Final archives use ISO dates; local typed projections use
+                    // exact numeric dates. Preserve the caller's representation.
+                    if let date = originals[key]?["occurredAt"] { exposures[key]?["occurredAt"] = date }
+                }
+                encoded["exposures"] = exposures
+                local["selectionLedger"] = encoded
+            } else { local.removeValue(forKey: "selectionLedger") }
+        } else { local.removeValue(forKey: "selectionLedger") }
+        local["withheldProtectedConflictAttemptIDs"] = protectedAttempts.sorted()
+        local["retiredOrdinaryDrafts"] = retired.filter { !protectedSessions.contains(id(object($0.value)["sessionID"])) }
+        local["attemptConflicts"] = rows(original["attemptConflicts"]).filter { !protectedAttempts.contains(id($0["attemptID"])) }
+        let corrections = rows(original["contentCorrections"])
+        let removedCorrections = Set(corrections.filter { protectedAttempts.contains(id($0["originalAttemptID"])) }
+            .compactMap { $0["idempotencyKey"] as? String })
+        local["contentCorrections"] = corrections.filter { !protectedAttempts.contains(id($0["originalAttemptID"])) }
+        local["activeContentCorrectionIDs"] = object(original["activeContentCorrectionIDs"]).filter {
+            !protectedAttempts.contains(id($0.key))
+        }.mapValues { ($0 as? [String] ?? []).filter { !removedCorrections.contains($0) } }
+        // Imported launch receipts may retain future evaluator payload fields.
+        // Device-local continuation authority is never portable.
+        for key in ["offlineRotationLedger", "rotationMigration", "fixedLaunchReceipts", "deletedFixedLaunchCommandIDs",
+                    "adaptiveItemReceipts", "editorialOverrideCommands", "deletedAdaptiveRunIDs", "transactionRevision"] { local.removeValue(forKey: key) }
+        return (local, protectedAttempts, protectedSessions, protectedItems)
+    }
+
+    nonisolated private static func portablePrivateRuns(_ rows: [[String: Any]], protectedItems: Set<String>) ->
+        (rows: [[String: Any]], unavailable: [String]) {
+        var safe: [[String: Any]] = [], unavailable: [String] = []
+        let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
+        for row in rows {
+            let identity = row["id"] as? String ?? ""
+            guard let id = UUID(uuidString: identity), let generation = (row["generationID"] as? String).flatMap(UUID.init(uuidString:)),
+                  let base64 = row["payload"] as? String, base64.utf8.count <= 12 * 1_024 * 1_024,
+                  let data = Data(base64Encoded: base64), data.count <= 8 * 1_024 * 1_024 else {
+                if UUID(uuidString: identity) != nil { unavailable.append(identity) }; continue
+            }
+            let canonical: Data?
+            if id == NFPrivateStudyMetadata.recordID {
+                if let metadata = try? JSONDecoder().decode(NFPrivateStudyMetadata.self, from: data), metadata.isSupported, generation == id {
+                    canonical = try? encoder.encode(metadata)
+                } else { canonical = nil }
+            } else if let draft = try? JSONDecoder().decode(NFGeneratedPracticeDraft.self, from: data),
+                      draft.valid, draft.id == id, draft.result.provenance.requestID == generation,
+                      !draft.result.questions.contains(where: { question in
+                          protectedItems.contains(question.id) || protectedItems.contains(question.authoritativeExercise.id)
+                              || question.authoritativeExercise.assessmentProtected
+                              || [.assessmentHoldout, .nearTransfer].contains(question.authoritativeExercise.evidenceClass)
+                      }), !protectedItems.contains(draft.lastScore?.exerciseID ?? "") {
+                canonical = try? encoder.encode(draft)
+            } else { canonical = nil }
+            guard let canonical else { unavailable.append(identity); continue }
+            var retained = row.filter { ["id", "generationID", "payload", "updatedAt"].contains($0.key) }
+            retained["payload"] = canonical.base64EncodedString()
+            safe.append(retained)
+        }
+        return (safe, unavailable)
+    }
+
+    nonisolated private static func portableDecode<T: Decodable>(_ type: T.Type, object: Any) -> T? {
+        guard JSONSerialization.isValidJSONObject(object), let bytes = try? JSONSerialization.data(withJSONObject: object) else { return nil }
+        let decoder = JSONDecoder()
+        if let value = try? decoder.decode(type, from: bytes) { return value }
+        decoder.dateDecodingStrategy = .iso8601
+        return try? decoder.decode(type, from: bytes)
+    }
+    nonisolated private static func portableObject<T: Encodable>(_ value: T) -> Any? {
+        let encoder = JSONEncoder()
+        guard let data = try? encoder.encode(value) else { return nil }
+        return try? JSONSerialization.jsonObject(with: data)
+    }
+    nonisolated private static func portableKnownKeys(_ original: Any, _ canonical: Any) -> Bool {
+        if let object = original as? [String: Any] {
+            guard let known = canonical as? [String: Any] else { return false }
+            return object.allSatisfy { key, value in
+                if value is NSNull { return true }
+                guard let expected = known[key] else { return false }
+                return portableKnownKeys(value, expected)
+            }
+        }
+        if let values = original as? [Any] {
+            guard let known = canonical as? [Any], values.count == known.count else { return false }
+            return zip(values, known).allSatisfy { portableKnownKeys($0.0, $0.1) }
+        }
+        return true
+    }
+
+    /// Apply the same defense at the local portable boundary and at the final
+    /// raw JSON import/export boundary. Neither projection edits local originals.
+    static func protectedLocalLearningArchive(_ archive: NFLocalSessionRepository.Archive) -> NFLocalSessionRepository.Archive {
+        guard let local = portableObject(archive),
+              let bytes = try? JSONSerialization.data(withJSONObject: ["localLearning": local]),
+              let redacted = try? protectedPortableData(bytes),
+              let root = try? JSONSerialization.jsonObject(with: redacted) as? [String: Any],
+              let safe = root["localLearning"],
+              let value = portableDecode(NFLocalSessionRepository.Archive.self, object: safe) else {
+            // An unencodable local recovery value cannot safely become portable.
+            var unavailable = NFLocalSessionRepository.Archive()
+            unavailable.withheldProtectedConflictAttemptIDs = archive.withheldProtectedConflictAttemptIDs
+            unavailable.unavailableHistorySnapshots = archive.unavailableHistorySnapshots
+            return unavailable
+        }
+        return value
+    }
+
+    private static func isProtected(_ attempt: AttemptRecord) -> Bool {
+        attempt.evidenceClassRaw == EvidenceClass.assessmentHoldout.rawValue
+            || attempt.sessionSourceRaw == SessionSource.baseline.rawValue
+            || attempt.sessionSourceRaw == SessionSource.reassessment.rawValue
+            || attempt.errorCode == "protected_evaluator_unavailable"
+    }
+
+    private static func isProtected(_ attempt: AttemptRecord, store: AppStore) -> Bool {
+        isProtected(attempt)
+            || store.localSessions.archive.snapshots.first { $0.attemptID == attempt.id }?.exercise.assessmentProtected == true
+            || store.localSessions.archive.unavailableHistorySnapshots?.contains {
+                $0.attemptID == attempt.id && $0.reason == .protectedContent
+            } == true || store.localSessions.archive.withheldProtectedConflictAttemptIDs?.contains(attempt.id) == true
     }
 
     private static func makeArchive(_ store: AppStore) -> Archive {
@@ -309,11 +736,27 @@ enum NFDataExportService {
                     diagnosticPayloadBytes: $0.diagnosticPayload.count,
                     authoredDiagnostic: $0.authoredDiagnostic
                 )
-            }
+            },
+            localLearning: store.localSessions.exportArchive
         )
     }
 
+    private static func portableProtectedIdentities(_ store: AppStore) -> (attempts: Set<String>, items: Set<String>) {
+        let rows: [[String: Any]] = store.attempts.map { attempt in
+            var row: [String: Any] = ["id": attempt.id.uuidString, "sessionID": attempt.sessionID.uuidString,
+                "itemID": attempt.itemID, "evidenceClassRaw": attempt.evidenceClassRaw,
+                "sessionSourceRaw": attempt.sessionSourceRaw]
+            if let errorCode = attempt.errorCode { row["errorCode"] = errorCode }
+            if let block = attempt.assessmentBlockRaw { row["assessmentBlockRaw"] = block }
+            return row
+        }
+        let local = portableObject(store.localSessions.archive) as? [String: Any] ?? [:]
+        let graph = portableLearningGraph(local, attempts: rows, checkpoints: [])
+        return (graph.attempts, graph.items)
+    }
+
     private static func makeSummaryCSV(_ store: AppStore) -> String {
+        let protectedIDs = portableProtectedIdentities(store).attempts
         var lines = ["lab,evidence_class,scorable_attempts,skipped,fully_correct,earned_credit_percent,last_activity"]
         for lab in TrainingLab.allCases {
             for evidence in EvidenceClass.allCases {
@@ -321,6 +764,7 @@ enum NFDataExportService {
                 guard !attempts.isEmpty else { continue }
                 let scorable = attempts.filter { !$0.wasSkipped && $0.evidenceWeight > 0 }
                 let skipped = attempts.filter(\.wasSkipped).count
+                let protected = attempts.contains { protectedIDs.contains($0.id.uuidString.lowercased()) || isProtected($0, store: store) }
                 let correct = scorable.filter(\.isCorrect).count
                 let availableEvidence = scorable.reduce(0) { $0 + max(0, $1.evidenceWeight) }
                 let earnedCredit = scorable.reduce(0) {
@@ -331,10 +775,10 @@ enum NFDataExportService {
                 lines.append([
                     lab.rawValue,
                     evidence.rawValue,
-                    String(scorable.count),
+                    protected ? "" : String(scorable.count),
                     String(skipped),
-                    String(correct),
-                    accuracy.formatted(.number.precision(.fractionLength(2))),
+                    protected ? "" : String(correct),
+                    protected ? "" : accuracy.formatted(.number.precision(.fractionLength(2))),
                     last
                 ].map(csvEscape).joined(separator: ","))
             }
@@ -343,6 +787,7 @@ enum NFDataExportService {
     }
 
     private static func makeGeneratedQuestionsExport(_ store: AppStore) -> GeneratedQuestionsExport {
+        let protectedItems = portableProtectedIdentities(store).items
         let exportedAt = Date()
         let generations = store.aiGenerations
             .sorted {
@@ -351,8 +796,14 @@ enum NFDataExportService {
             }
             .map { record in
                 let result = record.recoverableResult(at: exportedAt)
+                let permittedQuestions = result?.questions.filter {
+                    !$0.authoritativeExercise.assessmentProtected && ![.assessmentHoldout, .nearTransfer].contains($0.evidenceClass)
+                        && !protectedItems.contains($0.id) && !protectedItems.contains($0.authoritativeExercise.id)
+                } ?? []
                 let payloadState: String
-                if result != nil {
+                if permittedQuestions.count != (result?.questions.count ?? 0) {
+                    payloadState = "protected_receipts_only"
+                } else if result != nil {
                     payloadState = "available"
                 } else if record.resultPayload.isEmpty {
                     payloadState = "purged"
@@ -381,11 +832,11 @@ enum NFDataExportService {
                     payloadState: payloadState,
                     payloadExpiresAt: record.payloadExpiresAt,
                     recordedQuestionCount: record.questionCount,
-                    exportedQuestionCount: result?.questions.count ?? 0,
+                    exportedQuestionCount: permittedQuestions.count,
                     routeCandidates: result?.routeCandidates ?? [],
                     validationStatus: result?.validationStatus,
                     validationNotes: result?.validationNotes ?? [],
-                    questions: result?.questions.map {
+                    questions: permittedQuestions.map {
                         GeneratedQuestion(
                             stableQuestionID: "\(record.id.uuidString.lowercased()):\($0.id)",
                             questionID: $0.id,
@@ -403,7 +854,7 @@ enum NFDataExportService {
                             citationChunkIDs: $0.citationChunkIDs,
                             evidenceClass: $0.evidenceClass.rawValue
                         )
-                    } ?? []
+                    }
                 )
             }
 
@@ -417,6 +868,7 @@ enum NFDataExportService {
     }
 
     private static func makeReviewHistoryCSV(_ store: AppStore) -> String {
+        let protectedIDs = portableProtectedIdentities(store).attempts
         let header = [
             "schema_version", "review_id", "session_id", "item_id", "template_id",
             "generation_id", "generated_at", "shown_at", "submitted_at", "field", "lab",
@@ -447,10 +899,15 @@ enum NFDataExportService {
         var lines = [header.joined(separator: ",")]
         for attempt in personalReviews {
             let generation = attempt.generationID.flatMap { generationByID[$0] }
-            let wasEvaluated = !attempt.wasSkipped
+            let protected = protectedIDs.contains(attempt.id.uuidString.lowercased()) || isProtected(attempt, store: store)
+            let wasEvaluated = !attempt.wasSkipped && !protected && !["selfCheck", "sourceSelfCheck"].contains(attempt.responseFormatRaw)
             let countsAsEvidence = wasEvaluated && attempt.evidenceWeight > 0
             let outcome: String
-            if attempt.wasSkipped {
+            if protected {
+                outcome = "protected_response_saved"
+            } else if ["selfCheck", "sourceSelfCheck"].contains(attempt.responseFormatRaw) {
+                outcome = "self_reported_personal_study"
+            } else if attempt.wasSkipped {
                 outcome = "skipped_no_evidence"
             } else if attempt.evidenceWeight <= 0 {
                 outcome = "evaluated_personal_review_no_standardized_evidence"
@@ -470,13 +927,13 @@ enum NFDataExportService {
                 attempt.domainContextRaw,
                 attempt.gameID,
                 attempt.prompt,
-                wasEvaluated ? attempt.response : "",
-                wasEvaluated ? attempt.correctAnswerText : "",
-                wasEvaluated ? attempt.confidenceRaw ?? "" : "",
+                !attempt.wasSkipped ? attempt.response : "",
+                !attempt.wasSkipped && !protected ? attempt.correctAnswerText : "",
+                !attempt.wasSkipped ? attempt.confidenceRaw ?? "" : "",
                 outcome,
                 wasEvaluated ? String(attempt.isCorrect) : "",
                 wasEvaluated ? String(attempt.deterministicCredit) : "",
-                String(max(0, attempt.evidenceWeight)),
+                protected ? "" : String(max(0, attempt.evidenceWeight)),
                 String(countsAsEvidence),
                 attempt.evidenceClassRaw,
                 attempt.sessionSourceRaw,
@@ -604,7 +1061,7 @@ enum NFDataExportService {
         let evidenceClass: String
     }
 
-    struct Archive: Codable {
+    struct Archive: Codable, Sendable {
         let archiveVersion: Int
         let exportedAt: Date
         let appVersion: String
@@ -623,8 +1080,9 @@ enum NFDataExportService {
         let reassessmentState: NFReassessmentState?
         let adaptivePlanHistory: [NFAdaptivePlanChangeRecord]?
         let quarantinedReports: [Report]
+        var localLearning: NFLocalSessionRepository.Archive? = nil
     }
-    struct Profile: Codable {
+    struct Profile: Codable, Sendable {
         let id: UUID; let createdAt: Date; let modifiedAt: Date; let stage: String; let fields: [String]; let goals: [String]
         let dailyDuration: Int; let timingMode: String; let aiMode: String; let iCloudEnabled: Bool; let reducedMotion: Bool
         let hideTimers: Bool; let excludeVisualSpatial: Bool; let onboardingVersion: Int
@@ -633,7 +1091,7 @@ enum NFDataExportService {
         let dayBoundaryHour: Int; let ageBandAcknowledged16Plus: Bool; let preferredAnswerMode: String
         let reinforcementHapticsEnabled: Bool; let reinforcementSoundEnabled: Bool
     }
-    struct Attempt: Codable {
+    struct Attempt: Codable, Sendable {
         let id: UUID; let sessionID: UUID; let itemID: String; let templateID: String; let seed: UInt64; let lab: String
         let skillID: String; let skillWeights: [String: Double]; let domainContext: String
         let transferBrief: NFExerciseTransferBrief?; let spatialDifficultyParameters: NFSpatialDifficultyParameters?
@@ -647,25 +1105,26 @@ enum NFDataExportService {
         let accommodationFlags: [String]; let wasTimed: Bool; let assessmentDescriptorID: String?
         let assessmentTemplateFamily: String?; let assessmentFormat: String?; let assessmentMechanicID: String?
         let assessmentSubskillID: String?; let assessmentSeed: UInt64?; let assessmentCycle: Int?
+        var protectedReceipt: ProtectedReceipt? = nil
     }
-    struct AttemptReflection: Codable {
+    struct AttemptReflection: Codable, Sendable {
         let id: UUID; let attemptID: UUID; let deterministicErrorCode: String?; let selectedErrorCode: String?
         let trigger: String; let note: String; let createdAt: Date; let policyVersion: Int
     }
-    struct Document: Codable {
+    struct Document: Codable, Sendable {
         let id: UUID; let filename: String; let typeIdentifier: String; let sizeBytes: Int64; let importedAt: Date
         let indexState: String; let aiPolicy: String; let syncPolicy: String
         let pccExcerptConsentPolicyVersion: Int; let pccExcerptConsentDocumentID: String; let pccExcerptConsentedAt: Date?
         let characterCount: Int; let chunkCount: Int
         let extractionVersion: Int; let csvSelectedColumnIDs: [String]; let indexError: String?
     }
-    struct Chunk: Codable {
+    struct Chunk: Codable, Sendable {
         let id: String; let documentID: UUID; let documentVersion: Int; let sourceName: String; let page: Int?
         let lineStart: Int?; let lineEnd: Int?; let section: String?; let text: String; let contentHash: String; let ordinal: Int
         let characterStart: Int?; let characterEnd: Int?; let nearbyHeading: String?; let language: String?
         let contentTypeTags: [String]
     }
-    struct Generation: Codable {
+    struct Generation: Codable, Sendable {
         let id: UUID; let createdAt: Date; let capability: String; let lab: String; let field: String; let topic: String
         let route: String; let routeReason: String; let promptVersion: Int; let validationVersion: Int; let modelIdentifier: String
         let sourceDocumentIDs: [String]; let sourceChunkIDs: [String]; let repairCount: Int; let cacheKey: String
@@ -674,7 +1133,7 @@ enum NFDataExportService {
         let validationStatus: NFAuthoringValidationStatus?
         let validationNotes: [String]?
     }
-    struct Checkpoint: Codable {
+    struct Checkpoint: Codable, Sendable {
         let id: UUID; let sessionID: UUID; let lab: String; let source: String; let seed: UInt64
         let currentIndex: Int; let itemCount: Int; let response: String; let scratchpad: String
         let results: [String]; let evidenceClass: String; let updatedAt: Date; let isComplete: Bool
@@ -683,21 +1142,22 @@ enum NFDataExportService {
         let hasCommittedCurrentItem: Bool
         let assessmentBlock: String?; let assessmentCycle: Int?; let activeDurationSeconds: Double; let assessmentStopReason: String?
         let pendingReflectionAttemptID: UUID?; let reflectionTrigger: String?; let selectedReflectionCode: String?; let reflectionNote: String?
+        var protectedReceipt: ProtectedReceipt? = nil
     }
-    struct DailyPlan: Codable {
+    struct DailyPlan: Codable, Sendable {
         let id: String; let profileID: UUID; let localDayKey: String; let policyVersion: Int
         let canonicalPayloadBase64: String; let createdAt: Date; let timeZoneIdentifier: String
         let utcOffsetSeconds: Int; let dayBoundaryHour: Int; let boundaryStart: Date; let nextBoundaryAt: Date
         let travelPreservedUntil: Date?
     }
-    struct InputCalibration: Codable {
+    struct InputCalibration: Codable, Sendable {
         let id: UUID; let profileID: UUID; let completedAt: Date; let preferredAnswerMode: String
         let keyboardLatencyMilliseconds: Double?; let touchLatencyMilliseconds: Double?; let pencilLatencyMilliseconds: Double?
     }
-    struct ProgressAnnotation: Codable {
+    struct ProgressAnnotation: Codable, Sendable {
         let id: UUID; let startDate: Date; let endDate: Date; let note: String; let createdAt: Date; let modifiedAt: Date
     }
-    struct Report: Codable {
+    struct Report: Codable, Sendable {
         let id: UUID; let itemID: String; let templateID: String; let prompt: String; let reason: String
         let note: String; let createdAt: Date; let status: String; let seed: UInt64
         let generatorVersion: Int; let provenanceSummary: String; let sourceIDs: [String]

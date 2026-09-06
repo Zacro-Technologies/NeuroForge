@@ -1,0 +1,2056 @@
+{
+  "specificationVersion": "1.0",
+  "requirementCount": 256,
+  "distributionCertified": false,
+  "statusMeaning": "Implemented means source present, not all acceptance gates passed. Executed validation is recorded separately.",
+  "requirements": [
+    {
+      "id": "PRD-001",
+      "title": "Trustworthy attempts",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-001",
+      "status": "partial",
+      "implementation_ledger": "Product_Status.md",
+      "evidence_and_remaining_work": "Scoring and authority fixes are implemented; all-family independent review remains."
+    },
+    {
+      "id": "PRD-002",
+      "title": "Dependable continuity",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-002",
+      "status": "partial",
+      "implementation_ledger": "Product_Status.md",
+      "evidence_and_remaining_work": "Exact ordinary/generated continuation implemented; complete physical/crash matrix remains."
+    },
+    {
+      "id": "PRD-003",
+      "title": "A complete learning loop",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-003",
+      "status": "partial",
+      "implementation_ledger": "Product_Status.md",
+      "evidence_and_remaining_work": "All seven labs have bounded interactive work with durable ordinary/generated response and history paths. Quantitative, spatial transform, linked science, trace and transfer simulator slices passed on separately recorded source revisions. All-family content progression, full device/editor matrix and release gates remain."
+    },
+    {
+      "id": "PRD-004",
+      "title": "Meaningful personalization",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-004",
+      "status": "partial",
+      "implementation_ledger": "Product_Status.md",
+      "evidence_and_remaining_work": "Shared policy exists; real reviewed demand catalog and complete durable adaptive delivery remain."
+    },
+    {
+      "id": "PRD-005",
+      "title": "Useful breadth",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-005",
+      "status": "partial",
+      "implementation_ledger": "Product_Status.md",
+      "evidence_and_remaining_work": "All58families accounted for; admitted balanced edition is not authored/approved."
+    },
+    {
+      "id": "PRD-006",
+      "title": "Clear interface hierarchy",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-006",
+      "status": "partial",
+      "implementation_ledger": "Product_Status.md",
+      "evidence_and_remaining_work": "Five typed destinations and discovery changes exist; complete visual/large-text review remains."
+    },
+    {
+      "id": "PRD-007",
+      "title": "Inclusive operation",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-007",
+      "status": "partial",
+      "implementation_ledger": "Product_Status.md",
+      "evidence_and_remaining_work": "Typed access labels/native controls improved; manual assistive-tech acceptance not executed."
+    },
+    {
+      "id": "PRD-008",
+      "title": "Historical honesty and privacy",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-008",
+      "status": "partial",
+      "implementation_ledger": "Product_Status.md",
+      "evidence_and_remaining_work": "Original history preserved with local snapshots/dispositions and protected-safe export; full migration/account partition proof remains."
+    },
+    {
+      "id": "PRD-009",
+      "title": "Release evidence matches claims",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-009",
+      "status": "partial",
+      "implementation_ledger": "Product_Status.md",
+      "evidence_and_remaining_work": "Executed checks separate from unverified gates; no full release claim."
+    },
+    {
+      "id": "PRD-010",
+      "title": "Scope stays coherent",
+      "specification": "../Improvement_Spec_2026-09-04/README.md#prd-010",
+      "status": "partial",
+      "implementation_ledger": "Product_Status.md",
+      "evidence_and_remaining_work": "No backend/analytics or cross-device edit claims introduced; user changes preserved."
+    },
+    {
+      "id": "UX-001",
+      "title": "Five stable destinations",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-001",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Today/Practice/Progress/Sources/Settings labels; explicit Progress Overview/Review/History. Root destination enum renamed Today. Typed root routes and source context returns retained."
+    },
+    {
+      "id": "UX-002",
+      "title": "Primary-action hierarchy",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-002",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Today rewards moved into disclosure; resume leads; activity Start footer; source creation secondary; history versions technical disclosure. Remaining grayscale and complete action-hierarchy inspection."
+    },
+    {
+      "id": "UX-003",
+      "title": "Learning and evidence policies belong to the core model",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-003",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Root ordinary/protected policies consumed by session; generated confidence optional and self-check explicit. Reviewed-band delivery depends on content/adaptive integration, not UI relabeling."
+    },
+    {
+      "id": "UX-004",
+      "title": "Destination and visible content must agree",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-004",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Per-destination typed navigation paths with safe reference resolution, retained roots, cold empty paths, reselect reset, route-prune function. Generated draft owner check is read-only on foreign device and writer arbitration supports checkpointed takeover. Installed iPhone SE repeated history/detail→source document→Settings→history return passed; reported Mac hang still requires Mac UI replay."
+    },
+    {
+      "id": "UX-005",
+      "title": "Unsaved work and reversible navigation",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-005",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Generated/source drafts save at safe close; generated pending attempt survives store failure; prepared response locked; background checkpoints. Root handles ordinary/protected transaction failures. Future-metadata refusal and quarantine/pin-release tests pass. Manual injected failures and window-close recovery remain required."
+    },
+    {
+      "id": "UX-006",
+      "title": "Sample-first onboarding",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-006",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Fresh welcome primary Try a sample; untimed authored math strategy sample with feedback and no ability evidence; secondary setup and Restore a backup. Sample-completion Try another skill switches to an authored data-interpretation sample, preserving the same untimed answer/feedback loop. Installed sample choice, visible Correct explanation and completion-to-setup passed in the finalized 23:10:37 bundle."
+    },
+    {
+      "id": "UX-007",
+      "title": "Short, purposeful setup",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-007",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Three-stage setup retained with explicit Start practice / Take a short skill check and next-session explanation. Root sets five-minute untimed defaults and starts ordinary practice after setup. The original maximum-size test supplied an unrecognized raw value and was invalidated. The corrected UIKit accessibilityExtraExtraExtraLarge.rawValue test passed with its active-layout assertion; the real enlarged screenshot was inspected. Full first-session and device matrix still require verification."
+    },
+    {
+      "id": "UX-008",
+      "title": "Optional short calibration with honest scope",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-008",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Existing optional block-based starting check retained under Today and onboarding. Root exact protected resume. Requires final scope/timing copy and device journey evidence."
+    },
+    {
+      "id": "UX-009",
+      "title": "Today screen composition and defaults",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-009",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Date, exact saved work or daily task, due-review route, daily sections, optional activities; rewards and extra panels disclosed."
+    },
+    {
+      "id": "UX-010",
+      "title": "Readiness and adjustment",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-010",
+      "status": "partial",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Energy preview/cancel/cold journey passed earlier. Exact replacement title/time/evidence preview, five reasons, saved-original/proposal CAS and current-day/started-run fences pass7storetests in170scope. Installed05fdef passes125.319s: allreasons, cancel/cold, exactApply/ack/cold andoneused. Full adjustment/device matrix remains."
+    },
+    {
+      "id": "UX-011",
+      "title": "Today states",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-011",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Today continuity, due/empty reviews, stable existing completion retained. Runtime loading/save/no-content states root-owned; device failure evidence pending."
+    },
+    {
+      "id": "UX-012",
+      "title": "Exact activity discovery",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-012",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Activity text/translated title/summary/keywords match exact selectable result; direct route to preselected activity; root path preserves search and browsing state. Catalog supports complete current families. Favorite control on exact activity details and Recent/Favorite sections use local metadata; recents are recorded only after an accepted launch."
+    },
+    {
+      "id": "UX-013",
+      "title": "Activity detail and setup",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-013",
+      "status": "partial",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Activity setup preserves explicit unavailable family/band choices and explains genuine quarantine, exhaustion, prerequisites, timing and unreviewed bands. Actual catalog tests pass on c0c4. All58 authored EN/JA task-structure examples, safe admitted demand/duration aggregates and per-family mixed starting targets are integrated; the complete1315/1315 Mac run passes on6485. These are unscored examples and editorial planning estimates, not reviewed low/high calibration or measured learner timing. Released reviewed admission remains empty; native preview and full accessibility acceptance remain."
+    },
+    {
+      "id": "UX-014",
+      "title": "Question creation as a guided task",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-014",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Searchable paginated source chooser, selected-only filter, exact source eligibility/recovery and compact selected summary are implemented. Search preserves selected IDs; source chooser fixture passes in full1092. Complete external authoring/installed recovery matrix remains."
+    },
+    {
+      "id": "UX-015",
+      "title": "Saved versus temporary sets and collections",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-015",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Save set uses local durable repository; saved result recovery precedes temporary cache; accepted generated run pins exact result/request; expired in-memory new starts disabled without saved or unfinished run. Sources has Saved and collections, optional named/described collections, source/set membership, explicit membership-only deletion, supported JSON export and learning links. Remove saved copy describes temporary expiry, unfinished runs and retained history; root separately fixes full reusable-inventory deletion. Local metadata/export roundtrip and unsupported-schema no-overwrite tests pass. Root explicitly rejects conflicting imported metadata so original import bytes remain recoverable; automatic conflict merging is not claimed. Clock-boundary integration tests pending."
+    },
+    {
+      "id": "UX-016",
+      "title": "Keep the problem present through the answer loop",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-016",
+      "status": "partial",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Continuous ordinary/source/generated prompt-response-feedback implemented with immutable outcomes. Generated run lifecycle plus terminal compaction20tests pass in170/170. New native generated journey remains under debugging; full large-text/VoiceOver/keyboard matrix not certified."
+    },
+    {
+      "id": "UX-017",
+      "title": "Confidence before commit, inline",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-017",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Root inline confidence policy; generated optional inline selection with nil default; source recall confidence optional inline. Legacy mandatory generated confidence page and response-edit entry point removed."
+    },
+    {
+      "id": "UX-018",
+      "title": "Feedback that teaches",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-018",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Typed saved answer rendering; generated self-check neutral match label without numeric credit; history protected item neutral result, no key or scoring color; actual snapshot explanation used. Root session handles immediate teaching correction and protected acknowledgement."
+    },
+    {
+      "id": "UX-019",
+      "title": "Graduated help and repair",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-019",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Ordinary staged help/repair and generated staged hints plus skip/reveal unscored receipt paths are implemented. Generated11 fixtures passed in full1116 run with one unrelated older capability test failure. All-family authored ladder/repair validity and native fault matrix remain."
+    },
+    {
+      "id": "UX-020",
+      "title": "Reflection is useful and never a trap",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-020",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Root optional reflection after correction, no preselected learner diagnosis; old source/generated mandatory confidence removed. Required-reflection save/failure device evidence still required."
+    },
+    {
+      "id": "UX-021",
+      "title": "Session exit, pause and completion",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-021",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Root timing/exit/checkpoint lifecycle; generated monotonic active segment excludes reference/feedback/pause and resumes explicitly; summary after attempt write. Exact generated draft/owner test passes; installed English/Japanese ordinary Q3 draft and saved-feedback cold relaunch pass. Same-device concurrent-window UI evidence still required."
+    },
+    {
+      "id": "UX-022",
+      "title": "Scratchpad with visible context",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-022",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Scratchpad accepts pinned expandable question prompt; Undo clear; macOS note edits preserve opaque iPad drawing data. Root call sites pass prompt. Wide split-pane and native PencilKit undo/redo device verification remain."
+    },
+    {
+      "id": "UX-023",
+      "title": "Progress overview leads with useful interpretation",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-023",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Visible Overview/Review/History, approachable empty interpretation, accessible history entry. Legacy practice projection is separate and append-only correction notice links affected originals with acknowledgement. Chart/manual sample-size interpretation review remains."
+    },
+    {
+      "id": "UX-024",
+      "title": "Review is a learning queue",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-024",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Shared effective review queue, anchored durable deferral to captured local next-day boundary, canonical Today and notification-date projection, bounded standalone review, protected/quarantine exclusions and bookmark removal are implemented. All11 ReviewDeferralTests pass in full1092; installed deferral and real notification delivery remain."
+    },
+    {
+      "id": "UX-025",
+      "title": "History is directly readable, searchable and replayable",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-025",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "`NFResponsePresentation` covers all eight schemas; preserved raw payload stays compatibility-only; label lookup uses exact saved item; missing legacy labels honestly marked; history search uses typed display; protected key withheld. Actual Mac run passed the first five experience tests, including all schema types and absent-label redaction. Separate local notes/bookmarks, shared report/quarantine flow and Practice this skill action added; original attempt stays immutable. Imported metadata conflicts require explicit merge preservation."
+    },
+    {
+      "id": "UX-026",
+      "title": "Sources root and import states",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-026",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Existing search/import phases/cancel/duplicate/retry/empty recovery preserved; new Sources path isolated from Settings. Needs actual source import journey after refactor."
+    },
+    {
+      "id": "UX-027",
+      "title": "Source detail and studying",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-027",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Source learning actions lead metadata; Read source / Review from memory / Create question set; optional confidence before reference; Matched/Partly/Not yet stored as typed self-report with exact recall and stable attempt ID. Original privacy and separate sync controls preserved."
+    },
+    {
+      "id": "UX-028",
+      "title": "Searchable Settings categories",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-028",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Searchable six categories with English/Japanese synonyms; category matches reveal controls; export deep route opens Data and sync; grouped underlying editors and destructive flows preserved. No-match explanation, Clear search, and matched-category highlighting implemented; installed focus→filter→Done→root return with query→no-match→Done→Clear search passed."
+    },
+    {
+      "id": "INT-001",
+      "title": "Mental math: estimate, decompose, solve, repair",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-001",
+      "status": "partial",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Durable estimate-before-exact and supported compensation steps now retain original raw work in ordinary/generated checkpoints and history; math9 tests passed including failed local/legacy mirror writes and cold continuation. Independent content review and complete native interaction matrix remain."
+    },
+    {
+      "id": "INT-002",
+      "title": "Spatial reasoning: controlled transformations with reset",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-002",
+      "status": "partial",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Coordinate12 exact multi-step transforms, labeled cube11 proper rotations, section13 plane/solid intersections and net14 anchored printed-face geometry have retained original givens plus post-commit worked copies. Native09b coordinate, labeled cube and section journeys pass with actual44pt utility controls, camera/reset separation and static mode. All9 net14 contract tests pass on c0c4; new net installed journey is being authored. Inverse/unknown-transform and scored orientation work, full accessibility/VoiceOver review and nonvisual validity remain; no broad arbitrary-solid authority is claimed."
+    },
+    {
+      "id": "INT-003",
+      "title": "Quantitative reasoning: predict, inspect and compare data",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-003",
+      "status": "partial",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Observed-proportion chart/table/outcome menu, saved prediction/support, number/unit and Correct feedback/Next passed installed174.338s on58324687. Separate authentic graph construction schema4/gen7 has exact grid/table/pointer/numeric controls,8oracle/runtime tests; installed zero-distance drag intercepted scroll, now hold-before-drag under rerun. Other graph/data families remain."
+    },
+    {
+      "id": "INT-004",
+      "title": "Scientific reasoning: claim, evidence and experimental choice",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-004",
+      "status": "partial",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Linked evidence mapping then experimental design with frozen first-stage/support and changed-context repair integrated;9focused fixtures passed and installed linked-science journey passed221s onad199 source. Full science families/source-driven studies/generated native parity/physical accessibility remain."
+    },
+    {
+      "id": "INT-005",
+      "title": "Logic and debugging: visible state trace",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-005",
+      "status": "partial",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Restricted AST drives trace rendering, saved predictions, step/reset/undo and durable assistance;12runtime/native fixtures passed and installed trace journey122s onac428 source. Broader interpreter skins and full assistive-device matrix remain."
+    },
+    {
+      "id": "INT-006",
+      "title": "Retrieval: recall, reference and honest self-check",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-006",
+      "status": "partial",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Recall-before-reference, explicit honest self-check and retained citations remain; insufficient-excerpt report option added for cited ordinary/generated content using existing local report flow. Full source/spacing/physical acceptance remains."
+    },
+    {
+      "id": "INT-007",
+      "title": "Transfer: choose the useful structure in a new context",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-007",
+      "status": "partial",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Typed rate-product relationship selection then total with frozen first-stage,20/80credit and changed printer-to-liquid contexts integrated. Eight oracle/runtime tests pass; installed136.183s on536f verifies clear/undo/cold stage2 and one final receipt. Other transfer structures and reviewed evidence contracts remain."
+    },
+    {
+      "id": "INT-008",
+      "title": "Ordering, touch and keyboard conventions",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#int-008",
+      "status": "partial",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Ordered-step native private-UTI destination, movement threshold, cancellation/forged-payload checks, exact reorder, focus and undo are integrated; controller12, destination3 and grip2 tests pass. Native accepted drop path/visible Undo observed; keyboard Undo/Redo observed in a later isolated copy. One-gesture drag and complete accessibility matrix remain."
+    },
+    {
+      "id": "A11Y-001",
+      "title": "Layout matrix and breakpoints",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#a11y-001",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Width-adaptive existing grids retained; primary footers safe-area inset; Progress overview stacks at compact/accessibility size; source and claim lists reflow. Full specified width/window matrix not executed."
+    },
+    {
+      "id": "A11Y-002",
+      "title": "Token proposal",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#a11y-002",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Existing semantic contrast-tested palette retained and used by new controls; new cards use 16/20 radii and 44pt controls. Whole-app token consolidation and measured rendered contrast remain."
+    },
+    {
+      "id": "A11Y-003",
+      "title": "Dynamic Type and safe areas",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#a11y-003",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Safe-area footers, responsive Progress overview, source/claim text wrap, named Editors preserved. True UIKit AX5 onboarding passed and its enlarged screenshot was inspected; full largest-size coverage outside onboarding remains required."
+    },
+    {
+      "id": "A11Y-004",
+      "title": "Focus and keyboard sequence",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#a11y-004",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Typed path actions preserve ownership, source/generated Save and close; optional confidence avoids hidden default commit; root keyboard policy retained. Hardware-only journey and focus movement still unexecuted."
+    },
+    {
+      "id": "A11Y-005",
+      "title": "VoiceOver names, values and announcements",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#a11y-005",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Scratchpad notes/Your answer from memory/Confidence names; typed labels hide IDs from default VoiceOver; table inspection labels. Actual accessibility tree and live announcements need device review."
+    },
+    {
+      "id": "A11Y-006",
+      "title": "Motion, audio, haptics and sensory alternatives",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#a11y-006",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "No automatic model motion; camera controls discrete under Reduce Motion; sample/recovery understandable without sound/haptics. Whole transition audit still required."
+    },
+    {
+      "id": "COPY-001",
+      "title": "Vocabulary contract",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#copy-001",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Primary vocabulary Today/Practice/Sources, source actions, Question Writer, local saved labels. Existing deeper legacy terminology being normalized; methodology may retain precise technical terms."
+    },
+    {
+      "id": "COPY-002",
+      "title": "Standard action and state catalog",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#copy-002",
+      "status": "implemented",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Main check/continue/save/pause/recovery/self-check/expiry strings introduced consistently; local reports preserve existing actual quarantine copy."
+    },
+    {
+      "id": "COPY-003",
+      "title": "English and Japanese parity",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#copy-003",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "English/Japanese catalog additions now cover routes, collections, sample alternatives, report recovery, sitting budgets and runtime additions. Compiler extraction performed and catalog content lint passed in the 23:18:36 regression run. The ordinary Japanese Q3 journey and visible copy were inspected; manual Japanese editorial review and the full locale matrix remain external acceptance work."
+    },
+    {
+      "id": "UX-029",
+      "title": "Package order",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-029",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "Work followed correctness/navigation → answer loop → discovery → durable resources → interactions. Scope does not remove existing useful capabilities."
+    },
+    {
+      "id": "UX-030",
+      "title": "Release evidence required for this appendix",
+      "specification": "../Improvement_Spec_2026-09-04/01_Experience_and_Interaction.md#ux-030",
+      "status": "in progress",
+      "implementation_ledger": "Experience_Status.md",
+      "evidence_and_remaining_work": "This trace ledger and `Tests/ExperienceImprovementTests.swift` added. Root owns app/test logs. Manual widths/locales/VoiceOver/keyboard and independent usability sessions are still unexecuted; no certification claimed."
+    },
+    {
+      "id": "CON-001",
+      "title": "One contract must drive generation, rendering, validation, and explanation",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-001",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Optional versioned NFExerciseContractMetadata now serializes semantic/objective/family/structure identity, revisions, roles, canonical seed and explicit unreviewed status. ; Full typed stimulus/provenance/reviewer/oracle/canonical-parameter records and editorial demand adoption for every family remain."
+    },
+    {
+      "id": "CON-002",
+      "title": "Parameters must be generated before prose",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-002",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Existing exact arithmetic, restricted interpreter and cube-fold engine retained. Corrected science derives numeric geometry before prose; spatial duplicate guard runs before scoring. ; Full-domain independent family oracles and generator rejection reproduction for every admitted contract remain."
+    },
+    {
+      "id": "CON-003",
+      "title": "Generation failure must remain a content failure",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-003",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Invalid authored options/DAG/support contracts return invalidItem and no objective correctness; never a learner incorrect result. ; Atomic replacement reservation, diagnostic seed/revision receipt and session family quarantine need complete runtime acceptance."
+    },
+    {
+      "id": "CON-004",
+      "title": "Every representation needs a declared instructional role",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-004",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Four NFInstructionalRole cases; generated representation role arrays; independentRepresentations/independentContextText; conversion/Fermi/expected-value formulas are optionalPracticeHint. ; Every representation/context/source/accessibility field needs independent editorial role review; hint exposure transaction and supplementary teaching assets remain."
+    },
+    {
+      "id": "CON-005",
+      "title": "An item must state what is being judged",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-005",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Nearest-power-of-ten deliverable is explicit, including protected single-choice mode; state task explicitly asks end-state violation; boundary bug positive-input domain explicit. ; All 58 wording-versus-assessed-deliverable audits, including generic workflows, remain."
+    },
+    {
+      "id": "CON-006",
+      "title": "Every selectable alternative must be semantically distinct",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-006",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Coordinates/numbers canonicalized; duplicate semantic choices invalidate item. Spatial symmetric-coordinate distractor replaced with origin reflection; structured transfer excludes equal slope/intercept values that duplicate a swapped-role answer. ; General formula/prose equivalence annotations and all geometry boundary partitions still need full admission review."
+    },
+    {
+      "id": "CON-007",
+      "title": "Statistical interpretations must follow the estimand and procedure",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-007",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "NFClosedInterval validates finite ordered endpoints, distinguishes touching/overlap/disjoint; generated figure narrative derives from it. Separate supplied 95% mean intervals explicitly do not come from illustrative raw rows; no overlap-significance shortcut. ; Independent statistics/editorial approval and richer contrast-interval B2–B4 tasks remain."
+    },
+    {
+      "id": "CON-008",
+      "title": "No pre-answer solution leakage in independent modes",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-008",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Removed counterexample key, zero-divisor conclusion, best-experiment solution, completed proof equation, compensation decomposition and solution-bearing spatial/loop alt text. Added protected-family role regression fixtures. ; Exhaustive protected-manifest visual/VoiceOver/citation/nested-export inspection for every family and locale remains. Generated-authoring context roles are still absent, and its instructions field still aliases decisiveStep; the generated UI must not expose that field before response."
+    },
+    {
+      "id": "CON-009",
+      "title": "Distractors must express plausible errors",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-009",
+      "status": "specified",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Existing distractor IDs/error explanations retained; corrected coordinate alternative has origin-reflection misconception ID. ; Every distractor needs authored derivation, comparable grammar/length and independent review; generic recognition distractors remain a blocker."
+    },
+    {
+      "id": "CON-010",
+      "title": "A response form must perform the operation its name promises",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-010",
+      "status": "specified",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Target-specific rendering declarations now authorize genuine cloze, numerical equation slots and native figure/data assets for38 existing targets/98 compatible pairs; missing assets preserve same-target short recall in mixed practice or fail explicit focused launch. All8 asset tests pass in89 scope. Other forms/families and richer equation/figure structures remain engineering work."
+    },
+    {
+      "id": "CON-011",
+      "title": "Editorial difficulty must be based on real demands",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-011",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Removed targetDifficulty-based relabeling of unchanged generated demands. New editorialDemand is nil pending review, never inferred B1/B4. ; Real band-bearing content and family demand progression remain for all unapproved bands."
+    },
+    {
+      "id": "CON-012",
+      "title": "Difficulty requests must select valid demand specifications",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-012",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Legacy difficulty now describes generated task, not requested metadata; adaptive owns reviewed demand types and availability selection. ; Generator integration with real approved requested/realized band records and learner-visible unmet-demand route remains."
+    },
+    {
+      "id": "CON-013",
+      "title": "Editorial and empirical difficulty must remain separate",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-013",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Typed editorial record is separate from legacy difficulty and includes calibration status/version; corrective records explicitly unreviewed. ; Reviewed content adoption and empirical calibration dataset/model records remain; no calibration claim made."
+    },
+    {
+      "id": "SCO-001",
+      "title": "Correctness and credit must be consistent",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-001",
+      "status": "implemented",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "NFScoringOutcome correct/partial/incorrect/needsClarification/selfReported/skipped/invalidItem; optional objectiveCorrectness; accepted aliases earn1; partial never correct; self-report0/nil; legacy decode supported. ; End-to-end new-record disposition/evidence verification owned by runtime/adaptive; skipped emitted by lifecycle, not invented by scorer."
+    },
+    {
+      "id": "SCO-002",
+      "title": "Scoring must produce an inspectable component result",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-002",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Versioned component results preserve submitted/parsed text, credit, outcome and codes; logic fields+invariant separated; deterministic side-effect-free scorer. ; Multiple-choice/ordering/evidence still have aggregate component record rather than every diagnostic relationship; stronger parser AST provenance remains."
+    },
+    {
+      "id": "SCO-003",
+      "title": "Parsing policy must follow the answer domain",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-003",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Typed symbolic, exact-quantity, identifier, reviewed-prose and state Boolean/numeric/identifier/label authorities; case-sensitive unit symbols. ; Every legacy short-text/numeric/tuple/sequence/chemical/code family needs reviewed typed adoption; no universal normalizer completeness claimed."
+    },
+    {
+      "id": "SCO-004",
+      "title": "The eight response types remain the stable surface contract",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-004",
+      "status": "implemented",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "All eight interaction enum cases preserved; optional typed authority and graph/set fields added compatibly. ; Full UI/history journeys across all schemas are runtime/experience acceptance."
+    },
+    {
+      "id": "SCO-005",
+      "title": "Numeric responses require exact and approximate contracts",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-005",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Exact rational numeric parser retained; fractions/scientific notation/negative-zero work, known inline wrong units score semantic error, zero denominator/ambiguity clarify. ; Explicit rounded precision, free equivalent-unit conversion, percentages/probability mode and approximation intervals need complete typed policy adoption."
+    },
+    {
+      "id": "SCO-006",
+      "title": "Single-choice scoring requires a unique semantic answer",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-006",
+      "status": "implemented",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Scorer validates semantic numeric/tuple/display uniqueness before selected-ID scoring; unknown option IDs clarify; duplicate item is invalidItem with nil objective score. ; General formula/prose semantic annotations and runtime replacement remain CON-006/003 work."
+    },
+    {
+      "id": "SCO-007",
+      "title": "Multiple-choice credit must be explicit and resistant to selecting everything",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-007",
+      "status": "implemented",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Practice partial rule max(0,(correct selections−incorrect selections)/required); exact-set mode for rubric without partial/protected; explicit alternative accepted sets supported. ; All authored practice weight appropriateness still needs editorial review."
+    },
+    {
+      "id": "SCO-008",
+      "title": "Ordered steps must represent dependency rather than stylistic preference",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-008",
+      "status": "implemented",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Optional DAG; all complete topological orders accepted; cycles/self-edges/unknown edges rejected; fraction of satisfied edges when partial enabled; empty-edge complete permutation1. ; Family-specific proof inference truth needs independent content review."
+    },
+    {
+      "id": "SCO-009",
+      "title": "Short text must declare its supported interpretation",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-009",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Explicit constrained prose/identifier/symbolic/quantity domains; length validated before score; uncovered reviewed prose produces needsClarification rather than false wrong. ; Every legacy explanation needs migrated authority and explicit compare/report UI; full constrained-rubric coverage is not claimed."
+    },
+    {
+      "id": "SCO-010",
+      "title": "Restricted symbolic equivalence must preserve symbol roles",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-010",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Exact polynomial normalization with declared variables/functions, rational coefficients, implicit/explicit/glyph multiplication, sums/grouping/powers; F/f/application roles distinct. ; Variable-denominator rational functions, domain exclusions, alpha-equivalence, derivative primes and advanced domains deliberately unsupported and clarified."
+    },
+    {
+      "id": "SCO-011",
+      "title": "Symbolic processing must have bounded complexity",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-011",
+      "status": "implemented",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Local nonexecuting parser bounds 256 tokens, 32 depth, 16 symbols, exponents ±12, 2,048 terms; expanded monomial degree/work and arithmetic overflow bounded; unsupported syntax clarifies. ; Limits are version1 engineering policy; configurable runtime policy/review adoption remains."
+    },
+    {
+      "id": "SCO-012",
+      "title": "Prose grading must preserve direction, conditions, and negation",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-012",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Arithmetic-mean reviewed paraphrases accepted; explicit reversals/negated/add-then-deny claims rejected; unknown text clarifies. No added keyword-only acceptance. ; Other legacy requiredTerms/constrainedConcepts rubrics need relation-safe reviewed migration; broad prose understanding not claimed."
+    },
+    {
+      "id": "SCO-013",
+      "title": "Retrieval computations must use computational response contracts",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-013",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Typed exact numerical/radix/matrix authorities and real computational asset contracts preserve target identity.9 retrieval authority and8 actual asset tests pass in89 scope, including same-target renderings, finite wrong/equivalent answer checks and cold/history preservation. Full800 computed-target coverage and further structured results remain."
+    },
+    {
+      "id": "SCO-014",
+      "title": "Self-check must be honest about its authority",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-014",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Every self-check score is selfReported with no objective correctness/credit; target-aware checklist adapter; optional fallback reflection. AI runtime uses attempt→reveal→rating; actual self-check comparison checkpoint export/restore passed in the golden runtime test. ; Complete linked closed-reference retries and all lifecycle/device acceptance remain; all target-specific criteria remain editorial work."
+    },
+    {
+      "id": "SCO-015",
+      "title": "Composite and state answers must grade typed components",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-015",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Accepted whole-state aliases give full 1; partial score uses best accepted state; explicit Boolean/integer domains and per-field results; malformed typed states clarify, invalid typed keys block; invariant80/20 retained. ; Per-field authored arbitrary weights, enum domains, full schema validation and all composite policy adoption remain."
+    },
+    {
+      "id": "SCO-016",
+      "title": "Estimates and units require explicit semantic policies",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-016",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Nearest-power-of-ten instruction explicit and protected deliverable matches control; locale and inline-unit handling distinguish syntax from semantic mistakes. ; Numeric estimate/exact policy now compares the learner’s pair under an explicit 50% relative-error scale check; nonnumeric unit composite policies, free quantity conversion/rounding/estimate modes remain incomplete."
+    },
+    {
+      "id": "SCO-017",
+      "title": "Claim/evidence tasks must encode support constraints",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-017",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Alternative sufficient evidence bundles supported; unsupported attachments penalized; stale IDs clarify; validator no longer reveals keyed relationship count or blocks scoreable omissions. ; Every claim edge needs separate component explanation/weight and contradictions category; family scenario review remains."
+    },
+    {
+      "id": "SCO-018",
+      "title": "Feedback and replay must preserve the original result",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-018",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Ordinary feedback titles Correct/Check the answer; clarification is separately checkpointed editable guidance with no scored attempt; self-report distinct; protected feedback never reveals per-item keys even explicit legacy reveal argument. ; Family-specific first feedback sentence and original-result linked replay validation remain."
+    },
+    {
+      "id": "CON-020",
+      "title": "Separate identity layers and exposure relationships",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-020",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "New metadata provides semanticProblemID/fingerprint/objective/family/structure; fingerprint v2 includes typed authority, equivalent state, ordering dependency and support-bundle changes. ; Canonicalization of all surface substitutions, geometry symmetries, pseudocode skins, locales and query roles remains."
+    },
+    {
+      "id": "CON-021",
+      "title": "Version the smallest changed authority and the containing edition",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-021",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Scorer v8, generator/template v4, bank v3, fingerprint v2; metadata records superseded generator v3. Pure correction predicates preserve original identities. ; Granular per-contract supersession mapping for every changed authority and installed-ledger migration approval remain."
+    },
+    {
+      "id": "CON-022",
+      "title": "The release manifest must cover the actual delivered bank",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-022",
+      "status": "specified",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Existing signed descriptor inventory/public key/gate unchanged; adaptive floor remains fail-closed because offline inventory coverage is nil. New release-gate JSON explicitly unsigned. ; Authorized independent content review, manifest contentVersion update and offline release signature are required. No production signature generated or bypassed."
+    },
+    {
+      "id": "CON-023",
+      "title": "Every family needs an editorial record and an independent reviewer",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-023",
+      "status": "specified",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "All 58 draft matrix preserves prerequisites, demanded progression and family acceptance suites. ; Independent named reviewers, dates, primary references, rendered samples and boundary/oracle review records remain external release requirements."
+    },
+    {
+      "id": "CON-024",
+      "title": "Editorial review must evaluate language as part of correctness",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-024",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Removed several implementation/solution-bearing instructions; precision/science scope is explicit. Existing localization plumbing preserved. ; New corrective copy and every accepted response need English/Japanese editorial and accessible layout review; default English fallback is not equivalent-language certification."
+    },
+    {
+      "id": "CON-025",
+      "title": "Feedback must be authored as a learning sequence",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-025",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Scorer distinguishes clarification from conceptual error, exposes component results; existing hint/error explanations retained and protected solution leakage reduced. ; Misconception-specific smallest corrective actions and fresh linked repair content for every family remain."
+    },
+    {
+      "id": "CON-026",
+      "title": "Metacognitive tasks must not masquerade as subject knowledge",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-026",
+      "status": "specified",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Draft matrix flags workflow/calibration objective limitations and does not invent approved subject bands. ; Generic Retrieval Cycle Builder and Source-Filter Trace still need target-specific tasks or an explicit learning-method-only migration and evidence route."
+    },
+    {
+      "id": "CON-027",
+      "title": "Content incidents need a reproducible correction path",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-027",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "NFContentCorrectionPolicy now audits original evidence for duplicate choices, intervals, accepted state aliases, bounded F/f and prose, self-report, workflow, solution leakage, legacy demand and resume provenance; recommendations carry stable digests, rule revisions and exclusion scopes. See Historical_Content_Correction_Status.md. ; Append-only corrections and effective history presentation are integrated and covered by 18 passing historical tests. Complete incident triage, exposure denominator reporting and per-contract editorial decisions remain."
+    },
+    {
+      "id": "CON-014",
+      "title": "Balanced admission must precede balanced delivery",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-014",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Seven-lab listed quotas encoded exactly; retrieval’s listed900 versus required1000 contradiction fails closed; other lab totals are1000. Policies are in NFContentAdmission.proposedEditionPolicy, preserving 1000/lab floor; existing bank versioned v3. ; Existing first-unique numerical bank is not a balanced new edition. Genuine family/structure production and approved admission are still required."
+    },
+    {
+      "id": "CON-015",
+      "title": "Quota feasibility must be checked as a finite assignment problem",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-015",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Deterministic min-cost max-flow assigns unique targets with exact family/field quotas, assets/locales, structure maxima and minimum distinct structures; first-structure reward is bounded at each family minimum. Exhaustive independent finite oracle passed. ; Approved candidate production and integration into a signed edition manifest remain."
+    },
+    {
+      "id": "CON-016",
+      "title": "Per-target novelty and per-rendering variety must be distinguished",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-016",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Retrieval fingerprints preserve target identity across response forms; admission has one capacity unit per semantic ID/fingerprint. ; Generic Cycle Builder still must be separated from target knowledge; all compatible-rendering assets and review-lane runtime receipts remain."
+    },
+    {
+      "id": "CON-017",
+      "title": "Separate candidate order from the reservation of an adaptive item",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-017",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Local reservation receipts and revision-checked atomic fixed launch now publish the cursor, exact first snapshot and run together; admission remains separate from reservation mutations. See Reservation_Implementation.md and Atomic_Fixed_Launch_Test_Run.txt. ; Balanced reviewed whole-epoch ordering and the full expanded-family/adaptive selection acceptance remain; final execution of the newest atomic guard is pending."
+    },
+    {
+      "id": "CON-018",
+      "title": "Exhaustion fallback must preserve the guarantee it actually has",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-018",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Explicit unavailable-item state and focused-family tests prevent silent family switching on exhaustion; release-gate manifest names unavailable reviewed bands and quotas. ; Full related/review alternatives and reviewed family-specific capacity acceptance remain."
+    },
+    {
+      "id": "CON-019",
+      "title": "Epoch boundaries must solve capacity before reserving",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-019",
+      "status": "specified",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Existing no-replacement machinery retained without weakening capacity or signing gates. ; Full cross-epoch eligibility, exact shorter-session alternatives, abandonment and concurrent windows acceptance still required."
+    },
+    {
+      "id": "CON-028",
+      "title": "The matrix is the migration inventory, not a new count claim",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-028",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Content_Family_Matrix_Draft.json contains exactly 58 stable family IDs and every QA-F01–58 requirement verbatim, with reviewedBands=[] and concrete missing work. ; Complete reviewed supported-band contracts/assets and learner-facing unavailable-band enforcement remain."
+    },
+    {
+      "id": "CON-029",
+      "title": "Family expansion must preserve a coherent operation",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-029",
+      "status": "specified",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "No numerical-range widening, label changes or cube symmetry aliases were counted as substantive advanced capacity. ; Coherent new substructures and exact geometric/target canonical finite capacity for all expanded families remain."
+    },
+    {
+      "id": "SCO-019",
+      "title": "The score test corpus must contain both meaning-preserving and meaning-changing edits",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#sco-019",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "ContentImprovementRegressionTests cover meaning-preserving/meaning-changing derivatives,F/f,mean direction/negation,numeric spellings/units,aliases,sets,DAGs,intervals,duplicates,self-report and limits. ; Full every-authoritative-answer adversarial corpus and signed-manifest census remain."
+    },
+    {
+      "id": "CON-030",
+      "title": "Bank and identity tests must validate capacity, not only counts",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-030",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Admission tests cover shared target assignment, required asset failure, deterministic permutation, exact quotas; existing bank census tests updated for honest self-report. ; Full QA-B01–09 current inventory census, concurrent reservations, exhaustion, supersession and realized mix tests remain."
+    },
+    {
+      "id": "CON-031",
+      "title": "Release review must inspect representative learner sessions",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-031",
+      "status": "specified",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Automated fixtures exist; no human review sessions claimed. ; 28 four-band editorial sessions (or every actually advertised interim combination), keyboard-only and accessible reading plus nontechnical reviewer remain external."
+    },
+    {
+      "id": "CON-032",
+      "title": "Instrument quality without inventing a psychometric model",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-032",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Outcome/component/identity/role/version distinctions are serializable and available for structured local provenance. ; Complete event counts, review signal denominator reporting and local quality dashboard remain; no new analytics transmission added."
+    },
+    {
+      "id": "CON-033",
+      "title": "Implement in a dependency order that cannot hide unresolved defects",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-033",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "C-A trust corrections and C-B bounded authority have executable changes; C-C identity scaffold and C-E admission foundation added. ; C-D substantive family expansion and C-F actual editorial/signing/release evidence remain; dependency completion is not claimed."
+    },
+    {
+      "id": "CON-034",
+      "title": "The chapter is complete only when quality and honesty agree",
+      "specification": "../Improvement_Spec_2026-09-04/02_Content_and_Scoring.md#con-034",
+      "status": "in progress",
+      "implementation_ledger": "Content_Status.md",
+      "evidence_and_remaining_work": "Release and status artifacts separate repaired scoring from unimplemented content, review and signing. ; Full intended edition is not accepted: family expansion, approved bands, feasible reviewed quotas, human review and integrated runtime/release gates remain."
+    },
+    {
+      "id": "ADP-001",
+      "title": "Make the delivered question, the explanation and the record agree",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-001",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Typed requested/delivered bands and receipt; independent target versus evidence summaries ; Reviewed production demand contracts and integrated controls"
+    },
+    {
+      "id": "ADP-002",
+      "title": "Use a shared, explicit item contract",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-002",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "`NFEditorialDemandRecord`, compatibility IDs, optional reviewed durations; no float mapping ; Catalog admission supplies truthful signed records"
+    },
+    {
+      "id": "ADP-003",
+      "title": "Represent difficulty on multiple axes",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-003",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "`NFDemandVector`; timing is outside demand ; Authored solution graphs and typed family parameter validators"
+    },
+    {
+      "id": "ADP-004",
+      "title": "Define B1–B4 as reviewed task bands",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-004",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "B1–B4 shared enum and titles ; Editorial family review determines supported bands"
+    },
+    {
+      "id": "ADP-005",
+      "title": "Test difficulty through its actual demands",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-005",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Fixture candidates change dependency/representation demands and chosen delivered band is asserted ; Paired production examples/answer validators for every admitted transition"
+    },
+    {
+      "id": "ADP-006",
+      "title": "Start from low-stakes evidence without demanding a long baseline",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-006",
+      "status": "partial",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Live/mixed controllerV2 persists highest compatible demonstrated target, then recent independent target, explicit choice or coldB1, with30-day same-band refresh and authentic ordered evidence IDs. Real history, cold replay, shortages, future-policy preservation and quarantine tests pass on c0c4. New automatic scope construction includes admitted higher-only families and mixed preview exposes each actual initial target while retaining unavailable coldB1;all three new mixed fixtures pass in the complete1315/1315 Mac run. Optional starting-check route, authentic reviewed content admission and remaining complete policy/acceptance gates remain."
+    },
+    {
+      "id": "ADP-007",
+      "title": "Keep challenge, timing and assistance independent",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-007",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Separate challenge/timing types; fixed/adaptive controls; timed-fluency predicate ; Runtime timing-only freeze test; approved fluency catalog"
+    },
+    {
+      "id": "ADP-008",
+      "title": "Apply overrides at a safe boundary",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-008",
+      "status": "partial",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Live immutable next-choice commands and explicitReplace retain previouswork, keepmanual/automatic allowances separate and atomicallyaccept onefuture slot. Actual51controller/mixed tests pass1158full and writer188/189scope. Full reviewedcatalog/nativefield/setting matrix remains."
+    },
+    {
+      "id": "ADP-009",
+      "title": "Explain the change in learner language",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-009",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Typed selection reasons and rule-credit receipts ; Localized actual-demand explanation from approved content"
+    },
+    {
+      "id": "EVD-001",
+      "title": "Reduce durable events into separate evidence channels",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-001",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Typed lanes, single IDs and attributed objective; raw observation plus pure derived state ; Store observation provenance and decision/queue events in local durable envelope"
+    },
+    {
+      "id": "EVD-002",
+      "title": "Use `EditorialBandEvidenceV1` for both live and replayed results",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-002",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Last 20 in 60 stored canonical days; exact 0/1 flags, finite payload validation, descriptive planning score ; Catalog/version support registry and effective day passed by runtime"
+    },
+    {
+      "id": "EVD-003",
+      "title": "Define an independent observation before counting it",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-003",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Independent predicate, assistance/unknown/source exclusions, 30-day semantic dedup, structure cap ; Global local exposure/correction input integration"
+    },
+    {
+      "id": "EVD-004",
+      "title": "Assistance produces a learning outcome, not an unassisted success",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-004",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Assisted events excluded from independent means; support window and pending repair ; Durable hint/worked-step sequence and observed explanations in UI"
+    },
+    {
+      "id": "ADP-010",
+      "title": "Maintain a practice control state distinct from evidence",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-010",
+      "status": "partial",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Live versioned controller, next-choice/Replace, fixed-block separateactivity and per-family mixedcoordination are integrated;51actualcontroller/mixed tests pass1158full and writer188/189scope. Prelaunch activity-scoped choices are integrated with focused failures being resolved; releasedregistry empty and realreviewedcontent stillrequired."
+    },
+    {
+      "id": "ADP-011",
+      "title": "Apply a bounded practice staircase",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-011",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Exact up/down thresholds, authoritative flags, adjacent probes, cooldown and caps ; Live reviewed pool integration"
+    },
+    {
+      "id": "ADP-012",
+      "title": "Demonstrate a band using broader evidence than a short streak",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-012",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Deterministic capped eight-item set; sessions/days/formats/credit; historical date and hysteresis ; UI exposes per-objective scope and historical support"
+    },
+    {
+      "id": "EVD-005",
+      "title": "Collect confidence only under a defined purpose",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-005",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Salted one-in-five invitations; pre-outcome only; categorical version; 12 samples/two sessions; required/optional split ; UI lock/invitation provenance, complete optional-decline history"
+    },
+    {
+      "id": "EVD-006",
+      "title": "Treat partial credit according to the rubric, not the renderer",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-006",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Fractional score retained once; exact authoritative full/zero flags; no inferred strategy ; Content criterion IDs and scorer correctness contract"
+    },
+    {
+      "id": "EVD-007",
+      "title": "Give uncertainty an honest, implementable meaning",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-007",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Coverage enum/counts, no theta/psychometric uncertainty ; Updated detailed Progress presentation"
+    },
+    {
+      "id": "EVD-008",
+      "title": "Make invalid content exclusions affect every derived view",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-008",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Observation/semantic/family validity projection, derived corrected score, affected decision receipts ; Append-only authorized dispositions and atomic publication of rebuilt summaries"
+    },
+    {
+      "id": "EVD-009",
+      "title": "Preserve active time and exclude interrupted items from clean speed evidence",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-009",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Monotonic chunk input, complete-duration/interrupt/resume guards; legacy speed suppressed ; Runtime clock/focus interval accumulation and checkpoint fault injection"
+    },
+    {
+      "id": "EVD-010",
+      "title": "Keep personal study separate from built-in skill evidence",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-010",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Personal/source lane cannot populate practice/protected/calibration/retention skill observations ; Local personal-study reminders and source UI"
+    },
+    {
+      "id": "EVD-011",
+      "title": "Limit improvement statements to comparable observed tasks",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-011",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Formal improvement badge disabled; compatibility groups explicit ; Reviewed comparable-form protocol before stronger claims"
+    },
+    {
+      "id": "ADP-013",
+      "title": "Protect an assessment contract rather than a nominal seed namespace",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-013",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Leakage/exposure/accessibility predicates fail closed ; Visual/alt-text/editorial review of every protected contract"
+    },
+    {
+      "id": "ADP-014",
+      "title": "Use the same band evidence model with a separate protected channel",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-014",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "`NFEditorialProtectedPolicy`, seven performance IDs, distinct calibration lane, staircase/starting suggestion ; Admit new form protocol; old forms remain legacy; durable coverage-chain integration"
+    },
+    {
+      "id": "SCH-001",
+      "title": "Change the old eight-minute cap into a sitting budget",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-001",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Coverage separate from sitting budget; 16 presentations; explicit linked supplements ; Runtime resume of new reviewed protocol and actual presentation acknowledgements"
+    },
+    {
+      "id": "EVD-012",
+      "title": "Disclose results without leaking reusable protected keys",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-012",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Protected model and result policy do not publish reusable keys; disclosed form invalid for resume ; End-to-end history/export/a11y redaction and exceptional retirement transaction"
+    },
+    {
+      "id": "SCH-002",
+      "title": "Filter hard constraints before ranking candidates",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-002",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Validity, accessibility/language, scope/prerequisite, exposure/ownership, review and duration predicates ; Runtime supplies durable ownership/reservation ledger and frozen snapshot"
+    },
+    {
+      "id": "SCH-003",
+      "title": "Balance at the experience level, not only at bank construction",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-003",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Coverage/due/family/structure/goal/stable ranking; dominant-pool fixture ; Rolling-100 real presentation telemetry stored locally; infeasible quota UI"
+    },
+    {
+      "id": "SCH-004",
+      "title": "Handle content shortage visibly and safely",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-004",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Explicit no-content result and familiar/lower/other/end options; upward requires three semantics ; UI choice and reviewed alternative inventory"
+    },
+    {
+      "id": "SCH-005",
+      "title": "Use deterministic tie-breaking and persist the actual path",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-005",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Deterministic salted tie plus candidate secondary key and Codable path receipt ; Atomic adaptiveItem/fixedBlock reservations, <=2 advisory prewarms, concurrent owners"
+    },
+    {
+      "id": "SCH-006",
+      "title": "Keep review objectives separate from literal question repetition",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-006",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Review keyed objective/family/band/relation/comparability; familiar item not a novel observation ; Reviewed sibling inventory and exposure contract"
+    },
+    {
+      "id": "SCH-007",
+      "title": "Use a bounded, explainable initial interval ladder",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-007",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Exact 1/3/7/14/30 ladder, due-only one rung, help/no-response handling, reset after repair ; Persist queues and personal reminder policy separately"
+    },
+    {
+      "id": "SCH-008",
+      "title": "Make the mistake queue actionable and criterion-specific",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-008",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Criterion-linked mistake status and explanation/repair/delayed progression policy ; Durable explanation events and fresh sibling affordance in UI"
+    },
+    {
+      "id": "SCH-009",
+      "title": "Limit review backlog pressure",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-009",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "<=30% duration and <=5 items; unselected backlog retained ; Today backlog UI and exact duration metadata"
+    },
+    {
+      "id": "SCH-010",
+      "title": "Preserve the canonical daily plan while allowing real adaptation inside it",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-010",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Existing canonical-plan model retained; no evidence reducer rewrites blocks ; Runtime amendment/save tests for underway plans"
+    },
+    {
+      "id": "SCH-011",
+      "title": "Derive workload from item durations and interaction overhead",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-011",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Reviewed duration range and >=8 compatible median; mode overhead; one reflection ; Runtime replaces blanket count generation and records phase medians"
+    },
+    {
+      "id": "SCH-012",
+      "title": "Handle stopping and completion without falsifying achievement",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-012",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Separate participation/planned completion predicate; checkpoint failure never complete ; App completion transaction/retry route"
+    },
+    {
+      "id": "SCH-013",
+      "title": "Respect travel, offline use and changes in available content",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-013",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Stored canonical ordinals, no wall-clock elapsed reinterpretation; frozen selected path ; Travel/offline/catalog update integration fixtures"
+    },
+    {
+      "id": "EVD-013",
+      "title": "Guarantee deterministic equivalence",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-013",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Full pure evidence state Codable replay equality tested; stable event IDs ; Durable decisions/exposure/queue side effects replay alongside reducer"
+    },
+    {
+      "id": "EVD-014",
+      "title": "Make policy versions deployable without silent reinterpretation",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-014",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "One `EditorialBandEvidenceV1` version; unknown old band/conditions fail closed ; Deployment version registry, migration and correction publication boundary"
+    },
+    {
+      "id": "SCH-014",
+      "title": "Map the implementation to current components",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#sch-014",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Existing adapters and policy modules changed as above ; Reviewed catalog/runtime/UI connect the shared projection everywhere"
+    },
+    {
+      "id": "ADP-015",
+      "title": "Validate the proposed bands with representative learners",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#adp-015",
+      "status": "specified",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Stronger claims remain disabled ; Consented representative-learner pilot; no contact/telemetry authorized or conducted"
+    },
+    {
+      "id": "EVD-015",
+      "title": "Require evidence integrity before stronger product claims",
+      "specification": "../Improvement_Spec_2026-09-04/03_Adaptive_Learning_and_Evidence.md#evd-015",
+      "status": "in progress",
+      "implementation_ledger": "Adaptive_Status.md",
+      "evidence_and_remaining_work": "Deterministic tests added; stronger claims disabled ; All ten chapter release gates, especially production content and human pilot"
+    },
+    {
+      "id": "CORE-001",
+      "title": "One learning runtime",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#core-001",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Universal runtime is the built-in coordinator; generated/source lifecycles reuse local durability but still have separate controllers. Full coordinator consolidation remains."
+    },
+    {
+      "id": "CORE-002",
+      "title": "Separate responsibilities",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#core-002",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Pure authorities, selection/evidence/workload policies, local repository, typed presentation and navigation are separated. View/runtime extraction and single command interface remain."
+    },
+    {
+      "id": "CORE-003",
+      "title": "Pure boundaries",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#core-003",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Seed/locale/clock are explicit on new paths; a complete audit eliminating global time/locale from every legacy reducer and generator remains."
+    },
+    {
+      "id": "CORE-004",
+      "title": "Concurrency",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#core-004",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Immutable startup decoding, factory generation, backup/diagnostic projections and ordinary/modern/legacy generated debounce archive saves use workers. Archive validation frames are split without dropping checks after actual iOS source/cold/autosave stack crashes; installed09b source/coordinate/section/cube pass and all6 real typed cold-read/autosave worker tests pass on iOS6485. Ordinary/source/protected explicit Submit is migrated through awaited preparation/snapshot/feedback writes and verified publication;all14 regressions pass in the complete1315/1315 Mac run on6485. Generated explicit Submit, remaining launch/transition/admin writes, bulk controller/progress projections, owning-context model migration and Release performance budgets remain."
+    },
+    {
+      "id": "CORE-005",
+      "title": "Versioned interfaces",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#core-005",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Local envelope/checkpoint schema1, scorer8, archive18 and named editorial policy are separate. Complete presentation/selection version registry remains."
+    },
+    {
+      "id": "RUN-001",
+      "title": "A run has a durable identity before interaction",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-001",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Ordinary fixed focused launches now commit full reservation, canonical request, initial run/slot/snapshot and launch receipt in one atomic local file transaction with revision compare-and-swap. Exact prepared replay and deletion tombstones tested; reviewed adaptive delivery and other controllers remain."
+    },
+    {
+      "id": "RUN-002",
+      "title": "Launch is not resume",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-002",
+      "status": "implemented; validation recorded separately",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Explicit resumeSession(id) restores exact run before any launch reservation. New practice uses a distinct run."
+    },
+    {
+      "id": "RUN-003",
+      "title": "Persist the complete launch contract",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-003",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Sharedlifecycle saves immutable next/summary beforepublication ordinary/source/protected/generated. Protected8pass1158full;generated20terminalcasespass170scope. Generation-bearingruntime/storagecommands and capturedackrevisionCAS integrated:12newtests pass in188/189scope, no obsoletewriter feedback afterdurablereceipt. Asyncoff-mainwrite/projectionarchitecture andphysicalcrashmatrix remain."
+    },
+    {
+      "id": "RUN-004",
+      "title": "Multiple suspended sessions",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-004",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Multiple suspended ordinary/generated runs, Continue, explicit End and one writer. Practice All/Focused/Review filters and pagination in batches of10 include every suspended run; independent installed continuation validation remains."
+    },
+    {
+      "id": "RUN-005",
+      "title": "Same-device window ownership",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-005",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "App-scoped writer arbitration checkpoints predecessor on takeover and rejects stale commands. Persistent ownership generations and real multiwindow acceptance remain."
+    },
+    {
+      "id": "RUN-006",
+      "title": "Cross-device limit",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-006",
+      "status": "implemented; validation recorded separately",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Owner-device UUID gates continuation; foreign imports remain recovery. No cross-device mid-question lease is claimed."
+    },
+    {
+      "id": "RUN-007",
+      "title": "Lifecycle states",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-007",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Codable phases and prepared intents exist. Paused/save-error remain orthogonal state and require exhaustive illegal-transition modeling."
+    },
+    {
+      "id": "RUN-008",
+      "title": "Ordinary deterministic answer",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-008",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Inline scoring, separate clarification guidance without an attempt or save-error alert, stable immutable prepared answer and idempotent attempt insertion. Clarification/draft survives cold reconstruction in unit fixture; installed alert failure is under investigation."
+    },
+    {
+      "id": "RUN-009",
+      "title": "Confidence",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-009",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "One shared deterministic confidence invitation; nil defaults, inline protected requirement, timed suppression, semantic edit invalidation. Focus interval telemetry remains."
+    },
+    {
+      "id": "RUN-010",
+      "title": "Reflection",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-010",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Feedback precedes optional reflection, no diagnosis preselection and not-sure permitted. Later edits append local revisions linked to the immutable first reflection; history exposes current and first interpretations. Revisions survive backup and deletion scopes; new execution pending."
+    },
+    {
+      "id": "RUN-011",
+      "title": "Protected feedback",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-011",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Neutral protected UI, local receipt and portable redaction; original keys withheld. Reviewed dimensional completion and retired-form disclosure protocol remain gated."
+    },
+    {
+      "id": "RUN-012",
+      "title": "Reference/self-check",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-012",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Self-check reference reveal checkpoints before display, explicit rating, zero objective authority. Shared generated/source controller consolidation remains."
+    },
+    {
+      "id": "RUN-013",
+      "title": "Hint progression",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-013",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Progressive authored hints and worked-solution reveal persist with stage, active offset and generator version. Repeated solution reveal is idempotent; failed solution checkpoint does not disclose. Revealed outcomes retain draft separately from skips and carry no objective weight. Full hint-flight fault matrix remains."
+    },
+    {
+      "id": "RUN-014",
+      "title": "Skip",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-014",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Stable pending skip journal, no evidence denominator, recovery and duplicate protection. Explicit reason and skip-support recommendation remain."
+    },
+    {
+      "id": "RUN-015",
+      "title": "Next and repair",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-015",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Next checkpoints one slot; fresh repair starts a distinct fixed launch with origin and semantic exclusions supplied before atomic acceptance, zero immediate independent evidence weight. Reviewed adaptive item selection remains."
+    },
+    {
+      "id": "RUN-016",
+      "title": "Ending",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-016",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Explicit ended-early status/summary preserves attempts; fixed-count completion is distinct from sufficient scored evidence. Protected duration stop continues the same form in a later sitting."
+    },
+    {
+      "id": "DATA-001",
+      "title": "Exact item snapshot",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-001",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Ordinary exercise snapshot includes authentic content/schema/labels and digest. Protected evaluator regenerated only with digest verification. Full content-addressed asset manifest remains."
+    },
+    {
+      "id": "DATA-002",
+      "title": "Evaluation identity",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-002",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Scorer version plus snapshot digest pinned; unavailable on unsupported uncommitted evaluator. Signed invalidation predicates and compatible old scorer dispatch remain."
+    },
+    {
+      "id": "DATA-003",
+      "title": "Current-item fields",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-003",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Exact typed draft, phase, stable IDs, assistance events, confidence, time, reflection, snapshot, selection receipts and exclusions. Complete clock-chunk sequence remains."
+    },
+    {
+      "id": "DATA-004",
+      "title": "Time accounting",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-004",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Injected monotonic answer time begins on acknowledged presentation; sitting time separate; resume excludes unknown gaps. Tests plus installed lifecycle verification required."
+    },
+    {
+      "id": "DATA-005",
+      "title": "Clock edge cases",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-005",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Wall time cannot add answer-solving time; nonfinite clock intervals excluded. DST/timezone/lock-screen physical matrix remains."
+    },
+    {
+      "id": "DATA-006",
+      "title": "Save guarantees",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-006",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "500ms draft debounce and explicit pause/close/background/takeover flush; failed saves retain UI. Sudden unacknowledged keystrokes are not promised durable."
+    },
+    {
+      "id": "DATA-007",
+      "title": "Scratchpad portability",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-007",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Notes/drawing bytes independent; unsupported Mac drawing retained; layer clear/undo and pinned prompt. Pencil device verification remains."
+    },
+    {
+      "id": "DATA-008",
+      "title": "Resume algorithm",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-008",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Digest/version/owner validation and pending answer/skip replay before writable continuation. Signed content invalidation/restricted evaluator history migration remain."
+    },
+    {
+      "id": "DATA-009",
+      "title": "Language changes",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-009",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Saved question retains recorded locale; mixed chrome/content language has an explicit localized explanation. Full new-item locale-transition matrix remains."
+    },
+    {
+      "id": "DATA-010",
+      "title": "Idempotent commit protocol",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-010",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Prepared checkpoint precedes immutable attempt and acknowledged feedback; same-ID typed retries compare parsed response identity while retaining original raw bytes and reject changed key/result/session. Full fixed launch is now atomic with captured-slot and presentation ledgers. Durable dual-payload conflict journal remains."
+    },
+    {
+      "id": "DATA-011",
+      "title": "Crash boundaries",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-011",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Before/after attempt crash fixtures and exact saved feedback cover recovery. Every phase/platform crash matrix remains."
+    },
+    {
+      "id": "DATA-012",
+      "title": "Payload conflict",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-012",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Same-ID conflict journaling retains both raw records/contracts without extra score or XP. Physical cloud duplicate rows are now censused before display winner selection; entire conflicting identity is excluded by shared DTO, diagnostic/metric and historical summary paths. Actual store/cold/remove-duplicate tests pass in full1083 on536f. Peer conflict resolution UI and physical sync matrix remain."
+    },
+    {
+      "id": "DATA-013",
+      "title": "Derived state",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-013",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Existing reward constants preserved and new confidence/reflection add no attempts. All disposition-aware review/XP replay consumers require full audit."
+    },
+    {
+      "id": "DATA-014",
+      "title": "Save failure UI",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-014",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Retry/Keep working/export answer; prepared response stays locked. Queued close and prolonged-failure recovery wording need installed fault testing."
+    },
+    {
+      "id": "DATA-015",
+      "title": "Reservation atomicity and adaptive delivery",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-015",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Generated terminal runs now atomically drop unseen future questions and unrelated source excerpts while retaining exact current/answered prefix, typed work and original count/digests. CAS accepts only deterministic predecessor transform; inactive old terminal maintenance preserves source closure and skips unknown/owned states. Nine new fixtures pass170scope. Wider private/background/cloud retention and full deletion matrix remain."
+    },
+    {
+      "id": "DATA-016",
+      "title": "Proposed schema additions",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-016",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Atomic local archive combines runs/checkpoints/snapshots, sets/private metadata, immutable reflection revisions, dispositions, selection decisions, exposure/outcomes and fixed launch/migration receipts. Durable review tasks and signed invalidation records remain."
+    },
+    {
+      "id": "DATA-017",
+      "title": "Privacy partition",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-017",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "New snapshots, sets, private drafts and collections are local-only, outside SwiftData/CloudKit schema; source draft checkpoint avoids legacy cloud upsert."
+    },
+    {
+      "id": "DATA-018",
+      "title": "Legacy scope",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-018",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Original SwiftData record fields/partition policy unchanged. Existing private text scope is not widened by new local blobs; complete inventory/account checks remain."
+    },
+    {
+      "id": "DATA-019",
+      "title": "Content storage",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-019",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Saved sets persist without TTL; accepted draft pins the exact set. Explicit removal retains unfinished pins. Shared snapshot garbage collection respects retained run references and revokes only deleted writers; full content-addressed asset deduplication remains."
+    },
+    {
+      "id": "DATA-020",
+      "title": "Size and corrupt input",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-020",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "64MiB archive and8MiB private payload bounds, verified snapshots and typed private canonicalization. One malformed whole local archive still needs granular salvage; media decode audit remains."
+    },
+    {
+      "id": "DATA-021",
+      "title": "Presentation is typed",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-021",
+      "status": "implemented; validation recorded separately",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "All eight typed history response formats preserve values/original labels; missing context explained without invented IDs. Unit coverage present."
+    },
+    {
+      "id": "DATA-022",
+      "title": "Complete review context",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-022",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Authentic snapshot prompt/representations/answer/explanation plus report/fresh practice. Protected display checks precede instructional detail; all legacy missing-asset states require device review."
+    },
+    {
+      "id": "DATA-023",
+      "title": "Historical evidence correction",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-023",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Append-only historical corrections preserve original answers/results and use explicit current recommendation membership when earlier uncertainty resolves. Corrected historical accuracy is distinct from exclusions for speed, proficiency, calibration and independence. Signed rule publication remains."
+    },
+    {
+      "id": "DATA-024",
+      "title": "Rules for each audited defect",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-024",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Historical policy covers the nine specified defect classes plus workflow/leakage. Exact reconstructable cases receive deterministic correction; missing options/tables/aliases have explicit unresolved or precautionary exclusion outcomes. Old originals are never fabricated. All real affected-store fixture coverage remains."
+    },
+    {
+      "id": "DATA-025",
+      "title": "Communicating corrections",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#data-025",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Dismissible correction notice links affected originals; all history projections show effective correction/exclusion while retaining labeled original results and disputed keys. Protected display checks precede any explanation. Complete compatible-chart regime and affected real-store replay remain."
+    },
+    {
+      "id": "RUN-017",
+      "title": "Five destinations",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-017",
+      "status": "implemented; validation recorded separately",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Today/Practice/Progress/Sources/Settings with typed inner routes and Review/History in Progress."
+    },
+    {
+      "id": "RUN-018",
+      "title": "Path ownership",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-018",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Independent stable destination paths, safe reselection and back ownership. Installed nested route tests required to close prior hang."
+    },
+    {
+      "id": "RUN-019",
+      "title": "Cold launch and recovery",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-019",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Cold Today with Continue, validated typed deep links, deleted-record fallback and path pruning. Disposable paths are not restored blindly."
+    },
+    {
+      "id": "RUN-020",
+      "title": "Transactional route intents",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-020",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Existing deferred dirty intent routing preserved; typed destination paths added. Complete unique intent replay/queue close across every external route remains."
+    },
+    {
+      "id": "RUN-021",
+      "title": "Implementation constraint",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-021",
+      "status": "implemented; validation recorded separately",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Primary changing navigation .id removed; per-session .id is retained solely to construct the selected session runtime."
+    },
+    {
+      "id": "RUN-022",
+      "title": "Safe exit during work and failure",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#run-022",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Save/close across phases and durable retry/error controls. Native window close and pending-close journal recovery across all controllers still need certification."
+    },
+    {
+      "id": "MIG-001",
+      "title": "Freeze the shipped schema",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-001",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "No persistent @Model fields changed. Shipped source captured separately. Genuine frozen V1/V2 metadata plus every prerelease binary store fixture remain a distribution blocker."
+    },
+    {
+      "id": "MIG-002",
+      "title": "Additive first",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-002",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Additive optional local envelopes preserve old raw history. New full-history asynchronous backfill/projection publication remains."
+    },
+    {
+      "id": "MIG-003",
+      "title": "Legacy sessions",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-003",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Legacy incomplete draft is recovery-only; it is never attached to a regenerated question. Full historical generator-backed migration classification remains."
+    },
+    {
+      "id": "MIG-004",
+      "title": "Content epoch transition",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-004",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Existing signed edition is not relabeled reviewed. Admission reports deficits; new balanced signed edition, semantic mappings and consumed-ledger migration remain blocked on content."
+    },
+    {
+      "id": "MIG-005",
+      "title": "Archive version",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-005",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Archive18 added;14–17 and future rejection tested; optional new local data defaults. No backward writer promise."
+    },
+    {
+      "id": "MIG-006",
+      "title": "Export completeness and protection",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-006",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Archive includes local snapshots/sets/drafts/metadata/dispositions; protected receipts redact reusable keys/outcomes. Invalid opaque private payload IDs are reported; all counts/hash references need independent validator expansion."
+    },
+    {
+      "id": "MIG-007",
+      "title": "Restore transaction",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-007",
+      "status": "partial",
+      "implementation_ledger": "Restore_Runtime_And_Linked_Deletion_Status.md",
+      "evidence_and_remaining_work": "Live reviewed-byte request staging, process lease, startup gate and actual cold two-SQLite/exact-side-file coordinator are implemented. Durable accepted journal, fresh census verification, pre-acceptance cancellation, forward recovery and completion acknowledgement tests pass. Isolated installed journey is running; genuine shipped stores and physical crash/account matrix remain."
+    },
+    {
+      "id": "MIG-008",
+      "title": "Rollback",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-008",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Existing recovery package retained and no old schema removed. A compatible recovery binary/package exercise is not yet executed."
+    },
+    {
+      "id": "MIG-009",
+      "title": "Cloud deployment",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-009",
+      "status": "partial",
+      "implementation_ledger": "Runtime_Status.md",
+      "evidence_and_remaining_work": "Local additions never enter durable CloudKit model. Signed development/production-equivalent schema/device checks are not verified."
+    },
+    {
+      "id": "MIG-010",
+      "title": "Deletion and account lifecycle",
+      "specification": "../Improvement_Spec_2026-09-04/04_Runtime_Data_and_Migration.md#mig-010",
+      "status": "partial",
+      "implementation_ledger": "Restore_Runtime_And_Linked_Deletion_Status.md",
+      "evidence_and_remaining_work": "Live AppStore required guard connects explicit source/generated payload/history/annotation deletion and cloud/duplicate-import callers to authenticated cleanup of completed private restore payloads. Tombstones/counts persist, unfinished/foreign artifacts block and narrow startup retry resumes invalidated cleanup. Thirteen cleanup/guard tests pass; physical lifecycle and all primary-delete compensation cases remain."
+    },
+    {
+      "id": "QA-REQ-001",
+      "title": "Separate the claims",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-001",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Build, grading, content census, UI, policy and human evidence are separate in this bundle."
+    },
+    {
+      "id": "QA-REQ-002",
+      "title": "Five independent gates",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-002",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "G1–G5 are not collectively passed; no distribution certification."
+    },
+    {
+      "id": "QA-REQ-003",
+      "title": "Test the shipped configuration",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-003",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Machine-readable run manifest records source/configuration/toolchain and synthetic test environment."
+    },
+    {
+      "id": "QA-REQ-004",
+      "title": "Independent oracle rule",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-004",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Independent spatial/interval/symbolic/admission oracles exist; human prose/diagram blind review remains."
+    },
+    {
+      "id": "QA-REQ-005",
+      "title": "Test the failure path as a product",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-005",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Save failures tested through public runtime state; installed keyboard/focus fault matrix remains."
+    },
+    {
+      "id": "QA-REQ-006",
+      "title": "Layer responsibilities",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-006",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Engine/repository/policy tests separate from installed UI journeys."
+    },
+    {
+      "id": "QA-REQ-007",
+      "title": "Golden fixture package",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-007",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Sixteen committed deterministic golden fixtures cover archives14–18, malformed/future payloads, duplicate/deleted references and seeded runtime phases. Actual10,000-attempt restore passed; one UUID-casing assertion corrected for final rerun. Genuine distributed binary-store fixtures remain."
+    },
+    {
+      "id": "QA-REQ-008",
+      "title": "Reproduction identity",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-008",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Regression fixtures pin seeds and reproduce known content defects; final logs preserved."
+    },
+    {
+      "id": "QA-REQ-009",
+      "title": "Bounded exhaustive versus sampled checks",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-009",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Bounded domains and full7,000candidate census executed; not proof of all possible generator parameters."
+    },
+    {
+      "id": "QA-REQ-010",
+      "title": "Editorial inspection",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-010",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "58family draft ledger exists; approved worked B1–B4 contracts and independent reviewers are missing."
+    },
+    {
+      "id": "QA-REQ-011",
+      "title": "Variety report",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-011",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Actual candidate census and quota feasibility report exist; delivered session distributions pending."
+    },
+    {
+      "id": "QA-REQ-012",
+      "title": "Navigation coverage algorithm",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-012",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Typed path tests and actual nested installed journeys added; full crossproduct dirty/deeplink matrix pending."
+    },
+    {
+      "id": "QA-REQ-013",
+      "title": "Timing robustness",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-013",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Monotonic injected tests added; physical locked-screen/interruption matrix pending."
+    },
+    {
+      "id": "QA-REQ-014",
+      "title": "Human demand audit",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-014",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "55 pure adaptive fixtures plus runtime and captured-slot reservation bridges; actual reviewed demand integration pending."
+    },
+    {
+      "id": "QA-REQ-015",
+      "title": "Simulation is a policy check",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-015",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Adaptive60fixture mapping differentiates unit coverage from integration gaps."
+    },
+    {
+      "id": "QA-REQ-016",
+      "title": "Required configurations",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-016",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Installed compact-phone journeys are executed and rerun; compact/large text/iPad/mac physical matrix incomplete."
+    },
+    {
+      "id": "QA-REQ-017",
+      "title": "Journey coverage",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-017",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Installed flows retain exact source/runner hashes and actual recordings. Quantitative174s, spatial112s, transfer136s, trace122s, science221s and cold restores passed on their respective recorded revisions. Latest three-flow e6ee run failed graph scroll gesture, generated keyboard setup, and empty fragment test expectation; corrections under fresh4e90run. These partial journeys do not establish complete mode/device crossproduct."
+    },
+    {
+      "id": "QA-REQ-018",
+      "title": "Manual accessibility protocol",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-018",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "No human VoiceOver or switch/voice input testing claimed."
+    },
+    {
+      "id": "QA-REQ-019",
+      "title": "Visual artifact review",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-019",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "UI test attachments intended for actual runs; full contact sheet matrix requires review."
+    },
+    {
+      "id": "QA-REQ-020",
+      "title": "Contrast and target targets",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-020",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Native semantic components preserved; full rendered color and touch target measurement not completed."
+    },
+    {
+      "id": "QA-REQ-021",
+      "title": "Proposed performance budgets",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-021",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "No invented latency percentiles;30run Release physical baseline and scale/endurance measurements remain."
+    },
+    {
+      "id": "QA-REQ-022",
+      "title": "Hang closure",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-022",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Stable-OS macOS hang trace/largehistory route reproduction remains unresolved."
+    },
+    {
+      "id": "QA-REQ-023",
+      "title": "Migration/restore run sheet",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-023",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Automated14–18archive fixtures exist; real distributed store/physical restoration remains."
+    },
+    {
+      "id": "QA-REQ-024",
+      "title": "Correction validation",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-024",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "All nine historical defect categories plus workflow/leakage have evidence-bounded policy and eighteen policy/presentation fixtures; AppStore integration preserves originals and explicit current correction scopes. Complete real affected-store replay remains."
+    },
+    {
+      "id": "QA-REQ-025",
+      "title": "Local data and diagnostics boundaries",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-025",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Local expiry/pinning/metadata/deletion, typed protected export and inactive-account retry cleanup fixtures exist; physical account lifecycle proof remains."
+    },
+    {
+      "id": "QA-REQ-026",
+      "title": "Signed integration matrix",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-026",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Signed provider/CloudKit/notification/widget/Spotlight/import matrix not verified."
+    },
+    {
+      "id": "QA-REQ-027",
+      "title": "Formative usability rounds",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-027",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Two rounds of six participants not recruited or run; no invented observations."
+    },
+    {
+      "id": "QA-REQ-028",
+      "title": "Question usefulness review",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-028",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "No human usefulness scores invented; all58family reviews required."
+    },
+    {
+      "id": "QA-REQ-029",
+      "title": "Learning evaluation is a separate study",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-029",
+      "status": "external or manual gate outstanding",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "No efficacy claim or learning study result; separate consented protocol required."
+    },
+    {
+      "id": "QA-REQ-030",
+      "title": "Product metrics with honest denominators",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#qa-req-030",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Outcome categories explicit; complete local research metrics/denominators instrumentation remains."
+    },
+    {
+      "id": "DEL-001",
+      "title": "Deliver slices with dependent gates",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-001",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Slices and owner ledgers retained with dependencies; editorial gates remain."
+    },
+    {
+      "id": "DEL-002",
+      "title": "First reviewable vertical slice",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-002",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Numeric continuity/scoring/feedback/history/repair tested; reviewed B1/B2 content sign-off still absent."
+    },
+    {
+      "id": "DEL-003",
+      "title": "Preserve source-of-truth build configuration",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-003",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "project.yml preserved and xcodegen used; Swift6/warnings-as-errors unchanged; independent fixtures accompany changed expectations."
+    },
+    {
+      "id": "DEL-004",
+      "title": "Capability gating",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-004",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Reviewed demand absent stays unassessed; automatic duration-dependent work refuses unknown estimates; complete persisted capability registry remains."
+    },
+    {
+      "id": "DEL-005",
+      "title": "Definition of done per package",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-005",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Files/tests/remaining acceptance linked; manual review gates still open."
+    },
+    {
+      "id": "DEL-006",
+      "title": "Severity and release decisions",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-006",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Unresolved protected/content/migration failures block affected release claim; no P0/P1 waiver invented."
+    },
+    {
+      "id": "DEL-007",
+      "title": "Rollout order",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-007",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Destructive fixtures use disposable state. Unit host now takes a disposable bootstrap before production startup; test caches/documents/artifacts/rotation are isolated and shared-widget publishing is disabled. Earlier runs predate the tightened shared-widget guard; no production-data deletion was performed."
+    },
+    {
+      "id": "DEL-008",
+      "title": "Rollback means compatible recovery",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-008",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Old schema/recovery retained; compatible distribution recovery run outstanding."
+    },
+    {
+      "id": "DEL-009",
+      "title": "Release evidence bundle",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-009",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Owner ledgers, census, oracle evidence, manifest and test output collected; signed/human sheets remain unexecuted."
+    },
+    {
+      "id": "DEL-010",
+      "title": "Final closure questions",
+      "specification": "../Improvement_Spec_2026-09-04/05_QA_and_Delivery.md#del-010",
+      "status": "partial",
+      "implementation_ledger": "QA_Delivery_Status.md",
+      "evidence_and_remaining_work": "Closure record explicitly states incomplete content/adaptation/manual/distribution work; passing tests alone are not completion."
+    }
+  ]
+}

@@ -676,7 +676,10 @@ final class PrivateCloudTransportTests: XCTestCase {
             fixture.root.appending(path: "NeuroForge/Sync/Accounts/account-b/private-document-assets.json"),
             fixture.root.appending(path: "NeuroForge/CloudAssets/legacy-hash"),
             fixture.root.appending(path: "NeuroForge/CloudAssetAccounts/account-a/a-hash"),
-            fixture.root.appending(path: "NeuroForge/CloudAssetAccounts/account-b/b-hash")
+            fixture.root.appending(path: "NeuroForge/CloudAssetAccounts/account-b/b-hash"),
+            fixture.root.appending(path: "NeuroForge/LocalLearning/sessions-v1.json"),
+            fixture.root.appending(path: "NeuroForge/LocalLearning/account-a/sessions-v1.json"),
+            fixture.root.appending(path: "NeuroForge/LocalLearning/account-b/future-corrupt-private-envelope.json")
         ]
         for target in queueTargets {
             try fileManager.createDirectory(
@@ -719,6 +722,12 @@ final class PrivateCloudTransportTests: XCTestCase {
             defaults: fixture.defaults
         ))
 
+        // A crash or stale process may leave another private artifact before
+        // relaunch. The same durable purge intent must clear it on retry too.
+        let latePrivateArtifact = fixture.root.appending(path: "NeuroForge/LocalLearning/account-b/recovery.json")
+        try fileManager.createDirectory(at: latePrivateArtifact.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try Data("retained private response".utf8).write(to: latePrivateArtifact)
+
         XCTAssertEqual(
             NFPrivateCloudStoreIdentityResolver.performPendingLocalPurgeBeforeOpeningContainer(
                 defaults: fixture.defaults,
@@ -729,6 +738,7 @@ final class PrivateCloudTransportTests: XCTestCase {
         XCTAssertFalse(fileManager.fileExists(atPath: accountA.durableStoreURL.path))
         XCTAssertFalse(fileManager.fileExists(atPath: localDerived.path))
         XCTAssertFalse(fileManager.fileExists(atPath: managedDocument.path))
+        XCTAssertFalse(fileManager.fileExists(atPath: latePrivateArtifact.path))
         XCTAssertNil(fixture.defaults.object(
             forKey: NFPrivateCloudStoreIdentityResolver.registryKey
         ))

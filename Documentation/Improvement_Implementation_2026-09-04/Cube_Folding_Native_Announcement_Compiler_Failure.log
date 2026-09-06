@@ -1,0 +1,572 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project NeuroForge.xcodeproj -scheme NeuroForge -destination platform=macOS -derivedDataPath /tmp/NeuroForge-improvement-build CODE_SIGNING_ALLOWED=NO test
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  SwiftMath: https://github.com/mgriebling/SwiftMath.git @ 1d2c908
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, id:00006020-000228AE0287401E, name:My Mac }
+{ platform:macOS, arch:x86_64, id:00006020-000228AE0287401E, name:My Mac }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'NeuroForgeTests' in project 'NeuroForge'
+        ➜ Explicit dependency on target 'NeuroForge' in project 'NeuroForge'
+    Target 'NeuroForge' in project 'NeuroForge'
+        ➜ Explicit dependency on target 'SwiftMath' in project 'SwiftMath'
+    Target 'SwiftMath' in project 'SwiftMath'
+        ➜ Explicit dependency on target 'SwiftMath' in project 'SwiftMath'
+        ➜ Explicit dependency on target 'SwiftMath_SwiftMath' in project 'SwiftMath'
+    Target 'SwiftMath' in project 'SwiftMath'
+        ➜ Explicit dependency on target 'SwiftMath_SwiftMath' in project 'SwiftMath'
+    Target 'SwiftMath_SwiftMath' in project 'SwiftMath' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/NeuroForge.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -o /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+
+SwiftDriver NeuroForgeTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'NeuroForgeTests' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name NeuroForgeTests -Onone @/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.4 -g -module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -warnings-as-errors -index-store-path /tmp/NeuroForge-improvement-build/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/NeuroForge-improvement-build/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -F /tmp/NeuroForge-improvement-build/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -emit-localized-strings -emit-localized-strings-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64 -c -j12 -disable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -sdk-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/NeuroForge-improvement-build/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-generated-files.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-own-target-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge-1f477e43189f7d9a813ad7fc7bf5f2ec-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-project-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Products/Debug/include -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/DerivedSources/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests-Swift.h -working-directory /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver NeuroForge normal arm64 com.apple.xcode.tools.swift.compiler (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name NeuroForge -Onone @/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.SwiftFileList -DDEBUG -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.4 -g -module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -warnings-as-errors -index-store-path /tmp/NeuroForge-improvement-build/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/NeuroForge-improvement-build/Build/Products/Debug -F /tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -F /tmp/NeuroForge-improvement-build/Build/Products/Debug -emit-localized-strings -emit-localized-strings-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64 -c -j12 -disable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -sdk-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/NeuroForge-improvement-build/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-generated-files.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-own-target-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge-1f477e43189f7d9a813ad7fc7bf5f2ec-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-project-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Products/Debug/include -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources-normal/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge-Swift.h -working-directory /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge -experimental-emit-module-separately -disable-cmo
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ NeuroForgeTests (in target 'NeuroForgeTests' from project 'NeuroForge')
+
+EmitSwiftModule normal arm64 (in target 'NeuroForgeTests' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ ContentImprovementRegressionTests.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Tests/ContentImprovementRegressionTests.swift (in target 'NeuroForgeTests' from project 'NeuroForge')
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Tests/ContentImprovementRegressionTests.swift (in target 'NeuroForgeTests' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ DataExportRoundTripTests.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Tests/DataExportRoundTripTests.swift (in target 'NeuroForgeTests' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Tests/DataExportRoundTripTests.swift (in target 'NeuroForgeTests' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ LibraryView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Library/LibraryView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Library/LibraryView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NFAppLocalization.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Resources/NFAppLocalization.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Resources/NFAppLocalization.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NFExactArithmetic.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFExactArithmetic.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFExactArithmetic.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ MethodologyLibraryView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Methodology/MethodologyLibraryView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Methodology/MethodologyLibraryView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NFDailyScheduler.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Assessment/NFDailyScheduler.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Assessment/NFDailyScheduler.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NFAssessmentEngine.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Assessment/NFAssessmentEngine.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Assessment/NFAssessmentEngine.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NFClaimEvidenceEditor.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/NFClaimEvidenceEditor.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/NFClaimEvidenceEditor.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NFContinueSessionsCard.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Today/NFContinueSessionsCard.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Today/NFContinueSessionsCard.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NFAuthoringEngine.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFAuthoringEngine.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFAuthoringEngine.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ NeuroForge (in target 'NeuroForge' from project 'NeuroForge')
+EmitSwiftModule normal arm64 (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NFSyncIntegration.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Integrations/System/NFSyncIntegration.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Integrations/System/NFSyncIntegration.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ ScratchpadView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/ScratchpadView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/ScratchpadView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NFReleaseContentRuntimeBridge.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFReleaseContentRuntimeBridge.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFReleaseContentRuntimeBridge.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFAppLocalization.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling MethodologyLibraryView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFDailyScheduler.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFExactArithmetic.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ TrainCatalogView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Train/TrainCatalogView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Train/TrainCatalogView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFAssessmentEngine.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFMentalMathProgressAdapter.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Adaptive/NFMentalMathProgressAdapter.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Adaptive/NFMentalMathProgressAdapter.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFReleaseContentRuntimeBridge.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFFallbackExerciseGenerator.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFFallbackExerciseGenerator.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFFallbackExerciseGenerator.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for NeuroForgeTests (in target 'NeuroForgeTests' from project 'NeuroForge')
+
+SwiftDriver\ Compilation\ Requirements NeuroForgeTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'NeuroForgeTests' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name NeuroForgeTests -Onone @/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.4 -g -module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -warnings-as-errors -index-store-path /tmp/NeuroForge-improvement-build/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/NeuroForge-improvement-build/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -F /tmp/NeuroForge-improvement-build/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -emit-localized-strings -emit-localized-strings-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64 -c -j12 -disable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -sdk-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/NeuroForge-improvement-build/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-generated-files.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-own-target-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge-1f477e43189f7d9a813ad7fc7bf5f2ec-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-project-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Products/Debug/include -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/DerivedSources/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests-Swift.h -working-directory /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFClaimEvidenceEditor.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFSystemIntegrationCoordinator.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Integrations/System/NFSystemIntegrationCoordinator.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Integrations/System/NFSystemIntegrationCoordinator.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+Copy /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForgeTests.swiftmodule/arm64-apple-macos.abi.json /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.abi.json (in target 'NeuroForgeTests' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.abi.json /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForgeTests.swiftmodule/arm64-apple-macos.abi.json
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFSyncIntegration.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+Copy /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForgeTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.swiftsourceinfo (in target 'NeuroForgeTests' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.swiftsourceinfo /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForgeTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+SwiftCompile normal arm64 Compiling\ NFLocalSessionRepository.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Persistence/NFLocalSessionRepository.swift (in target 'NeuroForge' from project 'NeuroForge')
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Persistence/NFLocalSessionRepository.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NeuroForgeIntents.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Integrations/NeuroForgeIntents.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Integrations/NeuroForgeIntents.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFAuthoringEngine.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFOCRService.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFOCRService.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFOCRService.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFContinueSessionsCard.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFProgressInsightEngine.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Adaptive/NFProgressInsightEngine.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Adaptive/NFProgressInsightEngine.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ScratchpadView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFAuthoredExerciseAuthority.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFAuthoredExerciseAuthority.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFAuthoredExerciseAuthority.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFOCRService.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFExternalRoute.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/App/NFExternalRoute.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/App/NFExternalRoute.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFMentalMathProgressAdapter.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFGeneratedPracticeDraft.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/AI/NFGeneratedPracticeDraft.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/AI/NFGeneratedPracticeDraft.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFAuthoredExerciseAuthority.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFTodaySessionSequence.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/NFTodaySessionSequence.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/NFTodaySessionSequence.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFFallbackExerciseGenerator.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ TodayView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Today/TodayView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Today/TodayView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NeuroForgeIntents.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFWidgetSnapshotPublishing.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Integrations/NFWidgetSnapshotPublishing.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Integrations/NFWidgetSnapshotPublishing.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NFPlanReplacementPersistence.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Persistence/NFPlanReplacementPersistence.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Persistence/NFPlanReplacementPersistence.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NFReviewQueueView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Progress/NFReviewQueueView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Progress/NFReviewQueueView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFSystemIntegrationCoordinator.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFExternalRoute.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFProgressInsightEngine.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ PersistenceModels.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Persistence/PersistenceModels.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Persistence/PersistenceModels.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling DataExportRoundTripTests.swift (in target 'NeuroForgeTests' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ ProgressAnnotationsView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Progress/ProgressAnnotationsView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Progress/ProgressAnnotationsView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFTodaySessionSequence.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFRestoreRuntimeController.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Privacy/NFRestoreRuntimeController.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Privacy/NFRestoreRuntimeController.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling TrainCatalogView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ SystemControlsCard.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Settings/SystemControlsCard.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Settings/SystemControlsCard.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFGeneratedPracticeDraft.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFPrivateStudyMetadata.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Library/NFPrivateStudyMetadata.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Library/NFPrivateStudyMetadata.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFWidgetSnapshotPublishing.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFOfflineQuestionBank.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFOfflineQuestionBank.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFOfflineQuestionBank.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling SystemControlsCard.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFAdaptiveQuestionPopulationAppBridge.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFAdaptiveQuestionPopulationAppBridge.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFAdaptiveQuestionPopulationAppBridge.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFPlanReplacementPersistence.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ SpotlightSettingsControls.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Settings/SpotlightSettingsControls.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Settings/SpotlightSettingsControls.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFOfflineQuestionBank.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFAttemptAnnotationView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Progress/NFAttemptAnnotationView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Progress/NFAttemptAnnotationView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ProgressAnnotationsView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFDataArchiveRestoreService.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Privacy/NFDataArchiveRestoreService.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Privacy/NFDataArchiveRestoreService.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFReviewQueueView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFContentInventoryAudit.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFContentInventoryAudit.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFContentInventoryAudit.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling LibraryView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFNextDayPlanPreparationService.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFNextDayPlanPreparationService.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFNextDayPlanPreparationService.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ContentImprovementRegressionTests.swift (in target 'NeuroForgeTests' from project 'NeuroForge')
+
+SwiftDriver\ Compilation NeuroForgeTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'NeuroForgeTests' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name NeuroForgeTests -Onone @/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.4 -g -module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -warnings-as-errors -index-store-path /tmp/NeuroForge-improvement-build/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/NeuroForge-improvement-build/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -F /tmp/NeuroForge-improvement-build/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -emit-localized-strings -emit-localized-strings-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64 -c -j12 -disable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -sdk-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/NeuroForge-improvement-build/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-generated-files.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-own-target-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge-1f477e43189f7d9a813ad7fc7bf5f2ec-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests-project-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Products/Debug/include -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/DerivedSources/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests-Swift.h -working-directory /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFAdaptiveQuestionPopulationAppBridge.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ ProgressDashboardView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Progress/ProgressDashboardView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Progress/ProgressDashboardView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ NeuroForgeApp.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/App/NeuroForgeApp.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/App/NeuroForgeApp.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFContentInventoryAudit.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFStudyResourcesView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Library/NFStudyResourcesView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Library/NFStudyResourcesView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFRestoreRuntimeController.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFDataExportService.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Privacy/NFDataExportService.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Privacy/NFDataExportService.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling SpotlightSettingsControls.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ OnboardingView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Onboarding/OnboardingView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Onboarding/OnboardingView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFPrivateStudyMetadata.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFDirtyEditorGuard.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/DesignSystem/NFDirtyEditorGuard.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/DesignSystem/NFDirtyEditorGuard.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling TodayView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ AppRootView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/App/AppRootView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/App/AppRootView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFAttemptAnnotationView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFDefaultContentCatalog.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFDefaultContentCatalog.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFDefaultContentCatalog.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFNextDayPlanPreparationService.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ AIStudioView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/AI/AIStudioView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/AI/AIStudioView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFDefaultContentCatalog.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ UniversalSessionView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/UniversalSessionView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/UniversalSessionView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFStudyResourcesView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NotificationSettingsControls.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Settings/NotificationSettingsControls.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Settings/NotificationSettingsControls.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftCompile normal arm64 Compiling\ BaselineOverviewView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Assessment/BaselineOverviewView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Assessment/BaselineOverviewView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFDirtyEditorGuard.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ InputCalibrationSettingsView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Settings/InputCalibrationSettingsView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Settings/InputCalibrationSettingsView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling OnboardingView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ SpatialDiagramView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/SpatialDiagramView.swift (in target 'NeuroForge' from project 'NeuroForge')
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c -filelist /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/sources-1 -primary-file /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/SpatialDiagramView.swift -emit-dependencies-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/SpatialDiagramView.d -emit-const-values-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/SpatialDiagramView.swiftconstvalues -emit-reference-dependencies-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/SpatialDiagramView.swiftdeps -serialize-diagnostics-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/SpatialDiagramView.dia -emit-localized-strings -emit-localized-strings-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64 -target arm64-apple-macos26.4 -module-can-import-version AppKit 2685.60.104 2685.60.104 -module-can-import-version AudioToolbox 1556.604 1000.0.0 -module-can-import-version CoreSpotlight 2418.5.9.101 2418.5.9 -module-can-import-version DeveloperToolsSupport 23.40.26 23.40.26 -module-can-import-version MetricKit 297.120.4 1.0.0 -module-can-import-version UniformTypeIdentifiers 877.5.1 709.0.0 -module-can-import-version UserNotifications 1.0.0 1.0.0 -module-can-import-version WidgetKit 664.5.28.100 664.5.28 -disable-cross-import-overlay-search -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/AppKit.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/UIKit.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/AppKit.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import AppIntents /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/UIKit.swiftoverlay -swift-module-cross-import CoreData /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/CoreData.framework/Modules/CoreData.swiftcrossimport/CloudKit.swiftoverlay -swift-module-cross-import CoreData /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/CoreData.framework/Modules/CoreData.swiftcrossimport/CloudKit.swiftoverlay -swift-module-cross-import Darwin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/Darwin.swiftcrossimport/xlocale.swiftoverlay -swift-module-cross-import RealityKit /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/RealityKit.framework/Modules/RealityKit.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/CoreData.swiftoverlay -swift-module-cross-import SwiftData /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftDataMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftDataMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge-dependencies-1.json -debug-module-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.swiftmodule -Xllvm -aarch64-use-tbi -enable-objc-interop -stack-check -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -I /tmp/NeuroForge-improvement-build/Build/Products/Debug -F /tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -F /tmp/NeuroForge-improvement-build/Build/Products/Debug -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -module-cache-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -warnings-as-errors -warnings-as-errors -swift-version 6 -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge_const_extract_protocols.json -enable-experimental-feature DebugDescriptionMacro -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /tmp/NeuroForge-improvement-build/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge -enable-anonymous-context-mangled-names -file-compilation-dir /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/swift-overrides.hmap -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-generated-files.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-own-target-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge-1f477e43189f7d9a813ad7fc7bf5f2ec-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-project-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Products/Debug/include -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources-normal/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name NeuroForge -frontend-parseable-output -disable-clang-spi -clang-target arm64-apple-macos26.5 -target-sdk-version 26.5 -target-sdk-name macosx26.5 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/SpatialDiagramView.o -index-unit-output-path /NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/SpatialDiagramView.o -index-store-path /tmp/NeuroForge-improvement-build/Index.noindex/DataStore -index-system-modules
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/SpatialDiagramView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+/Users/takamimarsh/Developer/Projects/Zacro Tech/NeuroForge/Sources/Features/Training/SpatialDiagramView.swift:1597:38: error: coercion of implicitly unwrappable value of type 'NSApplication?' to 'Any' does not unwrap optional
+        NSAccessibility.post(element:NSApp,notification:.announcementRequested,userInfo:[.announcement:value,.priority:NSAccessibilityPriorityLevel.medium.rawValue])
+                                     ^~~~~
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSApplication.h:191:58: note: implicitly unwrapped var 'NSApp' declared here
+APPKIT_EXTERN __kindof NSApplication * _Null_unspecified NSApp NS_SWIFT_UI_ACTOR;
+                                                         ^
+/Users/takamimarsh/Developer/Projects/Zacro Tech/NeuroForge/Sources/Features/Training/SpatialDiagramView.swift:1597:38: note: provide a default value to avoid this warning
+        NSAccessibility.post(element:NSApp,notification:.announcementRequested,userInfo:[.announcement:value,.priority:NSAccessibilityPriorityLevel.medium.rawValue])
+                                     ^~~~~
+                                           ?? <#default value#>
+/Users/takamimarsh/Developer/Projects/Zacro Tech/NeuroForge/Sources/Features/Training/SpatialDiagramView.swift:1597:38: note: force-unwrap the value to avoid this warning
+        NSAccessibility.post(element:NSApp,notification:.announcementRequested,userInfo:[.announcement:value,.priority:NSAccessibilityPriorityLevel.medium.rawValue])
+                                     ^~~~~
+                                          !
+/Users/takamimarsh/Developer/Projects/Zacro Tech/NeuroForge/Sources/Features/Training/SpatialDiagramView.swift:1597:38: note: explicitly cast to 'Any' with 'as Any' to silence this warning
+        NSAccessibility.post(element:NSApp,notification:.announcementRequested,userInfo:[.announcement:value,.priority:NSAccessibilityPriorityLevel.medium.rawValue])
+                                     ^~~~~
+                                           as Any
+
+SwiftDriverJobDiscovery normal arm64 Compiling NeuroForgeApp.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ NFNextDayEnhancementCache.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFNextDayEnhancementCache.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/AI/NFNextDayEnhancementCache.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFDataExportService.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 Compiling\ SettingsView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Settings/SettingsView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Settings/SettingsView.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling InputCalibrationSettingsView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling NotificationSettingsControls.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling BaselineOverviewView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppRootView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFNextDayEnhancementCache.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFDataArchiveRestoreService.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling PersistenceModels.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Compiling ProgressDashboardView.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+
+Test session results, code coverage, and logs:
+	/tmp/NeuroForge-improvement-build/Logs/Test/Test-NeuroForge-2026.09.05_17-43-24--0400.xcresult
+
+Testing failed:
+	Coercion of implicitly unwrappable value of type 'NSApplication?' to 'Any' does not unwrap optional
+	Testing cancelled because the build failed.
+
+** TEST FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ SpatialDiagramView.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/SpatialDiagramView.swift (in target 'NeuroForge' from project 'NeuroForge')
+	SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/Features/Training/SpatialDiagramView.swift (in target 'NeuroForge' from project 'NeuroForge')
+	Testing project NeuroForge with scheme NeuroForge
+(3 failures)

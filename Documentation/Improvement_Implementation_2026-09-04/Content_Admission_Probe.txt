@@ -1,0 +1,8 @@
+Executed 4 September 2026, local macOS.
+Command: xcrun swiftc Sources/TrainingEngine/NFContentAdmission.swift /tmp/NFAdmissionProbe.swift -o /tmp/NFAdmissionProbe
+Command: /tmp/NFAdmissionProbe
+PASS: 64 exhaustive729-assignment fixtures, deterministic input order, required variety beyond raw quotas
+
+The probe compiles the production admission file with minimal enum/catalog stubs only for unused proposedEditionPolicy dependencies. Its independent assignment oracle is preserved in Tests/ContentImprovementRegressionTests.swift testB08VarietyAssignmentMatchesAnIndependentExhaustiveOracle. It does not call the production graph to calculate expected feasibility.
+
+Additional executed check: the same64×729 independent fixture corpus with maximumPerFamilyStructure=2 and minimumStructuresPerFamily=2 for each family also passed, so minimum variety was tested independently of a capacity-one structural ceiling. Commands: xcrun swiftc Sources/TrainingEngine/NFContentAdmission.swift /tmp/NFAdmissionVarietyProbe.swift -o /tmp/NFAdmissionVarietyProbe; /tmp/NFAdmissionVarietyProbe.

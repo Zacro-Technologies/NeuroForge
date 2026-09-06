@@ -162,11 +162,24 @@ enum NFPlanReplacementReason: String, Codable, CaseIterable, Identifiable, Senda
     case accessibility
     case needVariety
     case notRelevantToday
+    case tooEasy
+    case tooHard
+    case alreadyFamiliar
+    case wantVariety
+    case accessibilityIssue
+
+    /// Historical reasons keep their raw values and original labels.
+    static var currentChoices: [Self] { [.tooEasy, .tooHard, .alreadyFamiliar, .wantVariety, .accessibilityIssue] }
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
+        case .wantVariety: NFAppLocalization.localizedCatalogValue("Want variety", locale: NFAppLocalization.preferredLocale)
+        case .accessibilityIssue: NFAppLocalization.localizedCatalogValue("Accessibility issue", locale: NFAppLocalization.preferredLocale)
+        case .tooEasy: NFAppLocalization.localizedCatalogValue("Too easy", locale: NFAppLocalization.preferredLocale)
+        case .tooHard: NFAppLocalization.localizedCatalogValue("Too hard", locale: NFAppLocalization.preferredLocale)
+        case .alreadyFamiliar: NFAppLocalization.localizedCatalogValue("Already familiar", locale: NFAppLocalization.preferredLocale)
         case .lowerEnergy: NFAppLocalization.localized("Lower energy", locale: NFAppLocalization.preferredLocale, comment: "User-selected reason for replacing one daily-plan block.")
         case .accessibility: NFAppLocalization.localized("Accessibility need", locale: NFAppLocalization.preferredLocale, comment: "User-selected reason for replacing one daily-plan block.")
         case .needVariety: NFAppLocalization.localized("Need variety", locale: NFAppLocalization.preferredLocale, comment: "User-selected reason for replacing one daily-plan block.")
@@ -248,9 +261,13 @@ enum NFPlanReplacementError: Error, LocalizedError, Equatable, Sendable {
     case alreadyUsed
     case blockNotFound
     case noAccessibleAlternative
+    case unsupportedPolicy
+    case stalePreview
 
     var errorDescription: String? {
         switch self {
+        case .stalePreview: NFAppLocalization.localizedCatalogValue("Today’s plan changed after this preview. Review a new replacement before applying.", locale: NFAppLocalization.preferredLocale)
+        case .unsupportedPolicy: NFAppLocalization.localizedCatalogValue("This saved work needs a compatible version of NeuroForge. Your original answers remain saved.", locale: NFAppLocalization.preferredLocale)
         case .alreadyUsed: NFAppLocalization.localized("Today’s one block replacement has already been used.", locale: NFAppLocalization.preferredLocale, comment: "Error shown when a user attempts a second daily-plan block replacement.")
         case .blockNotFound: NFAppLocalization.localized("That block is no longer part of today’s plan.", locale: NFAppLocalization.preferredLocale, comment: "Error shown when a plan block changed before replacement.")
         case .noAccessibleAlternative: NFAppLocalization.localized("No suitable offline alternative is available for this block.", locale: NFAppLocalization.preferredLocale, comment: "Error shown when no accessible offline replacement block can be scheduled.")
@@ -293,16 +310,22 @@ enum NFDailyPlanValidator {
 // MARK: - Deterministic construction
 
 enum NFDailyScheduler {
-    static let policyVersion = 4
+    // v5 pins the five-item reminder cap and reviewed-only fluency inputs.
+    // v4 snapshots already contain their complete executable block contract.
+    static let policyVersion = 5
+    static func supportsFrozenPlanPolicy(_ version: Int) -> Bool {
+        version == 4 || version == policyVersion
+    }
     static let breadthActiveDayWindow = 14
 
     /// Existing plans win for their canonical local day. This is the persistence
     /// boundary that prevents newly appended attempts from silently rewriting
-    /// the plan after a session has started.
+    /// the plan after a session has started. Unknown versions remain readable;
+    /// the execution and replacement boundaries reject unsupported contracts.
     static func canonicalPlan(
         for snapshot: NFDailySchedulingSnapshot,
         existingPlan: NFCanonicalDailyPlan? = nil,
-        calendar: Calendar = .current
+        calendar: Calendar
     ) -> NFCanonicalDailyPlan {
         let dayKey = localDayKey(
             for: snapshot.date,
@@ -311,15 +334,15 @@ enum NFDailyScheduler {
         )
         if let existingPlan,
            existingPlan.profileID == snapshot.profile.id,
-           existingPlan.localDayKey == dayKey,
-           existingPlan.policyVersion == policyVersion {
+           existingPlan.localDayKey == dayKey {
             return existingPlan
         }
         return buildPlan(for: snapshot, localDayKey: dayKey, calendar: calendar)
     }
 
     static func priorityBreakdowns(
-        for snapshot: NFDailySchedulingSnapshot
+        for snapshot: NFDailySchedulingSnapshot,
+        calendar: Calendar
     ) -> [NFSchedulingScoreBreakdown] {
         let rawGoalWeights = Dictionary(uniqueKeysWithValues: foundationalLabs.map { lab in
             (lab, rawGoalWeight(for: lab, goals: snapshot.profile.goals))
@@ -356,7 +379,8 @@ enum NFDailyScheduler {
                 lab: lab,
                 date: snapshot.date,
                 retentionStates: snapshot.retentionStates,
-                lastTrained: summary?.lastTrained ?? labAttempts.last?.submittedAt
+                lastTrained: summary?.lastTrained ?? labAttempts.last?.submittedAt,
+                calendar: calendar
             )
             let transferGap = transferGap(
                 trainingAttempts: trainingAttempts,
@@ -405,6 +429,7 @@ enum NFDailyScheduler {
         reason: NFPlanReplacementReason,
         at date: Date = .now
     ) throws -> NFCanonicalDailyPlan {
+        guard supportsFrozenPlanPolicy(plan.policyVersion) else { throw NFPlanReplacementError.unsupportedPolicy }
         guard plan.replacement == nil else { throw NFPlanReplacementError.alreadyUsed }
         guard let index = plan.blocks.firstIndex(where: { $0.id == blockID }) else {
             throw NFPlanReplacementError.blockNotFound
@@ -472,7 +497,7 @@ enum NFDailyScheduler {
         localDayKey: String,
         calendar: Calendar
     ) -> NFCanonicalDailyPlan {
-        let priorities = priorityBreakdowns(for: snapshot)
+        let priorities = priorityBreakdowns(for: snapshot, calendar: calendar)
         let available = priorities.filter { $0.accessibilityPenalty < 1 }
         let ranked = available.isEmpty ? priorities : available
         let breadthTargets = uncoveredBreadthPriorities(
@@ -517,7 +542,8 @@ enum NFDailyScheduler {
         let retentionAssignments = NFRetentionScheduler.schedule(
             states: snapshot.retentionStates.filter { $0.lab == reviewTarget.lab },
             at: snapshot.date,
-            maximumItems: max(1, budget / 2)
+            maximumItems: min(5, max(1, budget / 2)),
+            calendar: calendar
         )
         let specs = durationTemplate(for: budget)
         var blocks: [NFDailyPlanBlock] = []
@@ -753,11 +779,12 @@ enum NFDailyScheduler {
         lab: TrainingLab,
         date: Date,
         retentionStates: [NFRetentionItemState],
-        lastTrained: Date?
+        lastTrained: Date?,
+        calendar: Calendar
     ) -> Double {
         let explicit = retentionStates
             .filter { $0.lab == lab }
-            .map { NFRetentionScheduler.urgency(for: $0, at: date) }
+            .map { NFRetentionScheduler.urgency(for: $0, at: date, calendar: calendar) }
             .max()
         if let explicit { return NFStableDeterminism.clampedUnit(explicit) }
         guard let lastTrained else { return 0.35 }
@@ -881,7 +908,7 @@ enum NFDailyScheduler {
         case .retentionReview:
             return (
                 NFAppLocalization.localized("Recall practice", locale: locale, comment: "Title of a daily-plan block for delayed recall."),
-                NFAppLocalization.localized("Recall \(targetTitle) in a different form.", locale: locale, comment: "Description of a delayed-recall daily-plan block; the placeholder is a training-lab name.")
+                NFAppLocalization.localized("Review \(targetTitle) with a practice reminder.", locale: locale, comment: "Description of a delayed-recall daily-plan block; the placeholder is a training-lab name.")
             )
         case .targetPractice:
             return (

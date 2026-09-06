@@ -257,6 +257,12 @@ private struct NFDuplicateImportReview: Identifiable {
 enum NFSourceReviewRotation {
     static let responseFormat = "sourceSelfCheck"
 
+    static func isSourceReview(_ attempt: AttemptRecord) -> Bool {
+        attempt.evidenceClassRaw == EvidenceClass.documentPractice.rawValue
+            && [responseFormat, "selfCheck"].contains(attempt.responseFormatRaw)
+            && !attempt.sourceDocumentIDsRaw.isEmpty && !attempt.sourceChunkIDsRaw.isEmpty
+    }
+
     static func nextChunk(
         in chunks: [NFSourceChunk],
         attempts: [AttemptRecord],
@@ -295,7 +301,7 @@ enum NFSourceReviewRotation {
         attempts.reduce(into: [:]) { result, attempt in
             guard !attempt.wasSkipped,
                   attempt.evidenceClassRaw == EvidenceClass.documentPractice.rawValue,
-                  attempt.responseFormatRaw == responseFormat else { return }
+                  isSourceReview(attempt) else { return }
             for chunkID in attempt.sourceChunkIDsRaw.split(separator: ",").map(String.init) {
                 result[chunkID] = max(result[chunkID] ?? .distantPast, attempt.submittedAt)
             }
@@ -349,7 +355,7 @@ struct NFSourceReviewDestinationResolver {
               }),
               let attempt = attempts.first(where: { $0.id == reviewID }),
               attempt.evidenceClassRaw == EvidenceClass.documentPractice.rawValue,
-              attempt.responseFormatRaw == NFSourceReviewRotation.responseFormat else {
+              NFSourceReviewRotation.isSourceReview(attempt) else {
             return nil
         }
         let documentIDs = Set(attempt.sourceDocumentIDsRaw
@@ -417,10 +423,10 @@ struct NFDocumentReadinessPresentation: Equatable, Sendable {
 
 struct LibraryView: View {
     @Environment(AppStore.self) private var store
+    @Environment(NFNavigationState.self) private var navigation
     @State private var searchText = ""
     @State private var importing = false
     @State private var importError: String?
-    @State private var selectedDocument: SourceDocumentRecord?
     @State private var selectedReviewPresentation: NFSourceReviewPresentation?
     @State private var selectedDocumentInitialChunkID: String?
     @State private var sourceReviewRecoveryNotice: NFSourceReviewRecoveryNotice?
@@ -436,7 +442,7 @@ struct LibraryView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: Binding(get: { navigation.sources }, set: { navigation.sources = $0 })) {
             ZStack {
                 AppBackground()
                 ScrollView {
@@ -449,6 +455,9 @@ struct LibraryView: View {
                         libraryHero
                         if importBatch != nil { importProgressCard }
                         reviewsCard
+                        NavigationLink(value: NFSourceRoute.resources) {
+                            Label("Saved and collections", systemImage: "folder.badge.plus")
+                        }.buttonStyle(.bordered)
                         documentsSection
                         supportedTypes
                     }
@@ -476,11 +485,16 @@ struct LibraryView: View {
             ) { result in
                 handleImport(result)
             }
-            .navigationDestination(item: $selectedDocument) { document in
-                DocumentDetailView(
-                    document: document,
-                    initialSourceChunkID: selectedDocumentInitialChunkID
-                )
+            .navigationDestination(for: NFSourceRoute.self) { route in
+                switch route {
+                case .resources: NFStudyResourcesView()
+                case .document(let documentID, let chunkID):
+                    if let document = store.documents.first(where: { $0.id == documentID }) {
+                        DocumentDetailView(document: document, initialSourceChunkID: chunkID)
+                    } else {
+                        ContentUnavailableView("Source unavailable", systemImage: "doc.questionmark", description: Text("The source may have been deleted. Your saved answers remain in History."))
+                    }
+                }
             }
             .sheet(item: $selectedReviewPresentation, onDismiss: presentPendingSourceReview) { presentation in
                 switch presentation {
@@ -546,28 +560,43 @@ struct LibraryView: View {
     }
 
     private var libraryHero: some View {
-        HStack(spacing: 20) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(LinearGradient(colors: [NFTheme.cyan.opacity(0.24), NFTheme.indigo.opacity(0.13)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                Image(systemName: "doc.text.magnifyingglass")
-                    .font(.system(size: 38, weight: .medium))
-                    .foregroundStyle(NFTheme.cyanForeground)
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 20) {
+                libraryHeroIcon
+                libraryHeroSummary
             }
-            .frame(width: 100, height: 100)
-            .accessibilityHidden(true)
-
-            VStack(alignment: .leading, spacing: 7) {
-                Text(librarySourceCountTitle)
-                    .font(.system(.title2, design: .rounded, weight: .bold))
-                HStack(spacing: 8) {
-                    NFStatusPill(text: "Stored in NeuroForge", symbol: "internaldrive.fill", color: NFTheme.mint)
-                    NFStatusPill(text: "Search inside sources", symbol: "text.magnifyingglass", color: NFTheme.cyan)
-                }
+            .fixedSize(horizontal: true, vertical: false)
+            VStack(alignment: .leading, spacing: 20) {
+                libraryHeroIcon
+                libraryHeroSummary
             }
-            Spacer(minLength: 0)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .nfCard(cornerRadius: 26)
+    }
+
+    private var libraryHeroIcon: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(LinearGradient(colors: [NFTheme.cyan.opacity(0.24), NFTheme.indigo.opacity(0.13)], startPoint: .topLeading, endPoint: .bottomTrailing))
+            Image(systemName: "doc.text.magnifyingglass")
+                .font(.system(size: 38, weight: .medium))
+                .foregroundStyle(NFTheme.cyanForeground)
+        }
+        .frame(width: 100, height: 100)
+        .accessibilityHidden(true)
+    }
+
+    private var libraryHeroSummary: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(librarySourceCountTitle)
+                .font(.system(.title2, design: .rounded, weight: .bold))
+                .fixedSize(horizontal: false, vertical: true)
+            FlowLayout(spacing: 8) {
+                NFStatusPill(text: "Stored in NeuroForge", symbol: "internaldrive.fill", color: NFTheme.mint)
+                NFStatusPill(text: "Search inside sources", symbol: "text.magnifyingglass", color: NFTheme.cyan)
+            }
+        }
     }
 
     @ViewBuilder
@@ -703,7 +732,7 @@ struct LibraryView: View {
                 ForEach(filteredDocuments) { document in
                     Button {
                         selectedDocumentInitialChunkID = nil
-                        selectedDocument = document
+                        navigation.sources = [.document(document.id, chunkID: selectedDocumentInitialChunkID)]
                     } label: {
                         DocumentRow(document: document)
                     }
@@ -778,6 +807,7 @@ struct LibraryView: View {
                 if Task.isCancelled { break }
                 importBatch?.currentFilename = url.lastPathComponent
                 importBatch?.stage = .copying
+                var replacementCopyID: UUID?
                 do {
                     let duplicateAction = approvedDuplicateActions[url.standardizedFileURL.path]
                     if duplicateAction == nil {
@@ -807,19 +837,27 @@ struct LibraryView: View {
                         }
                     }
 
+                    if case .replace = duplicateAction {
+                        // Fail before creating a replacement copy when an old
+                        // private restore prevents deleting the selected source.
+                        try await store.withLinkedRestoreArtifactDeletion { }
+                    }
                     let document = try await store.importDocumentAsync(from: url) { stage in
                         importBatch?.stage = stage
                     }
                     if case let .replace(existingDocumentID) = duplicateAction {
-                        try NFDuplicateImportReplacementTransaction.commit(
-                            importedSource: document,
-                            existingDocumentID: existingDocumentID,
-                            findExisting: { documentID in
-                                store.documents.first(where: { $0.id == documentID })
-                            },
-                            deleteExisting: { try store.deleteDocument($0) },
-                            rollbackImported: { try store.deleteDocument($0) }
-                        )
+                        replacementCopyID = document.id
+                        try await store.withLinkedRestoreArtifactDeletion {
+                            try NFDuplicateImportReplacementTransaction.commit(
+                                importedSource: document,
+                                existingDocumentID: existingDocumentID,
+                                findExisting: { documentID in
+                                    store.documents.first(where: { $0.id == documentID })
+                                },
+                                deleteExisting: { try store.deleteDocument($0) },
+                                rollbackImported: { try store.deleteDocument($0) }
+                            )
+                        }
                     }
                     if store.shouldOpenSourceReviews {
                         store.requestedLibraryDocumentID = document.id
@@ -828,6 +866,13 @@ struct LibraryView: View {
                 } catch is CancellationError {
                     break
                 } catch {
+                    if let cleanupError = error as? NFRestoreLinkedDeletionError {
+                        var message = cleanupError.errorDescription ?? ""
+                        if let replacementCopyID, store.documents.contains(where: { $0.id == replacementCopyID }) {
+                            message += "\n" + NFAppLocalization.localized("The newly imported copy is also retained. Retry replacement after cleanup finishes.")
+                        }
+                        store.notice = AppNotice(title: NFAppLocalization.localized("Deletion incomplete"), message: message)
+                    }
                     failedURLs.append(url)
                 }
                 processedCount += 1
@@ -1019,7 +1064,7 @@ struct LibraryView: View {
             return
         }
         selectedDocumentInitialChunkID = requestedChunkID
-        selectedDocument = document
+        navigation.sources = [.document(document.id, chunkID: selectedDocumentInitialChunkID)]
     }
 
     private func presentNextSourceReview(
@@ -1081,7 +1126,7 @@ struct LibraryView: View {
             guard let documentID = notice.documentID,
                   let document = store.documents.first(where: { $0.id == documentID }) else { return }
             selectedDocumentInitialChunkID = nil
-            selectedDocument = document
+            navigation.sources = [.document(document.id, chunkID: selectedDocumentInitialChunkID)]
         }
 
         switch notice.reason {
@@ -1178,7 +1223,7 @@ struct LibraryView: View {
                 store.requestedLibraryDocumentID = documentID
             } else if let document = store.documents.first(where: { $0.id == documentID }) {
                 selectedDocumentInitialChunkID = nil
-                selectedDocument = document
+                navigation.sources = [.document(document.id, chunkID: selectedDocumentInitialChunkID)]
             }
             continueAfterDuplicateDecision(remainingURLs)
 
@@ -1525,7 +1570,7 @@ private struct DocumentRow: View {
     }
 }
 
-private struct DocumentDetailView: View {
+struct DocumentDetailView: View {
     @Environment(AppStore.self) private var store
     @Environment(NFSystemIntegrationCoordinator.self) private var systemIntegrations
     @Environment(\.dismiss) private var dismiss
@@ -1587,6 +1632,69 @@ private struct DocumentDetailView: View {
                                 .foregroundStyle(documentStudyStatusColor)
                         }
                     }
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Practice from this source").font(.title2.bold())
+                        Text("This practice stays separate from your skill score.")
+                            .foregroundStyle(.secondary)
+                        Button {
+                            showSourceReview = true
+                        } label: {
+                            Label("Review from memory", systemImage: "rectangle.stack.badge.play.fill")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(NFTheme.controlTint(for: "indigo"))
+                        .foregroundStyle(NFTheme.controlForeground(for: "indigo"))
+                        .controlSize(.large)
+                        .disabled(document.chunkCount == 0 || isDocumentProcessing)
+
+                        ViewThatFits(in: .horizontal) {
+                            HStack { sourceQuestionButton; browseSourceButton }
+                            VStack(spacing: 10) { sourceQuestionButton; browseSourceButton }
+                        }
+
+                        if document.chunkCount > 0, !documentHasProseRecall {
+                            Text(documentCanUseQuestionWriter
+                                ? "Question Writer can use bounded excerpts from this format. Source review remains local."
+                                : "Offline question sets need complete prose statements. Use Source review for this format.")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        if isPDF && document.indexState == "extractionFailed" {
+                            Button {
+                                runOCR()
+                            } label: {
+                                Label(
+                                    ocrInProgress ? "Recognizing every page…" : "Run local OCR",
+                                    systemImage: "viewfinder.circle"
+                                )
+                                .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.large)
+                            .disabled(isDocumentProcessing)
+                        }
+
+                        if document.indexState == "extractionFailed" {
+                            Button {
+                                retryExtraction()
+                            } label: {
+                                Label(
+                                    extractionInProgress
+                                        ? "Retrying local extraction…"
+                                        : (isImage ? "Run local OCR" : "Retry text extraction"),
+                                    systemImage: "arrow.clockwise.circle"
+                                )
+                                .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.large)
+                            .disabled(extractionInProgress || ocrInProgress)
+                        }
+                    }
+                    .nfCard()
 
                     VStack(spacing: 12) {
                         LabeledContent("Imported", value: importedDate)
@@ -1715,69 +1823,6 @@ private struct DocumentDetailView: View {
                     }
                     .nfCard()
 
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Practice from this source").font(.title2.bold())
-                        Text("This practice stays separate from your skill score.")
-                            .foregroundStyle(.secondary)
-                        Button {
-                            showSourceReview = true
-                        } label: {
-                            Label("Start source review", systemImage: "rectangle.stack.badge.play.fill")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(NFTheme.controlTint(for: "indigo"))
-                        .foregroundStyle(NFTheme.controlForeground(for: "indigo"))
-                        .controlSize(.large)
-                        .disabled(document.chunkCount == 0 || isDocumentProcessing)
-
-                        ViewThatFits(in: .horizontal) {
-                            HStack { sourceQuestionButton; browseSourceButton }
-                            VStack(spacing: 10) { sourceQuestionButton; browseSourceButton }
-                        }
-
-                        if document.chunkCount > 0, !documentHasProseRecall {
-                            Text(documentCanUseQuestionWriter
-                                ? "Question Writer can use bounded excerpts from this format. Source review remains local."
-                                : "Offline question sets need complete prose statements. Use Source review for this format.")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        if isPDF && document.indexState == "extractionFailed" {
-                            Button {
-                                runOCR()
-                            } label: {
-                                Label(
-                                    ocrInProgress ? "Recognizing every page…" : "Run local OCR",
-                                    systemImage: "viewfinder.circle"
-                                )
-                                .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.bordered)
-                            .controlSize(.large)
-                            .disabled(isDocumentProcessing)
-                        }
-
-                        if document.indexState == "extractionFailed" {
-                            Button {
-                                retryExtraction()
-                            } label: {
-                                Label(
-                                    extractionInProgress
-                                        ? "Retrying local extraction…"
-                                        : (isImage ? "Run local OCR" : "Retry text extraction"),
-                                    systemImage: "arrow.clockwise.circle"
-                                )
-                                .frame(maxWidth: .infinity)
-                            }
-                            .buttonStyle(.bordered)
-                            .controlSize(.large)
-                            .disabled(extractionInProgress || ocrInProgress)
-                        }
-                    }
-                    .nfCard()
-
                     HStack {
                         if !document.localPath.isEmpty {
                             ShareLink(item: URL(fileURLWithPath: document.localPath)) {
@@ -1831,7 +1876,8 @@ private struct DocumentDetailView: View {
                             try await systemIntegrations.deleteDocumentEverywhere(document, store: store)
                             dismiss()
                         } catch {
-                            deleteError = (error as? NFPrivateSyncDeletionError)?.errorDescription
+                            deleteError = (error as? NFRestoreLinkedDeletionError)?.errorDescription
+                                ?? (error as? NFPrivateSyncDeletionError)?.errorDescription
                                 ?? NFAppLocalization.localized("NeuroForge kept the local document because iCloud deletion could not finish. Retry when sync is available.",
                                     locale: NFAppLocalization.preferredLocale,
                                     comment: "Fallback error after a synced-document deletion cannot be queued."
@@ -1841,14 +1887,16 @@ private struct DocumentDetailView: View {
                 }
             } else {
                 Button("Delete source data from this device", role: .destructive) {
-                    do {
-                        try store.deleteDocument(document)
-                        dismiss()
-                    } catch {
-                        deleteError = NFAppLocalization.localized("NeuroForge could not verify complete deletion. Retry from this screen; the original file outside the app was not changed.",
-                            locale: NFAppLocalization.preferredLocale,
-                            comment: "Error after local study-document deletion cannot be verified."
-                        )
+                    Task { @MainActor in
+                        do {
+                            try await store.withLinkedRestoreArtifactDeletion { try store.deleteDocument(document) }
+                            dismiss()
+                        } catch {
+                            deleteError = (error as? NFRestoreLinkedDeletionError)?.errorDescription
+                                ?? NFAppLocalization.localized("NeuroForge could not verify complete deletion. Retry from this screen; the original file outside the app was not changed.",
+                                    locale: NFAppLocalization.preferredLocale,
+                                    comment: "Error after local study-document deletion cannot be verified.")
+                        }
                     }
                 }
             }
@@ -1978,12 +2026,12 @@ private struct DocumentDetailView: View {
 
     private var sourceQuestionButton: some View {
         Button { showAIStudio = true } label: {
-            Label("Create questions", systemImage: "text.book.closed.fill")
+            Label("Create question set", systemImage: "text.book.closed.fill")
                 .frame(maxWidth: .infinity)
-                .foregroundStyle(NFTheme.roseControlForeground)
+
         }
-        .buttonStyle(.borderedProminent)
-        .tint(NFTheme.roseControlTint)
+        .buttonStyle(.bordered)
+        .tint(NFTheme.roseForeground)
         .disabled(
             isDocumentProcessing
                 || document.chunkCount == 0
@@ -2022,7 +2070,7 @@ private struct DocumentDetailView: View {
 
     private var browseSourceButton: some View {
         Button { showSourceViewer = true } label: {
-            Label("Browse source", systemImage: "text.magnifyingglass")
+            Label("Read source", systemImage: "text.magnifyingglass")
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.bordered)
@@ -2358,13 +2406,13 @@ struct NFSourceReviewDraftSnapshot: Equatable, Sendable {
     }
 
     init(checkpoint: SessionCheckpointRecord) {
-        let events = Dictionary(uniqueKeysWithValues: checkpoint.assessmentEventsRaw
+        let events = Dictionary(checkpoint.assessmentEventsRaw
             .split(separator: ",")
             .compactMap { event -> (String, String)? in
                 let parts = event.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
                 guard parts.count == 2 else { return nil }
                 return (String(parts[0]), String(parts[1]))
-            })
+            }, uniquingKeysWith: { _, latest in latest })
         response = checkpoint.response
         confidence = events["confidence"].flatMap(ConfidenceLevel.init(rawValue:))
         stageRawValue = events["sourceReviewStage"] ?? SourceReviewStage.recall.rawValue
@@ -2383,516 +2431,226 @@ enum NFSourceReviewDraftIdentity {
     }
 }
 
-private enum SourceReviewMatch: String, CaseIterable, Identifiable {
-    case supported
-    case partlySupported
-    case notSupported
+/// Personal source recall uses the same durable item lifecycle as every other
+/// exercise. The only answer reference is the immutable, device-local snapshot.
+@MainActor
+enum NFSourceReviewExactAdapter {
+    static let templateFamily = "source.review.exact"
+    static let legacyRecoveryReason = "This older draft did not save its original excerpt. Your answer remains available for review, but it cannot be compared with a changed source."
 
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .supported: NFAppLocalization.localized("Supported", locale: NFAppLocalization.preferredLocale, comment: "Self-check option comparing a recall response with a cited excerpt.")
-        case .partlySupported: NFAppLocalization.localized("Partly supported", locale: NFAppLocalization.preferredLocale, comment: "Self-check option comparing a recall response with a cited excerpt.")
-        case .notSupported: NFAppLocalization.localized("Not supported", locale: NFAppLocalization.preferredLocale, comment: "Self-check option comparing a recall response with a cited excerpt.")
+    static func makeRequest(
+        chunk: NFSourceChunk, localeIdentifier: String,
+        sessionID: UUID = UUID(), slotID: UUID = UUID(), attemptID: UUID = UUID(), at date: Date = Date()
+    ) throws -> SessionRequest {
+        let locale = Locale(identifier: localeIdentifier)
+        func localized(_ key: String) -> String {
+            NFAppLocalization.localizedCatalogValue(key, locale: locale)
         }
+        let title = localized("Source recall")
+        let prompt = localized("Recall the main ideas from the cited excerpt in your own words.")
+        let instructions = localized("Write what you remember before revealing the saved excerpt. Then compare it with your answer and choose your own rating.")
+        let comparison = localized("This is a personal comparison with your source. It does not change skill scores.")
+        let documentID = chunk.documentID.uuidString
+        let citation = NFExerciseCitation(
+            id: "source-review.\(chunk.id)", documentID: documentID, sourceChunkID: chunk.id,
+            title: chunk.sourceName, locator: .section(chunk.citationLabel),
+            supportDescription: localized("Saved source excerpt"), excerptDigest: chunk.contentHash)
+        let exercise = NFExercise(
+            id: "\(templateFamily).\(slotID.uuidString)", schemaVersion: 1, generatorVersion: 1,
+            templateID: templateFamily, templateFamily: templateFamily, templateVersion: 1,
+            seed: 0, lab: .retrieval, purpose: .documentPractice, evidenceClass: .documentPractice,
+            localeIdentifier: localeIdentifier, title: title, prompt: prompt,
+            contextText: "\(chunk.sourceName) · \(chunk.citationLabel)", instructions: instructions,
+            sourceContext: NFExerciseSourceContext(materialTitle: chunk.sourceName,
+                sourceDocumentIDs: [documentID], sourceChunkIDs: [chunk.id], targetSkills: [TrainingLab.retrieval.skillID]),
+            interaction: .selfCheck(.init(referenceAnswer: chunk.text,
+                criteria: [localized("Compare the main ideas and details with the saved excerpt.")], asksForReflection: true)),
+            difficulty: .init(overall: 0.5, reasoningSteps: 1, abstraction: 0.5,
+                representationShift: 0, priorKnowledge: 0.5, timePressure: 0),
+            skillWeights: [TrainingLab.retrieval.skillID: 1],
+            strategies: [.init(id: "source-recall", title: title, summary: instructions,
+                orderedSteps: [instructions], whenToUse: title)],
+            representations: [.prose], citations: [citation],
+            provenance: .init(contentTier: .deterministicGenerated, generatorID: templateFamily,
+                generatorVersion: 1, modelIdentifier: nil, promptVersion: nil,
+                sourceDocumentIDs: [documentID], sourceChunkIDs: [chunk.id],
+                contentDigest: "source:\(chunk.contentHash)", validatorVersion: NFExerciseSchemaValidator.validatorVersion,
+                isSourceGrounded: true),
+            rubric: .init(criteria: [.init(id: "personal-comparison", description: comparison, weight: 1)],
+                fullCreditThreshold: 1, permitsPartialCredit: false),
+            feedback: .init(timing: .immediate, correctTitle: localized("Self-check saved"),
+                correctExplanation: comparison, retryTitle: localized("Self-check saved"),
+                retryExplanation: comparison, decisiveStep: comparison, hintLadder: [], errorExplanations: [:]),
+            accessibility: .init(promptAccessibilityLabel: prompt, visualAlternative: nil,
+                requiresVisualSpatialProcessing: false, supportsVoiceOver: true, supportsKeyboardOnly: true, usesMotion: false),
+            assessmentProtected: false, expectedDurationSeconds: 120, timingEligible: false,
+            responseEditPolicy: .lockedAfterSubmit, tags: ["source-review", "personal-study", "self-check"])
+        try NFExerciseSchemaValidator.validate(exercise)
+        var request = SessionRequest(lab: .retrieval, source: .focused, seed: 0,
+            localeIdentifier: localeIdentifier, evidenceClass: .documentPractice, requestedItemCount: 1,
+            planID: NFSourceReviewDraftIdentity.planID(documentID: chunk.documentID), planBlockID: chunk.id,
+            isTimed: false)
+        request.id = sessionID
+        request.localSessionID = sessionID
+        request.localCheckpoint = try .initial(request: request, exercise: exercise,
+            slotID: slotID, attemptID: attemptID, at: date)
+        request.freshlyAcceptedLaunch = true
+        return request
     }
 
-    var symbol: String {
-        switch self {
-        case .supported: "checkmark.circle.fill"
-        case .partlySupported: "circle.lefthalf.filled"
-        case .notSupported: "arrow.triangle.2.circlepath"
-        }
+    static func belongsToSource(_ run: NFLocalSessionEnvelope, documentID: UUID, chunkID: String?) -> Bool {
+        guard run.request.planID == NFSourceReviewDraftIdentity.planID(documentID: documentID),
+              chunkID == nil || run.request.planBlockID == chunkID else { return false }
+        return run.status == .suspended || run.status == .migrationRecovery
     }
 
-    var countsAsSupported: Bool { self == .supported }
-}
+    static func resumeRequest(_ run: NFLocalSessionEnvelope, ownerDeviceID: UUID) throws -> SessionRequest {
+        guard run.ownerDeviceID == ownerDeviceID else { throw NFLocalSessionRepository.RepositoryError.wrongOwner }
+        guard run.status == .suspended,
+              run.schemaVersion == 1, run.checkpoint.schemaVersion == 1,
+              let exercise = run.checkpoint.exercise,
+              exercise.templateFamily == templateFamily,
+              exercise.evidenceClass == .documentPractice,
+              !exercise.assessmentProtected,
+              case .selfCheck = exercise.interaction,
+              exercise.provenance.sourceDocumentIDs.count == 1,
+              exercise.provenance.sourceChunkIDs == [run.request.planBlockID ?? ""],
+              run.request.planID == exercise.provenance.sourceDocumentIDs.first
+                .flatMap(UUID.init(uuidString:)).map(NFSourceReviewDraftIdentity.planID(documentID:)),
+              try NFLocalItemCheckpoint.digest(exercise) == run.checkpoint.exerciseDigest else {
+            throw NFLocalSessionRepository.RepositoryError.corruptSnapshot
+        }
+        try NFExerciseSchemaValidator.validate(exercise)
+        var request = run.request
+        request.localSessionID = run.id
+        request.localCheckpoint = run.checkpoint
+        request.freshlyAcceptedLaunch = nil
+        return request
+    }
 
-private struct SourceExcerpt: Sendable {
-    let text: String
-    let citation: String
-    let chunkID: String
-    let language: String?
-    let contentTypeTags: [String]
+    static func recoveryResponse(_ response: NFExerciseResponse) -> String {
+        if case let .selfCheck(submission) = response { return submission.reflection ?? "" }
+        return ""
+    }
 }
 
 private struct SourceReviewView: View {
     @Environment(AppStore.self) private var store
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.scenePhase) private var scenePhase
     let document: SourceDocumentRecord
     let initialChunkID: String?
     let onReviewAnother: ((String) -> Void)?
-    @State private var stage: SourceReviewStage = .recall
-    @State private var response = ""
-    @State private var confidence: ConfidenceLevel?
-    @State private var excerpt: SourceExcerpt?
-    @State private var finished = false
-    @State private var saveError: String?
-    @State private var draftSessionID = UUID()
-    @State private var savedDraftSnapshot = NFSourceReviewDraftSnapshot(
-        response: "",
-        confidence: nil,
-        stageRawValue: SourceReviewStage.recall.rawValue
-    )
-    @State private var didLoadDraft = false
-    @State private var isShowingCloseConfirmation = false
-    @State private var dirtyEditorRegistrationID = UUID()
+    @State private var request: SessionRequest?
+    @State private var recoveryReason: String?
+    @State private var recoveredResponse = ""
+    @State private var hasLegacyRecovery = false
+    @State private var didLoad = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 22) {
-                        HStack {
-                            NFStatusPill(text: "Document practice", symbol: "text.book.closed.fill", color: NFTheme.cyan)
-                            Spacer()
-                            NFStatusPill(text: "Separate from skill score", symbol: "shield.slash", color: NFTheme.mint)
-                        }
-
-                        switch stage {
-                        case .recall: recallStep
-                        case .confidence: confidenceStep
-                        case .selfCheck: selfCheckStep
-                        }
-                    }
-                    .padding(24)
-                    .frame(maxWidth: 720)
-                    .frame(maxWidth: .infinity)
-                }
-            }
-            .navigationTitle("Source review")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { requestClose() }
-                        .keyboardShortcut(.cancelAction)
-                }
-            }
-        }
-        .task {
-            loadInitialExcerpt()
-        }
-        .onChange(of: scenePhase) { _, phase in
-            if phase != .active, hasUnsavedDraftChanges {
-                _ = persistDraft(reportFailure: true)
-            }
-        }
-        .onDisappear {
-            if hasUnsavedDraftChanges,
-               !store.dirtyEditorWasDiscarded(id: dirtyEditorRegistrationID) {
-                _ = persistDraft(reportFailure: false)
-            }
-        }
-        .nfGuardsUnsavedEditor(
-            hasUnsavedDraftChanges,
-            title: NFAppLocalization.localized(
-                "Source review",
-                locale: NFAppLocalization.preferredLocale,
-                comment: "Dirty-editor name used in the global navigation warning."
-            ),
-            registrationID: dirtyEditorRegistrationID,
-            onDiscard: { _ = removeSavedDraftIfPresent(reportFailure: false) }
-        )
-        .confirmationDialog(
-            "Keep this source-review draft?",
-            isPresented: $isShowingCloseConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Save draft") { saveDraftAndDismiss() }
-            Button("Discard draft", role: .destructive) { discardDraftAndDismiss() }
-            Button("Keep editing", role: .cancel) {}
-        } message: {
-            Text("Save keeps your recalled answer, confidence step, and place in this review on this device. Discard removes both the current edits and any earlier saved draft for this excerpt.")
-        }
-        .alert("Review could not be saved", isPresented: Binding(
-            get: { saveError != nil },
-            set: { if !$0 { saveError = nil } }
-        )) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(LocalizedStringKey(saveError ?? "Your recall remains on screen so you can retry."))
-        }
-    }
-
-    private var recallStep: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            NFSectionHeader(
-                "Recall before reopening the source",
-                eyebrow: document.filename,
-                subtitle: "Write what you remember about this cited excerpt. NeuroForge will reveal it after confidence."
-            )
-
-            if let excerpt {
-                Label(excerpt.citation, systemImage: "mappin.and.ellipse")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(NFTheme.cyanForeground)
-            }
-
-            TextEditor(text: $response)
-                .font(.body)
-                .scrollContentBackground(.hidden)
-                .padding(12)
-                .frame(minHeight: 170)
-                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .strokeBorder(.primary.opacity(0.08))
-                }
-                .accessibilityLabel("Your recalled answer")
-
-            Button {
-                stage = .confidence
-            } label: {
-                Label("Choose confidence", systemImage: "gauge.with.dots.needle.50percent")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(NFTheme.controlTint(for: "indigo"))
-            .foregroundStyle(NFTheme.controlForeground(for: "indigo"))
-            .controlSize(.large)
-            .disabled(response.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-        }
-    }
-
-    private var confidenceStep: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            NFSectionHeader(
-                "How confident are you?",
-                eyebrow: "Before the source is revealed",
-                subtitle: "Confidence stays separate from your self-check result."
-            )
-
-            Text(response)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .nfCard()
-
-            ForEach(ConfidenceLevel.allCases) { level in
-                Button {
-                    confidence = level
-                    stage = .selfCheck
-                } label: {
-                    HStack {
-                        ConfidenceGlyph(level: level)
-                        Text(level.title).font(.headline)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .foregroundStyle(.tertiary)
-                    }
-                    .padding(14)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-                }
-                .buttonStyle(.plain)
-            }
-
-            Button("Change recall") { stage = .recall }
-                .buttonStyle(.borderless)
-        }
-    }
-
-    @ViewBuilder
-    private var selfCheckStep: some View {
-        if finished {
-            VStack(spacing: 20) {
-                NFIconTile(symbol: "checkmark.seal.fill", color: NFTheme.mint, size: 76)
-                Text("Source review saved")
-                    .font(.system(.title, design: .rounded, weight: .bold))
-                Text("Your review is saved without changing standardized progress.")
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                if canReviewAnother {
-                    Button("Review another excerpt") {
-                        if let onReviewAnother, let chunkID = excerpt?.chunkID {
-                            onReviewAnother(chunkID)
-                            dismiss()
-                        } else {
-                            beginAnotherReview()
+        Group {
+            if let request {
+                UniversalSessionView(request: request)
+                    .id(request.id)
+                    .toolbar {
+                        if let chunkID = request.planBlockID,
+                           store.localSessions.archive.sessions.contains(where: { $0.id == request.id && $0.status == .completed }),
+                           onReviewAnother != nil || store.chunks(for: document).count > 1 {
+                            ToolbarItem(placement: .primaryAction) {
+                                Button("Review another excerpt") {
+                                    if let onReviewAnother {
+                                        onReviewAnother(chunkID)
+                                        dismiss()
+                                    } else {
+                                        startFresh(excluding: chunkID)
+                                    }
+                                }
+                            }
                         }
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(NFTheme.controlTint(for: "indigo"))
-                    .foregroundStyle(NFTheme.controlForeground(for: "indigo"))
-                    .controlSize(.large)
-                }
-                Button("Done") { dismiss() }
-                    .buttonStyle(.bordered)
-                    .controlSize(.large)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 36)
-        } else {
-            VStack(alignment: .leading, spacing: 18) {
-                NFSectionHeader(
-                    "Compare with the cited source",
-                    eyebrow: confidence?.title ?? "Confidence recorded",
-                    subtitle: "Judge only whether your recall is supported by this excerpt."
-                )
-
-                if let excerpt {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Label("Your answer", systemImage: "text.bubble")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                        Text(verbatim: response)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .textSelection(.enabled)
-                    }
-                    .nfCard(cornerRadius: 14, padding: 12)
-
-                    VStack(alignment: .leading, spacing: 12) {
-                        NFFormattedLearningText(
-                            excerpt.text,
-                            sourceLanguage: excerpt.language,
-                            contentTypeTags: excerpt.contentTypeTags
-                        )
-                            .textSelection(.enabled)
-                        Divider()
-                        Label(excerpt.citation, systemImage: "quote.opening")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(NFTheme.cyanForeground)
-                    }
-                    .nfCard()
-
-                    Text("How well did your recall match?")
-                        .font(.headline)
-
-                    ForEach(SourceReviewMatch.allCases) { match in
-                        Button {
-                            save(match)
-                        } label: {
-                            Label(match.title, systemImage: match.symbol)
-                                .frame(maxWidth: .infinity)
+            } else {
+                NavigationStack {
+                    recoveryView
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Close") { dismiss() }
+                            }
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.large)
-                    }
-
-                    if !document.localPath.isEmpty {
-                        ShareLink(item: URL(fileURLWithPath: document.localPath)) {
-                            Label("Open or export original", systemImage: "square.and.arrow.up")
-                        }
-                        .buttonStyle(.borderless)
-                    }
-                } else {
-                    ContentUnavailableView(
-                        "Citation excerpt unavailable",
-                        systemImage: "doc.text.magnifyingglass",
-                        description: Text("NeuroForge could not load a source excerpt, so this review cannot be rated or saved. For a scanned PDF, close this review and run local OCR; otherwise import a text-based version.")
-                    )
-                    .nfCard()
-
-                    if !document.localPath.isEmpty {
-                        ShareLink(item: URL(fileURLWithPath: document.localPath)) {
-                            Label("Open or export original", systemImage: "square.and.arrow.up")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(NFTheme.controlTint(for: "indigo"))
-                        .foregroundStyle(NFTheme.controlForeground(for: "indigo"))
-                        .controlSize(.large)
-                    }
                 }
             }
         }
+        .task { load() }
     }
 
-    private func save(_ match: SourceReviewMatch) {
-        guard let excerpt, let confidence else { return }
-        do {
-            try store.saveLabAttempt(
-                lab: .retrieval,
-                itemID: "document.\(document.id.uuidString).\(excerpt.chunkID)",
-                prompt: "Recall the cited excerpt from \(document.filename). [Citation: \(excerpt.citation)]",
-                response: response,
-                correctAnswer: "",
-                isCorrect: match.countsAsSupported,
-                confidence: confidence,
-                evidenceClass: .documentPractice,
-                sourceDocumentIDs: [document.id],
-                sourceChunkIDs: [excerpt.chunkID],
-                responseFormat: NFSourceReviewRotation.responseFormat
-            )
-            removeSavedDraftIfPresent(reportFailure: false)
-            savedDraftSnapshot = currentDraftSnapshot
-            finished = true
-        } catch {
-            saveError = "Your recall remains on screen. NeuroForge could not save it locally yet."
-        }
-    }
-
-    private func loadInitialExcerpt() {
-        let chunks = store.chunks(for: document)
-        let chunk = initialChunkID.flatMap { initialID in
-            chunks.first(where: { $0.id == initialID })
-        } ?? NFSourceReviewRotation.nextChunk(in: chunks, attempts: store.attempts)
-        excerpt = chunk.map(makeExcerpt)
-        restoreSavedDraftIfPresent()
-    }
-
-    private func beginAnotherReview() {
-        let chunks = store.chunks(for: document)
-        let next = NFSourceReviewRotation.nextChunk(
-            in: chunks,
-            attempts: store.attempts,
-            excluding: excerpt?.chunkID
-        )
-        excerpt = next.map(makeExcerpt)
-        response = ""
-        confidence = nil
-        stage = .recall
-        finished = false
-        saveError = nil
-        draftSessionID = UUID()
-        didLoadDraft = true
-        savedDraftSnapshot = currentDraftSnapshot
-    }
-
-    private func makeExcerpt(_ chunk: NFSourceChunk) -> SourceExcerpt {
-        SourceExcerpt(
-            text: chunk.text,
-            citation: chunk.citationLabel,
-            chunkID: chunk.id,
-            language: chunk.language,
-            contentTypeTags: chunk.contentTypeTags
-        )
-    }
-
-    private var canReviewAnother: Bool {
-        onReviewAnother != nil || store.chunks(for: document).count > 1
-    }
-
-    private var currentDraftSnapshot: NFSourceReviewDraftSnapshot {
-        NFSourceReviewDraftSnapshot(
-            response: response,
-            confidence: confidence,
-            stageRawValue: stage.rawValue
-        )
-    }
-
-    private var hasUnsavedDraftChanges: Bool {
-        didLoadDraft && !finished && currentDraftSnapshot != savedDraftSnapshot
-    }
-
-    private var draftPlanID: String {
-        NFSourceReviewDraftIdentity.planID(documentID: document.id)
-    }
-
-    private var savedDraftCheckpoint: SessionCheckpointRecord? {
-        guard let chunkID = excerpt?.chunkID else { return nil }
-        return store.sessionCheckpoints.first {
-            !$0.isComplete
-                && $0.planID == draftPlanID
-                && $0.planBlockID == chunkID
-        }
-    }
-
-    private func requestClose() {
-        if hasUnsavedDraftChanges {
-            isShowingCloseConfirmation = true
-        } else {
-            dismiss()
-        }
-    }
-
-    private func saveDraftAndDismiss() {
-        if persistDraft(reportFailure: true) {
-            dismiss()
-        }
-    }
-
-    @discardableResult
-    private func persistDraft(reportFailure: Bool) -> Bool {
-        guard let chunkID = excerpt?.chunkID else {
-            if reportFailure {
-                saveError = "This excerpt is no longer available, so the draft could not be saved. Your answer remains on screen."
+    private var recoveryView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                ContentUnavailableView("Saved work unavailable", systemImage: "doc.text.magnifyingglass",
+                    description: Text(verbatim: NFAppLocalization.localizedCatalogValue(
+                        recoveryReason ?? "Citation excerpt unavailable", locale: NFAppLocalization.preferredLocale)))
+                if !recoveredResponse.isEmpty {
+                    Text("Your response").font(.headline)
+                    Text(verbatim: recoveredResponse).textSelection(.enabled)
+                        .accessibilityIdentifier("source-recovery-response")
+                }
+                if hasLegacyRecovery {
+                    Button("Start a new source review") { startFresh() }
+                        .buttonStyle(.borderedProminent).controlSize(.large)
+                }
+                if !document.localPath.isEmpty {
+                    ShareLink(item: URL(fileURLWithPath: document.localPath)) {
+                        Label("Open or export original", systemImage: "square.and.arrow.up")
+                    }
+                }
             }
-            return false
+            .padding(24).frame(maxWidth: 720).frame(maxWidth: .infinity)
         }
-        let snapshot = currentDraftSnapshot
-        do {
-            try store.upsertCheckpoint(
-                sessionID: draftSessionID,
-                request: SessionRequest(
-                    lab: .retrieval,
-                    source: .focused,
-                    seed: 0,
-                    evidenceClass: .documentPractice,
-                    requestedItemCount: 1,
-                    planID: draftPlanID,
-                    planBlockID: chunkID
-                ),
-                currentIndex: 0,
-                itemCount: 1,
-                response: snapshot.response,
-                scratchpad: "",
-                results: [],
-                assessmentEvents: snapshot.checkpointEvents
-            )
-            savedDraftSnapshot = snapshot
-            saveError = nil
-            return true
-        } catch {
-            store.context.rollback()
-            store.reload()
-            if reportFailure {
-                saveError = "Your answer remains on screen. NeuroForge could not save this draft locally yet."
+        .background { AppBackground() }
+    }
+
+    private func load() {
+        guard !didLoad else { return }
+        didLoad = true
+        if let run = store.localSessions.archive.sessions
+            .filter({ NFSourceReviewExactAdapter.belongsToSource($0, documentID: document.id, chunkID: initialChunkID) })
+            .max(by: { $0.updatedAt < $1.updatedAt }) {
+            do { request = try NFSourceReviewExactAdapter.resumeRequest(run, ownerDeviceID: store.localSessions.ownerDeviceID) }
+            catch {
+                recoveryReason = error.localizedDescription
+                recoveredResponse = NFSourceReviewExactAdapter.recoveryResponse(run.checkpoint.response)
             }
-            return false
-        }
-    }
-
-    private func discardDraftAndDismiss() {
-        guard removeSavedDraftIfPresent(reportFailure: true) else { return }
-        savedDraftSnapshot = currentDraftSnapshot
-        dismiss()
-    }
-
-    @discardableResult
-    private func removeSavedDraftIfPresent(reportFailure: Bool) -> Bool {
-        guard let checkpoint = savedDraftCheckpoint else { return true }
-        store.context.delete(checkpoint)
-        do {
-            try store.context.save()
-            store.reload()
-            return true
-        } catch {
-            store.context.rollback()
-            store.reload()
-            if reportFailure {
-                saveError = "The saved draft could not be removed. It remains available, and this review is still open."
-            }
-            return false
-        }
-    }
-
-    private func restoreSavedDraftIfPresent() {
-        defer {
-            didLoadDraft = true
-            savedDraftSnapshot = currentDraftSnapshot
-        }
-        guard let checkpoint = savedDraftCheckpoint,
-              let chunkID = excerpt?.chunkID else { return }
-
-        let completedAfterDraft = store.attempts.contains {
-            !$0.wasSkipped
-                && $0.responseFormatRaw == NFSourceReviewRotation.responseFormat
-                && $0.sourceChunkIDsRaw.split(separator: ",").contains(Substring(chunkID))
-                && $0.submittedAt >= checkpoint.updatedAt
-        }
-        if completedAfterDraft {
-            _ = removeSavedDraftIfPresent(reportFailure: false)
             return
         }
+        if let legacy = store.sessionCheckpoints
+            .filter({ !$0.isComplete && $0.planID == NFSourceReviewDraftIdentity.planID(documentID: document.id)
+                && (initialChunkID == nil || $0.planBlockID == initialChunkID) })
+            .max(by: { $0.updatedAt < $1.updatedAt }) {
+            recoveryReason = NFSourceReviewExactAdapter.legacyRecoveryReason
+            recoveredResponse = NFSourceReviewDraftSnapshot(checkpoint: legacy).response
+            hasLegacyRecovery = true
+            return
+        }
+        startFresh()
+    }
 
-        let snapshot = NFSourceReviewDraftSnapshot(checkpoint: checkpoint)
-        let restoredConfidence = snapshot.confidence
-        let requestedStage = SourceReviewStage(rawValue: snapshot.stageRawValue) ?? .recall
-
-        response = snapshot.response
-        confidence = restoredConfidence
-        stage = requestedStage == .selfCheck && restoredConfidence == nil ? .confidence : requestedStage
-        draftSessionID = checkpoint.sessionID
+    private func startFresh(excluding chunkID: String? = nil) {
+        let chunks = store.chunks(for: document)
+        let selected: NFSourceChunk?
+        if let initialChunkID, chunkID == nil {
+            selected = chunks.first { $0.id == initialChunkID }
+        } else {
+            selected = NFSourceReviewRotation.nextChunk(in: chunks, attempts: store.attempts, excluding: chunkID)
+        }
+        guard let selected else {
+            recoveryReason = "Citation excerpt unavailable"
+            return
+        }
+        do {
+            request = try NFSourceReviewExactAdapter.makeRequest(chunk: selected,
+                localeIdentifier: NFAppLocalization.preferredLocale.identifier)
+            recoveryReason = nil
+            recoveredResponse = ""
+            hasLegacyRecovery = false
+        } catch { recoveryReason = error.localizedDescription }
     }
 }
 

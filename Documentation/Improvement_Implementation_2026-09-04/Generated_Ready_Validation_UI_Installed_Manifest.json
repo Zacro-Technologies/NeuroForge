@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-09-05T20:17:14.143777+00:00",
+  "sourceInputManifestDigest": "43d3456480a7da0577a5c77ef683ab30dba40782790150c78b60132985d72ef2",
+  "simulatorUDID": "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+  "scope": "One installed generated-set journey: actual offline creation, enabled Start, separate run identities, Skip and cold recovery, explicit end. Loaded runner verified; last-run summary disappears in this failed source.",
+  "files": [
+    {
+      "builtPath": "/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForge.app/NeuroForge",
+      "installedPath": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/E9C921A3-30D5-45A3-8EA1-E4B55F34F140/NeuroForge.app/NeuroForge",
+      "builtSHA256": "064490886945fd4ecc5fe41c9ee2270ecd43fabc0f844c0608b5f18050c6fa75",
+      "installedSHA256": "064490886945fd4ecc5fe41c9ee2270ecd43fabc0f844c0608b5f18050c6fa75"
+    },
+    {
+      "builtPath": "/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForge.app/NeuroForge.debug.dylib",
+      "installedPath": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/E9C921A3-30D5-45A3-8EA1-E4B55F34F140/NeuroForge.app/NeuroForge.debug.dylib",
+      "builtSHA256": "5621314d7fd13fcb487d8180069de225046a35ae4ed6027fcb4ad3dd9c3f5080",
+      "installedSHA256": "5621314d7fd13fcb487d8180069de225046a35ae4ed6027fcb4ad3dd9c3f5080"
+    },
+    {
+      "builtPath": "/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForgeUITests-Runner.app/PlugIns/NeuroForgeUITests.xctest/NeuroForgeUITests",
+      "installedPath": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/4A8229A7-C907-4602-A7D5-670F0E870080/NeuroForgeUITests-Runner.app/PlugIns/NeuroForgeUITests.xctest/NeuroForgeUITests",
+      "builtSHA256": "efac1d6aac3de248f55db56a878e688ad224ebe6692078fb2fe47700074bce9b",
+      "installedSHA256": "efac1d6aac3de248f55db56a878e688ad224ebe6692078fb2fe47700074bce9b"
+    }
+  ],
+  "actualInjectedRunner": {
+    "verifiedAt": "2026-09-05T20:18:13.185756+00:00",
+    "pid": 43882,
+    "path": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/DCCD9EFD-5353-4D9C-A0C0-040741D1BF73/NeuroForgeUITests-Runner.app/PlugIns/NeuroForgeUITests.xctest/NeuroForgeUITests",
+    "sha256": "efac1d6aac3de248f55db56a878e688ad224ebe6692078fb2fe47700074bce9b",
+    "scope": "Actual loaded XCTest plugin; compiled source binding is sourceInputManifestDigest in this installation manifest."
+  }
+}

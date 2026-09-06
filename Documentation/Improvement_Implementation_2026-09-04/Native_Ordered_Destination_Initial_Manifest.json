@@ -1,0 +1,25 @@
+{
+  "runID": "093ADAD2-0C28-4639-9276-E4B45D35A09F",
+  "app": "/tmp/NeuroForge-Ordered-Native-QA-093adad2-0c28-4639-9276-e4b45d35a09f/NeuroForgeNativeQA.app",
+  "sourceManifestDigest": "75bc0fc7934c761712271d2d6d5ec29824ad89661a3b14aa19cec681db5f11b9",
+  "verifiedTests": "26/26 PASS restore acknowledgement and native ordering; native UI verification pending",
+  "binaries": {
+    "Contents/MacOS/NeuroForge": "814d0705d449ef061d56d19ed3bc638b7c5d016d81b33f12346ea80df198a574",
+    "Contents/MacOS/__preview.dylib": "a214382e36028d1061ceb7fdd5805c8035d1beb32d7d5b54a3e46eb66316c1fc",
+    "Contents/MacOS/NeuroForge.debug.dylib": "f9ae2acae9f7db92b8deca076fc4e4d8e969ec3444ba43d81775ee4f29617b19"
+  },
+  "declarations": [
+    {
+      "UTTypeConformsTo": [
+        "public.data"
+      ],
+      "UTTypeDescription": "NeuroForge response step",
+      "UTTypeIdentifier": "com.zacrotech.NeuroForge.ordered-response-step"
+    }
+  ],
+  "nativeUI": {
+    "drag": "failed: entry accepted but no release/perform before Escape",
+    "cancellation": "passed: Escape ended drag and preserved original ordering",
+    "scope": "All events from isolated093ADAD2 process, current source is later"
+  }
+}

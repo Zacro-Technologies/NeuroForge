@@ -310,7 +310,7 @@ struct NFAuthoringRequest: Codable, Sendable {
     let count: Int
     let localeIdentifier: String
     let seed: UInt64
-    let sourceChunks: [NFSourceChunk]
+    var sourceChunks: [NFSourceChunk]
     let documentPolicies: [DocumentAIPolicy]
     let externalSourceConsent: NFExternalSourceConsent?
     let aiMode: AIMode

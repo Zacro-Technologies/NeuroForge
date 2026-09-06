@@ -8,6 +8,7 @@ struct NFVersionedOfflineQuestionBank: Equatable, Sendable {
     let version: Int
     private let questionIDsByLab: [TrainingLab: [String]]
     fileprivate let fingerprint: String
+    var catalogFingerprint: String { fingerprint }
 
     init(version: Int, questionIDsByLab: [TrainingLab: [String]]) throws {
         guard version > 0 else {
@@ -67,7 +68,8 @@ struct NFOfflineQuestionRotationPlanItem: Codable, Equatable, Sendable {
     let epoch: UInt64
     /// Zero-based position in the epoch's deterministic permutation.
     let epochOrdinal: Int
-    /// Monotonic position in this profile/lab/lane/bank-version rotation.
+    /// Stable position in this profile/lab/lane/bank-version rotation. Delivery
+    /// may return to an earlier unconsumed hole after eligibility changes.
     let stableOrdinal: UInt64
 }
 
@@ -97,6 +99,7 @@ enum NFOfflineQuestionRotationError: Error, Equatable, Sendable {
     case concurrentReservationLimitExceeded
     case ordinalOverflow
     case rotationInvariantViolation
+    case insufficientEligibleQuestions(actual: Int, required: Int)
 }
 
 /// Persistence is deliberately tiny and compare-and-swap based. The latter is
@@ -109,6 +112,20 @@ protocol NFOfflineQuestionRotationStateStoring: Sendable {
         expectedRevision: UInt64?,
         replacement: NFOfflineQuestionRotationLedger
     ) throws -> Bool
+
+    func withSnapshot<Result>(_ operation: (NFOfflineQuestionRotationLedger?) throws -> Result) throws -> Result
+}
+
+extension NFOfflineQuestionRotationStateStoring {
+    func withSnapshot<Result>(_ operation: (NFOfflineQuestionRotationLedger?) throws -> Result) throws -> Result {
+        try operation(load())
+    }
+}
+
+struct NFOfflineQuestionRotationProposal: Sendable {
+    let expectedRevision: UInt64?
+    let replacement: NFOfflineQuestionRotationLedger
+    let plan: NFOfflineQuestionRotationPlan
 }
 
 struct NFOfflineQuestionRotationLedger: Codable, Equatable, Sendable {
@@ -128,6 +145,37 @@ struct NFOfflineQuestionRotationScopeState: Codable, Equatable, Sendable {
     /// Tail of the prior epoch. The current permutation places these IDs after
     /// all other IDs, preventing an immediate boundary repeat.
     var boundaryExclusions: [String]
+    /// Positions consumed beyond the first unconsumed cursor. Nil means the
+    /// legacy contiguous prefix. Ineligible positions are never inserted here.
+    var consumedEpochOrdinals: Set<Int>? = nil
+
+    var hasValidConsumption: Bool {
+        bankQuestionCount > 0 && cursor >= 0 && cursor < bankQuestionCount
+            && (consumedEpochOrdinals ?? []).allSatisfy { $0 > cursor && $0 < bankQuestionCount }
+    }
+
+    func containsConsumed(epoch candidateEpoch: UInt64, ordinal: Int) -> Bool {
+        ordinal >= 0 && ordinal < bankQuestionCount
+            && (candidateEpoch < epoch || (candidateEpoch == epoch
+                && (ordinal < cursor || consumedEpochOrdinals?.contains(ordinal) == true)))
+    }
+}
+
+/// Disposable fixture authority. It never reads or writes UserDefaults.
+final class NFMemoryOfflineQuestionRotationStateStore: NFOfflineQuestionRotationStateStoring, @unchecked Sendable {
+    private let lock = NSLock()
+    private var ledger: NFOfflineQuestionRotationLedger?
+    func load() -> NFOfflineQuestionRotationLedger? { lock.withLock { ledger } }
+    func compareAndSwap(expectedRevision: UInt64?, replacement: NFOfflineQuestionRotationLedger) -> Bool {
+        lock.withLock {
+            guard ledger?.revision == expectedRevision else { return false }
+            ledger = replacement
+            return true
+        }
+    }
+    func withSnapshot<Result>(_ operation: (NFOfflineQuestionRotationLedger?) throws -> Result) throws -> Result {
+        try lock.withLock { try operation(ledger) }
+    }
 }
 
 /// UserDefaults-backed ledger for the app singleton. Writes are verified and
@@ -174,6 +222,10 @@ final class NFUserDefaultsOfflineQuestionRotationStateStore:
         try Self.processLock.withLock {
             try decodePersistedLedger()
         }
+    }
+
+    func withSnapshot<Result>(_ operation: (NFOfflineQuestionRotationLedger?) throws -> Result) throws -> Result {
+        try Self.processLock.withLock { try operation(decodePersistedLedger()) }
     }
 
     func compareAndSwap(
@@ -227,13 +279,17 @@ struct NFOfflineQuestionRotation: Sendable {
         self.maximumCompareAndSwapAttempts = max(1, maximumCompareAndSwapAttempts)
     }
 
-    func reserve(
-        profileID: UUID,
-        lab: TrainingLab,
-        laneID: String = "mixed",
-        itemCount: Int,
-        bank: NFVersionedOfflineQuestionBank
-    ) throws -> NFOfflineQuestionRotationPlan {
+    /// Read-only compatibility source. New app launches persist the proposal
+    /// with their run in NFLocalSessionRepository, never through this store.
+    func legacySnapshot() throws -> NFOfflineQuestionRotationLedger? { try store.load() }
+    func withLegacySnapshot<Result>(_ operation: (NFOfflineQuestionRotationLedger?) throws -> Result) throws -> Result {
+        try store.withSnapshot(operation)
+    }
+
+    func prepareReservation(profileID: UUID, lab: TrainingLab, laneID: String = "mixed",
+                            itemCount: Int, bank: NFVersionedOfflineQuestionBank,
+                            loadedLedger: NFOfflineQuestionRotationLedger?,
+                            isEligible: ((NFOfflineQuestionRotationPlanItem) -> Bool)? = nil) throws -> NFOfflineQuestionRotationProposal {
         guard !laneID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw NFOfflineQuestionRotationError.emptyLaneID
         }
@@ -245,111 +301,124 @@ struct NFOfflineQuestionRotation: Sendable {
             )
         }
 
-        for _ in 0..<maximumCompareAndSwapAttempts {
-            let loadedLedger = try store.load()
-            let expectedRevision = loadedLedger?.revision
-            var ledger = loadedLedger ?? NFOfflineQuestionRotationLedger(
-                revision: 0,
-                scopes: [:]
-            )
-            guard ledger.schemaVersion == NFOfflineQuestionRotationLedger.schemaVersion else {
-                throw NFOfflineQuestionRotationError.corruptPersistedState
-            }
+        let expectedRevision = loadedLedger?.revision
+        var ledger = loadedLedger ?? NFOfflineQuestionRotationLedger(
+            revision: 0,
+            scopes: [:]
+        )
+        guard ledger.schemaVersion == NFOfflineQuestionRotationLedger.schemaVersion else {
+            throw NFOfflineQuestionRotationError.corruptPersistedState
+        }
 
-            let scopeKey = Self.scopeKey(
-                profileID: profileID,
-                lab: lab,
-                laneID: laneID,
-                bankVersion: bank.version
-            )
-            var state = try resolvedState(
-                ledger.scopes[scopeKey],
-                bank: bank,
-                lab: lab,
-                bankQuestionCount: bankIDs.count
-            )
-            let reservationOrdinal = state.nextReservationOrdinal
-            state.nextReservationOrdinal = try Self.incrementing(state.nextReservationOrdinal)
+        let scopeKey = Self.scopeKey(
+            profileID: profileID,
+            lab: lab,
+            laneID: laneID,
+            bankVersion: bank.version
+        )
+        var state = try resolvedState(
+            ledger.scopes[scopeKey],
+            bank: bank,
+            lab: lab,
+            bankQuestionCount: bankIDs.count
+        )
+        let reservationOrdinal = state.nextReservationOrdinal
+        state.nextReservationOrdinal = try Self.incrementing(state.nextReservationOrdinal)
 
-            var planItems: [NFOfflineQuestionRotationPlanItem] = []
-            planItems.reserveCapacity(itemCount)
+        var planItems: [NFOfflineQuestionRotationPlanItem] = []
+        planItems.reserveCapacity(itemCount)
 
-            while planItems.count < itemCount {
-                let order = Self.epochOrder(
-                    bankIDs: bankIDs,
-                    profileID: profileID,
-                    lab: lab,
-                    laneID: laneID,
-                    bankVersion: bank.version,
-                    bankFingerprint: bank.fingerprint,
-                    epoch: state.epoch,
-                    boundaryExclusions: state.boundaryExclusions
-                )
-                guard order.count == bankIDs.count,
-                      state.cursor >= 0,
-                      state.cursor < order.count else {
-                    throw NFOfflineQuestionRotationError.rotationInvariantViolation
-                }
-
-                let available = order.count - state.cursor
-                let needed = itemCount - planItems.count
-                let takeCount = min(available, needed)
-                for epochOrdinal in state.cursor..<(state.cursor + takeCount) {
-                    let stableOrdinal = try Self.stableOrdinal(
-                        epoch: state.epoch,
-                        epochOrdinal: epochOrdinal,
-                        bankQuestionCount: bankIDs.count
-                    )
-                    planItems.append(NFOfflineQuestionRotationPlanItem(
-                        questionID: order[epochOrdinal],
-                        quizOrdinal: planItems.count,
-                        epoch: state.epoch,
-                        epochOrdinal: epochOrdinal,
-                        stableOrdinal: stableOrdinal
-                    ))
-                }
-                state.cursor += takeCount
-
-                if state.cursor == order.count {
-                    let quizTailCount = planItems.count < itemCount ? planItems.count : 0
-                    state = try advancingEpoch(
-                        state,
-                        completedOrder: order,
-                        minimumExcludedTailCount: quizTailCount
-                    )
-                }
-            }
-
-            guard Set(planItems.map(\.questionID)).count == planItems.count else {
-                throw NFOfflineQuestionRotationError.rotationInvariantViolation
-            }
-
-            ledger.scopes[scopeKey] = state
-            ledger.revision = try Self.incrementing(ledger.revision)
-            let plan = NFOfflineQuestionRotationPlan(
-                id: Self.planID(
-                    profileID: profileID,
-                    lab: lab,
-                    laneID: laneID,
-                    bankVersion: bank.version,
-                    reservationOrdinal: reservationOrdinal
-                ),
+        while planItems.count < itemCount {
+            let order = Self.epochOrder(
+                bankIDs: bankIDs,
                 profileID: profileID,
                 lab: lab,
                 laneID: laneID,
                 bankVersion: bank.version,
-                reservationOrdinal: reservationOrdinal,
-                items: planItems
+                bankFingerprint: bank.fingerprint,
+                epoch: state.epoch,
+                boundaryExclusions: state.boundaryExclusions
             )
+            guard order.count == bankIDs.count,
+                  state.cursor >= 0,
+                  state.cursor < order.count else {
+                throw NFOfflineQuestionRotationError.rotationInvariantViolation
+            }
 
-            if try store.compareAndSwap(
-                expectedRevision: expectedRevision,
-                replacement: ledger
-            ) {
-                return plan
+            var consumed = state.consumedEpochOrdinals ?? []
+            for epochOrdinal in state.cursor..<order.count {
+                guard !consumed.contains(epochOrdinal) else { continue }
+                let stableOrdinal = try Self.stableOrdinal(
+                    epoch: state.epoch,
+                    epochOrdinal: epochOrdinal,
+                    bankQuestionCount: bankIDs.count
+                )
+                let candidate = NFOfflineQuestionRotationPlanItem(
+                    questionID: order[epochOrdinal],
+                    quizOrdinal: planItems.count,
+                    epoch: state.epoch,
+                    epochOrdinal: epochOrdinal,
+                    stableOrdinal: stableOrdinal
+                )
+                guard !planItems.contains(where: { $0.questionID == candidate.questionID }),
+                      isEligible?(candidate) ?? true else { continue }
+                planItems.append(candidate)
+                consumed.insert(epochOrdinal)
+                if planItems.count == itemCount { break }
+            }
+            while consumed.remove(state.cursor) != nil { state.cursor += 1 }
+            state.consumedEpochOrdinals = consumed.isEmpty ? nil : consumed
+
+            if state.cursor == order.count {
+                let quizTailCount = planItems.count < itemCount ? planItems.count : 0
+                state = try advancingEpoch(
+                    state,
+                    completedOrder: order,
+                    minimumExcludedTailCount: quizTailCount
+                )
+            } else if planItems.count < itemCount {
+                // One finite pass has exhausted this epoch's feasible pool.
+                // Holes prevent a new epoch; no proposal is published on failure.
+                throw NFOfflineQuestionRotationError.insufficientEligibleQuestions(actual: planItems.count, required: itemCount)
             }
         }
 
+        guard Set(planItems.map(\.questionID)).count == planItems.count else {
+            throw NFOfflineQuestionRotationError.rotationInvariantViolation
+        }
+
+        ledger.scopes[scopeKey] = state
+        ledger.revision = try Self.incrementing(ledger.revision)
+        let plan = NFOfflineQuestionRotationPlan(
+            id: Self.planID(
+                profileID: profileID,
+                lab: lab,
+                laneID: laneID,
+                bankVersion: bank.version,
+                reservationOrdinal: reservationOrdinal
+            ),
+            profileID: profileID,
+            lab: lab,
+            laneID: laneID,
+            bankVersion: bank.version,
+            reservationOrdinal: reservationOrdinal,
+            items: planItems
+        )
+
+        return .init(expectedRevision: expectedRevision, replacement: ledger, plan: plan)
+    }
+
+    /// Legacy/test adapter. Production AppStore launches use prepareReservation
+    /// and the local repository's atomic acceptance boundary instead.
+    func reserve(profileID: UUID, lab: TrainingLab, laneID: String = "mixed", itemCount: Int,
+                 bank: NFVersionedOfflineQuestionBank) throws -> NFOfflineQuestionRotationPlan {
+        for _ in 0..<maximumCompareAndSwapAttempts {
+            let proposal = try prepareReservation(profileID: profileID, lab: lab, laneID: laneID,
+                itemCount: itemCount, bank: bank, loadedLedger: store.load())
+            if try store.compareAndSwap(expectedRevision: proposal.expectedRevision, replacement: proposal.replacement) {
+                return proposal.plan
+            }
+        }
         throw NFOfflineQuestionRotationError.concurrentReservationLimitExceeded
     }
 
@@ -376,8 +445,7 @@ struct NFOfflineQuestionRotation: Sendable {
                 version: bank.version
             )
         }
-        guard persisted.cursor >= 0,
-              persisted.cursor < bankQuestionCount,
+        guard persisted.hasValidConsumption,
               Set(persisted.boundaryExclusions).count == persisted.boundaryExclusions.count,
               Set(persisted.boundaryExclusions).isSubset(of: Set(bank.questionIDs(for: lab))) else {
             throw NFOfflineQuestionRotationError.corruptPersistedState
@@ -393,6 +461,7 @@ struct NFOfflineQuestionRotation: Sendable {
         var next = state
         next.epoch = try Self.incrementing(state.epoch)
         next.cursor = 0
+        next.consumedEpochOrdinals = nil
         let exclusionCount = min(
             completedOrder.count - 1,
             max(boundaryTailLength, minimumExcludedTailCount)
@@ -463,7 +532,7 @@ struct NFOfflineQuestionRotation: Sendable {
         return hash
     }
 
-    private static func scopeKey(
+    static func scopeKey(
         profileID: UUID,
         lab: TrainingLab,
         laneID: String,
@@ -509,5 +578,25 @@ private struct NFOfflineQuestionRotationRandom: Sendable {
             let other = Int(next() % UInt64(index + 1))
             if index != other { values.swapAt(index, other) }
         }
+    }
+}
+
+extension NFOfflineQuestionRotation {
+    /// Observe one finite epoch without accepting any candidate. This preserves
+    /// the exact original permutation and every ineligible hole. No store read,
+    /// cursor publication, speculative ownership or exposure occurs here.
+    func availablePositions(profileID: UUID, lab: TrainingLab, laneID: String,
+                            bank: NFVersionedOfflineQuestionBank,
+                            loadedLedger: NFOfflineQuestionRotationLedger?) throws -> [NFOfflineQuestionRotationPlanItem] {
+        var positions: [NFOfflineQuestionRotationPlanItem] = []
+        do {
+            _ = try prepareReservation(profileID: profileID, lab: lab, laneID: laneID, itemCount: 1,
+                bank: bank, loadedLedger: loadedLedger) { position in
+                    positions.append(position); return false
+                }
+        } catch NFOfflineQuestionRotationError.insufficientEligibleQuestions(actual: 0, required: 1) {
+            return positions
+        }
+        throw NFOfflineQuestionRotationError.rotationInvariantViolation
     }
 }

@@ -63,7 +63,8 @@ final class TransferTaxonomyTests: XCTestCase {
         XCTAssertNil(attempt.skillWeights[TrainingLab.retrieval.skillID])
 
         let summaries = AdaptiveEngine.reduce([attempt.dto])
-        XCTAssertEqual(summaries.first(where: { $0.lab == .transfer })?.evidenceCount, 1)
+        XCTAssertEqual(summaries.first(where: { $0.lab == .transfer })?.evidenceCount, 0)
+        XCTAssertEqual(NFHistoricalPracticeProjection.reduce(attempts: [attempt.dto]).first?.legacyCount, 1)
         XCTAssertEqual(summaries.first(where: { $0.lab == .retrieval })?.evidenceCount, 0)
     }
 

@@ -1,0 +1,333 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project NeuroForge.xcodeproj -scheme NeuroForge -destination platform=macOS -derivedDataPath /tmp/NeuroForge-improvement-build CODE_SIGNING_ALLOWED=NO "-only-testing:NeuroForgeTests/SpatialStructureContractTests" "-only-testing:NeuroForgeTests/ContentImprovementRegressionTests" "-only-testing:NeuroForgeTests/DefaultContentCatalogTests" "-only-testing:NeuroForgeTests/GeneratedLifecycleParityTests" "-only-testing:NeuroForgeTests/LocalizationCatalogTests" "-only-testing:NeuroForgeTests/LocalizationResidualTests" test
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  SwiftMath: https://github.com/mgriebling/SwiftMath.git @ 1d2c908
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, id:00006020-000228AE0287401E, name:My Mac }
+{ platform:macOS, arch:x86_64, id:00006020-000228AE0287401E, name:My Mac }
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (5 targets)
+    Target 'NeuroForgeTests' in project 'NeuroForge'
+        ➜ Explicit dependency on target 'NeuroForge' in project 'NeuroForge'
+    Target 'NeuroForge' in project 'NeuroForge'
+        ➜ Explicit dependency on target 'SwiftMath' in project 'SwiftMath'
+    Target 'SwiftMath' in project 'SwiftMath'
+        ➜ Explicit dependency on target 'SwiftMath' in project 'SwiftMath'
+        ➜ Explicit dependency on target 'SwiftMath_SwiftMath' in project 'SwiftMath'
+    Target 'SwiftMath' in project 'SwiftMath'
+        ➜ Explicit dependency on target 'SwiftMath_SwiftMath' in project 'SwiftMath'
+    Target 'SwiftMath_SwiftMath' in project 'SwiftMath' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/NeuroForge.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -o /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache
+
+SwiftDriver NeuroForge normal arm64 com.apple.xcode.tools.swift.compiler (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name NeuroForge -Onone @/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.SwiftFileList -DDEBUG -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.4 -g -module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -warnings-as-errors -index-store-path /tmp/NeuroForge-improvement-build/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/NeuroForge-improvement-build/Build/Products/Debug -F /tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -F /tmp/NeuroForge-improvement-build/Build/Products/Debug -emit-localized-strings -emit-localized-strings-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64 -c -j12 -disable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -sdk-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/NeuroForge-improvement-build/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-generated-files.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-own-target-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge-1f477e43189f7d9a813ad7fc7bf5f2ec-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-project-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Products/Debug/include -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources-normal/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge-Swift.h -working-directory /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ NFExerciseContractMetadata.swift /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFExerciseContractMetadata.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftCompile normal arm64 /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge/Sources/TrainingEngine/NFExerciseContractMetadata.swift (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ NeuroForge (in target 'NeuroForge' from project 'NeuroForge')
+EmitSwiftModule normal arm64 (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NFExerciseContractMetadata.swift (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for NeuroForge (in target 'NeuroForge' from project 'NeuroForge')
+
+SwiftDriver\ Compilation\ Requirements NeuroForge normal arm64 com.apple.xcode.tools.swift.compiler (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name NeuroForge -Onone @/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.SwiftFileList -DDEBUG -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.4 -g -module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -warnings-as-errors -index-store-path /tmp/NeuroForge-improvement-build/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/NeuroForge-improvement-build/Build/Products/Debug -F /tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -F /tmp/NeuroForge-improvement-build/Build/Products/Debug -emit-localized-strings -emit-localized-strings-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64 -c -j12 -disable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -sdk-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/NeuroForge-improvement-build/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-generated-files.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-own-target-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge-1f477e43189f7d9a813ad7fc7bf5f2ec-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-project-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Products/Debug/include -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources-normal/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge-Swift.h -working-directory /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver\ Compilation NeuroForge normal arm64 com.apple.xcode.tools.swift.compiler (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name NeuroForge -Onone @/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.SwiftFileList -DDEBUG -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -target arm64-apple-macos26.4 -g -module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -warnings-as-errors -index-store-path /tmp/NeuroForge-improvement-build/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/NeuroForge-improvement-build/Build/Products/Debug -F /tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -F /tmp/NeuroForge-improvement-build/Build/Products/Debug -emit-localized-strings -emit-localized-strings-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64 -c -j12 -disable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/NeuroForge-improvement-build/SDKStatCaches.noindex/macosx26.5-25F70-e082c4a02f00227109f4ed75e425c832.sdkstatcache -output-file-map /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -sdk-module-cache-path /tmp/NeuroForge-improvement-build/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.swiftmodule -validate-clang-modules-once -clang-build-session-file /tmp/NeuroForge-improvement-build/ModuleCache.noindex/Session.modulevalidation -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-generated-files.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-own-target-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge-1f477e43189f7d9a813ad7fc7bf5f2ec-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-project-headers.hmap -Xcc -I/tmp/NeuroForge-improvement-build/Build/Products/Debug/include -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources-normal/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources/arm64 -Xcc -I/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge-Swift.h -working-directory /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge -experimental-emit-module-separately -disable-cmo
+
+Copy /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.swiftsourceinfo (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.swiftsourceinfo /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+Copy /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.swiftmodule/arm64-apple-macos.abi.json /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.abi.json (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.abi.json /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.swiftmodule/arm64-apple-macos.abi.json
+
+Ld /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib normal (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.4 -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -L/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/tmp/NeuroForge-improvement-build/Build/Products/Debug -F/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -F/tmp/NeuroForge-improvement-build/Build/Products/Debug -filelist /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.LinkFileList -install_name @rpath/NeuroForge.debug.dylib -Xlinker -rpath -Xlinker /tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -object_path_lto -Xlinker /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.swiftmodule @/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge-linker-args.resp -Wl,-no_warn_duplicate_libraries -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -o /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib -Xlinker -add_ast_path -Xlinker /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/SwiftMath.build/Debug/SwiftMath.build/Objects-normal/arm64/SwiftMath.swiftmodule @/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/SwiftMath.build/Debug/SwiftMath.build/Objects-normal/arm64/SwiftMath-linker-args.resp
+
+ConstructStubExecutorLinkFileList /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-ExecutorLinkFileList-normal-arm64.txt (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    construct-stub-executor-link-file-list /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'NeuroForge' from project 'NeuroForge')
+
+Ld /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge normal (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.4 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -L/tmp/NeuroForge-improvement-build/Build/Products/Debug -F/tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -F/tmp/NeuroForge-improvement-build/Build/Products/Debug -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker /tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -rdynamic -Xlinker -no_deduplicate -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge-ExecutorLinkFileList-normal-arm64.txt /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib -o /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge
+
+CopySwiftLibs /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib --scan-folder /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/Frameworks --scan-folder /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns --scan-folder /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/Library/SystemExtensions --scan-folder /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/Extensions --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+Ignoring --strip-bitcode because --sign was not passed
+
+ExtractAppIntentsMetadata (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name NeuroForge --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F113 --platform-family macOS --deployment-target 26.4 --bundle-identifier com.zacrotech.NeuroForge --output /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/Resources --target-triple arm64-apple-macos26.4 --binary-file /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge --dependency-file /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge_dependency_info.dat --stringsdata-file /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.SwiftFileList --metadata-file-list /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge.DependencyMetadataFileList --static-metadata-file-list /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/NeuroForge.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForge.build/Objects-normal/arm64/NeuroForge.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents
+2026-09-05 15:47:01.734 appintentsmetadataprocessor[32415:5697830] Starting appintentsmetadataprocessor export
+2026-09-05 15:47:01.850 appintentsmetadataprocessor[32415:5697830] Writing Metadata.appintents
+2026-09-05 15:47:01.850 appintentsmetadataprocessor[32415:5697830] Metadata root: /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/Resources/Metadata.appintents
+
+Ld /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns/NeuroForgeTests.xctest/Contents/MacOS/NeuroForgeTests normal (in target 'NeuroForgeTests' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.4 -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk -O0 -L/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/tmp/NeuroForge-improvement-build/Build/Products/Debug -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -F/tmp/NeuroForge-improvement-build/Build/Products/Debug -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.LinkFileList -Xlinker -rpath -Xlinker /tmp/NeuroForge-improvement-build/Build/Products/Debug/PackageFrameworks -Xlinker -rpath -Xlinker @loader_path/../Frameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -bundle_loader /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge -Xlinker -object_path_lto -Xlinker /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.swiftmodule @/tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests-linker-args.resp -Wl,-no_warn_duplicate_libraries -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib -o /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns/NeuroForgeTests.xctest/Contents/MacOS/NeuroForgeTests
+
+CopySwiftLibs /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns/NeuroForgeTests.xctest (in target 'NeuroForgeTests' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns/NeuroForgeTests.xctest/Contents/MacOS/NeuroForgeTests --scan-folder /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns/NeuroForgeTests.xctest/Contents/Frameworks --scan-folder /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns/NeuroForgeTests.xctest/Contents/PlugIns --scan-folder /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns/NeuroForgeTests.xctest/Contents/Library/SystemExtensions --scan-folder /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns/NeuroForgeTests.xctest/Contents/Extensions --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns/NeuroForgeTests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+Ignoring --strip-bitcode because --sign was not passed
+
+ExtractAppIntentsMetadata (in target 'NeuroForgeTests' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name NeuroForgeTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk --xcode-version 17F113 --platform-family macOS --deployment-target 26.4 --bundle-identifier com.zacrotech.NeuroForgeTests --output /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns/NeuroForgeTests.xctest/Contents/Resources --target-triple arm64-apple-macos26.4 --binary-file /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/PlugIns/NeuroForgeTests.xctest/Contents/MacOS/NeuroForgeTests --dependency-file /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests_dependency_info.dat --stringsdata-file /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.SwiftFileList --metadata-file-list /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests.DependencyMetadataFileList --static-metadata-file-list /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/NeuroForgeTests.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/NeuroForge-improvement-build/Build/Intermediates.noindex/NeuroForge.build/Debug/NeuroForgeTests.build/Objects-normal/arm64/NeuroForgeTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-09-05 15:47:02.388 appintentsmetadataprocessor[32422:5697879] Starting appintentsmetadataprocessor export
+2026-09-05 15:47:02.418 appintentsmetadataprocessor[32422:5697879] Extracted no relevant App Intents symbols, skipping writing output
+
+Validate /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    builtin-validationUtility /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app -no-validate-extension -infoplist-subpath Contents/Info.plist
+
+RegisterWithLaunchServices /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app (in target 'NeuroForge' from project 'NeuroForge')
+    cd /Users/takamimarsh/Developer/Projects/Zacro\ Tech/NeuroForge
+    /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -f -R -trusted /tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app
+
+2026-09-05 15:47:05.365485-0400 NeuroForge[32436:5698090] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-05 15:47:05.366101-0400 NeuroForge[32436:5698090] [Application] Error registering app with intents framework: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-05 15:47:05.366677-0400 NeuroForge[32436:5698093] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-05 15:47:05.366694-0400 NeuroForge[32436:5698093] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-05 15:47:05.367435-0400 NeuroForge[32436:5698091] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-05 15:47:05.367451-0400 NeuroForge[32436:5698091] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-05 15:47:05.368267-0400 NeuroForge[32436:5698091] [Connection] Will NOT re-try to establish the connection
+2026-09-05 15:47:05.368300-0400 NeuroForge[32436:5698090] [Connection] Unable to get synchronousRemoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-05 15:47:05.368314-0400 NeuroForge[32436:5698090] [Connection] Unable to re-register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-09-05 15:47:05.671397-0400 NeuroForge[32436:5698065] ApplePersistenceIgnoreState: Existing state will not be touched. New state will be written to /var/folders/9s/lwj2ss7d679bl8hv9dx2qf6h0000gn/T/com.zacrotech.NeuroForge.savedState
+Test Suite 'Selected tests' started at 2026-09-05 15:47:06.622.
+Test Suite 'NeuroForgeTests.xctest' started at 2026-09-05 15:47:06.623.
+Test Suite 'ContentImprovementRegressionTests' started at 2026-09-05 15:47:06.623.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testB08AdmissionSolvesSharedTargetsAndReportsExactMissingAssets]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testB08AdmissionSolvesSharedTargetsAndReportsExactMissingAssets]' passed (0.006 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testB08VarietyAssignmentMatchesAnIndependentExhaustiveOracle]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testB08VarietyAssignmentMatchesAnIndependentExhaustiveOracle]' passed (0.065 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testColdProtectedNumericResumeUsesSavedEnglishLocaleUnderJapaneseChrome]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testColdProtectedNumericResumeUsesSavedEnglishLocaleUnderJapaneseChrome]' passed (0.051 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testEstimateKeysStayCanonicalAcrossRegionsAndRejectThousandfoldErrors]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testEstimateKeysStayCanonicalAcrossRegionsAndRejectThousandfoldErrors]' passed (0.151 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testExactAliasGuardPreservesCanonicalJudgmentEstimateAndUnrelatedLogicAlternatives]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testExactAliasGuardPreservesCanonicalJudgmentEstimateAndUnrelatedLogicAlternatives]' passed (0.027 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testFrozenGermanEstimateExactAliasesAreInvalidItemsWithoutChangingSavedAnswers]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testFrozenGermanEstimateExactAliasesAreInvalidItemsWithoutChangingSavedAnswers]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testHistoricalCorrectionsAreReproducibleFindingsAndNeverRewriteOriginals]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testHistoricalCorrectionsAreReproducibleFindingsAndNeverRewriteOriginals]' passed (0.004 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testObservationChartAndTablePreserveTheSameOriginalCountsAndScale]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testObservationChartAndTablePreserveTheSameOriginalCountsAndScale]' passed (0.027 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testObservationInspectionDoesNotGuessMalformedCountOrCategoryValues]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testObservationInspectionDoesNotGuessMalformedCountOrCategoryValues]' passed (0.006 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testObservationInspectionRejectsProtectedFutureAndNonGivenContracts]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testObservationInspectionRejectsProtectedFutureAndNonGivenContracts]' passed (0.005 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS01EquivalentCoordinateOptionsInvalidateTheItemRatherThanPenalizeOneChoice]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS01EquivalentCoordinateOptionsInvalidateTheItemRatherThanPenalizeOneChoice]' passed (0.378 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS01StructuredTransferOptionsRemainDistinctAndAgreeWithIndependentTableOracle]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS01StructuredTransferOptionsRemainDistinctAndAgreeWithIndependentTableOracle]' passed (0.258 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS02IntervalGeometryExhaustsTheAuthoredDomainWithoutUsingItAsAnInferenceTest]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS02IntervalGeometryExhaustsTheAuthoredDomainWithoutUsingItAsAnInferenceTest]' passed (0.301 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS03AndS04SymbolicEquivalenceRetainsCaseFunctionRolesAndDomainBoundaries]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS03AndS04SymbolicEquivalenceRetainsCaseFunctionRolesAndDomainBoundaries]' passed (0.007 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS03ProseAcceptsReviewedRelationsRejectsContradictionsAndClarifiesUnknownCoverage]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS03ProseAcceptsReviewedRelationsRejectsContradictionsAndClarifiesUnknownCoverage]' passed (0.002 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS05EveryDeclaredEstimateAliasReceivesIdenticalFullCredit]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS05EveryDeclaredEstimateAliasReceivesIdenticalFullCredit]' passed (0.013 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS06KnownSolutionScaffoldsAreAbsentFromIndependentRoles]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS06KnownSolutionScaffoldsAreAbsentFromIndependentRoles]' passed (0.013 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS07NumericEquivalenceSeparatesSyntaxFromWrongUnits]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS07NumericEquivalenceSeparatesSyntaxFromWrongUnits]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS08SelectingEverythingCannotExploitPartialCreditOrSupportBundles]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS08SelectingEverythingCannotExploitPartialCreditOrSupportBundles]' passed (0.005 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS09DAGAcceptsEveryCompleteTopologicalOrderAndBlocksCycles]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS09DAGAcceptsEveryCompleteTopologicalOrderAndBlocksCycles]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS10SelfReportsNeverBecomeVerifiedCorrectnessAndRoundTrip]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testS10SelfReportsNeverBecomeVerifiedCorrectnessAndRoundTrip]' passed (0.002 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testSavedRequestLocalePinsNumericAndCubeContentAcrossChromeLanguageChanges]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testSavedRequestLocalePinsNumericAndCubeContentAcrossChromeLanguageChanges]' passed (0.006 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testSpatialCoordinateLabelsDoNotConvertUnboundedDoublesToIntegers]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testSpatialCoordinateLabelsDoNotConvertUnboundedDoublesToIntegers]' passed (0.001 seconds).
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testSpatialRenderingRejectsUnrepresentableAndOversizedOriginalGeometry]' started.
+Test Case '-[NeuroForgeTests.ContentImprovementRegressionTests testSpatialRenderingRejectsUnrepresentableAndOversizedOriginalGeometry]' passed (0.001 seconds).
+Test Suite 'ContentImprovementRegressionTests' passed at 2026-09-05 15:47:07.966.
+	 Executed 24 tests, with 0 failures (0 unexpected) in 1.337 (1.343) seconds
+Test Suite 'DefaultContentCatalogTests' started at 2026-09-05 15:47:07.967.
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testCatalogCallerForwardsElapsedOnlyWithoutUnlockingLegacyFluency]' started.
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testCatalogCallerForwardsElapsedOnlyWithoutUnlockingLegacyFluency]' passed (0.032 seconds).
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testCatalogExposesEveryDeterministicFamilyExactlyOnce]' started.
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testCatalogExposesEveryDeterministicFamilyExactlyOnce]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testCatalogLaunchCarriesFieldPracticeEvidenceAndExposureSeed]' started.
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testCatalogLaunchCarriesFieldPracticeEvidenceAndExposureSeed]' passed (0.050 seconds).
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testCatalogTitlesAndResearchBoundariesAreLocalized]' started.
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testCatalogTitlesAndResearchBoundariesAreLocalized]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testEveryCatalogEntrySelectsARealDeterministicScorableFamily]' started.
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testEveryCatalogEntrySelectsARealDeterministicScorableFamily]' passed (2.835 seconds).
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testPuzzleCatalogStaysBoundedToNamedMechanics]' started.
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testPuzzleCatalogStaysBoundedToNamedMechanics]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testSearchSupportsTaxonomyEnglishAndJapanese]' started.
+Test Case '-[NeuroForgeTests.DefaultContentCatalogTests testSearchSupportsTaxonomyEnglishAndJapanese]' passed (0.020 seconds).
+Test Suite 'DefaultContentCatalogTests' passed at 2026-09-05 15:47:10.915.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 2.946 (2.948) seconds
+Test Suite 'GeneratedLifecycleParityTests' started at 2026-09-05 15:47:10.915.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testCompletedInventoryKeepsEveryAttemptAndOriginalCompletionScope]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testCompletedInventoryKeepsEveryAttemptAndOriginalCompletionScope]' passed (0.049 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testEarlyEndFailurePreservesEditorUntilDurableTerminalAcknowledgement]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testEarlyEndFailurePreservesEditorUntilDurableTerminalAcknowledgement]' passed (0.047 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testExactLegacyPendingCommitKeepsOriginalRunAndAttemptProtocol]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testExactLegacyPendingCommitKeepsOriginalRunAndAttemptProtocol]' passed (0.014 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testExpiredTemporaryInventoryStillPinsSuspendedRunUntilExplicitEnd]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testExpiredTemporaryInventoryStillPinsSuspendedRunUntilExplicitEnd]' passed (0.046 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testHintFailureRevealsNoStageAndCapturedSkipCannotSkipTheFollowingItem]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testHintFailureRevealsNoStageAndCapturedSkipCannotSkipTheFollowingItem]' passed (0.028 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testInitialFailedAcknowledgementCannotEditSubmitHintOrStartAnswerClock]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testInitialFailedAcknowledgementCannotEditSubmitHintOrStartAnswerClock]' passed (0.014 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testInitialReferenceAndSelfRatingAreLockedWhilePausedAndCountAsActivity]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testInitialReferenceAndSelfRatingAreLockedWhilePausedAndCountAsActivity]' passed (0.022 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testNoDraftStartDoesNotInferRunFromSetHistoryAndRetainedTerminalCannotReopen]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testNoDraftStartDoesNotInferRunFromSetHistoryAndRetainedTerminalCannotReopen]' passed (0.021 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testPreparedResponseCannotBeRewrittenByAValidLookingSameSlotCheckpoint]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testPreparedResponseCannotBeRewrittenByAValidLookingSameSlotCheckpoint]' passed (0.017 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testRealUnwritableFileRetainsInitialIdentityAndCannotPublishOrAdvance]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testRealUnwritableFileRetainsInitialIdentityAndCannotPublishOrAdvance]' passed (0.034 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testSkipFailedNextRetainsOneUnscoredReceiptAndExactDraftThenColdAdvances]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testSkipFailedNextRetainsOneUnscoredReceiptAndExactDraftThenColdAdvances]' passed (0.038 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalCollectionFailedFileWritePreservesAllOriginalPayloadsForRetry]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalCollectionFailedFileWritePreservesAllOriginalPayloadsForRetry]' passed (0.031 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalCollectionSkipsActiveOwnedAndAmbiguousLegacyPayloads]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalCollectionSkipsActiveOwnedAndAmbiguousLegacyPayloads]' passed (0.023 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalInventoryCASRejectsTamperedCountsQuestionAndSourceClosure]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalInventoryCASRejectsTamperedCountsQuestionAndSourceClosure]' passed (0.037 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalInventoryFailedWriteRetainsFullRunUntilAtomicRetry]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalInventoryFailedWriteRetainsFullRunUntilAtomicRetry]' passed (0.031 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalInventoryReleasesFutureQuestionsAndRetainsExactUnfinishedSlotOnColdOpen]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalInventoryReleasesFutureQuestionsAndRetainsExactUnfinishedSlotOnColdOpen]' passed (0.058 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalSourceClosureDropsOnlyUnusedChunksAndPreservesReusableCollection]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalSourceClosureDropsOnlyUnusedChunksAndPreservesReusableCollection]' passed (0.030 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalSourceClosureRetainsLowercaseDocumentAndUnresolvedLegacyReferences]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTerminalSourceClosureRetainsLowercaseDocumentAndUnresolvedLegacyReferences]' passed (0.049 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTwoRunsOfOneSetHaveSeparateAttemptSessionsAndStableNextSlots]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testTwoRunsOfOneSetHaveSeparateAttemptSessionsAndStableNextSlots]' passed (0.043 seconds).
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testWorkedSolutionWaitsForReceiptAndFeedbackFailureReplaysWithoutGrading]' started.
+Test Case '-[NeuroForgeTests.GeneratedLifecycleParityTests testWorkedSolutionWaitsForReceiptAndFeedbackFailureReplaysWithoutGrading]' passed (0.024 seconds).
+Test Suite 'GeneratedLifecycleParityTests' passed at 2026-09-05 15:47:11.575.
+	 Executed 20 tests, with 0 failures (0 unexpected) in 0.655 (0.660) seconds
+Test Suite 'LocalizationCatalogTests' started at 2026-09-05 15:47:11.575.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testAppIntentMetadataDoesNotNameApple]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testAppIntentMetadataDoesNotNameApple]' passed (0.002 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testCentralizedCountAndDurationCopyHandlesSingularPluralRangesAndLocales]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testCentralizedCountAndDurationCopyHandlesSingularPluralRangesAndLocales]' passed (0.002 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testCompositeResponseLabelsLocalizeWithoutChangingCanonicalKeys]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testCompositeResponseLabelsLocalizeWithoutChangingCanonicalKeys]' passed (0.001 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testCurrentComputedQuestionWriterAndSettingsKeysAreManuallyInventoriedAndCataloged]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testCurrentComputedQuestionWriterAndSettingsKeysAreManuallyInventoriedAndCataloged]' passed (0.168 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testDeterministicExercisesHonorRequestedJapaneseLocaleAcrossEveryLab]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testDeterministicExercisesHonorRequestedJapaneseLocaleAcrossEveryLab]' passed (0.025 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testDynamicTitlesHonorExplicitAppLocale]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testDynamicTitlesHonorExplicitAppLocale]' passed (0.001 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testEveryExtractedProductionKeyIsCataloged]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testEveryExtractedProductionKeyIsCataloged]' passed (0.604 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testEveryTranslatableCatalogEntryHasJapaneseAndMatchingPlaceholders]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testEveryTranslatableCatalogEntryHasJapaneseAndMatchingPlaceholders]' passed (0.235 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testJapaneseLocalizationDoesNotChangeDeterministicAuthorityTopology]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testJapaneseLocalizationDoesNotChangeDeterministicAuthorityTopology]' passed (0.038 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testJapaneseMentalMathDomainPacksLocalizeVisibleCopyAndPreserveStableIDs]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testJapaneseMentalMathDomainPacksLocalizeVisibleCopyAndPreserveStableIDs]' passed (0.023 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testLocaleAwareDateFormattingDiffersAcrossSupportedLanguages]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testLocaleAwareDateFormattingDiffersAcrossSupportedLanguages]' passed (0.002 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testNewFirstRunAndQuestionWriterJourneysHaveRealJapaneseCopy]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testNewFirstRunAndQuestionWriterJourneysHaveRealJapaneseCopy]' passed (0.023 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testPersistedDailyPlanPresentationReprojectsForSelectedLocaleWithoutChangingAuthority]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testPersistedDailyPlanPresentationReprojectsForSelectedLocaleWithoutChangingAuthority]' passed (0.002 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testProductionAvoidsProcessLocaleDateConvenienceFormatting]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testProductionAvoidsProcessLocaleDateConvenienceFormatting]' passed (0.034 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testRemovedNativeAndObsoleteConsentCopyIsAbsentFromShippingCatalog]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testRemovedNativeAndObsoleteConsentCopyIsAbsentFromShippingCatalog]' passed (0.068 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testRuntimeComputedLocalizationAlwaysUsesTheExplicitAppBundleResolver]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testRuntimeComputedLocalizationAlwaysUsesTheExplicitAppBundleResolver]' passed (0.032 seconds).
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testShortcutPhraseMetadataIsCataloged]' started.
+Test Case '-[NeuroForgeTests.LocalizationCatalogTests testShortcutPhraseMetadataIsCataloged]' passed (0.001 seconds).
+Test Suite 'LocalizationCatalogTests' passed at 2026-09-05 15:47:12.837.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 1.258 (1.262) seconds
+Test Suite 'LocalizationResidualTests' started at 2026-09-05 15:47:12.837.
+Test Case '-[NeuroForgeTests.LocalizationResidualTests testReportHistorySearchIncludesLocaleFormattedCreatedDate]' started.
+Test Case '-[NeuroForgeTests.LocalizationResidualTests testReportHistorySearchIncludesLocaleFormattedCreatedDate]' passed (0.003 seconds).
+Test Case '-[NeuroForgeTests.LocalizationResidualTests testReportStatusesLocalizeInBothSupportedLanguages]' started.
+Test Case '-[NeuroForgeTests.LocalizationResidualTests testReportStatusesLocalizeInBothSupportedLanguages]' passed (0.001 seconds).
+Test Case '-[NeuroForgeTests.LocalizationResidualTests testUnknownScoringCodeNeverReachesLearnerFacingCopy]' started.
+Test Case '-[NeuroForgeTests.LocalizationResidualTests testUnknownScoringCodeNeverReachesLearnerFacingCopy]' passed (0.001 seconds).
+Test Suite 'LocalizationResidualTests' passed at 2026-09-05 15:47:12.843.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.005 (0.006) seconds
+Test Suite 'SpatialStructureContractTests' started at 2026-09-05 15:47:12.843.
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testActualLaunchColdChoiceQuarantineAndHistoryKeepTheExactNewStructure]' started.
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testActualLaunchColdChoiceQuarantineAndHistoryKeepTheExactNewStructure]' passed (0.161 seconds).
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testAllOccupiedFootprintsMatchIndependentProjectionAndNativeCellPositions]' started.
+2026-09-05 15:47:13.313586-0400 NeuroForge[32436:5698065] [Assets] asset string 'engine:throttleGhosted.rematerial' parse failed: Invalid asset path: Unknown asset type suffix 'engine:throttleGhosted.rematerial'
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testAllOccupiedFootprintsMatchIndependentProjectionAndNativeCellPositions]' passed (0.630 seconds).
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testEveryFaceContractHasOnePhysicalKeyAndAllTwentyFourProperOrientations]' started.
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testEveryFaceContractHasOnePhysicalKeyAndAllTwentyFourProperOrientations]' passed (0.570 seconds).
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testGeneratedRetainedAssemblyUsesSameTypedChoiceAndSavedHistory]' started.
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testGeneratedRetainedAssemblyUsesSameTypedChoiceAndSavedHistory]' passed (0.051 seconds).
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testMalformedUnsupportedAndProtectedGeometryFailsBeforeScoringOrRendering]' started.
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testMalformedUnsupportedAndProtectedGeometryFailsBeforeScoringOrRendering]' passed (0.007 seconds).
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testSemanticAliasesAndMissingPinnedPolicyCannotMintOrOverwriteAQuestion]' started.
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testSemanticAliasesAndMissingPinnedPolicyCannotMintOrOverwriteAQuestion]' passed (0.019 seconds).
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testTwoViewQuestionsAcceptEveryValidProposalAndRejectEveryIncompleteOrExtraSet]' started.
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testTwoViewQuestionsAcceptEveryValidProposalAndRejectEveryIncompleteOrExtraSet]' passed (0.159 seconds).
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testWorkedEXC102UsesActualLabeledNativeFacesAndNeverReplaysBeforeCommit]' started.
+Test Case '-[NeuroForgeTests.SpatialStructureContractTests testWorkedEXC102UsesActualLabeledNativeFacesAndNeverReplaysBeforeCommit]' passed (0.066 seconds).
+Test Suite 'SpatialStructureContractTests' passed at 2026-09-05 15:47:14.509.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 1.664 (1.666) seconds
+Test Suite 'NeuroForgeTests.xctest' passed at 2026-09-05 15:47:14.510.
+	 Executed 79 tests, with 0 failures (0 unexpected) in 7.864 (7.887) seconds
+Test Suite 'Selected tests' passed at 2026-09-05 15:47:14.510.
+	 Executed 79 tests, with 0 failures (0 unexpected) in 7.864 (7.887) seconds
+2026-09-05 15:47:14.834 xcodebuild[32309:5696673] [MT] IDETestOperationsObserverDebug: 11.987 elapsed -- Testing started completed.
+2026-09-05 15:47:14.834 xcodebuild[32309:5696673] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-05 15:47:14.834 xcodebuild[32309:5696673] [MT] IDETestOperationsObserverDebug: 11.987 sec, +11.987 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/NeuroForge-improvement-build/Logs/Test/Test-NeuroForge-2026.09.05_15-46-46--0400.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

@@ -1,0 +1,46 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "00006020-000228AE0287401E",
+        "deviceName" : "My Mac",
+        "modelName" : "MacBook Pro",
+        "osBuildNumber" : "26A5425a",
+        "osVersion" : "27.0",
+        "platform" : "macOS"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 0,
+      "passedTests" : 1359,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "NeuroForge · Built with macOS 27.0",
+  "expectedFailures" : 0,
+  "failedTests" : 0,
+  "finishTime" : 1788648618.791,
+  "passedTests" : 1359,
+  "result" : "Passed",
+  "skippedTests" : 0,
+  "startTime" : 1788648290.391,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+
+  ],
+  "title" : "Test - NeuroForge",
+  "topInsights" : [
+    {
+      "category" : "Longest Test Runs",
+      "impact" : "54% of duration",
+      "text" : "15 longest test runs with outlier durations exceeding 3.84s (three standard deviations)"
+    }
+  ],
+  "totalTestCount" : 1359
+}

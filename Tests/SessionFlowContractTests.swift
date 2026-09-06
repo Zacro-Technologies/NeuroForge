@@ -203,13 +203,18 @@ final class SessionFlowContractTests: XCTestCase {
         _ = container
         let plan = store.todayPlan
         XCTAssertGreaterThanOrEqual(plan.blocks.count, 3)
-        let selected = Array(plan.blocks.prefix(2))
+        let executable = store.reviewExecutionPlan(plan, at: Date(), calendar: .current)
+        let selected = Array(executable.blocks.prefix(2))
+        XCTAssertEqual(selected.count, 2, "The sequence needs two genuinely launchable blocks")
+        let emptyReview = try XCTUnwrap(plan.blocks.first { $0.evidenceClass == .retention && $0.retentionItemIDs.isEmpty })
+        XCTAssertFalse(executable.blocks.contains { $0.id == emptyReview.id })
+        let original = try XCTUnwrap(store.dailyPlans.first { $0.id == plan.id }?.snapshot)
         let sequence = NFTodaySessionSequence()
 
         sequence.clear()
         XCTAssertTrue(sequence.start(
             plan: plan,
-            blockIDs: selected.map(\.id),
+            blockIDs: [emptyReview.id] + selected.map(\.id),
             store: store
         ))
         let firstRequest = try XCTUnwrap(store.activeSessionRequest)
@@ -235,6 +240,8 @@ final class SessionFlowContractTests: XCTestCase {
         XCTAssertEqual(secondRequest.planBlockID, selected[1].id)
         XCTAssertEqual(store.todayPlan.id, plan.id)
         XCTAssertEqual(store.todayPlan.blocks.map(\.id), plan.blocks.map(\.id))
+        XCTAssertEqual(store.dailyPlans.first { $0.id == plan.id }?.snapshot, original)
+        XCTAssertFalse(store.completedPlanBlockIDs(planID: plan.id).contains(emptyReview.id))
 
         try markComplete(secondRequest, store: store)
         XCTAssertFalse(sequence.advance(

@@ -1,0 +1,26 @@
+{
+  "recordedAt": "2026-09-05T06:42:28.970079+00:00",
+  "simulatorID": "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+  "sourceManifest": "Expanded_iOS_Source_Hashes.json",
+  "verifiedSelectors": [
+    "testQuestionSetSourceChooserPreservesSelectionAcrossSearchAndReopen",
+    "testEnergyPreviewCancelPreservesSavedPreferenceAfterRelaunch"
+  ],
+  "matchingBinaries": [
+    {
+      "built": "/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForge.app/NeuroForge",
+      "deployed": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/3789C0A7-DC67-44EF-9AB2-C9E71D1E8394/NeuroForge.app/NeuroForge",
+      "sha256": "064490886945fd4ecc5fe41c9ee2270ecd43fabc0f844c0608b5f18050c6fa75"
+    },
+    {
+      "built": "/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForge.app/NeuroForge.debug.dylib",
+      "deployed": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/3789C0A7-DC67-44EF-9AB2-C9E71D1E8394/NeuroForge.app/NeuroForge.debug.dylib",
+      "sha256": "6c108592f039b7cc6b3908d6a0e96af0d48cf91f799c92fc3f7913dbb5f59bb8"
+    },
+    {
+      "built": "/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForgeUITests-Runner.app/PlugIns/NeuroForgeUITests.xctest/NeuroForgeUITests",
+      "deployed": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/1DBB33C4-9688-461B-B258-3F578B13AB90/NeuroForgeUITests-Runner.app/PlugIns/NeuroForgeUITests.xctest/NeuroForgeUITests",
+      "sha256": "a95464399f9059356ed9b0edfef9e7dec12d16ec3f0407f4a3611643aa5a09ed"
+    }
+  ]
+}

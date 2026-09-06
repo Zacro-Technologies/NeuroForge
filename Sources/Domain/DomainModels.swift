@@ -542,8 +542,8 @@ struct OnboardingDraft: Codable, Equatable, Sendable {
     var stage: Stage = .undisclosed
     var fields: Set<STEMField> = [.general]
     var goals: Set<TrainingGoal> = [.mentalMath, .dataReasoning]
-    var dailyDuration: Int = 10
-    var timingMode: TimingMode = .adaptive
+    var dailyDuration: Int = 5
+    var timingMode: TimingMode = .untimed
     var aiMode: AIMode = .automatic
     var iCloudEnabled: Bool = false
     var reducedMotion: Bool = false
@@ -640,6 +640,10 @@ struct DailyPlan: Codable, Sendable {
 }
 
 struct AttemptDTO: Identifiable, Sendable {
+    let responseFormatRaw: String?
+    let wasSkipped: Bool
+    let hintCount: Int
+    let editorialObservation: NFEditorialObservation?
     let id: UUID
     let itemID: String
     let alternateFormID: String
@@ -679,8 +683,16 @@ struct AttemptDTO: Identifiable, Sendable {
         accommodationFlags: Set<String> = [],
         wasTimed: Bool = false,
         spatialDifficultyParameters: NFSpatialDifficultyParameters? = nil,
-        assessmentFormat: NFAssessmentItemFormat? = nil
+        assessmentFormat: NFAssessmentItemFormat? = nil,
+        editorialObservation: NFEditorialObservation? = nil,
+        responseFormatRaw: String? = nil,
+        wasSkipped: Bool = false,
+        hintCount: Int = 0
     ) {
+        self.responseFormatRaw = responseFormatRaw
+        self.wasSkipped = wasSkipped
+        self.hintCount = max(0, hintCount)
+        self.editorialObservation = editorialObservation
         self.id = id
         self.itemID = itemID ?? id.uuidString
         self.alternateFormID = alternateFormID ?? itemID ?? id.uuidString
@@ -693,7 +705,7 @@ struct AttemptDTO: Identifiable, Sendable {
             : [skillID: 1]
         self.lab = lab
         self.correct = correct
-        self.credit = min(1, max(0, credit ?? (correct ? 1 : 0)))
+        self.credit = credit ?? (correct ? 1 : 0)
         self.confidence = confidence
         self.submittedAt = submittedAt
         self.evidenceClass = evidenceClass

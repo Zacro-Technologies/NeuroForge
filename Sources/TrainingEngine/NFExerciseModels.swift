@@ -276,10 +276,40 @@ struct NFSpatialPoint: Codable, Equatable, Sendable {
     let z: Double?
 }
 
+/// Display-only resource limits also gate newly scored stimuli. Original
+/// snapshots remain intact when a history diagram cannot be represented.
+enum NFSpatialRenderingSafety {
+    static let maximumPointCount = 128
+    static let maximumCoordinateMagnitude = Double(Float.greatestFiniteMagnitude) / 4
+
+    static func permits(_ metadata: NFSpatialRepresentationMetadata) -> Bool {
+        let p = metadata.difficultyParameters
+        guard metadata.points.count <= maximumPointCount,
+              p.rotationMagnitudeDegrees.isFinite, (0...360).contains(p.rotationMagnitudeDegrees),
+              p.objectComplexity.isFinite, (0...1).contains(p.objectComplexity),
+              p.distractorSimilarity.isFinite, (0...1).contains(p.distractorSimilarity) else { return false }
+        return metadata.points.allSatisfy { point in
+            [point.x, point.y, point.z ?? 0].allSatisfy {
+                $0.isFinite && abs($0) <= maximumCoordinateMagnitude
+            }
+        }
+    }
+
+    static func coordinateLabel(_ value: Double, locale: Locale) -> String {
+        guard value.isFinite else { return "—" }
+        if abs(value) >= 1_000_000_000_000 {
+            return value.formatted(.number.locale(locale).notation(.scientific).precision(.significantDigits(1...12)))
+        }
+        return value.formatted(.number.locale(locale).precision(.fractionLength(0...1)))
+    }
+}
+
 enum NFSpatialResponseMode: String, Codable, CaseIterable, Sendable {
     case singleChoice
     case diagramMatch
     case coordinateEntry
+    case numericEntry
+    case multipleChoice
     case directManipulation
 }
 
@@ -426,6 +456,7 @@ struct NFLogicRepresentationMetadata: Codable, Equatable, Sendable {
     let transitions: [NFLogicTransition]
     let invariants: [String: String]
     let traceLanguage: String
+    var traceContract: NFCodeTraceContract? = nil
 }
 
 enum NFExerciseRepresentation: Codable, Equatable, Sendable {
@@ -561,6 +592,7 @@ struct NFMultipleChoiceResponseSchema: Codable, Equatable, Sendable {
     let correctOptionIDs: [String]
     let minimumSelections: Int
     let maximumSelections: Int
+    var acceptedAlternativeSets: [[String]]? = nil
 }
 
 struct NFOrderedStep: Codable, Equatable, Sendable, Identifiable {
@@ -568,9 +600,16 @@ struct NFOrderedStep: Codable, Equatable, Sendable, Identifiable {
     let text: String
 }
 
+struct NFOrderingDependency: Codable, Equatable, Sendable {
+    let before: String
+    let after: String
+}
+
 struct NFOrderedStepsResponseSchema: Codable, Equatable, Sendable {
     let steps: [NFOrderedStep]
     let correctOrder: [String]
+    /// nil preserves a legacy strict chain; [] deliberately accepts every complete order.
+    var dependencies: [NFOrderingDependency]? = nil
 }
 
 enum NFShortTextScoringRule: Codable, Equatable, Sendable {
@@ -588,10 +627,19 @@ enum NFShortTextScoringRule: Codable, Equatable, Sendable {
     )
 }
 
+enum NFShortTextAuthority: Codable, Equatable, Sendable {
+    case symbolic(NFSymbolicAnswerContract)
+    case exactQuantity(NFNumericResponseSchema)
+    case reviewedProse(acceptedAnswers: [String], rejectedAssertions: [String])
+    case identifier(acceptedAnswers: [String])
+    case unsignedBinaryNumeral(NFUnsignedBinaryNumeralContract)
+}
+
 struct NFShortTextResponseSchema: Codable, Equatable, Sendable {
     let expectedAnswer: String
     let scoringRule: NFShortTextScoringRule
     let maximumCharacters: Int
+    var authority: NFShortTextAuthority? = nil
 }
 
 struct NFSelfCheckResponseSchema: Codable, Equatable, Sendable {
@@ -616,10 +664,26 @@ struct NFClaimEvidencePair: Codable, Equatable, Sendable {
     let evidenceIDs: [String]
 }
 
+struct NFClaimSupportContract: Codable, Equatable, Sendable {
+    let claimID: String
+    /// Each inner set is independently sufficient; no unlisted attachment is supported.
+    let sufficientBundles: [[String]]
+}
+
+struct NFClaimEvidenceSelectionScope: Codable, Equatable, Sendable {
+    var schemaVersion = 1
+    let claimID: String
+    let evidenceIDs: [String]
+    let minimumSelections: Int
+    let maximumSelections: Int
+}
+
 struct NFClaimEvidenceResponseSchema: Codable, Equatable, Sendable {
     let claims: [NFClaimOption]
     let evidence: [NFEvidenceOption]
     let correctPairs: [NFClaimEvidencePair]
+    var supportContracts: [NFClaimSupportContract]? = nil
+    var selectionScopes: [NFClaimEvidenceSelectionScope]? = nil
 }
 
 struct NFLogicStateResponseSchema: Codable, Equatable, Sendable {
@@ -628,6 +692,8 @@ struct NFLogicStateResponseSchema: Codable, Equatable, Sendable {
     let acceptedEquivalentStates: [[String: String]]
     let ruleOptions: [NFChoiceOption]
     let expectedViolatedRuleID: String?
+    var fieldDomains: [String: NFStateFieldDomain]? = nil
+    var plausibilityPolicy: NFEstimatePlausibilityPolicy? = nil
 }
 
 enum NFExerciseInteraction: Codable, Equatable, Sendable {
@@ -710,6 +776,8 @@ struct NFExercise: Codable, Equatable, Sendable, Identifiable {
     let timingEligible: Bool
     let responseEditPolicy: NFResponseEditPolicy
     let tags: [String]
+    var contractMetadata: NFExerciseContractMetadata? = nil
+    var availabilityReason: String? = nil
 
     var spatialDifficultyParameters: NFSpatialDifficultyParameters? {
         representations.lazy.compactMap { representation in
@@ -781,6 +849,30 @@ struct NFExerciseFeedback: Codable, Equatable, Sendable {
     let isDelayed: Bool
 }
 
+enum NFScoringOutcome: String, Codable, Equatable, Sendable {
+    case correct, partial, incorrect, needsClarification, selfReported, skipped, invalidItem
+
+    var objectiveCorrectness: Bool? {
+        switch self {
+        case .correct: true
+        case .partial, .incorrect: false
+        case .needsClarification, .selfReported, .skipped, .invalidItem: nil
+        }
+    }
+}
+
+struct NFScoringComponentResult: Codable, Equatable, Sendable {
+    let id: String
+    let submittedValue: String
+    let parsedValue: String?
+    let ruleVersion: Int
+    let outcome: NFScoringOutcome
+    let awardedCredit: Double
+    let maximumCredit: Double
+    let misconceptionCode: String?
+    let explanation: String
+}
+
 struct NFExerciseScoringResult: Codable, Equatable, Sendable {
     let exerciseID: String
     let scoringVersion: Int
@@ -790,4 +882,43 @@ struct NFExerciseScoringResult: Codable, Equatable, Sendable {
     let errorCode: String?
     let expectedAnswerSummary: String?
     let feedback: NFExerciseFeedback
+    let outcome: NFScoringOutcome
+    let components: [NFScoringComponentResult]
+
+    var objectiveCorrectness: Bool? { outcome.objectiveCorrectness }
+
+    init(exerciseID: String, scoringVersion: Int, isCorrect: Bool, credit: Double,
+         normalizedResponse: String?, errorCode: String?, expectedAnswerSummary: String?,
+         feedback: NFExerciseFeedback, outcome: NFScoringOutcome? = nil,
+         components: [NFScoringComponentResult] = []) {
+        self.exerciseID = exerciseID
+        self.scoringVersion = scoringVersion
+        self.isCorrect = isCorrect
+        self.credit = credit
+        self.normalizedResponse = normalizedResponse
+        self.errorCode = errorCode
+        self.expectedAnswerSummary = expectedAnswerSummary
+        self.feedback = feedback
+        self.outcome = outcome ?? (isCorrect ? .correct : (credit > 0 ? .partial : .incorrect))
+        self.components = components
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case exerciseID, scoringVersion, isCorrect, credit, normalizedResponse, errorCode
+        case expectedAnswerSummary, feedback, outcome, components
+    }
+
+    init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(exerciseID: try c.decode(String.self, forKey: .exerciseID),
+                  scoringVersion: try c.decode(Int.self, forKey: .scoringVersion),
+                  isCorrect: try c.decode(Bool.self, forKey: .isCorrect),
+                  credit: try c.decode(Double.self, forKey: .credit),
+                  normalizedResponse: try c.decodeIfPresent(String.self, forKey: .normalizedResponse),
+                  errorCode: try c.decodeIfPresent(String.self, forKey: .errorCode),
+                  expectedAnswerSummary: try c.decodeIfPresent(String.self, forKey: .expectedAnswerSummary),
+                  feedback: try c.decode(NFExerciseFeedback.self, forKey: .feedback),
+                  outcome: try c.decodeIfPresent(NFScoringOutcome.self, forKey: .outcome),
+                  components: try c.decodeIfPresent([NFScoringComponentResult].self, forKey: .components) ?? [])
+    }
 }

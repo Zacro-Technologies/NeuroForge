@@ -1,0 +1,574 @@
+{
+  "kind": "provisional-spatial-geometry-capacity",
+  "generatorVersion": 11,
+  "exerciseSchemaVersion": 8,
+  "policyVersion": 1,
+  "executionStatus": "Python finite oracle executed. App generator/scorer/runtime/native XCTest methods authored; root execution pending.",
+  "faceRotation": {
+    "initialLabeledCubes": 1,
+    "singleOrTwoAxisPaths": 63,
+    "distinctNonidentityProperRotations": 23,
+    "properOrientationsIncludingInitial": 24,
+    "queryDirections": 6,
+    "canonicalQueryContracts": 138,
+    "substructures": [
+      "single-fixed-axis-turn",
+      "two-distinct-fixed-axis-turns"
+    ],
+    "countIsNotNumberOfIndependentObjectTopologies": true
+  },
+  "occupiedTopView": {
+    "freeTetrominoes": 5,
+    "freePentominoes": 12,
+    "canonicalFootprints": 17,
+    "heightsCreateNoNewTopViewIdentity": true,
+    "footprints": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ]
+      ]
+    ]
+  },
+  "twoViewConstraints": {
+    "grounded2x2HeightAssignments": 81,
+    "labeledProjectionPairs": 35,
+    "ambiguousLabeledPairs": 10,
+    "symmetryReducedAmbiguousPairs": 4,
+    "projections": [
+      [
+        2,
+        2,
+        2,
+        2
+      ],
+      [
+        2,
+        3,
+        2,
+        3
+      ],
+      [
+        2,
+        3,
+        3,
+        3
+      ],
+      [
+        3,
+        3,
+        3,
+        3
+      ]
+    ],
+    "correctProposalCounts": [
+      2,
+      3
+    ],
+    "allProposedValidAlternativesRequired": true,
+    "constructionMultiplicityAudit": [
+      {
+        "front": [
+          2,
+          2
+        ],
+        "side": [
+          2,
+          2
+        ],
+        "available": 7,
+        "required": 2,
+        "newClass": true
+      },
+      {
+        "front": [
+          2,
+          3
+        ],
+        "side": [
+          2,
+          3
+        ],
+        "available": 5,
+        "required": 3,
+        "newClass": true
+      },
+      {
+        "front": [
+          3,
+          2
+        ],
+        "side": [
+          2,
+          3
+        ],
+        "available": 5,
+        "required": 2,
+        "newClass": false
+      },
+      {
+        "front": [
+          3,
+          3
+        ],
+        "side": [
+          2,
+          3
+        ],
+        "available": 3,
+        "required": 2,
+        "newClass": true
+      },
+      {
+        "front": [
+          2,
+          3
+        ],
+        "side": [
+          3,
+          2
+        ],
+        "available": 5,
+        "required": 3,
+        "newClass": false
+      },
+      {
+        "front": [
+          2,
+          3
+        ],
+        "side": [
+          3,
+          3
+        ],
+        "available": 3,
+        "required": 3,
+        "newClass": false
+      },
+      {
+        "front": [
+          3,
+          3
+        ],
+        "side": [
+          3,
+          3
+        ],
+        "available": 17,
+        "required": 3,
+        "newClass": true
+      },
+      {
+        "front": [
+          3,
+          2
+        ],
+        "side": [
+          3,
+          2
+        ],
+        "available": 5,
+        "required": 2,
+        "newClass": false
+      },
+      {
+        "front": [
+          3,
+          2
+        ],
+        "side": [
+          3,
+          3
+        ],
+        "available": 3,
+        "required": 2,
+        "newClass": false
+      },
+      {
+        "front": [
+          3,
+          3
+        ],
+        "side": [
+          3,
+          2
+        ],
+        "available": 3,
+        "required": 2,
+        "newClass": false
+      }
+    ]
+  },
+  "totalCanonicalQueryContracts": 159,
+  "reviewedBandSlots": 0,
+  "signedEditionSlots": 0,
+  "familyStatus": {
+    "QA-F11": "unchanged engineering gap: all quadrants, other angles, non-origin centers and compositions",
+    "QA-F12": "new labeled cube, exact fixed-axis single/composed turns and feedback replay; asymmetric solids/occlusion remain engineering",
+    "QA-F13": "unchanged engineering gap: noncentral/intersection/oblique/degenerate sections",
+    "QA-F14": "new grounded occupied cells, top footprints and all matching two-view proposals; broader inverse assembly search remains engineering",
+    "QA-F15": "existing11free nets retained; new adjacency/partial-fold/multiconstraint query engineering remains",
+    "QA-F16": "unchanged engineering gap: translated/diagonal reflections and transform compositions"
+  },
+  "remainingEngineering": [
+    "Target-demand selection over these substructures rather than descriptive difficulty floats",
+    "Broader physical shapes and projection search spaces",
+    "New exact retention recipe for these new spatial identities",
+    "Exhaustive requested-block capacity/CAS assurance independent of bounded legacy random probes",
+    "Cross-family58structure expansion and source-driven asset authoring"
+  ],
+  "separateReleaseGates": [
+    "Independent language/visual editorial review",
+    "Reviewed band contracts and eligible structural quota assignment",
+    "Calibration/admission/signature approval"
+  ]
+}

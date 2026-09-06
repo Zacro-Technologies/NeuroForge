@@ -1,0 +1,30 @@
+
+/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+00000000014441a8 <_$s10NeuroForge21NFQuestionFingerprintO17canonicalContract3forSSAA10NFExerciseV_tFZ>:
+ 14441a8: a9bd57f6     	stp	x22, x21, [sp, #-0x30]!
+ 14441ac: a9014ff4     	stp	x20, x19, [sp, #0x10]
+ 14441b0: a9027bfd     	stp	x29, x30, [sp, #0x20]
+ 14441b4: 910083fd     	add	x29, sp, #0x20
+ 14441b8: 529f8009     	mov	w9, #0xfc00             ; =64512
+ 14441bc: d00096d0     	adrp	x16, 0x271e000 <_write+0x271e000>
+ 14441c0: f9427610     	ldr	x16, [x16, #0x4e8]
+ 14441c4: d63f0200     	blr	x16
+ 14441c8: d1403fff     	sub	sp, sp, #0xf, lsl #12   ; =0xf000
+ 14441cc: d13003ff     	sub	sp, sp, #0xc00
+ 14441d0: 91403be8     	add	x8, sp, #0xe, lsl #12   ; =0xe000
+ 14441d4: 910d0108     	add	x8, x8, #0x340
+ 14441d8: f903a3e8     	str	x8, [sp, #0x740]
+ 14441dc: 91401be8     	add	x8, sp, #0x6, lsl #12   ; =0x6000
+ 14441e0: 91194108     	add	x8, x8, #0x650
+ 14441e4: f903a7e8     	str	x8, [sp, #0x748]
+ 14441e8: 91401be8     	add	x8, sp, #0x6, lsl #12   ; =0x6000
+ 14441ec: 910b2108     	add	x8, x8, #0x2c8
+ 14441f0: f903abe8     	str	x8, [sp, #0x750]
+ 14441f4: 91400be8     	add	x8, sp, #0x2, lsl #12   ; =0x2000
+ 14441f8: 913c4108     	add	x8, x8, #0xf10
+ 14441fc: f903afe8     	str	x8, [sp, #0x758]
+ 1444200: 91400be8     	add	x8, sp, #0x2, lsl #12   ; =0x2000
+ 1444204: 9115e108     	add	x8, x8, #0x578

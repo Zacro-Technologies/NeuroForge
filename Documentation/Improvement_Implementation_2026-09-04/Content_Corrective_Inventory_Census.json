@@ -1,0 +1,836 @@
+{
+  "bankVersion" : 3,
+  "generatorVersion" : 4,
+  "labs" : [
+    {
+      "admission" : {
+        "assignments" : [
+
+        ],
+        "deficits" : [
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.mental.calculation-chain",
+            "required" : 100
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "structure",
+            "identifier" : "nf.default.mental.calculation-chain",
+            "required" : 4
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.mental.compensation",
+            "required" : 100
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "structure",
+            "identifier" : "nf.default.mental.compensation",
+            "required" : 4
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.mental.error-detective",
+            "required" : 100
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "structure",
+            "identifier" : "nf.default.mental.error-detective",
+            "required" : 4
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.mental.estimate-first",
+            "required" : 100
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "structure",
+            "identifier" : "nf.default.mental.estimate-first",
+            "required" : 4
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.mental.missing-factor",
+            "required" : 100
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "structure",
+            "identifier" : "nf.default.mental.missing-factor",
+            "required" : 4
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.mental.rapid-recall",
+            "required" : 100
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "structure",
+            "identifier" : "nf.default.mental.rapid-recall",
+            "required" : 4
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.mental.representation-relay",
+            "required" : 100
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "structure",
+            "identifier" : "nf.default.mental.representation-relay",
+            "required" : 4
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.mental.scientific-notation",
+            "required" : 100
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "structure",
+            "identifier" : "nf.default.mental.scientific-notation",
+            "required" : 4
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.mental.strategy-duel",
+            "required" : 100
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "structure",
+            "identifier" : "nf.default.mental.strategy-duel",
+            "required" : 4
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.mental.tool-judgment",
+            "required" : 100
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "structure",
+            "identifier" : "nf.default.mental.tool-judgment",
+            "required" : 4
+          }
+        ],
+        "policyVersion" : 1,
+        "rejectedByReason" : {
+          "invalidContract" : 1000
+        }
+      },
+      "concreteContractCount" : 1000,
+      "editorialBandCounts" : {
+        "unreviewed" : 1000
+      },
+      "familyCounts" : {
+        "mentalMath.unit-conversion.metric" : 4,
+        "nf.default.mental.calculation-chain" : 570,
+        "nf.default.mental.compensation" : 143,
+        "nf.default.mental.error-detective" : 12,
+        "nf.default.mental.estimate-first" : 30,
+        "nf.default.mental.missing-factor" : 119,
+        "nf.default.mental.rapid-recall" : 42,
+        "nf.default.mental.representation-relay" : 20,
+        "nf.default.mental.scientific-notation" : 20,
+        "nf.default.mental.strategy-duel" : 39,
+        "nf.default.mental.tool-judgment" : 1
+      },
+      "invalidContractCount" : 0,
+      "labID" : "mentalMath",
+      "objectiveCounts" : {
+        "mentalMath.unit-conversion.metric" : 4,
+        "nf.default.mental.calculation-chain" : 570,
+        "nf.default.mental.compensation" : 143,
+        "nf.default.mental.error-detective" : 12,
+        "nf.default.mental.estimate-first" : 30,
+        "nf.default.mental.missing-factor" : 119,
+        "nf.default.mental.rapid-recall" : 42,
+        "nf.default.mental.representation-relay" : 20,
+        "nf.default.mental.scientific-notation" : 20,
+        "nf.default.mental.strategy-duel" : 39,
+        "nf.default.mental.tool-judgment" : 1
+      },
+      "responseFormCounts" : {
+        "logicState" : 30,
+        "numeric" : 898,
+        "singleChoice" : 72
+      },
+      "structureCounts" : {
+        "mentalMath.calculation-chain" : 570,
+        "mentalMath.decompose.compensation" : 143,
+        "mentalMath.error-detective" : 12,
+        "mentalMath.estimate-first" : 30,
+        "mentalMath.mental-or-machine" : 1,
+        "mentalMath.missing-number" : 119,
+        "mentalMath.rapid-recall" : 42,
+        "mentalMath.representation-relay" : 20,
+        "mentalMath.scientific-notation" : 20,
+        "mentalMath.strategy-duel" : 39,
+        "mentalMath.unit-conversion.metric" : 4
+      },
+      "targetCount" : 0,
+      "uniqueSemanticCount" : 1000
+    },
+    {
+      "admission" : {
+        "assignments" : [
+
+        ],
+        "deficits" : [
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.spatial.coordinate-rotation",
+            "required" : 167
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.spatial.cross-section",
+            "required" : 167
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.spatial.cube-net",
+            "required" : 166
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.spatial.object-rotation",
+            "required" : 167
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.spatial.top-view",
+            "required" : 167
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.spatial.vector-reflection",
+            "required" : 166
+          }
+        ],
+        "policyVersion" : 1,
+        "rejectedByReason" : {
+          "invalidContract" : 1000
+        }
+      },
+      "concreteContractCount" : 1000,
+      "editorialBandCounts" : {
+        "unreviewed" : 1000
+      },
+      "familyCounts" : {
+        "nf.default.spatial.coordinate-rotation" : 413,
+        "nf.default.spatial.cross-section" : 3,
+        "nf.default.spatial.cube-net" : 66,
+        "nf.default.spatial.object-rotation" : 469,
+        "nf.default.spatial.top-view" : 24,
+        "nf.default.spatial.vector-reflection" : 25
+      },
+      "invalidContractCount" : 0,
+      "labID" : "spatial",
+      "objectiveCounts" : {
+        "nf.default.spatial.coordinate-rotation" : 413,
+        "nf.default.spatial.cross-section" : 3,
+        "nf.default.spatial.cube-net" : 66,
+        "nf.default.spatial.object-rotation" : 469,
+        "nf.default.spatial.top-view" : 24,
+        "nf.default.spatial.vector-reflection" : 25
+      },
+      "responseFormCounts" : {
+        "singleChoice" : 1000
+      },
+      "structureCounts" : {
+        "spatial.coordinate.rotate-ccw" : 413,
+        "spatial.cross-section.cube" : 1,
+        "spatial.cross-section.cylinder" : 1,
+        "spatial.cross-section.sphere" : 1,
+        "spatial.folding.cube-net" : 66,
+        "spatial.orthographic.top-view" : 24,
+        "spatial.rotation.3d-z-axis" : 469,
+        "spatial.vector.reflect-y-axis" : 25
+      },
+      "targetCount" : 0,
+      "uniqueSemanticCount" : 1000
+    },
+    {
+      "admission" : {
+        "assignments" : [
+
+        ],
+        "deficits" : [
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.quantitative.bayes",
+            "required" : 125
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.quantitative.expected-value",
+            "required" : 125
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.quantitative.fermi",
+            "required" : 125
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.quantitative.interval",
+            "required" : 125
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.quantitative.proportion",
+            "required" : 125
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.quantitative.regression",
+            "required" : 125
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.quantitative.scaling",
+            "required" : 125
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.quantitative.unit-bridge",
+            "required" : 125
+          }
+        ],
+        "policyVersion" : 1,
+        "rejectedByReason" : {
+          "invalidContract" : 1000
+        }
+      },
+      "concreteContractCount" : 1000,
+      "editorialBandCounts" : {
+        "unreviewed" : 1000
+      },
+      "familyCounts" : {
+        "nf.default.quantitative.bayes" : 8,
+        "nf.default.quantitative.expected-value" : 27,
+        "nf.default.quantitative.fermi" : 81,
+        "nf.default.quantitative.interval" : 1,
+        "nf.default.quantitative.proportion" : 788,
+        "nf.default.quantitative.regression" : 49,
+        "nf.default.quantitative.scaling" : 42,
+        "nf.default.quantitative.unit-bridge" : 4
+      },
+      "invalidContractCount" : 0,
+      "labID" : "quantitative",
+      "objectiveCounts" : {
+        "nf.default.quantitative.bayes" : 8,
+        "nf.default.quantitative.expected-value" : 27,
+        "nf.default.quantitative.fermi" : 81,
+        "nf.default.quantitative.interval" : 1,
+        "nf.default.quantitative.proportion" : 788,
+        "nf.default.quantitative.regression" : 49,
+        "nf.default.quantitative.scaling" : 42,
+        "nf.default.quantitative.unit-bridge" : 4
+      },
+      "responseFormCounts" : {
+        "logicState" : 4,
+        "numeric" : 946,
+        "singleChoice" : 50
+      },
+      "structureCounts" : {
+        "quantitative.fermi.decomposition" : 81,
+        "quantitative.observed.proportion" : 788,
+        "quantitative.probability.bayes-natural-frequency" : 8,
+        "quantitative.probability.expected-value" : 27,
+        "quantitative.sampling.regression-to-mean" : 49,
+        "quantitative.scaling.direct" : 14,
+        "quantitative.scaling.inverse" : 14,
+        "quantitative.scaling.power-law" : 14,
+        "quantitative.uncertainty.interval-interpretation" : 1,
+        "quantitative.units.metric-conversion" : 4
+      },
+      "targetCount" : 0,
+      "uniqueSemanticCount" : 1000
+    },
+    {
+      "admission" : {
+        "assignments" : [
+
+        ],
+        "deficits" : [
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.science.bias-repair",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.science.claim-evidence",
+            "required" : 112
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.science.competing-predictions",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.science.confound",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.science.experiment-sequence",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.science.figure-uncertainty",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.science.next-experiment",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.science.paper-sprint",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.science.reviewer",
+            "required" : 111
+          }
+        ],
+        "policyVersion" : 1,
+        "rejectedByReason" : {
+          "invalidContract" : 1000
+        }
+      },
+      "concreteContractCount" : 1000,
+      "editorialBandCounts" : {
+        "unreviewed" : 1000
+      },
+      "familyCounts" : {
+        "nf.default.science.bias-repair" : 1,
+        "nf.default.science.claim-evidence" : 567,
+        "nf.default.science.competing-predictions" : 1,
+        "nf.default.science.confound" : 1,
+        "nf.default.science.experiment-sequence" : 1,
+        "nf.default.science.figure-uncertainty" : 426,
+        "nf.default.science.next-experiment" : 1,
+        "nf.default.science.paper-sprint" : 1,
+        "nf.default.science.reviewer" : 1
+      },
+      "invalidContractCount" : 0,
+      "labID" : "scientificReasoning",
+      "objectiveCounts" : {
+        "nf.default.science.bias-repair" : 1,
+        "nf.default.science.claim-evidence" : 567,
+        "nf.default.science.competing-predictions" : 1,
+        "nf.default.science.confound" : 1,
+        "nf.default.science.experiment-sequence" : 1,
+        "nf.default.science.figure-uncertainty" : 426,
+        "nf.default.science.next-experiment" : 1,
+        "nf.default.science.paper-sprint" : 1,
+        "nf.default.science.reviewer" : 1
+      },
+      "responseFormCounts" : {
+        "claimEvidence" : 567,
+        "multipleChoice" : 2,
+        "orderedSteps" : 2,
+        "singleChoice" : 429
+      },
+      "structureCounts" : {
+        "scientificReasoning.claim.evidence.bounds" : 567,
+        "scientificReasoning.competing-hypotheses.prediction" : 1,
+        "scientificReasoning.data-forensics.uncertainty" : 426,
+        "scientificReasoning.design.discriminating-sequence" : 1,
+        "scientificReasoning.design.identify-confound" : 1,
+        "scientificReasoning.design.next-discriminating-experiment" : 1,
+        "scientificReasoning.design.repair-bias" : 1,
+        "scientificReasoning.paper-sprint.structure" : 1,
+        "scientificReasoning.reviewer-mode.method-figure" : 1
+      },
+      "targetCount" : 0,
+      "uniqueSemanticCount" : 1000
+    },
+    {
+      "admission" : {
+        "assignments" : [
+
+        ],
+        "deficits" : [
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.logic.boundary-bug",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.logic.calibration",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.logic.complexity",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.logic.conditions",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.logic.counterexample",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.logic.invalid-step",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.logic.loop-repair",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.logic.proof-builder",
+            "required" : 111
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.logic.state-trace",
+            "required" : 112
+          }
+        ],
+        "policyVersion" : 1,
+        "rejectedByReason" : {
+          "invalidContract" : 1000
+        }
+      },
+      "concreteContractCount" : 1000,
+      "editorialBandCounts" : {
+        "unreviewed" : 1000
+      },
+      "familyCounts" : {
+        "nf.default.logic.boundary-bug" : 1,
+        "nf.default.logic.calibration" : 3,
+        "nf.default.logic.complexity" : 1,
+        "nf.default.logic.conditions" : 1,
+        "nf.default.logic.counterexample" : 1,
+        "nf.default.logic.invalid-step" : 1,
+        "nf.default.logic.loop-repair" : 1,
+        "nf.default.logic.proof-builder" : 1,
+        "nf.default.logic.state-trace" : 990
+      },
+      "invalidContractCount" : 0,
+      "labID" : "logicDebugging",
+      "objectiveCounts" : {
+        "nf.default.logic.boundary-bug" : 1,
+        "nf.default.logic.calibration" : 3,
+        "nf.default.logic.complexity" : 1,
+        "nf.default.logic.conditions" : 1,
+        "nf.default.logic.counterexample" : 1,
+        "nf.default.logic.invalid-step" : 1,
+        "nf.default.logic.loop-repair" : 1,
+        "nf.default.logic.proof-builder" : 1,
+        "nf.default.logic.state-trace" : 990
+      },
+      "responseFormCounts" : {
+        "logicState" : 990,
+        "orderedSteps" : 1,
+        "singleChoice" : 9
+      },
+      "structureCounts" : {
+        "logicDebugging.calibration.observed-frequency" : 3,
+        "logicDebugging.conditions.divisibility" : 1,
+        "logicDebugging.counterexample.even-product" : 1,
+        "logicDebugging.debug.boundary-last-element" : 1,
+        "logicDebugging.debug.complexity-comparison" : 1,
+        "logicDebugging.debug.repair-loop-bound" : 1,
+        "logicDebugging.proof.first-invalid-division" : 1,
+        "logicDebugging.proof.order-odd-sum" : 1,
+        "logicDebugging.trace.stale-derived-state" : 990
+      },
+      "targetCount" : 0,
+      "uniqueSemanticCount" : 1000
+    },
+    {
+      "admission" : {
+        "assignments" : [
+
+        ],
+        "deficits" : [
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "policy",
+            "identifier" : "quotaTotals",
+            "required" : 900
+          }
+        ],
+        "policyVersion" : 1,
+        "rejectedByReason" : {
+          "invalidContract" : 1000
+        }
+      },
+      "concreteContractCount" : 1000,
+      "editorialBandCounts" : {
+        "unreviewed" : 1000
+      },
+      "familyCounts" : {
+        "nf.default.retrieval.cloze" : 130,
+        "nf.default.retrieval.equation" : 110,
+        "nf.default.retrieval.figure" : 98,
+        "nf.default.retrieval.free-recall" : 114,
+        "nf.default.retrieval.precision-recall" : 123,
+        "nf.default.retrieval.recognition" : 106,
+        "nf.default.retrieval.repair-cycle" : 115,
+        "nf.default.retrieval.source-filter" : 105,
+        "nf.default.retrieval.teach-back" : 99
+      },
+      "invalidContractCount" : 0,
+      "labID" : "retrieval",
+      "objectiveCounts" : {
+        "nf.default.retrieval.cloze" : 130,
+        "nf.default.retrieval.equation" : 110,
+        "nf.default.retrieval.figure" : 98,
+        "nf.default.retrieval.free-recall" : 114,
+        "nf.default.retrieval.precision-recall" : 123,
+        "nf.default.retrieval.recognition" : 106,
+        "nf.default.retrieval.repair-cycle" : 115,
+        "nf.default.retrieval.source-filter" : 105,
+        "nf.default.retrieval.teach-back" : 99
+      },
+      "responseFormCounts" : {
+        "orderedSteps" : 115,
+        "selfCheck" : 213,
+        "shortText" : 461,
+        "singleChoice" : 211
+      },
+      "structureCounts" : {
+        "retrieval.cloze.relationship" : 130,
+        "retrieval.code-tracing.source-filter" : 105,
+        "retrieval.equation-reconstruction" : 110,
+        "retrieval.explain-concept.self-check" : 99,
+        "retrieval.figure-interpretation" : 98,
+        "retrieval.free-recall.self-check" : 114,
+        "retrieval.reconstruction.ordered-cycle" : 115,
+        "retrieval.short-answer" : 123,
+        "retrieval.source-supported.recognition" : 106
+      },
+      "targetCount" : 1000,
+      "uniqueSemanticCount" : 1000
+    },
+    {
+      "admission" : {
+        "assignments" : [
+
+        ],
+        "deficits" : [
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.transfer.causal-map",
+            "required" : 143
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.transfer.conditions",
+            "required" : 143
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.transfer.interacting-variables",
+            "required" : 143
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.transfer.rate",
+            "required" : 143
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.transfer.representation",
+            "required" : 143
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.transfer.saturation",
+            "required" : 142
+          },
+          {
+            "assigned" : 0,
+            "available" : 0,
+            "dimension" : "family",
+            "identifier" : "nf.default.transfer.sequence",
+            "required" : 143
+          }
+        ],
+        "policyVersion" : 1,
+        "rejectedByReason" : {
+          "invalidContract" : 1000
+        }
+      },
+      "concreteContractCount" : 1000,
+      "editorialBandCounts" : {
+        "unreviewed" : 1000
+      },
+      "familyCounts" : {
+        "nf.default.transfer.causal-map" : 1,
+        "nf.default.transfer.conditions" : 1,
+        "nf.default.transfer.interacting-variables" : 6,
+        "nf.default.transfer.rate" : 986,
+        "nf.default.transfer.representation" : 4,
+        "nf.default.transfer.saturation" : 1,
+        "nf.default.transfer.sequence" : 1
+      },
+      "invalidContractCount" : 0,
+      "labID" : "transfer",
+      "objectiveCounts" : {
+        "nf.default.transfer.causal-map" : 1,
+        "nf.default.transfer.conditions" : 1,
+        "nf.default.transfer.interacting-variables" : 6,
+        "nf.default.transfer.rate" : 986,
+        "nf.default.transfer.representation" : 4,
+        "nf.default.transfer.saturation" : 1,
+        "nf.default.transfer.sequence" : 1
+      },
+      "responseFormCounts" : {
+        "claimEvidence" : 1,
+        "multipleChoice" : 1,
+        "numeric" : 992,
+        "orderedSteps" : 1,
+        "singleChoice" : 5
+      },
+      "structureCounts" : {
+        "transfer.constraint-shift.linearity" : 1,
+        "transfer.cross-context.conditions" : 1,
+        "transfer.cross-context.sequence" : 1,
+        "transfer.field-shift.causal-structure" : 1,
+        "transfer.field-shift.rate-product" : 986,
+        "transfer.interacting-variables.ratio" : 6,
+        "transfer.representation.table-to-equation" : 4
+      },
+      "targetCount" : 0,
+      "uniqueSemanticCount" : 1000
+    }
+  ],
+  "schemaVersion" : 1,
+  "scoringVersion" : 8,
+  "signedCorrectiveInventoryCoverage" : false
+}

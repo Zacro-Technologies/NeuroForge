@@ -1,0 +1,121 @@
+Application, 0x115be3e80, pid: 44635, label: 'NeuroForge' <App element pid: 44635>
+  Window (Main), 0x115be3d40, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4406396928.4>
+    Other, 0x115be3980, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4463583232.5>
+      Other, 0x115be3ac0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4464772992.6>
+        Other, 0x115be3840, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4406395904.7>
+          Other, 0x115be3200, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4462950848.8>
+            Other, 0x115be3480, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4407472384.9>
+              Other, 0x115be3340, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4731914240.10>
+                Other, 0x115be2940, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4407662720.12>
+                  Other, 0x115be2a80, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4406402048.15>
+                    Other, 0x1159f8000, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4463002944.18>
+                      Other, 0x1159f9f40, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4463002496.21>
+                        Other, 0x108717e80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'destination-today' <AX element pid: 44635, elementOrHash.elementID: 4462947264.27>
+                          NavigationBar, 0x1087175c0, {{0.0, 20.0}, {375.0, 106.0}}, identifier: 'Today' <AX element pid: 44635, elementOrHash.elementID: 4466103552.37>
+                            StaticText, 0x108715cc0, {{16.0, 77.5}, {95.5, 41.0}}, label: 'Today' <AX element pid: 44635, elementOrHash.elementID: 4408011264.48>
+                          Other, 0x108714500, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4462948160.38>
+                            Other, 0x108714000, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4462971520.49>
+                              Other, 0x1087143c0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4408010368.53>
+                                Other, 0x108716a80, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4463028288.56>
+                                  ScrollView, 0x108714f00, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4406083584.58>
+                                    Other, 0x108715040, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4462946816.59>
+                                      Other, 0x1087152c0, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 44635, elementOrHash.elementID: 4462976000.63>
+                                      Other, 0x108717c00, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 44635, elementOrHash.elementID: 4462979136.64>
+                                    Other, 0x108716bc0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4462946368.60>
+                                      Other, 0x108714640, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 44635, elementOrHash.elementID: 4464783872.65>
+                                        Image, 0x115203480, {{-120.0, 524.0}, {615.0, 286.0}}, identifier: 'AdditionalDimmingOverlay' <AX element pid: 44635, elementOrHash.elementID: 4740524544.68>
+                                        Other, 0x115200000, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 44635, elementOrHash.elementID: 4466111232.69>
+                                          Other, 0x115203340, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 44635, elementOrHash.elementID: 4462980032.83>
+                                        Other, 0x114fda6c0, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 44635, elementOrHash.elementID: 4464784512.70>
+                                          Other, 0x114fdb200, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 44635, elementOrHash.elementID: 4462980480.84>
+                                          Other, 0x114fdaf80, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 44635, elementOrHash.elementID: 4462984064.85>
+                                    Other, 0x114fd9cc0, {{0.0, 126.0}, {375.0, 1891.0}} <AX element pid: 44635, elementOrHash.elementID: 4731923456.61>
+                                      Other, 0x114fd92c0, {{16.0, 150.0}, {343.0, 1069.0}} <AX element pid: 44635, elementOrHash.elementID: 4463027392.66>
+                                        StaticText, 0x114fda800, {{16.0, 150.0}, {248.0, 41.0}}, label: 'Good afternoon' <AX element pid: 44635, elementOrHash.elementID: 4463003392.71>
+                                        StaticText, 0x114fd9a40, {{16.0, 196.0}, {157.0, 18.0}}, label: 'Saturday, September 5' <AX element pid: 44635, elementOrHash.elementID: 4463003840.72>
+                                        Other, 0x114fda080, {{33.5, 256.0}, {97.0, 97.0}}, label: 'Daily circuit, 8 minutes remaining, 0 percent complete' <AX element pid: 44635, elementOrHash.elementID: 4463068928.329>
+                                          StaticText, 0x114fd9f40, {{74.8, 284.5}, {14.5, 26.5}}, label: '8' <AX element pid: 44635, elementOrHash.elementID: 4463068480.337>
+                                          StaticText, 0x114fdb480, {{51.8, 311.0}, {60.5, 13.5}}, label: 'MIN LEFT' <AX element pid: 44635, elementOrHash.elementID: 4463069824.338>
+                                        StaticText, 0x114fd9680, {{142.0, 260.0}, {105.0, 13.5}}, label: 'DAILY CIRCUIT' <AX element pid: 44635, elementOrHash.elementID: 4463071616.330>
+                                        StaticText, 0x114fd9e00, {{142.0, 279.5}, {160.0, 49.0}}, label: 'Your all-round workout is ready.' <AX element pid: 44635, elementOrHash.elementID: 4463076096.331>
+                                        StaticText, 0x114fdb5c0, {{142.0, 334.5}, {178.0, 14.5}}, label: '3 chapters · +75 completion XP' <AX element pid: 44635, elementOrHash.elementID: 4463070720.332>
+                                        Button, 0x114fd9400, {{38.0, 365.0}, {299.0, 50.5}}, label: 'Start daily circuit' <AX element pid: 44635, elementOrHash.elementID: 4463081024.333>
+                                          Image, 0x114fdbac0, {{107.5, 382.0}, {14.0, 15.5}}, identifier: 'play.fill', label: 'Play' <AX element pid: 44635, elementOrHash.elementID: 4463073408.339>
+                                          StaticText, 0x114fd9540, {{38.0, 365.0}, {299.0, 50.5}}, label: 'Start daily circuit' <AX element pid: 44635, elementOrHash.elementID: 4463071168.340>
+                                        Other, 0x114fdb980, {{38.0, 431.5}, {299.0, 93.0}} <AX element pid: 44635, elementOrHash.elementID: 4463072960.334>
+                                          Image, 0x114fdb0c0, {{50.0, 463.5}, {22.5, 10.5}}, identifier: 'battery.75percent', label: 'battery.75percent' <AX element pid: 44635, elementOrHash.elementID: 4463081920.341>
+                                          StaticText, 0x114fda300, {{50.0, 459.8}, {82.5, 18.0}}, label: 'Energy' <AX element pid: 44635, elementOrHash.elementID: 4463079680.342>
+                                          Button, 0x114fdbc00, {{215.5, 441.5}, {111.5, 54.5}}, identifier: 'today-readiness-picker', label: 'Energy today', value: Normal <AX element pid: 44635, elementOrHash.elementID: 4798272000.343>
+                                            StaticText, 0x114fda440, {{264.0, 448.5}, {35.0, 40.5}}, label: 'Normal' <AX element pid: 44635, elementOrHash.elementID: 4798207232.345>
+                                          StaticText, 0x114fd9b80, {{48.0, 484.0}, {267.0, 30.5}}, label: 'Current effect: 10 minutes remaining, untimed. Next: Recall practice, 2 minutes.' <AX element pid: 44635, elementOrHash.elementID: 4463074752.344>
+                                        Button, 0x114fdb840, {{38.0, 534.5}, {123.0, 34.5}}, label: 'Adjust circuit' <AX element pid: 44635, elementOrHash.elementID: 4463076992.335>
+                                        Button, 0x114fdad00, {{38.0, 579.0}, {113.0, 34.5}}, label: 'Plan history' <AX element pid: 44635, elementOrHash.elementID: 4463073856.336>
+                                        Button, 0x114fdae40, {{16.0, 659.5}, {343.0, 58.0}}, label: 'You're up to date.' <AX element pid: 44635, elementOrHash.elementID: 4463008768.79>
+                                          Image, 0x114fdbd40, {{27.5, 680.0}, {19.0, 17.0}}, identifier: 'clock.arrow.circlepath', label: 'clock.arrow.circlepath' <AX element pid: 44635, elementOrHash.elementID: 4463006976.86>
+                                          StaticText, 0x114fda940, {{27.5, 678.2}, {163.0, 20.5}}, label: 'You're up to date.' <AX element pid: 44635, elementOrHash.elementID: 4463007872.87>
+                                          Image, 0x114fdaa80, {{337.5, 681.5}, {8.5, 14.5}}, identifier: 'chevron.right', label: 'Forward' <AX element pid: 44635, elementOrHash.elementID: 4463008320.88>
+                                        StaticText, 0x114fdb340, {{16.0, 741.5}, {209.5, 33.5}}, label: 'Circuit chapters' <AX element pid: 44635, elementOrHash.elementID: 4463009216.80>
+                                        StaticText, 0x114fdbe80, {{16.0, 781.0}, {314.5, 38.0}}, label: 'Recall, build, cross over, and reflect. Start the whole circuit above or choose one chapter.' <AX element pid: 44635, elementOrHash.elementID: 4463010112.81>
+                                        Other, 0x114fdabc0, {{16.0, 833.0}, {343.0, 386.0}} <AX element pid: 44635, elementOrHash.elementID: 4463026944.82>
+                                          Button, 0x114fd8280, {{16.0, 833.0}, {343.0, 186.0}}, identifier: 'today-plan-block-1', label: 'CHAPTER 1, Logic, Not completed, Logic, Practice Logic with a focused set., 5 min, +25 completion XP' <AX element pid: 44635, elementOrHash.elementID: 4463016384.89>
+                                            Image, 0x114fda1c0, {{32.0, 849.0}, {44.0, 44.0}}, identifier: 'point.3.connected.trianglepath.dotted', label: 'point.3.connected.trianglepath.dotted' <AX element pid: 44635, elementOrHash.elementID: 4463010560.92>
+                                            StaticText, 0x114fdb700, {{84.0, 849.0}, {75.5, 13.5}}, label: 'CHAPTER 1' <AX element pid: 44635, elementOrHash.elementID: 4463011456.93>
+                                            StaticText, 0x115bb4f00, {{84.0, 865.5}, {32.0, 14.5}}, label: 'Logic' <AX element pid: 44635, elementOrHash.elementID: 4463012352.94>
+                                            Image, 0x115bb4c80, {{321.5, 850.5}, {20.0, 20.0}}, identifier: 'circle', label: 'Not completed' <AX element pid: 44635, elementOrHash.elementID: 4463012800.95>
+                                            StaticText, 0x115bb5400, {{32.0, 907.0}, {43.0, 20.5}}, label: 'Logic' <AX element pid: 44635, elementOrHash.elementID: 4463013248.96>
+                                            StaticText, 0x115bb5040, {{32.0, 931.5}, {230.5, 18.0}}, label: 'Practice Logic with a focused set.' <AX element pid: 44635, elementOrHash.elementID: 4463014144.97>
+                                            Image, 0x115bb5540, {{33.0, 989.5}, {12.0, 12.0}}, identifier: 'clock', label: 'Clock' <AX element pid: 44635, elementOrHash.elementID: 4463014592.98>
+                                            StaticText, 0x115bb4140, {{33.0, 988.5}, {52.5, 14.5}}, label: '5 min' <AX element pid: 44635, elementOrHash.elementID: 4463015040.99>
+                                            StaticText, 0x115bb43c0, {{93.5, 988.5}, {115.0, 14.5}}, label: '+25 completion XP' <AX element pid: 44635, elementOrHash.elementID: 4463015488.100>
+                                            Image, 0x115bb4500, {{336.0, 990.5}, {6.5, 11.0}}, identifier: 'chevron.right', label: 'Forward' <AX element pid: 44635, elementOrHash.elementID: 4463015936.101>
+                                          Button, 0x115bb4640, {{16.0, 1033.0}, {343.0, 186.0}}, identifier: 'today-plan-block-2', label: 'CHAPTER 2, Try a new context, Not completed, Apply it differently, Use Mental Math in a new context or format., 2 min, +25 completion XP' <AX element pid: 44635, elementOrHash.elementID: 4463021120.90>
+                                            Image, 0x115bb48c0, {{32.0, 1049.0}, {44.0, 44.0}}, identifier: 'arrow.triangle.swap', label: 'Swap' <AX element pid: 44635, elementOrHash.elementID: 4463016832.102>
+                                            StaticText, 0x115bb4280, {{84.0, 1049.0}, {77.0, 13.5}}, label: 'CHAPTER 2' <AX element pid: 44635, elementOrHash.elementID: 4463017280.103>
+                                            StaticText, 0x108689a40, {{84.0, 1065.5}, {104.5, 14.5}}, label: 'Try a new context' <AX element pid: 44635, elementOrHash.elementID: 4407660928.104>
+                                            Image, 0x10868af80, {{321.5, 1050.5}, {20.0, 20.0}}, identifier: 'circle', label: 'Not completed' <AX element pid: 44635, elementOrHash.elementID: 4463017984.105>
+                                            StaticText, 0x1086892c0, {{32.0, 1107.0}, {147.5, 20.5}}, label: 'Apply it differently' <AX element pid: 44635, elementOrHash.elementID: 4463018432.106>
+                                            StaticText, 0x108689b80, {{32.0, 1131.5}, {303.5, 18.0}}, label: 'Use Mental Math in a new context or format.' <AX element pid: 44635, elementOrHash.elementID: 4463018880.107>
+                                            Image, 0x108689680, {{33.0, 1189.5}, {12.0, 12.0}}, identifier: 'clock', label: 'Clock' <AX element pid: 44635, elementOrHash.elementID: 4463019328.108>
+                                            StaticText, 0x10868a6c0, {{33.0, 1188.5}, {52.5, 14.5}}, label: '2 min' <AX element pid: 44635, elementOrHash.elementID: 4463019776.109>
+                                            StaticText, 0x10868bc00, {{93.5, 1188.5}, {115.0, 14.5}}, label: '+25 completion XP' <AX element pid: 44635, elementOrHash.elementID: 4463020224.110>
+                                            Image, 0x115bda800, {{336.0, 1190.5}, {6.5, 11.0}}, identifier: 'chevron.right', label: 'Forward' <AX element pid: 44635, elementOrHash.elementID: 4463020672.111>
+                                    Other, 0x115bdabc0, {{342.0, 74.0}, {30.0, 510.0}}, label: 'Vertical scroll bar, 5 pages', value: 0% <AX element pid: 44635, elementOrHash.elementID: 4740521472.62>
+                                      Other, 0x115bd9900, {{369.0, 77.0}, {3.0, 171.5}} <AX element pid: 44635, elementOrHash.elementID: 4462975552.67>
+                                    Other, 0x115bda580, {{342.0, 74.0}, {30.0, 510.0}}, label: 'Vertical scroll bar, 5 pages', value: 0% <AX element pid: 44635, elementOrHash.elementID: 4740521472.62>
+                                      Other, 0x115bd9b80, {{369.0, 77.0}, {3.0, 171.5}} <AX element pid: 44635, elementOrHash.elementID: 4462975552.67>
+                          Other, 0x115bd9f40, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4731924992.39>
+                            Other, 0x115bd9a40, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4731927040.50>
+                        Other, 0x115bda440, {{0.0, 516.0}, {375.0, 68.0}} <AX element pid: 44635, elementOrHash.elementID: 4463002048.28>
+              Other, 0x115bda300, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 44635, elementOrHash.elementID: 4407473728.11>
+                Other, 0x115bda080, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 44635, elementOrHash.elementID: 4407610432.13>
+                  TabBar, 0x115bda1c0, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar' <AX element pid: 44635, elementOrHash.elementID: 4464773632.16>
+                    Other, 0x115bda6c0, {{21.0, 584.0}, {333.0, 62.0}} <AX element pid: 44635, elementOrHash.elementID: 4407475520.19>
+                      Other, 0x115bd9e00, {{21.0, 584.0}, {74.0, 54.0}} <AX element pid: 44635, elementOrHash.elementID: 4407664960.22>
+                      Other, 0x115bd9cc0, {{21.0, 584.0}, {333.0, 62.0}} <AX element pid: 44635, elementOrHash.elementID: 4407871680.23>
+                        Button, 0x115bdb0c0, {{25.0, 588.0}, {74.0, 54.0}}, label: 'Today', Selected <AX element pid: 44635, elementOrHash.elementID: 4406435328.29>
+                          Image, 0x115bdb700, {{50.0, 592.5}, {23.5, 29.0}}, identifier: 'flame.fill', label: 'Flame' <AX element pid: 44635, elementOrHash.elementID: 4731914752.40>
+                        Button, 0x115bdaf80, {{87.2, 588.0}, {74.0, 54.0}}, label: 'Practice' <AX element pid: 44635, elementOrHash.elementID: 4406437888.30>
+                          Image, 0x115bdae40, {{108.2, 592.5}, {31.5, 31.5}}, identifier: 'scope', label: 'scope' <AX element pid: 44635, elementOrHash.elementID: 4731916288.41>
+                        Button, 0x115bdb5c0, {{149.5, 588.0}, {76.0, 54.0}}, label: 'Progress' <AX element pid: 44635, elementOrHash.elementID: 4406440448.31>
+                          Image, 0x115bdad00, {{172.5, 595.5}, {31.0, 25.5}}, identifier: 'chart.line.uptrend.xyaxis', label: 'chart line' <AX element pid: 44635, elementOrHash.elementID: 4731917312.42>
+                        Button, 0x115bac000, {{213.8, 588.0}, {74.0, 54.0}}, label: 'Sources' <AX element pid: 44635, elementOrHash.elementID: 4733468672.32>
+                          Image, 0x115bac140, {{233.8, 593.0}, {33.5, 29.5}}, identifier: 'books.vertical.fill', label: 'Bookshelf' <AX element pid: 44635, elementOrHash.elementID: 4731918336.43>
+                        Button, 0x115bac280, {{276.0, 588.0}, {74.0, 54.0}}, label: 'Settings' <AX element pid: 44635, elementOrHash.elementID: 4733471232.33>
+                          Image, 0x115bac3c0, {{299.0, 594.0}, {28.0, 28.0}}, identifier: 'gearshape.fill', label: 'gearshape.fill' <AX element pid: 44635, elementOrHash.elementID: 4731919360.44>
+                      Other, 0x115bac500, {{25.0, 588.0}, {74.0, 54.0}} <AX element pid: 44635, elementOrHash.elementID: 4464776832.24>
+                        Other, 0x115bac640, {{25.0, 588.0}, {74.0, 54.0}} <AX element pid: 44635, elementOrHash.elementID: 4407562176.34>
+                          Other, 0x115bac780, {{25.0, 588.0}, {74.0, 54.0}} <AX element pid: 44635, elementOrHash.elementID: 4406739392.45>
+                          Other, 0x115bac8c0, {{25.0, 588.0}, {74.0, 54.0}} <AX element pid: 44635, elementOrHash.elementID: 4407565312.46>
+                            Other, 0x115baca00, {{25.0, 588.0}, {74.0, 54.0}} <AX element pid: 44635, elementOrHash.elementID: 4407570240.51>
+                              Other, 0x115bacb40, {{25.0, 588.0}, {74.0, 54.0}} <AX element pid: 44635, elementOrHash.elementID: 4407572928.54>
+                                Other, 0x115bacc80, {{25.0, 588.0}, {74.0, 54.0}} <AX element pid: 44635, elementOrHash.elementID: 4407607296.57>
+                              Other, 0x115bacdc0, {{25.0, 588.0}, {74.0, 54.0}} <AX element pid: 44635, elementOrHash.elementID: 4407566208.55>
+                            Other, 0x115bacf00, {{25.0, 588.0}, {74.0, 54.0}} <AX element pid: 44635, elementOrHash.elementID: 4407568000.52>
+                Other, 0x115bad040, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 44635, elementOrHash.elementID: 4731912704.14>
+                  Other, 0x115bad180, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 44635, elementOrHash.elementID: 4408009472.17>
+                    Other, 0x115bad2c0, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 44635, elementOrHash.elementID: 4407668992.20>
+                      Other, 0x115bad400, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 44635, elementOrHash.elementID: 4407672128.25>
+                        Other, 0x115bad540, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 44635, elementOrHash.elementID: 4731921408.35>
+                          Other, 0x115bad680, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 44635, elementOrHash.elementID: 4407788416.47>
+                      Other, 0x115bad7c0, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 44635, elementOrHash.elementID: 4731921920.26>
+                        Other, 0x115bad900, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 44635, elementOrHash.elementID: 4407791104.36>

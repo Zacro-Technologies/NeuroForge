@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TodayView: View {
     @Environment(AppStore.self) private var store
+    @Environment(NFNavigationState.self) private var navigation
     @Environment(NFTodaySessionSequence.self) private var todaySessionSequence
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -12,9 +13,14 @@ struct TodayView: View {
     @State private var pendingSessionBlock: PlanBlock?
     @State private var pendingReplacementAcknowledgement: NFTodayReplacementAcknowledgement?
     @State private var readinessImpact: NFTodayReadinessImpact?
+    @State private var readinessPreview: NFTodayReadinessPreview?
     @State private var showSessionIntro = false
     @State private var showBaseline = false
     @State private var pendingBaselineStart: NFBaselineStart?
+
+    private var executablePlan: DailyPlan {
+        store.reviewExecutionPlan(store.todayPlan, at: Date(), calendar: .current)
+    }
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -28,27 +34,50 @@ struct TodayView: View {
         }
     }
 
-    private var readinessBinding: Binding<Readiness> {
+    private func readinessBinding(for plan: DailyPlan) -> Binding<Readiness> {
         Binding(
             get: { store.readiness },
-            set: { applyReadiness($0) }
+            set: { proposed in
+                guard proposed != store.readiness else { return }
+                let hasStarted = store.attempts.contains { $0.planID == plan.id }
+                    || store.sessionCheckpoints.contains { $0.planID == plan.id }
+                    || store.activeSessionRequest?.planID == plan.id
+                readinessPreview = NFTodayReadinessPreview(plan: plan,
+                    completedBlockIDs: store.completedPlanBlockIDs(planID: plan.id),
+                    currentReadiness: store.readiness, proposedReadiness: proposed,
+                    preservesRemainingPlan: hasStarted || plan.policyVersion != NFDailyScheduler.policyVersion)
+            }
         )
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: Binding(get: { navigation.today }, set: { navigation.today = $0 })) {
             ZStack {
                 AppBackground()
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 24) {
-                        header
-                        prescriptionHero
+                        greetingAndDate
+                        // Keep the sheet presenter alive when ending the last
+                        // saved run removes its card. The learner still needs
+                        // to read and dismiss that run's committed summary.
+                        ZStack(alignment: .topLeading) {
+                            NFContinueSessionsCard()
+                            if store.resumableSessions.isEmpty && store.generatedPracticeDrafts.isEmpty {
+                                prescriptionHero
+                            }
+                        }
+                        reviewShortcut
                         planSection
                         quickPractice
-                        abilityCores
-                        weeklyMission
-                        forgeMilestones
-                        sideQuests
+                        DisclosureGroup("More for today") {
+                            VStack(alignment: .leading, spacing: 24) {
+                                baselineCard
+                                abilityCores
+                                weeklyMission
+                                forgeMilestones
+                                sideQuests
+                            }.padding(.top, 12)
+                        }
                     }
                     .frame(maxWidth: 980, alignment: .leading)
                     .padding(.horizontal, horizontalSizeClass == .compact ? 16 : 20)
@@ -58,7 +87,15 @@ struct TodayView: View {
                     .padding(.vertical, 24)
                 }
             }
-            .navigationTitle("Forge")
+            .navigationTitle("Today")
+            .sheet(item: $readinessPreview) { preview in
+                NFTodayReadinessPreviewView(preview: preview,
+                    onCancel: { readinessPreview = nil },
+                    onApply: {
+                        readinessPreview = nil
+                        applyReadiness(preview.proposedReadiness)
+                    })
+            }
             .sheet(item: $selectedBlock) { block in
                 let persistedReason = persistedReplacementReason(for: block.id)
                 let acknowledgement = pendingReplacementAcknowledgement.flatMap {
@@ -73,8 +110,12 @@ struct TodayView: View {
                         pendingSessionBlock = block
                         selectedBlock = nil
                     },
-                    onReplace: { reason in
-                        if let replacement = store.replaceTodayPlanBlock(block.id, reason: reason) {
+                    onPreviewReplacement: { reason in
+                        try store.previewTodayPlanBlockReplacement(block.id, reason: reason)
+                    },
+                    onReplace: { preview in
+                        guard let reason = preview.proposedPlan.replacement?.reason else { return }
+                        if let replacement = store.replaceTodayPlanBlock(block.id, reason: reason, preview: preview) {
                             pendingReplacementAcknowledgement = makeReplacementAcknowledgement(
                                 originalBlock: block,
                                 replacementBlock: replacement
@@ -114,7 +155,7 @@ struct TodayView: View {
             }
             .sheet(isPresented: $showSessionIntro) {
                 TodaySessionIntroView(
-                    plan: store.todayPlan,
+                    plan: executablePlan,
                     completedBlockIDs: store.completedPlanBlockIDs(planID: store.todayPlan.id)
                 ) { selectedBlockIDs in
                     showSessionIntro = false
@@ -187,6 +228,23 @@ struct TodayView: View {
                 }
             }
         }
+    }
+
+    private var reviewShortcut: some View {
+        let due = store.readyReviewEntries(at: Date(), calendar: .current).count
+        return Button {
+            NFAppPreferenceScope.defaults.set("Review", forKey: "nf.progress.section")
+            store.selectedDestination = .progress
+        } label: {
+            HStack {
+                Label(due > 0 ? "Ready to review" : "You're up to date.", systemImage: "clock.arrow.circlepath")
+                Spacer()
+                if due > 0 { Text(NFAppLocalization.formattedQuestionCount(due)) }
+                Image(systemName: "chevron.right")
+            }
+            .frame(minHeight: 44)
+        }
+        .buttonStyle(.bordered)
     }
 
     private var baselineCard: some View {
@@ -536,8 +594,9 @@ struct TodayView: View {
         }
     }
 
-    private func readinessPicker(readiness: Binding<Readiness>) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+    private func readinessPicker(plan: DailyPlan) -> some View {
+        let readiness = readinessBinding(for: plan)
+        return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 10) {
                 Label("Energy", systemImage: store.readiness.symbol)
                     .font(.subheadline.weight(.semibold))
@@ -548,6 +607,8 @@ struct TodayView: View {
                     }
                 }
                 .pickerStyle(.menu)
+                .accessibilityIdentifier("today-readiness-picker")
+                .accessibilityValue(store.readiness.title)
             }
 
             Text(currentReadinessSnapshot.summary)
@@ -572,11 +633,11 @@ struct TodayView: View {
         .frame(maxWidth: 430)
         .nfCard(cornerRadius: 14, padding: 10)
         .accessibilityElement(children: .contain)
-        .accessibilityHint("Shows the exact remaining length, timed minutes, and next chapter after an energy change")
+        .accessibilityHint("Preview the effect before applying an energy change")
     }
 
     private var prescriptionHero: some View {
-        let plan = store.todayPlan
+        let plan = executablePlan
         let completedIDs = store.completedPlanBlockIDs(planID: plan.id)
         let completedMinutes = plan.blocks
             .filter { completedIDs.contains($0.id) }
@@ -611,7 +672,7 @@ struct TodayView: View {
 
                     startSessionButton
                         .frame(maxWidth: .infinity)
-                    heroControls(planIsComplete: planIsComplete, remainingBlockCount: remainingBlocks.count)
+                    heroControls(plan: plan, planIsComplete: planIsComplete, remainingBlockCount: remainingBlocks.count)
                 }
             } else {
                 HStack(spacing: 22) {
@@ -633,7 +694,7 @@ struct TodayView: View {
                             .foregroundStyle(.secondary)
                         startSessionButton
                             .frame(maxWidth: 310)
-                        heroControls(planIsComplete: planIsComplete, remainingBlockCount: remainingBlocks.count)
+                        heroControls(plan: plan, planIsComplete: planIsComplete, remainingBlockCount: remainingBlocks.count)
                     }
                     Spacer(minLength: 0)
                 }
@@ -668,9 +729,9 @@ struct TodayView: View {
     }
 
     private var startSessionButton: some View {
-        let plan = store.todayPlan
+        let plan = executablePlan
         let completed = store.completedPlanBlockIDs(planID: plan.id)
-        let planIsComplete = !plan.blocks.isEmpty && completed.count >= plan.blocks.count
+        let planIsComplete = !plan.blocks.isEmpty && plan.blocks.allSatisfy { completed.contains($0.id) }
         let remaining = plan.blocks.filter { !completed.contains($0.id) }
         let replacementToAcknowledge = pendingReplacementBlock(in: plan)
         return Button {
@@ -706,11 +767,11 @@ struct TodayView: View {
     }
 
     @ViewBuilder
-    private func heroControls(planIsComplete: Bool, remainingBlockCount: Int) -> some View {
+    private func heroControls(plan: DailyPlan, planIsComplete: Bool, remainingBlockCount: Int) -> some View {
         ViewThatFits(in: .horizontal) {
             HStack(alignment: .top, spacing: 12) {
                 if !planIsComplete {
-                    readinessPicker(readiness: readinessBinding)
+                    readinessPicker(plan: plan)
                     if pendingReplacementBlock(in: store.todayPlan) != nil {
                         Button("Review replacement") {
                             selectedBlock = pendingReplacementBlock(in: store.todayPlan)
@@ -726,7 +787,7 @@ struct TodayView: View {
             }
             VStack(alignment: .leading, spacing: 10) {
                 if !planIsComplete {
-                    readinessPicker(readiness: readinessBinding)
+                    readinessPicker(plan: plan)
                     if pendingReplacementBlock(in: store.todayPlan) != nil {
                         Button("Review replacement") {
                             selectedBlock = pendingReplacementBlock(in: store.todayPlan)
@@ -778,7 +839,7 @@ struct TodayView: View {
             )
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 250), spacing: 14)], spacing: 14) {
-                ForEach(Array(store.todayPlan.blocks.enumerated()), id: \.element.id) { index, block in
+                ForEach(Array(executablePlan.blocks.enumerated()), id: \.element.id) { index, block in
                     let completed = store.completedPlanBlockIDs(planID: store.todayPlan.id).contains(block.id)
                     Button {
                         if completed {
@@ -792,6 +853,7 @@ struct TodayView: View {
                         PlanBlockCard(number: index + 1, block: block, isComplete: completed)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("today-plan-block-\(index + 1)")
                     .accessibilityHint(completed
                                        ? "Opens the immutable saved-answer review for this completed chapter."
                                        : "Opens details and a start action for this chapter.")
@@ -812,7 +874,7 @@ struct TodayView: View {
         return VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .bottom) {
                 NFSectionHeader(
-                    "Ability cores",
+                    "Skills",
                     subtitle: "Keep the full STEM toolkit in rotation. Your goals add emphasis without removing broad practice."
                 )
                 Spacer(minLength: 12)
@@ -1079,6 +1141,7 @@ struct TodayView: View {
         let existingHistoryIDs = Set(store.adaptivePlanHistory.map(\.id))
 
         store.updateReadiness(newReadiness)
+        guard store.readiness == newReadiness else { return }
 
         let updatedPlan = store.todayPlan
         let updatedSnapshot = NFTodayReadinessPlanSnapshot(
@@ -1161,7 +1224,7 @@ struct TodayView: View {
     private func presentRequestedPlanIfNeeded() {
         guard store.shouldOpenTodayPlan else { return }
         store.consumeTodayPlanRequest()
-        let plan = store.todayPlan
+        let plan = executablePlan
         let completed = store.completedPlanBlockIDs(planID: plan.id)
         if let replacement = pendingReplacementBlock(in: plan) {
             selectedBlock = replacement
@@ -1178,6 +1241,96 @@ struct TodayView: View {
         selectedBlock = nil
         selectedCompletedBlock = nil
         showsCompletedPlanReview = true
+    }
+}
+
+struct NFTodayReadinessPreview: Identifiable {
+    let id = UUID()
+    let planID: String
+    let currentReadiness: Readiness
+    let proposedReadiness: Readiness
+    let completedBlocks: [PlanBlock]
+    let remainingBlocks: [PlanBlock]
+    let preservesRemainingPlan: Bool
+
+    init(plan: DailyPlan, completedBlockIDs: Set<String>, currentReadiness: Readiness,
+         proposedReadiness: Readiness, preservesRemainingPlan: Bool) {
+        planID = plan.id
+        self.currentReadiness = currentReadiness
+        self.proposedReadiness = proposedReadiness
+        completedBlocks = plan.blocks.filter { completedBlockIDs.contains($0.id) }
+        remainingBlocks = plan.blocks.filter { !completedBlockIDs.contains($0.id) }
+        self.preservesRemainingPlan = preservesRemainingPlan
+    }
+
+    var currentRemainingMinutes: Int { remainingBlocks.reduce(0) { $0 + $1.minutes } }
+
+    var pacingEffect: String {
+        switch proposedReadiness {
+        case .low:
+            NFAppLocalization.localized("New daily sessions will be untimed. You can choose a shorter remaining session; saved questions keep their original settings.", comment: "Low-energy preview describes real timing/shortening policy without inventing a replacement plan.")
+        case .normal, .high:
+            NFAppLocalization.localized("New daily sessions follow your usual pacing and timing preferences. Timed fluency still requires suitable practice evidence; saved questions keep their original settings.", comment: "Normal/high-energy preview does not promise a higher skill estimate or bypass fluency readiness.")
+        }
+    }
+
+    var planEffect: String {
+        preservesRemainingPlan
+            ? NFAppLocalization.localized("Your saved chapter list stays fixed. This choice changes the pacing available for new daily sessions.", comment: "Readiness preview for started or earlier-version immutable plans.")
+            : NFAppLocalization.localized("Applying may update the unstarted sections. Nothing changes until you apply.", comment: "Readiness preview for an unstarted current-policy plan; no prospective plan is generated.")
+    }
+}
+
+private struct NFTodayReadinessPreviewView: View {
+    let preview: NFTodayReadinessPreview
+    let onCancel: () -> Void
+    let onApply: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    Text("\(preview.currentReadiness.title) → \(preview.proposedReadiness.title)")
+                        .font(.title2.bold()).accessibilityHeading(.h2)
+                    Text(preview.pacingEffect).accessibilityIdentifier("readiness-preview-effect")
+                    Text(preview.planEffect).font(.subheadline)
+                    Label("Saved answers, completed sections and earned rewards stay unchanged.", systemImage: "lock.fill")
+                        .font(.subheadline).foregroundStyle(.secondary)
+                    if !preview.completedBlocks.isEmpty {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Completed sections — fixed").font(.headline)
+                            ForEach(preview.completedBlocks) { block in
+                                Label(block.title, systemImage: "checkmark.circle.fill")
+                                    .foregroundStyle(NFTheme.mintForeground)
+                            }
+                        }.nfCard(cornerRadius: 14)
+                    }
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Current remaining plan").font(.headline)
+                        Text(NFAppLocalization.formattedMinutes(preview.currentRemainingMinutes))
+                            .foregroundStyle(.secondary)
+                        ForEach(preview.remainingBlocks) { block in
+                            LabeledContent(block.title, value: NFAppLocalization.formattedMinutes(block.minutes))
+                        }
+                    }.nfCard(cornerRadius: 14)
+                }.padding(20)
+            }
+            .navigationTitle("Energy preview")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel", action: onCancel).accessibilityIdentifier("readiness-preview-cancel")
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                Button("Apply energy change", action: onApply)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .buttonStyle(.borderedProminent)
+                    .tint(NFTheme.controlTint(for: "indigo")).foregroundStyle(NFTheme.controlForeground(for: "indigo"))
+                    .padding(16).background(.regularMaterial)
+                    .accessibilityIdentifier("readiness-preview-apply")
+            }
+        }
+        .nfDesktopPresentationFrame(minWidth: 400, idealWidth: 600, minHeight: 520, idealHeight: 740)
     }
 }
 
@@ -1695,7 +1848,7 @@ private struct PlanBlockCard: View {
                         .font(.caption2.weight(.heavy))
                         .tracking(1.2)
                         .foregroundStyle(NFTheme.foregroundColor(for: block.lab.colorToken))
-                    Text(block.lab == .transfer ? "Crossover" : block.lab.shortTitle)
+                    Text(block.lab == .transfer ? "Try a new context" : block.lab.shortTitle)
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
                 }
@@ -1856,7 +2009,7 @@ private struct TodaySessionIntroView: View {
                         ContentUnavailableView(
                             "Today’s plan is complete",
                             systemImage: "checkmark.seal.fill",
-                            description: Text("Your completed work is saved. Focused practice is still available from Train.")
+                            description: Text("Your completed work is saved. Focused practice is still available from Practice.")
                         )
                     } else {
                         VStack(alignment: .leading, spacing: 10) {
@@ -1919,10 +2072,12 @@ private struct PlanBlockDetailView: View {
     let persistedReplacementReason: NFPlanReplacementReason?
     let replacementAcknowledgement: NFTodayReplacementAcknowledgement?
     let onStart: () -> Void
-    let onReplace: (NFPlanReplacementReason) -> Void
+    let onPreviewReplacement: (NFPlanReplacementReason) throws -> NFPlanReplacementPreview
+    let onReplace: (NFPlanReplacementPreview) -> Void
     let onAcknowledgeReplacement: () -> Void
-    @State private var replacementReason = NFPlanReplacementReason.needVariety
-    @State private var isConfirmingReplacement = false
+    @State private var replacementReason = NFPlanReplacementReason.wantVariety
+    @State private var replacementPreview: NFPlanReplacementPreview?
+    @State private var replacementPreviewError: String?
     @State private var didAcknowledgeReplacement = false
 
     private var requiresReplacementAcknowledgement: Bool {
@@ -1936,7 +2091,7 @@ private struct PlanBlockDetailView: View {
                     HStack(spacing: 16) {
                         NFIconTile(symbol: block.lab.symbol, color: NFTheme.color(for: block.lab.colorToken), size: 62)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(block.title).font(.title2.bold())
+                            Text(block.title).font(.title2.bold()).accessibilityIdentifier("plan-block-title")
                             Text(block.detail).foregroundStyle(.secondary)
                         }
                     }
@@ -1960,7 +2115,7 @@ private struct PlanBlockDetailView: View {
                                 onAcknowledgeReplacement()
                             } label: {
                                 Label("Acknowledge replacement", systemImage: "checkmark")
-                                    .frame(maxWidth: .infinity)
+                                    .frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
                             }
                             .buttonStyle(.borderedProminent)
                             .tint(NFTheme.controlTint(for: "green"))
@@ -1994,15 +2149,41 @@ private struct PlanBlockDetailView: View {
                             Text("Replacing a block keeps today’s total time. Choose the closest reason.")
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
-                            Picker("Reason", selection: $replacementReason) {
-                                ForEach(NFPlanReplacementReason.allCases) { reason in
-                                    Text(reason.title).tag(reason)
+                            Menu {
+                                ForEach(NFPlanReplacementReason.currentChoices) { reason in
+                                    Button { replacementReason = reason } label: {
+                                        if reason == replacementReason { Label(reason.title, systemImage: "checkmark") }
+                                        else { Text(reason.title) }
+                                    }
                                 }
+                            } label: {
+                                HStack {
+                                    Text("Reason")
+                                    Spacer()
+                                    Text(replacementReason.title)
+                                    Image(systemName: "chevron.up.chevron.down")
+                                }.frame(minHeight: 44).contentShape(Rectangle())
                             }
-                            .pickerStyle(.menu)
-                            Button("Replace this block") { isConfirmingReplacement = true }
-                                .buttonStyle(.bordered)
-                                .disabled(!canReplace)
+                            .accessibilityIdentifier("plan-replacement-reason")
+                            Button {
+                                do {
+                                    replacementPreview = try onPreviewReplacement(replacementReason)
+                                    replacementPreviewError = nil
+                                } catch {
+                                    replacementPreview = nil
+                                    replacementPreviewError = error.localizedDescription
+                                }
+                            } label: {
+                                Text("Preview replacement").frame(minHeight: 44).contentShape(Rectangle())
+                            }
+                            .buttonStyle(.bordered).disabled(!canReplace)
+                            .accessibilityIdentifier("plan-replacement-preview")
+                            if let replacementPreviewError {
+                                Text(verbatim: replacementPreviewError).foregroundStyle(.secondary)
+                            }
+                            if let preview = replacementPreview {
+                                replacementPreviewCard(preview)
+                            }
                             if !canReplace {
                                 Text("Replacement is unavailable after this block starts or after today’s one replacement is used.")
                                     .font(.caption)
@@ -2037,23 +2218,54 @@ private struct PlanBlockDetailView: View {
                     Button("Close") { dismiss() }
                 }
             }
-            .confirmationDialog(
-                "Replace this block?",
-                isPresented: $isConfirmingReplacement,
-                titleVisibility: .visible
-            ) {
-                Button("Replace for: \(replacementReason.title)") {
-                    onReplace(replacementReason)
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("NeuroForge will choose the highest-priority accessible alternative with the same duration.")
+            .onChange(of: replacementReason) { _, _ in
+                replacementPreview = nil
+                replacementPreviewError = nil
             }
         }
     }
 
-    private var evidenceTitle: String {
-        switch block.evidenceClass {
+    private func replacementPreviewCard(_ preview: NFPlanReplacementPreview) -> some View {
+        let original = preview.originalPlan.domainPlan.blocks.first { $0.id == preview.originalBlock.id }
+        let proposed = preview.proposedPlan.domainPlan.blocks.first { $0.id == preview.replacementBlock.id }
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("Replacement preview").font(.headline)
+                .accessibilityIdentifier("plan-replacement-preview-heading")
+            LabeledContent("Before", value: original?.title ?? preview.originalBlock.title)
+            LabeledContent {
+                Text(proposed?.title ?? preview.replacementBlock.title)
+                    .accessibilityIdentifier("plan-replacement-proposed-title")
+            } label: { Text("Proposed") }
+            LabeledContent("Target duration", value: NFAppLocalization.formattedMinutes(preview.replacementBlock.minutes))
+            LabeledContent("Your reason", value: replacementReason.title)
+            LabeledContent("Practice type", value: evidenceTitle(for: preview.replacementBlock.evidenceClass))
+            Text("Completed sections stay fixed. This replacement keeps the scheduled time and practice type. Earlier results stay unchanged.")
+                .font(.footnote).foregroundStyle(.secondary)
+            Text("Your reason changes today’s activity choice. It does not change your measured skill or assign a reviewed challenge band.")
+                .font(.footnote).foregroundStyle(.secondary)
+            HStack {
+                Button {
+                    replacementPreview = nil
+                    replacementPreviewError = nil
+                } label: {
+                    Text("Cancel").frame(minHeight: 44).contentShape(Rectangle())
+                }
+                .buttonStyle(.bordered).accessibilityIdentifier("plan-replacement-cancel")
+                Button {
+                    onReplace(preview)
+                } label: {
+                    Text("Apply replacement").frame(minHeight: 44).contentShape(Rectangle())
+                }
+                .buttonStyle(.borderedProminent).disabled(!canReplace)
+                .accessibilityIdentifier("plan-replacement-apply")
+            }
+        }.nfCard()
+    }
+
+    private var evidenceTitle: String { evidenceTitle(for: block.evidenceClass) }
+
+    private func evidenceTitle(for evidence: EvidenceClass) -> String {
+        switch evidence {
         case .practice: NFAppLocalization.localized("Training performance", locale: NFAppLocalization.preferredLocale, comment: "Evidence-channel title for ordinary practice.")
         case .nearTransfer: NFAppLocalization.localized("Near transfer", locale: NFAppLocalization.preferredLocale, comment: "Evidence-channel title for related but unfamiliar forms.")
         case .appliedTransfer: NFAppLocalization.localized("Applied transfer", locale: NFAppLocalization.preferredLocale, comment: "Evidence-channel title for applying a skill in another context.")

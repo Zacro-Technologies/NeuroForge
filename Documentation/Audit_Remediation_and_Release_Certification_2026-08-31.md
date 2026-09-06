@@ -1,7 +1,9 @@
 # NeuroForge Audit Remediation and Release Certification Companion
 
-Companion date: 2026-08-31  
-Source audit: [Whole-App UX, Accessibility, and Feature Audit](Whole_App_UX_Accessibility_QA_Audit_2026-08-30.md)  
+Companion date: 2026-08-31; release evidence updated through 2026-09-03
+
+Source audit: [Whole-App UX, Accessibility, and Feature Audit](Whole_App_UX_Accessibility_QA_Audit_2026-08-30.md)
+
 Scope: O-001 through O-030, R-001 through R-024, G-001 through G-015, and all twelve section 11 simplification candidates
 
 ## 1. Purpose and interpretation
@@ -40,6 +42,7 @@ An automated model, persistence, parser, or accessibility-label test is not a su
 - The exact-final-source iPhone SE UI smoke passed 4 of 4 with no failures, skips, or expected failures on the iPhone SE (3rd generation), iOS 26.5 Simulator. It covered primary destination navigation, all three onboarding steps at the maximum accessibility text category with contained/hittable primary actions, Mental Math Quick Practice entry into Universal Session, and declined Question Writer recovery without termination. Result bundle: /tmp/NeuroForge-final-postcal-ui-iphone-se-4tests.xcresult.
 - The final full macOS unit run passed 541 of 541 tests with no failures, skips, or expected failures. It also caught a widget-publication date-context regression before certification; widget publication now requests the plan using the caller's date and calendar, and the focused regression plus the complete suite passed afterward. Result bundle: /tmp/NeuroForge-final-unit-20260831-02.xcresult.
 - Exact-final-source clean builds passed for macOS Release, iOS Simulator Debug and Release, and unsigned generic iOS device Release. Debug static analysis passed on macOS and iOS Simulator. The final build-matrix logs contain no compiler warnings or errors.
+- App Store Connect accepted the signed `1.0.0` (`5`) package for TestFlight processing at 2026-09-03 22:10:52 EDT (2026-09-04 02:10:52 UTC). Upload ID: `b291e0f9-4c21-4eff-ad6f-ec9c0baf75c2`. The exact locally exported IPA passed strict signature, production-entitlement, privacy-manifest, and bundled-content checks; SHA-256: `8471d87d4a54d48099e89dbd37131cbe6cc2d3182559b0f98ec6b92e30b1c12c`. The matching archive and both dSYMs are preserved at `/Users/takamimarsh/Library/Developer/Xcode/Archives/2026-09-03/NeuroForge 1.0.0 (5).xcarchive`; the validated IPA and export metadata are preserved at `/Users/takamimarsh/Library/Developer/Xcode/Archives/2026-09-03/NeuroForge 1.0.0 (5) Export`. This upload evidence does not close the signed-device, CloudKit, external beta, or App Review gates below.
 - Temporary diagnostic logs known to the thread include:
   - /tmp/neuroforge-residual-focused-tests.log
   - /tmp/neuroforge-residual-final-tests.log
@@ -53,8 +56,9 @@ The earlier diagnostic logs are targeted development artifacts. The dated final-
 
 | Field | Final value |
 |---|---|
-| Candidate commit / source archive | Working tree on `main` at base HEAD `4f29d7bc8aa9e25f195e943c23d11fa2a57097b5`. The audit remediation is still uncommitted/untracked, so no immutable release-candidate commit or archive exists yet. |
-| Marketing version / build | `1.0.0` (`4`) |
+| Candidate commit / source archive | Application source committed on `main` at HEAD `f9b846015676e6b3bed7a4f7037e59475dda1b49`; build 5 publication metadata and upload evidence remain uncommitted working-tree changes. |
+| Marketing version / build | `1.0.0` (`5`) |
+| TestFlight upload | ACCEPTED / PROCESSING — App Store Connect accepted upload ID `b291e0f9-4c21-4eff-ad6f-ec9c0baf75c2` at 2026-09-03 22:10:52 EDT. The package is not yet certified for external testers or App Review. |
 | Xcode / Swift / XcodeGen versions | Xcode 26.6 (`17F113`); Apple Swift 6.3.3 (`swiftlang-6.3.3.1.3 clang-2100.1.1.101`); XcodeGen 2.46.0. |
 | macOS clean build command and result | PASS — `xcodebuild -project NeuroForge.xcodeproj -scheme NeuroForge -configuration Release -destination 'platform=macOS,arch=arm64' -derivedDataPath /tmp/NeuroForge-final-mac-release-20260831 -resultBundlePath /tmp/NeuroForge-final-mac-release-20260831.xcresult CODE_SIGNING_ALLOWED=NO clean build`; universal arm64/x86_64 app, 0 warnings/errors. PASS — Debug `analyze`, 0 analyzer warnings/errors; `/tmp/NeuroForge-final-mac-analyze-20260831.xcresult`. |
 | iOS Simulator clean build command and result | PASS — generic Simulator Debug and Release clean builds; PASS — generic iOS device Release clean build with `CODE_SIGNING_ALLOWED=NO`; PASS — generic Simulator Debug `clean analyze`. All four logs contain 0 `warning:`/`error:` diagnostics: `/tmp/NeuroForge-final-postcal-ios-sim-debug.log`, `/tmp/NeuroForge-final-postcal-ios-sim-release.log`, `/tmp/NeuroForge-final-postcal-ios-device-release-unsigned.log`, `/tmp/NeuroForge-final-postcal-ios-sim-analyze.log`. |

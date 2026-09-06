@@ -1,0 +1,5 @@
+# Installed coordinate journeys — passing
+
+Both journeys passed on source34e8999e, iPhone SE3/iOS26.5, actual loaded runner56459 hash e54bb33acaa96f674e8f811d4df1da3899fb6d8dca345b24db6f718bf914ebdd. Result bundle and full counts are in Coordinate_Explicit_Controls_2_Passing_Summary.json. Root inspected both worked-copy screenshots: rotation after one operation P=(−2,1), reflection after two P=(−2,0). Step is disabled at the final step, Reset remains readable and reachable, and Next is above the safe-area boundary. Automated checks also verified Reset, immutable original description, locked numeric answers, Correct, and question2 publication.
+
+This is default-size English simulator evidence, not the full device/VoiceOver/Dynamic Type acceptance matrix. The singular English phrase “1 operations” remains a small copy issue scheduled for the next UI patch. A macOS test-host crash was collected as a coordinate attachment by Xcode; it belongs to the separately failed Mac worker suite and was not an iOS coordinate crash.

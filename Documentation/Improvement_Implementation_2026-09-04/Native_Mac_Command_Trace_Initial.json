@@ -1,0 +1,33 @@
+{
+  "createdAt": "2026-09-05T08:42:38.868796+00:00",
+  "runID": "3EBA09C9-4D25-42D9-9D34-6B5FBCA81C4C",
+  "appPath": "/tmp/NeuroForge-Native-QA-3eba09c9-4d25-42d9-9d34-6b5fbca81c4c/NeuroForgeNativeQA.app",
+  "bundleID": "com.zacrotech.NeuroForge.nativeqa.3eba09c94d2542d99d346b5fbca81c4c",
+  "purpose": "Disposable native command/close verification using UUID test stores and isolated app preferences",
+  "sourceManifest": "Replacement_Deferral_Corrected_UI_Source_Hashes.json",
+  "sourceInputManifestDigest": "188c2cb3e357c638d46f06a0a134915787d43f3ddc71e271d6ed6c9385559b30",
+  "fixtureRoot": "/var/folders/9s/lwj2ss7d679bl8hv9dx2qf6h0000gn/T/NeuroForge-UITests-3EBA09C9-4D25-42D9-9D34-6B5FBCA81C4C",
+  "NeuroForge": {
+    "builtSHA256": "a664ae4291bbfec57d86bec08832758797577eefe6e576130f12e413c673191a",
+    "copiedSHA256": "a664ae4291bbfec57d86bec08832758797577eefe6e576130f12e413c673191a"
+  },
+  "NeuroForge.debug.dylib": {
+    "builtSHA256": "ef9d5f80ec7e6c5da9cda4b11ab86dff85c40c8ce763d63ad696f1a98f280f8e",
+    "copiedSHA256": "ef9d5f80ec7e6c5da9cda4b11ab86dff85c40c8ce763d63ad696f1a98f280f8e"
+  },
+  "observedAt": "2026-09-05T08:52:15.523956+00:00",
+  "events": [
+    "quit.command",
+    "quit.blocked",
+    "quit.command"
+  ],
+  "status": "Quit save guard executes and blocks failed save, Retry preserves123, later Quit dismisses session but fails to terminate. CmdW has no trace because command group is absent from this Window scene.",
+  "observations": [
+    "Initial answer12 saved; only isolated Sessions.json temporarily replaced by an empty directory, original file retained.",
+    "Typed123 stayed in recovery while CmdQ traced quit.command then quit.blocked.",
+    "Restored exact checkpoint predecessor; Retry saved123 and displayed Pause sheet.",
+    "CmdW remained inert before/after Retry, and no window.command event was recorded.",
+    "Second CmdQ dismissed to Today with Continue but no quit.forward-native or quit.delegate appeared."
+  ],
+  "cleanup": "Only disposable test PID16443 was terminated after its checkpoint path and durable answer were verified; ordinary user app was untouched."
+}

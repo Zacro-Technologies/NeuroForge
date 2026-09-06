@@ -1,4 +1,5 @@
 import Foundation
+import Observation
 
 struct NFProgressInsight: Identifiable, Equatable {
     enum Kind: String, Equatable {
@@ -24,154 +25,182 @@ struct NFProgressInsightSnapshot: Equatable {
     let reviewsDue: [NFProgressInsight]
 }
 
-enum NFProgressInsightEngine {
-    static let version = 1
+/// Immutable effective evidence crosses the projection boundary; SwiftData models
+/// and original disputed results never enter the diagnostic reducer.
+struct NFProgressDiagnosticObservation: Sendable, Equatable {
+    let attempt: AttemptDTO
+    let errorCode: String?
+    let isProtected: Bool
 
+    init(attempt: AttemptDTO, errorCode: String?, isProtected: Bool = false) {
+        self.attempt = attempt
+        self.isProtected = isProtected
+        self.errorCode = isProtected ? nil : errorCode
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        let a = lhs.attempt, b = rhs.attempt
+        func same(_ lhs: Double, _ rhs: Double) -> Bool { lhs == rhs || (lhs.isNaN && rhs.isNaN) }
+        // Invalid numeric inputs still need reflexive change detection; they
+        // are excluded by the worker rather than causing a render/retry loop.
+        return a.id == b.id && a.lab == b.lab && a.correct == b.correct && same(a.credit, b.credit)
+            && same(a.evidenceWeight, b.evidenceWeight) && a.evidenceClass == b.evidenceClass
+            && a.wasSkipped == b.wasSkipped && a.responseFormatRaw == b.responseFormatRaw
+            && same(a.submittedAt.timeIntervalSince1970, b.submittedAt.timeIntervalSince1970)
+            && lhs.errorCode == rhs.errorCode && lhs.isProtected == rhs.isProtected
+    }
+}
+
+struct NFRepeatedErrorPattern: Equatable, Sendable {
+    let lab: TrainingLab
+    let code: String
+    let evidenceAttemptIDs: [UUID]
+    let lastObservedAt: Date
+}
+
+enum NFProgressDiagnosticReducer {
+    static func reduce(_ observations: [NFProgressDiagnosticObservation], at date: Date, minimumCount: Int = 2) -> [NFRepeatedErrorPattern] {
+        guard date.timeIntervalSince1970.isFinite else { return [] }
+        // Duplicate payloads for an identity cannot manufacture repetition. A
+        // disagreement at this boundary is conservatively omitted in full.
+        let byIdentity = Dictionary(grouping: observations, by: { $0.attempt.id })
+        let eligible = byIdentity.values.compactMap { records -> NFProgressDiagnosticObservation? in
+            guard let value = records.first else { return nil }
+            let attempt = value.attempt
+            guard records.allSatisfy({ other in
+                let candidate = other.attempt
+                return candidate.lab == attempt.lab && candidate.correct == attempt.correct
+                    && candidate.credit == attempt.credit && candidate.evidenceWeight == attempt.evidenceWeight
+                    && candidate.evidenceClass == attempt.evidenceClass && candidate.wasSkipped == attempt.wasSkipped
+                    && candidate.responseFormatRaw == attempt.responseFormatRaw
+                    && candidate.submittedAt == attempt.submittedAt && other.errorCode == value.errorCode
+                    && other.isProtected == value.isProtected
+            }) else { return nil }
+            guard !value.isProtected,
+                  ![EvidenceClass.assessmentHoldout, .nearTransfer].contains(attempt.evidenceClass),
+                  !attempt.wasSkipped, !attempt.correct, attempt.evidenceWeight.isFinite,
+                  attempt.evidenceWeight > 0, attempt.evidenceClass != .documentPractice,
+                  !["selfcheck", "sourceselfcheck"].contains((attempt.responseFormatRaw ?? "").lowercased()),
+                  attempt.credit.isFinite, (0...1).contains(attempt.credit),
+                  attempt.submittedAt.timeIntervalSince1970.isFinite, attempt.submittedAt <= date,
+                  let code = value.errorCode, !code.isEmpty else { return nil }
+            return value
+        }
+        let groups = Dictionary(grouping: eligible) { value in
+            "\(value.attempt.lab.rawValue)|\(value.errorCode ?? "")"
+        }
+        return groups.values.compactMap { records -> NFRepeatedErrorPattern? in
+            guard records.count >= max(1, minimumCount), let first = records.first, let code = first.errorCode else { return nil }
+            let ordered = records.sorted {
+                $0.attempt.submittedAt == $1.attempt.submittedAt
+                    ? $0.attempt.id.uuidString < $1.attempt.id.uuidString
+                    : $0.attempt.submittedAt < $1.attempt.submittedAt
+            }
+            return NFRepeatedErrorPattern(lab: first.attempt.lab, code: code,
+                evidenceAttemptIDs: ordered.map { $0.attempt.id }, lastObservedAt: ordered.last!.attempt.submittedAt)
+        }.sorted {
+            if $0.evidenceAttemptIDs.count != $1.evidenceAttemptIDs.count {
+                return $0.evidenceAttemptIDs.count > $1.evidenceAttemptIDs.count
+            }
+            return "\($0.lab.rawValue)|\($0.code)" < "\($1.lab.rawValue)|\($1.code)"
+        }
+    }
+}
+
+/// A disposable projection owns no model context and cannot cancel a save.
+/// Every publication is tied to the exact input generation that requested it.
+@MainActor @Observable
+final class NFProgressDiagnosticProjection {
+    private(set) var patterns: [NFRepeatedErrorPattern] = []
+    private(set) var isLoading = false
+    private(set) var revision: UInt64 = 0
+    @ObservationIgnored private var task: Task<Void, Never>?
+
+    @discardableResult
+    func update(_ observations: [NFProgressDiagnosticObservation], at date: Date) -> UInt64 {
+        task?.cancel()
+        revision &+= 1
+        let ticket = revision
+        // Previously included results must disappear immediately when a new
+        // correction or filter invalidates their authority.
+        patterns = []
+        isLoading = !observations.isEmpty
+        guard !observations.isEmpty else { return ticket }
+        task = Task { [weak self] in
+            let worker = Task.detached(priority: .userInitiated) {
+                guard !Task.isCancelled else { return [NFRepeatedErrorPattern]() }
+                return NFProgressDiagnosticReducer.reduce(observations, at: date, minimumCount: 1)
+            }
+            let result = await withTaskCancellationHandler(operation: { await worker.value }, onCancel: { worker.cancel() })
+            guard !Task.isCancelled else { return }
+            self?.publish(result, for: ticket)
+        }
+        return ticket
+    }
+
+    func publish(_ result: [NFRepeatedErrorPattern], for ticket: UInt64) {
+        guard ticket == revision else { return }
+        patterns = result
+        isLoading = false
+    }
+
+    func cancel() {
+        task?.cancel()
+        task = nil
+        revision &+= 1
+        isLoading = false
+    }
+}
+
+enum NFProgressInsightEngine {
+    static let version = 2
+
+    /// Legacy adapter for isolated callers without an AppStore disposition view.
+    /// Live progress captures effective DTOs and current interpretations first.
+    @MainActor
     static func makeSnapshot(
         at date: Date,
         attempts: [AttemptRecord],
         errorCodeOverrides: [UUID: String] = [:]
     ) -> NFProgressInsightSnapshot {
-        let eligible = attempts
-            .filter { !$0.wasSkipped && $0.evidenceWeight > 0 }
-            .sorted(by: evidenceOrder)
-        return NFProgressInsightSnapshot(
-            strengths: strengths(from: eligible),
-            repeatedErrors: repeatedErrors(from: eligible, errorCodeOverrides: errorCodeOverrides),
-            overconfidenceHotspots: overconfidence(from: eligible),
-            reviewsDue: reviewsDue(at: date, from: eligible)
+        makeSnapshot(at: date, observations: attempts.map {
+            NFProgressDiagnosticObservation(attempt: $0.dto, errorCode: errorCodeOverrides[$0.id] ?? $0.errorCode,
+                isProtected: NFReadOnlyAttemptSnapshot(attempt: $0).source == .protectedAssessment)
+        })
+    }
+
+    static func makeSnapshot(at date: Date, observations: [NFProgressDiagnosticObservation]) -> NFProgressInsightSnapshot {
+        present(NFProgressDiagnosticReducer.reduce(observations, at: date))
+    }
+
+    static func present(_ patterns: [NFRepeatedErrorPattern]) -> NFProgressInsightSnapshot {
+        NFProgressInsightSnapshot(
+            strengths: [], // Reviewed-band summaries supply supported task scope.
+            repeatedErrors: patterns.filter { $0.evidenceAttemptIDs.count >= 2 }.map { pattern in
+                NFProgressInsight(id: "error.\(pattern.lab.rawValue)|\(pattern.code)",
+                    kind: .repeatedError, ruleID: "progress.repeated-error.v2.n2",
+                    lab: pattern.lab,
+                    title: NFErrorReflectionCode(rawValue: pattern.code)?.title
+                        ?? NFScoringErrorCopy.title(for: pattern.code),
+                    detail: NFAppLocalization.localized("This pattern appeared \(pattern.evidenceAttemptIDs.count) times in \(pattern.lab.shortTitle).", locale: NFAppLocalization.preferredLocale, comment: "Repeated-error progress insight; placeholders are occurrence count and training-lab name."),
+                    evidenceAttemptIDs: pattern.evidenceAttemptIDs)
+            },
+            overconfidenceHotspots: [], // Legacy conditions cannot establish calibration.
+            reviewsDue: [] // Versioned relation-level retention queue supplies due entries.
         )
-    }
-
-    private static func strengths(from attempts: [AttemptRecord]) -> [NFProgressInsight] {
-        Dictionary(grouping: attempts) { TrainingLab(rawValue: $0.gameID) ?? .mentalMath }
-            .compactMap { lab, records -> (NFProgressInsight, Double)? in
-                guard records.count >= 5 else { return nil }
-                let available = records.reduce(0) { $0 + max(0, $1.evidenceWeight) }
-                guard available > 0 else { return nil }
-                let earned = records.reduce(0) {
-                    $0 + min(1, max(0, $1.deterministicCredit)) * max(0, $1.evidenceWeight)
-                }
-                let credit = earned / available
-                let evidenceClasses = Set(records.map(\.evidenceClassRaw))
-                guard credit >= 0.75, evidenceClasses.count >= 2 else { return nil }
-                let insight = NFProgressInsight(
-                    id: "strength.\(lab.rawValue)",
-                    kind: .strength,
-                    ruleID: "progress.strength.v1.n5.credit75.two-channels",
-                    lab: lab,
-                    title: NFAppLocalization.localized("Current strength: \(lab.shortTitle)", locale: NFAppLocalization.preferredLocale, comment: "Progress insight title; the placeholder is a training-lab name."),
-                    detail: NFAppLocalization.localized("\(records.count) scored answers average \(credit.formatted(.percent.precision(.fractionLength(0)))).", locale: NFAppLocalization.preferredLocale, comment: "Progress strength detail; placeholders are an answer count and locale-formatted average score."),
-                    evidenceAttemptIDs: records.map(\.id)
-                )
-                return (insight, credit)
-            }
-            .sorted {
-                if abs($0.1 - $1.1) > 0.000_000_001 { return $0.1 > $1.1 }
-                return $0.0.lab.rawValue < $1.0.lab.rawValue
-            }
-            .map(\.0)
-    }
-
-    private static func repeatedErrors(
-        from attempts: [AttemptRecord],
-        errorCodeOverrides: [UUID: String]
-    ) -> [NFProgressInsight] {
-        let errors = attempts.compactMap { attempt -> (attempt: AttemptRecord, code: String)? in
-            guard !attempt.isCorrect,
-                  let code = errorCodeOverrides[attempt.id] ?? attempt.errorCode,
-                  !code.isEmpty else { return nil }
-            return (attempt, code)
-        }
-        return Dictionary(grouping: errors) {
-            "\($0.attempt.gameID)|\($0.code)"
-        }
-        .compactMap { key, records -> NFProgressInsight? in
-            guard records.count >= 2,
-                  let first = records.first else { return nil }
-            let lab = TrainingLab(rawValue: first.attempt.gameID) ?? .mentalMath
-            return NFProgressInsight(
-                id: "error.\(key)",
-                kind: .repeatedError,
-                ruleID: "progress.repeated-error.v1.n2",
-                lab: lab,
-                title: NFErrorReflectionCode(rawValue: first.code)?.title
-                    ?? NFScoringErrorCopy.title(for: first.code),
-                detail: NFAppLocalization.localized("This pattern appeared \(records.count) times in \(lab.shortTitle).", locale: NFAppLocalization.preferredLocale, comment: "Repeated-error progress insight; placeholders are occurrence count and training-lab name."),
-                evidenceAttemptIDs: records.map(\.attempt.id)
-            )
-        }
-        .sorted {
-            if $0.evidenceAttemptIDs.count != $1.evidenceAttemptIDs.count {
-                return $0.evidenceAttemptIDs.count > $1.evidenceAttemptIDs.count
-            }
-            return $0.id < $1.id
-        }
-    }
-
-    private static func overconfidence(from attempts: [AttemptRecord]) -> [NFProgressInsight] {
-        let candidates = attempts.filter { attempt in
-            guard !attempt.isCorrect,
-                  let confidence = attempt.confidenceRaw.flatMap(ConfidenceLevel.init(rawValue:)) else {
-                return false
-            }
-            return confidence.probability >= ConfidenceLevel.fairlyConfident.probability
-        }
-        return Dictionary(grouping: candidates) { TrainingLab(rawValue: $0.gameID) ?? .mentalMath }
-            .compactMap { lab, records -> NFProgressInsight? in
-                guard records.count >= 2 else { return nil }
-                return NFProgressInsight(
-                    id: "overconfidence.\(lab.rawValue)",
-                    kind: .overconfidence,
-                    ruleID: "progress.overconfidence.v1.incorrect-confidence72.n2",
-                    lab: lab,
-                    title: NFAppLocalization.localized("Confidence check: \(lab.shortTitle)", locale: NFAppLocalization.preferredLocale, comment: "Confidence-calibration progress insight title; the placeholder is a training-lab name."),
-                    detail: NFAppLocalization.localized("\(NFAppLocalization.formattedAnswerCount(records.count)) were incorrect despite high confidence. Review the underlying step before retrying.", locale: NFAppLocalization.preferredLocale, comment: "Confidence-calibration progress insight; the placeholder is a localized answer count."),
-                    evidenceAttemptIDs: records.map(\.id)
-                )
-            }
-            .sorted {
-                if $0.evidenceAttemptIDs.count != $1.evidenceAttemptIDs.count {
-                    return $0.evidenceAttemptIDs.count > $1.evidenceAttemptIDs.count
-                }
-                return $0.lab.rawValue < $1.lab.rawValue
-            }
-    }
-
-    private static func reviewsDue(at date: Date, from attempts: [AttemptRecord]) -> [NFProgressInsight] {
-        Dictionary(grouping: attempts.filter { !$0.templateID.isEmpty }, by: \.templateID)
-            .compactMap { templateID, records -> (NFProgressInsight, Date)? in
-                guard let latest = records.max(by: evidenceOrder) else { return nil }
-                let correctCount = records.filter(\.isCorrect).count
-                let stabilityDays = max(0.5, 1 + Double(correctCount) * 0.6)
-                let dueAt = latest.submittedAt.addingTimeInterval(stabilityDays * 86_400)
-                guard dueAt <= date else { return nil }
-                let lab = TrainingLab(rawValue: latest.gameID) ?? .mentalMath
-                let insight = NFProgressInsight(
-                    id: "review.\(templateID)",
-                    kind: .reviewDue,
-                    ruleID: "progress.review-due.v1.stability-linear",
-                    lab: lab,
-                    title: NFAppLocalization.localized("Review due: \(lab.shortTitle)", locale: NFAppLocalization.preferredLocale, comment: "Retention-review insight title; the placeholder is a training-lab name."),
-                    detail: NFAppLocalization.localized("A fresh version of this question pattern is ready for review.", locale: NFAppLocalization.preferredLocale, comment: "Retention-review insight detail."),
-                    evidenceAttemptIDs: records.map(\.id)
-                )
-                return (insight, dueAt)
-            }
-            .sorted {
-                if $0.1 != $1.1 { return $0.1 < $1.1 }
-                return $0.0.id < $1.0.id
-            }
-            .map(\.0)
-    }
-
-    private static func evidenceOrder(_ lhs: AttemptRecord, _ rhs: AttemptRecord) -> Bool {
-        if lhs.submittedAt != rhs.submittedAt { return lhs.submittedAt < rhs.submittedAt }
-        return lhs.id.uuidString < rhs.id.uuidString
     }
 }
 
-enum NFConsistencyDayStatus: String, Equatable {
+@MainActor
+extension AppStore {
+    func progressDiagnosticObservation(for attempt: AttemptRecord) -> NFProgressDiagnosticObservation {
+        let protected = historyPresentation(for: .init(attempt: attempt)).source == .protectedAssessment
+        return NFProgressDiagnosticObservation(attempt: effectiveAttemptDTO(attempt),
+            errorCode: protected ? nil : effectiveErrorCode(for: attempt), isProtected: protected)
+    }
+}
+
+enum NFConsistencyDayStatus: String, Equatable, Sendable {
     case active
     case plannedRest
     case protectedPause
@@ -179,13 +208,13 @@ enum NFConsistencyDayStatus: String, Equatable {
     case availableToday
 }
 
-struct NFConsistencyDay: Identifiable, Equatable {
+struct NFConsistencyDay: Identifiable, Equatable, Sendable {
     let date: Date
     let status: NFConsistencyDayStatus
     var id: Date { date }
 }
 
-struct NFConsistencySnapshot: Equatable {
+struct NFConsistencySnapshot: Equatable, Sendable {
     let currentActiveDayStreak: Int
     let activeDaysInWindow: Int
     let plannedDaysInWindow: Int
@@ -197,6 +226,7 @@ struct NFConsistencySnapshot: Equatable {
 enum NFConsistencyEngine {
     static let version = 1
 
+    @MainActor
     static func makeSnapshot(
         at date: Date,
         attempts: [AttemptRecord],
@@ -205,9 +235,17 @@ enum NFConsistencyEngine {
         windowDays: Int = 28,
         calendar suppliedCalendar: Calendar = .current
     ) -> NFConsistencySnapshot {
+        makeSnapshot(at: date, activities: attempts.map(NFImmutableAttemptRecordSnapshot.init),
+            trainingDays: trainingDays, trackingStartDate: trackingStartDate,
+            windowDays: windowDays, calendar: suppliedCalendar)
+    }
+
+    static func makeSnapshot(at date: Date, activities: [NFImmutableAttemptRecordSnapshot],
+        trainingDays: Set<Int>, trackingStartDate: Date? = nil, windowDays: Int = 28,
+        calendar suppliedCalendar: Calendar = .current) -> NFConsistencySnapshot {
         let calendar = suppliedCalendar
         let today = calendar.startOfDay(for: date)
-        let activeDates = Set(attempts.compactMap { attempt -> Date? in
+        let activeDates = Set(activities.compactMap { attempt -> Date? in
             guard !attempt.wasSkipped, attempt.evidenceWeight > 0 else { return nil }
             return calendar.startOfDay(for: attempt.submittedAt)
         })
@@ -292,7 +330,7 @@ struct NFForgeMilestone: Identifiable, Equatable, Sendable {
     var id: String { code.rawValue }
 }
 
-struct NFForgeProgressSnapshot: Equatable {
+struct NFForgeProgressSnapshot: Equatable, Sendable {
     let policyVersion: Int
     let totalXP: Int
     let attemptXP: Int
@@ -323,6 +361,7 @@ enum NFForgeProgressEngine {
     static let xpPerEligibleAttempt = 10
     static let xpPerEligibleCompletedSession = 25
 
+    @MainActor
     static func makeSnapshot(
         at date: Date,
         attempts: [AttemptRecord],
@@ -332,10 +371,18 @@ enum NFForgeProgressEngine {
         excludedLabs: Set<TrainingLab> = [],
         calendar: Calendar = .current
     ) -> NFForgeProgressSnapshot {
-        let uniqueAttempts = uniqueAttempts(from: attempts)
+        makeSnapshot(at: date, activities: attempts.map(NFImmutableAttemptRecordSnapshot.init),
+            completions: checkpoints.map { .init(sessionID: $0.sessionID, isComplete: $0.isComplete, updatedAt: $0.updatedAt) },
+            trainingDays: trainingDays, trackingStartDate: trackingStartDate, excludedLabs: excludedLabs, calendar: calendar)
+    }
+
+    static func makeSnapshot(at date: Date, activities: [NFImmutableAttemptRecordSnapshot],
+        completions: [NFForgeCompletionInput], trainingDays: Set<Int>, trackingStartDate: Date? = nil,
+        excludedLabs: Set<TrainingLab> = [], calendar: Calendar = .current) -> NFForgeProgressSnapshot {
+        let uniqueAttempts = uniqueAttempts(from: activities)
         let eligibleAttempts = uniqueAttempts.filter { !$0.wasSkipped }
         let eligibleSessionIDs = Set(eligibleAttempts.map(\.sessionID))
-        let completedSessions = completedSessionDates(from: checkpoints)
+        let completedSessions = completedSessionDates(from: completions)
             .filter { eligibleSessionIDs.contains($0.key) }
         let attemptXP = eligibleAttempts.count * xpPerEligibleAttempt
         let completionXP = completedSessions.count * xpPerEligibleCompletedSession
@@ -372,7 +419,7 @@ enum NFForgeProgressEngine {
             levelProgress: levelState.progress,
             momentum: NFConsistencyEngine.makeSnapshot(
                 at: date,
-                attempts: uniqueAttempts,
+                activities: uniqueAttempts,
                 trainingDays: trainingDays,
                 trackingStartDate: trackingStartDate,
                 calendar: calendar
@@ -388,8 +435,8 @@ enum NFForgeProgressEngine {
         )
     }
 
-    private static func uniqueAttempts(from attempts: [AttemptRecord]) -> [AttemptRecord] {
-        var winners: [UUID: AttemptRecord] = [:]
+    private static func uniqueAttempts(from attempts: [NFImmutableAttemptRecordSnapshot]) -> [NFImmutableAttemptRecordSnapshot] {
+        var winners: [UUID: NFImmutableAttemptRecordSnapshot] = [:]
         for attempt in attempts {
             if let current = winners[attempt.id] {
                 if attemptPrecedes(attempt, current) { winners[attempt.id] = attempt }
@@ -402,7 +449,7 @@ enum NFForgeProgressEngine {
 
     /// Mirrors the durable store's deterministic projection closely enough that
     /// a temporary CloudKit duplicate cannot alter an engagement contribution.
-    private static func attemptPrecedes(_ lhs: AttemptRecord, _ rhs: AttemptRecord) -> Bool {
+    private static func attemptPrecedes(_ lhs: NFImmutableAttemptRecordSnapshot, _ rhs: NFImmutableAttemptRecordSnapshot) -> Bool {
         if lhs.submittedAt != rhs.submittedAt { return lhs.submittedAt > rhs.submittedAt }
         if lhs.shownAt != rhs.shownAt { return lhs.shownAt > rhs.shownAt }
         if lhs.scoringVersion != rhs.scoringVersion { return lhs.scoringVersion > rhs.scoringVersion }
@@ -411,7 +458,7 @@ enum NFForgeProgressEngine {
         return lhs.itemID < rhs.itemID
     }
 
-    private static func attemptChronology(_ lhs: AttemptRecord, _ rhs: AttemptRecord) -> Bool {
+    private static func attemptChronology(_ lhs: NFImmutableAttemptRecordSnapshot, _ rhs: NFImmutableAttemptRecordSnapshot) -> Bool {
         if lhs.submittedAt != rhs.submittedAt { return lhs.submittedAt < rhs.submittedAt }
         return lhs.id.uuidString < rhs.id.uuidString
     }
@@ -420,7 +467,7 @@ enum NFForgeProgressEngine {
     /// any number of stale incomplete checkpoints, and the earliest completion
     /// supplies the stable milestone date.
     private static func completedSessionDates(
-        from checkpoints: [SessionCheckpointRecord]
+        from checkpoints: [NFForgeCompletionInput]
     ) -> [UUID: Date] {
         checkpoints.reduce(into: [UUID: Date]()) { result, checkpoint in
             guard checkpoint.isComplete else { return }
@@ -432,7 +479,7 @@ enum NFForgeProgressEngine {
     }
 
     private static func milestones(
-        eligibleAttempts: [AttemptRecord],
+        eligibleAttempts: [NFImmutableAttemptRecordSnapshot],
         completedSessions: [UUID: Date],
         accessibleLabs: Set<TrainingLab>
     ) -> [NFForgeMilestone] {
@@ -517,5 +564,113 @@ enum NFForgeProgressEngine {
         let completedLevels = Int64(max(0, level - 1))
         let threshold = 50 * completedLevels * (completedLevels + 1)
         return threshold > Int64(Int.max) ? Int.max : Int(threshold)
+    }
+}
+
+/// Immutable engagement inputs preserve raw activity semantics. They never
+/// become reviewed evidence and contain no model or repository references.
+struct NFForgeCompletionInput: Sendable {
+    let sessionID: UUID
+    let isComplete: Bool
+    let updatedAt: Date
+}
+
+struct NFProgressDashboardEngagementInput: Sendable {
+    let activities: [NFImmutableAttemptRecordSnapshot]
+    let completions: [NFForgeCompletionInput]
+    let trainingDays: Set<Int>
+    let trackingStartDate: Date?
+    let excludedLabs: Set<TrainingLab>
+}
+
+/// Derived dashboard values contain no SwiftData model or repository authority.
+struct NFProgressDashboardSnapshot: Sendable {
+    let summaries: [SkillSummary]
+    let totalEvidence: Int
+    let categories: [EvidenceClass: Int]
+    let calibration: NFHistoryCalibrationSummary
+    let weeklyPoints: [NFWeeklyProgressPoint]
+    let patterns: [NFRepeatedErrorPattern]
+    var consistency: NFConsistencySnapshot? = nil
+    var forge: NFForgeProgressSnapshot? = nil
+    var mentalMathMetrics: [NFMentalMathMetricKind: NFMentalMathMetricResult] = [:]
+}
+
+struct NFProgressDashboardInput: Sendable {
+    let effectiveAttempts: [AttemptDTO]
+    let publicAttempts: [AttemptDTO]
+    let diagnostics: [NFProgressDiagnosticObservation]
+    let capturedAt: Date
+    let calendar: Calendar
+    var engagement: NFProgressDashboardEngagementInput? = nil
+    var mentalMathInputs: [NFMentalMathProgressInput] = []
+}
+
+enum NFProgressDashboardReducer {
+    static func make(_ input: NFProgressDashboardInput) throws -> NFProgressDashboardSnapshot {
+        try Task.checkCancellation()
+        let summaries = AdaptiveEngine.reduce(input.effectiveAttempts)
+        try Task.checkCancellation()
+        let categories = NFProgressEvidenceProjection.categoryCounts(input.effectiveAttempts, at: input.capturedAt)
+        let calibration = NFHistoryCalibrationSummary(attempts: input.effectiveAttempts)
+        try Task.checkCancellation()
+        let points = NFWeeklyProgressPoint.make(from: input.publicAttempts, calendar: input.calendar, at: input.capturedAt)
+        try Task.checkCancellation()
+        let patterns = NFProgressDiagnosticReducer.reduce(input.diagnostics, at: input.capturedAt, minimumCount: 1)
+        try Task.checkCancellation()
+        let metrics = NFMentalMathMetricReducer.reduce(NFMentalMathProgressAdapter.observations(
+            from: input.mentalMathInputs, at: input.capturedAt))
+        try Task.checkCancellation()
+        let consistency = input.engagement.map { value in
+            NFConsistencyEngine.makeSnapshot(at: input.capturedAt,
+                activities: value.activities.filter { $0.evidenceClassRaw != EvidenceClass.documentPractice.rawValue },
+                trainingDays: value.trainingDays, trackingStartDate: value.trackingStartDate, calendar: input.calendar)
+        }
+        try Task.checkCancellation()
+        let forge = input.engagement.map { value in
+            NFForgeProgressEngine.makeSnapshot(at: input.capturedAt, activities: value.activities,
+                completions: value.completions, trainingDays: value.trainingDays,
+                trackingStartDate: value.trackingStartDate, excludedLabs: value.excludedLabs, calendar: input.calendar)
+        }
+        try Task.checkCancellation()
+        return .init(summaries: summaries,
+            totalEvidence: input.effectiveAttempts.filter { !$0.wasSkipped && $0.evidenceWeight > 0 }.count,
+            categories: categories, calibration: calibration, weeklyPoints: points, patterns: patterns,
+            consistency: consistency, forge: forge, mentalMathMetrics: metrics)
+    }
+}
+
+/// A newer filter, import or correction invalidates the previous result before
+/// work starts. Cancellation has no relationship to durable session writes.
+@MainActor @Observable
+final class NFProgressDashboardProjection {
+    private(set) var snapshot: NFProgressDashboardSnapshot?
+    private(set) var isLoading = false
+    @ObservationIgnored private var generation = UUID()
+    @ObservationIgnored private var activeWorker: Task<NFProgressDashboardSnapshot, Error>?
+
+    func update(_ input: NFProgressDashboardInput,
+        compute: @escaping @Sendable (NFProgressDashboardInput) throws -> NFProgressDashboardSnapshot = NFProgressDashboardReducer.make) async {
+        activeWorker?.cancel()
+        let ticket = UUID()
+        generation = ticket
+        snapshot = nil
+        isLoading = true
+        let worker = Task.detached(priority: .userInitiated) { try compute(input) }
+        activeWorker = worker
+        let result = await withTaskCancellationHandler(operation: { await worker.result }, onCancel: { worker.cancel() })
+        guard generation == ticket else { return }
+        activeWorker = nil
+        isLoading = false
+        guard !Task.isCancelled, case let .success(value) = result else { return }
+        snapshot = value
+    }
+
+    func cancel() {
+        activeWorker?.cancel()
+        activeWorker = nil
+        generation = UUID()
+        snapshot = nil
+        isLoading = false
     }
 }

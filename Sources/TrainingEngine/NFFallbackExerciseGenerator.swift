@@ -10,6 +10,20 @@ struct NFExerciseGenerationRequest: Codable, Equatable, Sendable {
     let targetDifficulty: Double?
     let preferredAssessmentFormat: NFAssessmentItemFormat?
     let preferredAssessmentMechanicID: String?
+    let tracePolicyVersion: Int?
+    let scienceStudyPolicyVersion: Int?
+    let scienceStudyExcludedContextID: String?
+    let graphConstructionPolicyVersion: Int?
+    let retrievalAuthorityPolicyVersion: Int?
+    let retrievalAssetPolicyVersion: Int?
+    let spatialStructurePolicyVersion: Int?
+    let coordinateTransformPolicyVersion: Int?
+    let solidSectionPolicyVersion: Int?
+    let netFoldingPolicyVersion: Int?
+    let coordinateReasoningPolicyVersion: Int?
+    let spatialAssemblyPolicyVersion: Int?
+    let transferPolicyVersion: Int?
+    let transferExcludedContextID: String?
 
     init(
         seed: UInt64,
@@ -20,7 +34,21 @@ struct NFExerciseGenerationRequest: Codable, Equatable, Sendable {
         sourceContext: NFExerciseSourceContext = NFExerciseSourceContext(),
         targetDifficulty: Double? = nil,
         preferredAssessmentFormat: NFAssessmentItemFormat? = nil,
-        preferredAssessmentMechanicID: String? = nil
+        preferredAssessmentMechanicID: String? = nil,
+        tracePolicyVersion: Int? = nil,
+        scienceStudyPolicyVersion: Int? = nil,
+        scienceStudyExcludedContextID: String? = nil,
+        transferPolicyVersion: Int? = nil,
+        transferExcludedContextID: String? = nil,
+        graphConstructionPolicyVersion: Int? = nil,
+        retrievalAuthorityPolicyVersion: Int? = nil,
+        retrievalAssetPolicyVersion: Int? = nil,
+        spatialStructurePolicyVersion: Int? = nil,
+        coordinateTransformPolicyVersion: Int? = nil,
+        solidSectionPolicyVersion: Int? = nil,
+        netFoldingPolicyVersion: Int? = nil,
+        coordinateReasoningPolicyVersion: Int? = nil,
+        spatialAssemblyPolicyVersion: Int? = nil
     ) {
         self.seed = seed
         self.index = index
@@ -31,12 +59,38 @@ struct NFExerciseGenerationRequest: Codable, Equatable, Sendable {
         self.targetDifficulty = targetDifficulty
         self.preferredAssessmentFormat = preferredAssessmentFormat
         self.preferredAssessmentMechanicID = preferredAssessmentMechanicID
+        self.tracePolicyVersion = tracePolicyVersion
+        self.scienceStudyPolicyVersion = scienceStudyPolicyVersion
+        self.scienceStudyExcludedContextID = scienceStudyExcludedContextID
+        self.graphConstructionPolicyVersion = graphConstructionPolicyVersion
+        self.retrievalAuthorityPolicyVersion = retrievalAuthorityPolicyVersion
+        self.retrievalAssetPolicyVersion = retrievalAssetPolicyVersion
+        self.spatialStructurePolicyVersion = spatialStructurePolicyVersion
+        self.coordinateTransformPolicyVersion = coordinateTransformPolicyVersion
+        self.solidSectionPolicyVersion = solidSectionPolicyVersion
+        self.netFoldingPolicyVersion = netFoldingPolicyVersion
+        self.coordinateReasoningPolicyVersion = coordinateReasoningPolicyVersion
+        self.spatialAssemblyPolicyVersion = spatialAssemblyPolicyVersion
+        self.transferPolicyVersion = transferPolicyVersion
+        self.transferExcludedContextID = transferExcludedContextID
     }
 }
 
 enum NFExerciseGenerationError: Error, Equatable, Sendable {
     case invalidIndex
     case invalidTargetDifficulty
+    case unsupportedTracePolicy
+    case unsupportedScienceStudyPolicy
+    case unsupportedGraphConstructionPolicy
+    case unsupportedTransferPolicy
+    case unsupportedRetrievalAuthorityPolicy
+    case unsupportedRetrievalAsset
+    case unsupportedSpatialStructure
+    case unsupportedCoordinateTransform
+    case unsupportedSolidSection
+    case unsupportedNetFolding
+    case unsupportedCoordinateReasoning
+    case unsupportedSpatialAssembly
 }
 
 /// Versioned, offline generator used whenever authored packs or AI are unavailable.
@@ -44,8 +98,8 @@ enum NFExerciseGenerationError: Error, Equatable, Sendable {
 /// change nouns and framing but never authoritative quantities.
 enum NFFallbackExerciseGenerator {
     static let schemaVersion = 2
-    static let generatorVersion = 3
-    static let templateVersion = 3
+    static let generatorVersion = 4
+    static let templateVersion = 4
     static let generatorID = "nf.exercise.fallback"
 
     /// The authoritative number of deterministic families implemented by each
@@ -64,7 +118,115 @@ enum NFFallbackExerciseGenerator {
         }
     }
 
+    /// Construction owns many value temporaries in Debug builds. Return that
+    /// frame before nested authority/representation validation so a background
+    /// worker need not retain both phases' stack allocations at once.
     static func generate(_ request: NFExerciseGenerationRequest) throws -> NFExercise {
+        let exercise = try buildCandidate(request)
+        try NFExerciseSchemaValidator.validate(exercise)
+        try NFTransferTaxonomy.validate(exercise: exercise)
+        return exercise
+    }
+
+    @inline(never)
+    private static func buildCandidate(_ request: NFExerciseGenerationRequest) throws -> NFExercise {
+        let draft = try makeDraft(request)
+        return try finishCandidate(request, draft: draft)
+    }
+
+    @inline(never)
+    private static func finishCandidate(_ request: NFExerciseGenerationRequest, draft: Draft) throws -> NFExercise {
+        let effectiveSeed = mixedSeed(for: request)
+        var exercise = try assembleCandidate(request, draft: draft, effectiveSeed: effectiveSeed)
+        // Return the constructor frame before canonical encoding or building the
+        // metadata. Their value temporaries must not accumulate on a worker.
+        let fingerprint = semanticFingerprint(for: exercise, draft: draft)
+        exercise.contractMetadata = makeContractMetadata(request, draft: draft, effectiveSeed: effectiveSeed,
+            generatorVersion: exercise.generatorVersion, fingerprint: fingerprint)
+        return exercise
+    }
+
+    /// Draft generation and final contract assembly have disjoint lifetimes.
+    /// Keeping their large value temporaries in separate frames allows the same
+    /// exact generator to run on the system's bounded cooperative worker stack.
+    /// Invalid-policy temporaries are gone before any typed draft is built.
+    @inline(never)
+    private static func validateGenerationRequest(_ request: NFExerciseGenerationRequest) throws {
+        guard request.graphConstructionPolicyVersion == nil || (request.graphConstructionPolicyVersion == 1
+            && request.lab == .quantitative && [.practice, .documentPractice].contains(request.purpose)
+            && NFGraphConstructionContract.matchesMechanic(request.preferredAssessmentMechanicID)
+            && request.tracePolicyVersion == nil && request.scienceStudyPolicyVersion == nil
+            && request.sourceContext.sourceDocumentIDs.isEmpty && request.sourceContext.sourceChunkIDs.isEmpty) else {
+            throw NFExerciseGenerationError.unsupportedGraphConstructionPolicy
+        }
+        guard request.tracePolicyVersion == nil || request.tracePolicyVersion == 1 else { throw NFExerciseGenerationError.unsupportedTracePolicy }
+        guard request.scienceStudyPolicyVersion == nil || (request.scienceStudyPolicyVersion == 1
+            && request.lab == .scientificReasoning && [.practice, .documentPractice].contains(request.purpose)),
+              request.scienceStudyExcludedContextID.map({ NFScienceStudyContract.contextIDs.contains($0) && request.scienceStudyPolicyVersion == 1 }) ?? true else {
+            throw NFExerciseGenerationError.unsupportedScienceStudyPolicy
+        }
+        guard request.transferPolicyVersion == nil || (request.transferPolicyVersion == 1
+            && request.lab == .transfer && [.practice, .documentPractice].contains(request.purpose)),
+              request.transferExcludedContextID.map({ NFTransferRelationshipContract.contextIDs.contains($0) && request.transferPolicyVersion == 1 }) ?? true else {
+            throw NFExerciseGenerationError.unsupportedTransferPolicy
+        }
+        guard request.retrievalAuthorityPolicyVersion == nil || (request.retrievalAuthorityPolicyVersion == 1
+            && request.lab == .retrieval && [.practice, .documentPractice].contains(request.purpose)
+            && request.tracePolicyVersion == nil && request.scienceStudyPolicyVersion == nil
+            && request.graphConstructionPolicyVersion == nil && request.transferPolicyVersion == nil) else {
+            throw NFExerciseGenerationError.unsupportedRetrievalAuthorityPolicy
+        }
+        guard request.retrievalAssetPolicyVersion == nil || (request.retrievalAssetPolicyVersion == 1
+            && request.retrievalAuthorityPolicyVersion == 1 && request.lab == .retrieval
+            && [.practice, .documentPractice].contains(request.purpose)) else { throw NFExerciseGenerationError.unsupportedRetrievalAsset }
+        if request.retrievalAssetPolicyVersion == 1, let form = retrievalAssetForm(request.preferredAssessmentMechanicID),
+           (retrievalAssetTargets(form: form, request: request).isEmpty || request.preferredAssessmentFormat != nil) { throw NFExerciseGenerationError.unsupportedRetrievalAsset }
+        guard request.spatialStructurePolicyVersion == nil || (request.spatialStructurePolicyVersion == 1
+            && request.lab == .spatial && [.practice,.documentPractice].contains(request.purpose)
+            && request.sourceContext.sourceDocumentIDs.isEmpty && request.sourceContext.sourceChunkIDs.isEmpty
+            && request.sourceContext.groundingFacts.isEmpty
+            && request.preferredAssessmentFormat == nil && request.tracePolicyVersion == nil
+            && request.scienceStudyPolicyVersion == nil && request.graphConstructionPolicyVersion == nil
+            && request.transferPolicyVersion == nil && request.retrievalAuthorityPolicyVersion == nil
+            && request.retrievalAssetPolicyVersion == nil) else { throw NFExerciseGenerationError.unsupportedSpatialStructure }
+        guard request.coordinateTransformPolicyVersion == nil || (request.coordinateTransformPolicyVersion == 1
+            && request.lab == .spatial && [.practice,.documentPractice].contains(request.purpose)
+            && request.sourceContext.sourceDocumentIDs.isEmpty && request.sourceContext.sourceChunkIDs.isEmpty
+            && request.sourceContext.groundingFacts.isEmpty
+            && request.preferredAssessmentFormat == nil && request.tracePolicyVersion == nil
+            && request.scienceStudyPolicyVersion == nil && request.graphConstructionPolicyVersion == nil
+            && request.transferPolicyVersion == nil && request.retrievalAuthorityPolicyVersion == nil
+            && request.retrievalAssetPolicyVersion == nil
+            && (request.spatialStructurePolicyVersion == nil || request.spatialStructurePolicyVersion == 1)) else { throw NFExerciseGenerationError.unsupportedCoordinateTransform }
+        guard request.solidSectionPolicyVersion == nil || (request.solidSectionPolicyVersion == 1
+            && request.lab == .spatial && [.practice,.documentPractice].contains(request.purpose)
+            && request.sourceContext.sourceDocumentIDs.isEmpty && request.sourceContext.sourceChunkIDs.isEmpty
+            && request.sourceContext.groundingFacts.isEmpty && request.preferredAssessmentFormat == nil
+            && request.tracePolicyVersion == nil && request.scienceStudyPolicyVersion == nil
+            && request.graphConstructionPolicyVersion == nil && request.transferPolicyVersion == nil
+            && request.retrievalAuthorityPolicyVersion == nil && request.retrievalAssetPolicyVersion == nil) else { throw NFExerciseGenerationError.unsupportedSolidSection }
+        guard request.netFoldingPolicyVersion == nil || (request.netFoldingPolicyVersion == 1
+            && request.lab == .spatial && [.practice,.documentPractice].contains(request.purpose)
+            && request.sourceContext.sourceDocumentIDs.isEmpty && request.sourceContext.sourceChunkIDs.isEmpty
+            && request.sourceContext.groundingFacts.isEmpty && request.preferredAssessmentFormat == nil
+            && request.tracePolicyVersion == nil && request.scienceStudyPolicyVersion == nil
+            && request.graphConstructionPolicyVersion == nil && request.transferPolicyVersion == nil
+            && request.retrievalAuthorityPolicyVersion == nil && request.retrievalAssetPolicyVersion == nil) else { throw NFExerciseGenerationError.unsupportedNetFolding }
+        guard request.coordinateReasoningPolicyVersion == nil || (request.coordinateReasoningPolicyVersion == 1
+            && request.lab == .spatial && [.practice,.documentPractice].contains(request.purpose)
+            && request.sourceContext.sourceDocumentIDs.isEmpty && request.sourceContext.sourceChunkIDs.isEmpty
+            && request.sourceContext.groundingFacts.isEmpty && request.preferredAssessmentFormat == nil
+            && request.tracePolicyVersion == nil && request.scienceStudyPolicyVersion == nil
+            && request.graphConstructionPolicyVersion == nil && request.transferPolicyVersion == nil
+            && request.retrievalAuthorityPolicyVersion == nil && request.retrievalAssetPolicyVersion == nil) else { throw NFExerciseGenerationError.unsupportedCoordinateReasoning }
+        guard request.spatialAssemblyPolicyVersion == nil || (request.spatialAssemblyPolicyVersion == 1
+            && request.lab == .spatial && [.practice,.documentPractice].contains(request.purpose)
+            && request.sourceContext.sourceDocumentIDs.isEmpty && request.sourceContext.sourceChunkIDs.isEmpty
+            && request.sourceContext.groundingFacts.isEmpty && request.preferredAssessmentFormat == nil
+            && request.tracePolicyVersion == nil && request.scienceStudyPolicyVersion == nil
+            && request.graphConstructionPolicyVersion == nil && request.transferPolicyVersion == nil
+            && request.retrievalAuthorityPolicyVersion == nil && request.retrievalAssetPolicyVersion == nil
+            && request.coordinateReasoningPolicyVersion == nil) else { throw NFExerciseGenerationError.unsupportedSpatialAssembly }
         guard request.index >= 0 else { throw NFExerciseGenerationError.invalidIndex }
         if let target = request.targetDifficulty,
            !target.isFinite || !(0...1).contains(target) {
@@ -72,6 +234,11 @@ enum NFFallbackExerciseGenerator {
         }
         try NFReleaseContentGate.requireVerified()
 
+    }
+
+    @inline(never)
+    private static func makeDraft(_ request: NFExerciseGenerationRequest) throws -> Draft {
+        try validateGenerationRequest(request)
         let effectiveSeed = mixedSeed(for: request)
         var random = NFFallbackRandom(seed: effectiveSeed)
         let draft: Draft
@@ -92,10 +259,23 @@ enum NFFallbackExerciseGenerator {
             draft = transferDraft(request: request, random: &random)
         }
 
+        return draft
+    }
+
+    @inline(never)
+    private static func assembleCandidate(_ request: NFExerciseGenerationRequest, draft: Draft, effectiveSeed: UInt64) throws -> NFExercise {
+        if request.retrievalAssetPolicyVersion == 1, NFRetrievalAssetContract.Form.allCases.contains(where: { $0.templateSlug == draft.templateSlug }), draft.retrievalAsset == nil {
+            throw NFExerciseGenerationError.unsupportedRetrievalAsset
+        }
+        let generatorVersion = draft.spatialAssembly != nil ? 16 : draft.coordinateReasoning != nil ? 15 : draft.netFolding != nil ? 14 : draft.solidSection != nil ? 13 : draft.coordinateTransform != nil ? 12 : draft.spatialStructure != nil ? 11 : draft.retrievalAsset != nil ? 10 : request.retrievalAuthorityPolicyVersion == 1 ? 9 : draft.graphConstruction != nil ? NFGraphConstructionContract.generatorVersion : draft.transferRelationship != nil ? NFTransferRelationshipContract.generatorVersion : draft.scienceStudy == nil ? (request.tracePolicyVersion == 1 ? 5 : Self.generatorVersion) : NFScienceStudyContract.generatorVersion
         let poolToken = templatePoolToken(for: request.purpose)
-        let templateFamily = "nf.fallback.\(request.lab.rawValue).\(poolToken).v3"
+        let templateFamily = "nf.fallback.\(request.lab.rawValue).\(poolToken).v4"
         let templateID = "\(templateFamily).\(draft.templateSlug)"
-        let itemID = "\(templateID).\(String(effectiveSeed, radix: 16)).\(request.index)"
+        // New opt-in recipes must not alias an old question's identity even
+        // when their seed and catalog family are identical. Nil recipes retain
+        // the exact original identifier and bytes.
+        let recipeIdentity = generatorVersion == Self.generatorVersion ? "" : ".r\(generatorVersion)"
+        let itemID = "\(templateID)\(recipeIdentity).\(String(effectiveSeed, radix: 16)).\(request.index)"
         let digest = stableDigest(
             [
                 itemID,
@@ -136,7 +316,7 @@ enum NFFallbackExerciseGenerator {
         }
         let exercise = NFExercise(
             id: itemID,
-            schemaVersion: schemaVersion,
+            schemaVersion: draft.spatialAssembly != nil ? 13 : draft.coordinateReasoning != nil ? 12 : draft.netFolding != nil ? 11 : draft.solidSection != nil ? 10 : draft.coordinateTransform != nil ? 9 : draft.spatialStructure != nil ? 8 : draft.retrievalAsset != nil ? 7 : request.retrievalAuthorityPolicyVersion == 1 ? 6 : draft.graphConstruction != nil ? 4 : draft.transferRelationship != nil ? 5 : draft.scienceStudy == nil ? schemaVersion : 3,
             generatorVersion: generatorVersion,
             templateID: templateID,
             templateFamily: templateFamily,
@@ -161,9 +341,9 @@ enum NFFallbackExerciseGenerator {
             rubric: draft.rubric,
             feedback: NFExerciseFeedbackSpec(
                 timing: feedbackTiming,
-                correctTitle: localized("Supported", request: request),
+                correctTitle: localized("Correct", request: request),
                 correctExplanation: draft.correctExplanation,
-                retryTitle: localized("Revisit the decisive step", request: request),
+                retryTitle: localized("Check the answer", request: request),
                 retryExplanation: draft.retryExplanation,
                 decisiveStep: draft.decisiveStep,
                 hintLadder: request.purpose.isProtectedAssessment ? [] : draft.hints,
@@ -181,9 +361,52 @@ enum NFFallbackExerciseGenerator {
                 + domainPackTags
                 + draft.tags
         )
-        try NFExerciseSchemaValidator.validate(exercise)
-        try NFTransferTaxonomy.validate(exercise: exercise)
         return exercise
+    }
+
+    @inline(never)
+    private static func semanticFingerprint(for exercise: NFExercise, draft: Draft) -> String {
+        if let value = draft.spatialAssembly { return NFQuestionFingerprint.spatialAssemblyFingerprint(identity: value.task.identity) }
+        if let value = draft.coordinateReasoning { return NFQuestionFingerprint.coordinateReasoningFingerprint(identity: value.task.identity) }
+        if let value = draft.netFolding { return NFQuestionFingerprint.netFoldingFingerprint(identity: value.task.identity) }
+        if let value = draft.solidSection { return NFQuestionFingerprint.solidSectionFingerprint(identity: value.task.identity) }
+        if let value = draft.coordinateTransform { return NFQuestionFingerprint.coordinateTransformFingerprint(identity: value.task.semanticIdentity) }
+        if let value = draft.spatialStructure { return NFQuestionFingerprint.spatialStructureFingerprint(identity: value.structure.identity) }
+        return NFQuestionFingerprint.fingerprint(for: exercise)
+    }
+
+    @inline(never)
+    private static func makeContractMetadata(_ request: NFExerciseGenerationRequest, draft: Draft,
+        effectiveSeed: UInt64, generatorVersion: Int, fingerprint: String) -> NFExerciseContractMetadata {
+        let catalogFamily = NFDefaultContentCatalog.activities.first {
+            $0.lab == request.lab && (draft.spatialAssembly != nil ? $0.id == draft.spatialAssembly?.familyID : draft.coordinateReasoning != nil ? $0.id == draft.coordinateReasoning?.familyID : draft.netFolding != nil ? $0.id == NFNetFoldingContract.familyID : draft.coordinateTransform != nil ? $0.variant == draft.coordinateTransform?.familyVariant : (draft.spatialStructure == nil ? draft.templateSlug.hasPrefix($0.templateSlug) : $0.variant == draft.spatialStructure?.familyVariant))
+        }
+        let scaffoldSlugs: Set<String> = ["units.metric-conversion", "fermi.decomposition", "probability.expected-value"]
+        let representationRole: NFInstructionalRole = scaffoldSlugs.contains(draft.templateSlug)
+            || (request.lab == .mentalMath && draft.tags.contains("unit-conversion")) ? .optionalPracticeHint : .essentialGiven
+        var metadata = NFExerciseContractMetadata(
+            contractSchemaVersion: 1, semanticProblemID: "nf.semantic.v2." + fingerprint,
+            semanticFingerprint: fingerprint, contractRevision: templateVersion, presentationRevision: 1,
+            objectiveID: draft.tags.contains("learning-method-only") ? "learning-method.\(draft.templateSlug)" : catalogFamily?.id ?? "\(request.lab.rawValue).\(draft.templateSlug)",
+            familyID: catalogFamily?.id ?? "\(request.lab.rawValue).\(draft.templateSlug)",
+            structureID: draft.spatialAssembly?.task.identity ?? draft.coordinateReasoning?.task.identity ?? draft.netFolding?.task.identity ?? draft.solidSection?.task.identity ?? draft.coordinateTransform?.task.semanticIdentity ?? draft.spatialStructure?.structure.identity ?? "\(request.lab.rawValue).\(draft.templateSlug)", generatorVersion: generatorVersion,
+            contentEditionID: draft.spatialAssembly != nil ? "spatial-assembly-development-v1-unsigned" : draft.coordinateReasoning != nil ? "coordinate-reasoning-development-v1-unsigned" : draft.netFolding != nil ? "cube-folding-development-v1-unsigned" : draft.solidSection != nil ? "solid-sections-development-v1-unsigned" : draft.coordinateTransform != nil ? "coordinate-transforms-development-v1-unsigned" : draft.spatialStructure != nil ? "spatial-structures-development-v1-unsigned" : draft.retrievalAsset != nil ? "retrieval-assets-development-v1-unsigned" : request.retrievalAuthorityPolicyVersion == 1 ? "retrieval-authority-development-v1-unsigned" : draft.graphConstruction != nil ? "graph-construction-development-v1-unsigned" : draft.transferRelationship != nil ? "linked-transfer-development-v1-unsigned" : draft.scienceStudy == nil ? "corrective-development-v4-unsigned" : "linked-science-development-v1-unsigned", canonicalParameters: ["seed": String(effectiveSeed)],
+            contextRole: .essentialGiven, representationRoles: draft.representations.map { _ in representationRole },
+            supplementaryRepresentations: [], reviewStatus: "Pending independent review against the September specification",
+            supersedesGeneratorVersion: 3
+        )
+        metadata.scienceStudy = draft.scienceStudy
+        metadata.graphConstruction = draft.graphConstruction
+        metadata.transferRelationship = draft.transferRelationship
+        metadata.retrievalAuthorityPolicyVersion = request.retrievalAuthorityPolicyVersion
+        metadata.retrievalAsset = draft.retrievalAsset
+        metadata.spatialStructure = draft.spatialStructure
+        metadata.coordinateTransform = draft.coordinateTransform
+        metadata.solidSection = draft.solidSection
+        metadata.netFolding = draft.netFolding
+        metadata.coordinateReasoning = draft.coordinateReasoning
+        metadata.spatialAssembly = draft.spatialAssembly
+        return metadata
     }
 
     private static func responseEditPolicy(
@@ -239,7 +462,7 @@ enum NFFallbackExerciseGenerator {
                 orderedSteps: [localized("Attempt retrieval", request: request), localized("Split one factor if needed", request: request), localized("Check the product", request: request)],
                 whenToUse: localized("Common arithmetic facts", request: request)
             )
-            interaction = numericInteraction(answer: Double(left * right), tolerance: .absolute(0), unit: nil)
+            interaction = numericInteraction(request: request, answer: Double(left * right), tolerance: .absolute(0), unit: nil)
             instructions = localized("Enter the exact integer.", request: request)
             representations = [.equation(latex: "\(left) \\times \(right)", spokenDescription: localized("\(left) times \(right)", request: request))]
             tags = ["rapid-recall", "basic-fluency"]
@@ -260,9 +483,9 @@ enum NFFallbackExerciseGenerator {
                 orderedSteps: [localized("Choose the nearby factor", request: request), localized("Compute the easy product", request: request), localized("Compensate by one group", request: request)],
                 whenToUse: localized("A multiplier is one away from a round number", request: request)
             )
-            interaction = numericInteraction(answer: Double(left * right), tolerance: .absolute(0), unit: nil)
+            interaction = numericInteraction(request: request, answer: Double(left * right), tolerance: .absolute(0), unit: nil)
             instructions = localized("Enter the exact result.", request: request)
-            representations = [.equation(latex: "\(left)(\(nearby) \(right < nearby ? "-" : "+") 1)", spokenDescription: localized("Compensate from the nearby factor", request: request))]
+            representations = [.equation(latex: "\(left) \\times \(right)", spokenDescription: localized("\(left) times \(right)", request: request))]
             tags = ["decompose", "flexible-calculation", "compensation"]
             errorExplanations = ["numeric_value": localized("Recheck whether the one-group compensation should be added or subtracted.", request: request)]
 
@@ -282,7 +505,7 @@ enum NFFallbackExerciseGenerator {
                     orderedSteps: [localized("Name the physical dimension", request: request), localized("Write the conversion ratio", request: request), localized("Cancel milligrams", request: request), localized("Check that grams are numerically smaller", request: request)],
                     whenToUse: localized("Exact metric unit conversion", request: request)
                 )
-                interaction = numericInteraction(
+                interaction = numericInteraction(request: request,
                     answer: grams,
                     tolerance: .absolute(0),
                     unit: "g",
@@ -322,7 +545,7 @@ enum NFFallbackExerciseGenerator {
                     orderedSteps: [localized("Divide numerator by denominator", request: request), localized("Scale by 100", request: request), localized("Check against one-half or one whole", request: request)],
                     whenToUse: localized("Fraction–decimal–percentage conversion", request: request)
                 )
-                interaction = numericInteraction(
+                interaction = numericInteraction(request: request,
                     answer: percentage,
                     tolerance: .absolute(0.001),
                     unit: "%",
@@ -343,10 +566,10 @@ enum NFFallbackExerciseGenerator {
             let coefficient = [12, 25, 36, 48][random.int(upperBound: 4)]
             let exponent = 2 + random.int(upperBound: 5)
             var options = [
-                NFChoiceOption(id: "correct", text: localized("\(format(Double(coefficient) / 10)) × 10^\(exponent + 1)", request: request), accessibilityLabel: nil, distractorCode: nil),
+                NFChoiceOption(id: "correct", text: localized("\(format(Double(coefficient) / 10, request: request)) × 10^\(exponent + 1)", request: request), accessibilityLabel: nil, distractorCode: nil),
                 NFChoiceOption(id: "coefficient", text: localized("\(coefficient) × 10^\(exponent)", request: request), accessibilityLabel: nil, distractorCode: "coefficient_not_normalized"),
-                NFChoiceOption(id: "exponent", text: localized("\(format(Double(coefficient) / 10)) × 10^\(exponent)", request: request), accessibilityLabel: nil, distractorCode: "exponent"),
-                NFChoiceOption(id: "direction", text: localized("\(format(Double(coefficient) / 10)) × 10^\(exponent - 1)", request: request), accessibilityLabel: nil, distractorCode: "place_value")
+                NFChoiceOption(id: "exponent", text: localized("\(format(Double(coefficient) / 10, request: request)) × 10^\(exponent)", request: request), accessibilityLabel: nil, distractorCode: "exponent"),
+                NFChoiceOption(id: "direction", text: localized("\(format(Double(coefficient) / 10, request: request)) × 10^\(exponent - 1)", request: request), accessibilityLabel: nil, distractorCode: "place_value")
             ]
             random.shuffle(&options)
             prompt = localized("Normalize \(coefficient) × 10^\(exponent) into scientific notation.", request: request)
@@ -383,7 +606,7 @@ enum NFFallbackExerciseGenerator {
                 orderedSteps: [localized("Identify the applied operation", request: request), localized("Apply its inverse", request: request), localized("Verify in the original relation", request: request)],
                 whenToUse: localized("Missing-number and inverse-relation problems", request: request)
             )
-            interaction = numericInteraction(answer: Double(missing), tolerance: .absolute(0), unit: nil)
+            interaction = numericInteraction(request: request, answer: Double(missing), tolerance: .absolute(0), unit: nil)
             instructions = localized("Enter the exact missing integer.", request: request)
             representations = [.equation(latex: "x \\times \(multiplier) = \(product)", spokenDescription: localized("x times \(multiplier) equals \(product)", request: request))]
             tags = ["missing-number", "inverse-operation"]
@@ -444,7 +667,7 @@ enum NFFallbackExerciseGenerator {
                 orderedSteps: [localized("Apply the addition", request: request), localized("Multiply the new state", request: request), localized("Subtract from that result", request: request)],
                 whenToUse: localized("Sequential mental calculations", request: request)
             )
-            interaction = numericInteraction(answer: Double(answer), tolerance: .absolute(0), unit: nil)
+            interaction = numericInteraction(request: request, answer: Double(answer), tolerance: .absolute(0), unit: nil)
             instructions = localized("Enter the exact final value.", request: request)
             representations = [
                 .equation(latex: "(\(start)+\(add))\\times\(multiplier)-\(subtract)", spokenDescription: localized("Add, multiply, then subtract", request: request)),
@@ -463,13 +686,15 @@ enum NFFallbackExerciseGenerator {
             var options = magnitudes.sorted().map { value in
                 NFChoiceOption(
                     id: value == closest ? "correct" : "magnitude.\(value)",
-                    text: value.formatted(),
+                    text: value.formatted(.number.locale(Locale(identifier: request.localeIdentifier))),
                     accessibilityLabel: nil,
                     distractorCode: value == closest ? nil : "place_value"
                 )
             }
             random.shuffle(&options)
-            prompt = localized("Estimate \(count) × \(rate) first, record whether that estimate makes the exact result plausible, then calculate the exact product.", request: request)
+            prompt = request.purpose.isProtectedAssessment || request.preferredAssessmentFormat == .singleChoice
+                ? localized("Which power of ten is nearest to \(count) × \(rate)?", request: request)
+                : localized("Give the nearest power of ten to \(count) × \(rate), enter the exact product, and judge whether your estimate is within 50% of that exact result.", request: request)
             context = contextualLead(request) + localized(" Estimate, plausibility judgment, and exact response are captured as separate fields in that order.", request: request)
             decisiveStep = localized("Round to about 200 × 50, then identify the nearest power-of-ten scale.", request: request)
             strategy = NFExerciseStrategy(
@@ -484,12 +709,12 @@ enum NFFallbackExerciseGenerator {
                 instructions = localized("Choose the closest magnitude.", request: request)
             } else {
                 let contract = NFEstimateExactContract(
-                    estimate: String(closest),
-                    acceptedEstimateAlternatives: [closest.formatted()],
+                    estimate: canonicalNumericKey(closest),
+                    acceptedEstimateAlternatives: [],
                     plausibility: localized("plausible", request: request),
                     acceptedPlausibilityAlternatives: [localized("yes", request: request)],
-                    exact: String(exact),
-                    acceptedExactAlternatives: [exact.formatted()]
+                    exact: canonicalNumericKey(exact),
+                    acceptedExactAlternatives: []
                 )
                 interaction = .logicState(contract.responseSchema)
                 instructions = localized("Enter the estimate first, make a plausibility judgment second, and enter the exact result third.", request: request)
@@ -632,6 +857,23 @@ enum NFFallbackExerciseGenerator {
             ],
             random: &random
         )
+        if request.netFoldingPolicyVersion == 1, variant == 4 { return netFoldingDraft(request:request,random:&random) }
+        if request.solidSectionPolicyVersion == 1, variant == 2 { return solidSectionDraft(request:request,random:&random) }
+        if request.spatialAssemblyPolicyVersion == 1, [1,3].contains(variant) { return spatialAssemblyDraft(request:request,variant:variant,random:&random) }
+        if request.coordinateReasoningPolicyVersion == 1, [0,5].contains(variant) { return coordinateReasoningDraft(request:request,variant:variant,random:&random) }
+        if request.coordinateTransformPolicyVersion == 1, [0,5].contains(variant) {
+            return coordinateTransformDraft(request: request, variant: variant, random: &random)
+        }
+        if request.spatialStructurePolicyVersion == 1, [1,3].contains(variant) {
+            return spatialStructureDraft(request: request, variant: variant, random: &random)
+        }
+        return legacySpatialDraft(request: request, variant: variant, random: &random)
+    }
+
+    /// Typed spatial recipes do not retain the unrelated legacy drawing frame.
+    @inline(never)
+    private static func legacySpatialDraft(request: NFExerciseGenerationRequest, variant: Int,
+        random: inout NFFallbackRandom) -> Draft {
         let templateSlug: String
         let operation: NFSpatialOperation
         let stimulusCategory: String
@@ -671,7 +913,7 @@ enum NFFallbackExerciseGenerator {
             distractors = [
                 (localized("(\(y), \(x))", request: request), "axis_swap"),
                 (localized("(\(x), \(-y))", request: request), "sign_direction"),
-                (localized("(\(-x), \(y))", request: request), "wrong_transform")
+                (localized("(\(-x), \(-y))", request: request), "origin_reflection")
             ]
             accessibilityDescription = localized("Point P begins at x \(x), y \(y); rotate its coordinate pair counterclockwise by ninety degrees.", request: request)
             tags = ["coordinate-transformation", "2d-rotation", "coordinate-geometry"]
@@ -692,14 +934,14 @@ enum NFFallbackExerciseGenerator {
             viewpoint = localized("Positive z-axis remains fixed", request: request)
             points = [NFSpatialPoint(label: localized("A", request: request), x: Double(x), y: Double(y), z: Double(z))]
             axisLabels = [localized("x", request: request), localized("y", request: request), localized("z", request: request)]
-            prompt = localized("A molecular point A is at (\(x), \(y), \(z)). Rotate it 90° counterclockwise about the z-axis. Which coordinate is correct?", request: request)
+            prompt = localized("A molecular point A is at (\(x), \(y), \(z)). Rotate it 90° counterclockwise about the z-axis, viewed from positive z toward the origin. Which coordinate is correct?", request: request)
             correctText = localized("(\(correct.0), \(correct.1), \(correct.2))", request: request)
             distractors = [
                 (localized("(\(y), \(-x), \(z))", request: request), "rotation_direction"),
                 (localized("(\(-y), \(x), \(-z))", request: request), "fixed_axis"),
                 (localized("(\(x), \(z), \(y))", request: request), "axis_swap")
             ]
-            accessibilityDescription = localized("Point A has x \(x), y \(y), z \(z). A quarter-turn about z maps x and y while leaving z fixed.", request: request)
+            accessibilityDescription = localized("Point A has x \(x), y \(y), z \(z). View the counterclockwise rotation from positive z looking toward the origin.", request: request)
             tags = ["3d-rotation", "molecular-structure", "procedural-object"]
             rotationMagnitudeDegrees = 90
             objectComplexity = 0.56
@@ -756,7 +998,7 @@ enum NFFallbackExerciseGenerator {
                 (localized("\(width) by \(height)", request: request), "projection_side"),
                 (localized("\(length) by \(width) by \(height)", request: request), "projection_dimension")
             ]
-            accessibilityDescription = localized("Looking straight down removes height; the visible rectangle retains length and width.", request: request)
+            accessibilityDescription = localized("The block has length \(length), width \(width), and height \(height). View it from directly above.", request: request)
             tags = ["orthographic-projection", "abstract-block", "view-matching"]
             rotationMagnitudeDegrees = 0
             objectComplexity = 0.46
@@ -782,7 +1024,7 @@ enum NFFallbackExerciseGenerator {
             prompt = localized("In the procedurally checked cube net, which face becomes opposite face \(queriedFace) after folding?", request: request)
             correctText = oppositeFace
             distractors = adjacentDistractors.map { ($0, "adjacent_face") }
-            accessibilityDescription = NFCubeNetEngine.accessibilityDescription(for: net)
+            accessibilityDescription = NFCubeNetEngine.accessibilityDescription(for: net, locale: NFAppLocalization.locale(identifier: request.localeIdentifier))
                 + localized(" Determine the face whose folded normal points opposite \(queriedFace).", request: request)
             tags = ["folding-net", "cube-net", "diagram", "algorithmically-validated-net"]
             rotationMagnitudeDegrees = 90
@@ -807,7 +1049,7 @@ enum NFFallbackExerciseGenerator {
                 (localized("(\(y), \(x))", request: request), "axis_swap"),
                 (localized("(\(-x), \(-y))", request: request), "rotation_instead")
             ]
-            accessibilityDescription = localized("Reflection across the y-axis reverses the x component and preserves the y component.", request: request)
+            accessibilityDescription = localized("Vector v begins with x component \(x) and y component \(y). The mirror line is the y-axis.", request: request)
             tags = ["vector-transformation", "representation-translation", "vector-field-diagram"]
             rotationMagnitudeDegrees = 0
             objectComplexity = 0.32
@@ -909,6 +1151,9 @@ enum NFFallbackExerciseGenerator {
             ],
             random: &random
         )
+        if variant == 3, request.graphConstructionPolicyVersion == 1 {
+            return graphConstructionDraft(request: request, random: &random)
+        }
         let templateSlug: String
         let prompt: String
         let context: String
@@ -934,7 +1179,7 @@ enum NFFallbackExerciseGenerator {
             prompt = localized("In a \(profile.entity) study, \(successes) of \(total) observations meet the criterion. Estimate the observed proportion as a percentage.", request: request)
             context = contextualLead(request) + localized(" Report one decimal place; small rounding differences are accepted.", request: request)
             instructions = localized("Enter the percentage and the % unit.", request: request)
-            interaction = numericInteraction(
+            interaction = numericInteraction(request: request,
                 answer: expected,
                 tolerance: .absolute(0.15),
                 unit: "%",
@@ -976,7 +1221,7 @@ enum NFFallbackExerciseGenerator {
             prompt = localized("Fermi estimate: a building has about \(floors) floors, \(rooms) rooms per floor, \(lamps) active lamps per room, and \(hours) operating hours. Estimate daily lamp-hours.", request: request)
             context = contextualLead(request) + localized(" A reasonable range is accepted; focus on the assumptions and order of magnitude.", request: request)
             instructions = localized("Enter a magnitude estimate in lamp-hours.", request: request)
-            interaction = numericInteraction(
+            interaction = numericInteraction(request: request,
                 answer: reference,
                 tolerance: .relative(0.5),
                 unit: localized("lamp-hours", request: request),
@@ -1008,7 +1253,7 @@ enum NFFallbackExerciseGenerator {
                 prompt = localized("Convert \(millimeters) millimeters to meters.", request: request)
                 context = contextualLead(request) + localized(" The physical dimension remains length; only the scale changes.", request: request)
                 instructions = localized("Enter the value and unit in meters.", request: request)
-                interaction = numericInteraction(
+                interaction = numericInteraction(request: request,
                     answer: meters,
                     tolerance: .absolute(0.000_001),
                     unit: "m",
@@ -1082,7 +1327,7 @@ enum NFFallbackExerciseGenerator {
             prompt = localized("An output is \(baseline) units at the current input and is \(relationship). If the input is multiplied by \(factor), what is the new output?", request: request)
             context = contextualLead(request) + localized(" Apply the stated functional relationship, not a surface-word heuristic.", request: request)
             instructions = localized("Enter the resulting value in units.", request: request)
-            interaction = numericInteraction(
+            interaction = numericInteraction(request: request,
                 answer: answer,
                 tolerance: .absolute(0.000_001),
                 unit: localized("units", request: request),
@@ -1130,7 +1375,7 @@ enum NFFallbackExerciseGenerator {
                 var options = values.enumerated().map { index, value in
                     NFChoiceOption(
                         id: index == 0 ? "correct" : "posterior.\(index)",
-                        text: "\(format(value))%",
+                        text: "\(format(value, request: request))%",
                         accessibilityLabel: nil,
                         distractorCode: index == 0 ? nil : "numeric_value"
                     )
@@ -1142,7 +1387,7 @@ enum NFFallbackExerciseGenerator {
                 instructions = localized("Choose the defensible interpretation.", request: request)
             } else {
                 instructions = localized("Enter the conditional percentage and % unit.", request: request)
-                interaction = numericInteraction(
+                interaction = numericInteraction(request: request,
                     answer: posterior,
                     tolerance: .absolute(0.15),
                     unit: "%",
@@ -1194,7 +1439,7 @@ enum NFFallbackExerciseGenerator {
                 var options = values.enumerated().map { index, value in
                     NFChoiceOption(
                         id: index == 0 ? "correct" : "expected.\(index)",
-                        text: format(value),
+                        text: format(value, request: request),
                         accessibilityLabel: nil,
                         distractorCode: index == 0 ? nil : "numeric_value"
                     )
@@ -1206,7 +1451,7 @@ enum NFFallbackExerciseGenerator {
                 instructions = localized("Choose the defensible interpretation.", request: request)
             } else {
                 instructions = localized("Enter the signed expected value in points.", request: request)
-                interaction = numericInteraction(
+                interaction = numericInteraction(request: request,
                     answer: expected,
                     tolerance: .absolute(0.000_001),
                     unit: localized("points", request: request),
@@ -1336,6 +1581,9 @@ enum NFFallbackExerciseGenerator {
             ],
             random: &random
         )
+        if variant == 0, request.scienceStudyPolicyVersion == 1 {
+            return linkedScienceStudyDraft(request: request, random: &random)
+        }
         let templateSlug: String
         let prompt: String
         let context: String
@@ -1429,13 +1677,13 @@ enum NFFallbackExerciseGenerator {
             random.shuffle(&options)
             templateSlug = "design.next-discriminating-experiment"
             prompt = localized("An increased output could be caused by intervention A or by measurement drift. Which next experiment best discriminates the hypotheses?", request: request)
-            context = contextualLead(request) + localized(" The useful experiment changes A independently and checks the outcome with a separate calibrated measurement.", request: request)
+            context = contextualLead(request) + localized(" The original output was measured with one instrument. Both explanations remain possible.", request: request)
             instructions = localized("Choose the experiment with the clearest contrasting predictions.", request: request)
             interaction = .singleChoice(NFSingleChoiceResponseSchema(options: options, correctOptionID: "correct"))
             representations = [.table(
                 headers: [localized("Hypothesis", request: request), localized("Distinct prediction", request: request)],
-                rows: [[localized("A causes output", request: request), localized("Randomized A changes independent measure", request: request)], [localized("Measurement drift", request: request), localized("Independent measure does not follow the drift", request: request)]],
-                accessibilitySummary: localized("The hypotheses differ when A is randomized and outcome is checked independently.", request: request)
+                rows: [[localized("A causes output", request: request), localized("A changes the underlying output", request: request)], [localized("Measurement drift", request: request), localized("The instrument reading changes while underlying output stays the same", request: request)]],
+                accessibilitySummary: localized("Two explanations are supplied: a change in underlying output, or a change in instrument reading.", request: request)
             )]
             strategy = NFExerciseStrategy(
                 id: "strategy.experiment.discriminate",
@@ -1456,6 +1704,13 @@ enum NFFallbackExerciseGenerator {
         case 3:
             let low = 15 + random.int(upperBound: 50)
             let high = low + 3 + random.int(upperBound: 20)
+            let intervalA = try! NFClosedInterval(lower: Double(low - 3), upper: Double(low + 5))
+            let intervalB = try! NFClosedInterval(lower: Double(high - 5), upper: Double(high + 3))
+            let geometry: String = switch intervalA.relationship(to: intervalB) {
+            case .disjoint: localized("The intervals are disjoint.", request: request)
+            case .touching: localized("The intervals share one endpoint.", request: request)
+            case .overlapping: localized("The intervals overlap over a positive range.", request: request)
+            }
             let offsets = [-4, -2, -1, 0, 0, 1, 2, 4]
             let rawRows = offsets.enumerated().flatMap { index, offset in
                 [
@@ -1464,22 +1719,22 @@ enum NFFallbackExerciseGenerator {
                 ]
             }
             var options = [
-                NFChoiceOption(id: "correct", text: localized("Group B has the higher observed mean, but overlapping uncertainty prevents a definitive effect claim from this figure alone.", request: request), accessibilityLabel: nil, distractorCode: nil),
+                NFChoiceOption(id: "correct", text: localized("Group B has the higher observed mean. The supplied mean intervals alone do not establish a causal effect or a result for the mean difference.", request: request), accessibilityLabel: nil, distractorCode: nil),
                 NFChoiceOption(id: "cause", text: localized("The figure proves assignment to B causes every outcome to increase.", request: request), accessibilityLabel: nil, distractorCode: "causal_overreach"),
-                NFChoiceOption(id: "none", text: localized("Overlapping intervals prove the groups are exactly identical.", request: request), accessibilityLabel: nil, distractorCode: "uncertainty_overreach"),
+                NFChoiceOption(id: "none", text: localized("The mean intervals prove that the groups are exactly equal.", request: request), accessibilityLabel: nil, distractorCode: "uncertainty_overreach"),
                 NFChoiceOption(id: "universal", text: localized("Every future B observation will exceed every future A observation.", request: request), accessibilityLabel: nil, distractorCode: "universal_overreach")
             ]
             random.shuffle(&options)
             templateSlug = "data-forensics.uncertainty"
-            prompt = localized("A synthetic figure shows group A mean \(low) and group B mean \(high) with overlapping uncertainty intervals. Which claim is strongest?", request: request)
-            context = contextualLead(request) + localized(" The seeded figure encodes means and intervals separately.", request: request)
+            prompt = localized("A synthetic report gives group A mean \(low) and group B mean \(high), with separate supplied 95% confidence intervals for the means. Which conclusion is supported?", request: request)
+            context = contextualLead(request) + localized(" These intervals are supplied model summaries, not calculated from the illustrative observations below. The comparison procedure and group assignment are unspecified; no interval for B−A is supplied.", request: request)
             instructions = localized("Choose the claim supported by the displayed data and no more.", request: request)
             interaction = .singleChoice(NFSingleChoiceResponseSchema(options: options, correctOptionID: "correct"))
             representations = [
                 .table(
                     headers: [localized("Group", request: request), localized("Mean", request: request), localized("Interval", request: request)],
                     rows: [[localized("A", request: request), localized("\(low)", request: request), localized("\(low - 3)–\(low + 5)", request: request)], [localized("B", request: request), localized("\(high)", request: request), localized("\(high - 5)–\(high + 3)", request: request)]],
-                    accessibilitySummary: localized("B has a higher mean, and the two uncertainty intervals overlap.", request: request)
+                    accessibilitySummary: localized("Separate 95% confidence intervals for the group means.", request: request) + " " + geometry
                 ),
                 .table(
                     headers: [localized("Group", request: request), localized("Observation", request: request), localized("Value", request: request)],
@@ -1488,8 +1743,8 @@ enum NFFallbackExerciseGenerator {
                 )
             ]
             strategy = claimScopeStrategy(request: request)
-            correctExplanation = localized("The observed mean difference is descriptive; overlapping uncertainty and unknown design details limit stronger conclusions.", request: request)
-            decisiveStep = localized("Report the visible contrast while preserving uncertainty and design limits.", request: request)
+            correctExplanation = localized("The observed difference is B−A = \(high-low). \(geometry) Interval geometry alone is not a test of the mean difference, proof of equality, or evidence of causation.", request: request)
+            decisiveStep = localized("Identify the quantity each interval estimates, then separate the observed contrast from inference and causality.", request: request)
             tags = ["data-forensics", "synthetic-figure", "seeded-dataset", "uncertainty", "figure-to-claim"]
             errorExplanations = [
                 "causal_overreach": localized("A plotted contrast does not establish causal assignment.", request: request),
@@ -1606,7 +1861,7 @@ enum NFFallbackExerciseGenerator {
             random.shuffle(&steps)
             templateSlug = "design.discriminating-sequence"
             prompt = localized("An increased output could be caused by intervention A or by measurement drift. Which next experiment best discriminates the hypotheses?", request: request)
-            context = contextualLead(request) + localized(" The useful experiment changes A independently and checks the outcome with a separate calibrated measurement.", request: request)
+            context = contextualLead(request) + localized(" The original output was measured with one instrument. Both explanations remain possible.", request: request)
             instructions = localized("Order the extraction steps.", request: request)
             interaction = .orderedSteps(
                 NFOrderedStepsResponseSchema(
@@ -1783,12 +2038,15 @@ enum NFFallbackExerciseGenerator {
                     "rule.readiness": localized("ready must equal (count <= \(threshold))", request: request),
                     "rule.nonnegative": localized("count must remain nonnegative", request: request)
                 ],
-                traceLanguage: skin
+                traceLanguage: skin,
+                traceContract: request.tracePolicyVersion == 1 && !request.purpose.delaysFeedback
+                    ? try? NFCodeTraceContract.make(program: program,
+                        initialVariables: ["count": .integer(start), "ready": .boolean(false)], skin: displaySkin) : nil
             )
             templateSlug = "trace.stale-derived-state"
-            prompt = localized("Trace the state and identify the invariant first violated after the final transition.", request: request)
+            prompt = localized("Trace the state and identify the rule violated at the end of the final update.", request: request)
             context = localized("Initial state: count = \(start), ready = false. ", request: request) + contextualLead(request)
-            instructions = localized("Enter the final state and select the first violated invariant.", request: request)
+            instructions = localized("Enter the final state and select the violated end-state rule.", request: request)
             interaction = .logicState(
                 NFLogicStateResponseSchema(
                     initialState: ["count": "\(start)", "ready": "false"],
@@ -1798,7 +2056,8 @@ enum NFFallbackExerciseGenerator {
                         NFChoiceOption(id: "rule.readiness", text: localized("ready must equal (count <= \(threshold))", request: request), accessibilityLabel: nil, distractorCode: nil),
                         NFChoiceOption(id: "rule.nonnegative", text: localized("count must remain nonnegative", request: request), accessibilityLabel: nil, distractorCode: nil)
                     ],
-                    expectedViolatedRuleID: "rule.readiness"
+                    expectedViolatedRuleID: "rule.readiness",
+                    fieldDomains: ["count": .exactNumber, "ready": .boolean]
                 )
             )
             representations = [
@@ -1832,7 +2091,7 @@ enum NFFallbackExerciseGenerator {
             random.shuffle(&options)
             templateSlug = "conditions.divisibility"
             prompt = localized("For integers, divisibility by 4 guarantees evenness. Relative to being even, being divisible by 4 is what kind of condition?", request: request)
-            context = contextualLead(request) + localized(" Multiples of 4 are even, but 2 and 6 are even without being divisible by 4.", request: request)
+            context = contextualLead(request) + localized(" The domain is the set of integers.", request: request)
             instructions = localized("Choose the exact logical relationship.", request: request)
             interaction = .singleChoice(NFSingleChoiceResponseSchema(options: options, correctOptionID: "correct"))
             representations = [.equation(latex: "4 \\mid n \\Rightarrow 2 \\mid n", spokenDescription: localized("If four divides n, then two divides n", request: request))]
@@ -1866,7 +2125,7 @@ enum NFFallbackExerciseGenerator {
             context = contextualLead(request) + localized(" A counterexample must satisfy the premise and falsify the conclusion.", request: request)
             instructions = localized("Choose one valid counterexample.", request: request)
             interaction = .singleChoice(NFSingleChoiceResponseSchema(options: options, correctOptionID: "correct"))
-            representations = [.equation(latex: "2 \\times 3 = 6", spokenDescription: localized("Two times three equals six", request: request))]
+            representations = [.prose]
             strategy = NFExerciseStrategy(
                 id: "strategy.counterexample.constraints",
                 title: localized("Satisfy premise, break conclusion", request: request),
@@ -1893,10 +2152,10 @@ enum NFFallbackExerciseGenerator {
             random.shuffle(&steps)
             templateSlug = "proof.order-odd-sum"
             prompt = localized("Arrange the proof that the sum of two odd integers is even.", request: request)
-            context = contextualLead(request) + localized(" The deterministic key follows dependency order, not stylistic preference.", request: request)
+            context = contextualLead(request) + localized(" Each step may use only a definition or result already established.", request: request)
             instructions = localized("Order every proof step.", request: request)
             interaction = .orderedSteps(NFOrderedStepsResponseSchema(steps: steps, correctOrder: ["define", "add", "factor", "conclude"]))
-            representations = [.equation(latex: "(2m+1)+(2n+1)=2(m+n+1)", spokenDescription: localized("The sum factors as two times an integer", request: request))]
+            representations = [.equation(latex: "a=2m+1, b=2n+1", spokenDescription: localized("a and b are odd integers; m and n are integers", request: request))]
             strategy = NFExerciseStrategy(
                 id: "strategy.proof.dependencies",
                 title: localized("Order by logical dependency", request: request),
@@ -1920,7 +2179,7 @@ enum NFFallbackExerciseGenerator {
             random.shuffle(&options)
             templateSlug = "proof.first-invalid-division"
             prompt = localized("A false proof starts with nonzero a = b, obtains a² − b² = ab − b², factors, then divides by a − b. What is the first invalid step?", request: request)
-            context = contextualLead(request) + localized(" Because a equals b, the proposed divisor is zero.", request: request)
+            context = contextualLead(request) + localized(" Assume a = b and a is nonzero.", request: request)
             instructions = localized("Choose the first invalid step.", request: request)
             interaction = .singleChoice(NFSingleChoiceResponseSchema(options: options, correctOptionID: "correct"))
             representations = [.equation(latex: "(a-b)(a+b)=b(a-b)", spokenDescription: localized("Both sides contain the factor a minus b", request: request))]
@@ -1964,11 +2223,11 @@ enum NFFallbackExerciseGenerator {
             ]
             random.shuffle(&options)
             templateSlug = "debug.boundary-last-element"
-            prompt = localized("A sum loop runs while index < count − 1, so it never visits the final element. What is the smallest nonempty failing input?", request: request)
-            context = contextualLead(request) + localized(" The bounded internal AST is interpreted; user text and imported code are never executed.", request: request)
+            prompt = localized("The displayed loop should sum every positive integer in its input. What is the smallest nonempty list length for which it fails?", request: request)
+            context = contextualLead(request) + localized(" The input contains positive integers; total and index both start at zero.", request: request)
             instructions = localized("Choose the minimal boundary case.", request: request)
             interaction = .singleChoice(NFSingleChoiceResponseSchema(options: options, correctOptionID: "correct"))
-            representations = [.code(language: "language-neutral", source: "index = 0\nwhile index < count - 1:\n    total += values[index]\n    index += 1", accessibilitySummary: localized("The loop condition stops before the final valid index.", request: request))]
+            representations = [.code(language: "language-neutral", source: "index = 0\nwhile index < count - 1:\n    total += values[index]\n    index += 1", accessibilitySummary: localized("Starting with total and index zero, repeat while index is less than count minus one: add values at index to total, then increment index.", request: request))]
             strategy = NFExerciseStrategy(
                 id: "strategy.boundary.smallest",
                 title: localized("Shrink to the first failing boundary", request: request),
@@ -2029,7 +2288,7 @@ enum NFFallbackExerciseGenerator {
             context = contextualLead(request) + localized(" Candidate patches were checked against empty, singleton, and multi-element arrays.", request: request)
             instructions = localized("Choose the repair that passes all boundary tests.", request: request)
             interaction = .singleChoice(NFSingleChoiceResponseSchema(options: options, correctOptionID: "correct"))
-            representations = [.code(language: "language-neutral", source: "index = 0\nwhile index < count - 1:\n    visit(values[index])\n    index += 1", accessibilitySummary: localized("The original loop stops one position before the array count.", request: request))]
+            representations = [.code(language: "language-neutral", source: "index = 0\nwhile index < count - 1:\n    visit(values[index])\n    index += 1", accessibilitySummary: localized("Starting at index zero, repeat while index is less than count minus one: visit values at index, then increment index.", request: request))]
             strategy = NFExerciseStrategy(
                 id: "strategy.patch.tests",
                 title: localized("Validate patches against boundary tests", request: request),
@@ -2163,7 +2422,11 @@ enum NFFallbackExerciseGenerator {
         let suppliedFact = suppliedCitation?.sourceChunkID == nil ? nil : suppliedCandidate
         let fallbackFact: NFExerciseGroundingFact
         if suppliedFact == nil {
-            let target = bundledRetrievalTarget(for: request.sourceContext.primaryField, random: &random)
+            let target: NFRetrievalKnowledgeTarget
+            if request.retrievalAssetPolicyVersion == 1, let form = retrievalAssetForm(request.preferredAssessmentMechanicID) {
+                let candidates = retrievalAssetTargets(form: form, request: request)
+                target = candidates[random.int(upperBound: candidates.count)]
+            } else { target = bundledRetrievalTarget(for: request.sourceContext.primaryField, random: &random) }
             fallbackFact = NFExerciseGroundingFact(
                 id: target.id,
                 statement: target.prompt,
@@ -2179,7 +2442,7 @@ enum NFFallbackExerciseGenerator {
         }
         let fact = suppliedFact ?? fallbackFact
         let citations = suppliedFact == nil ? [] : suppliedCitation.map { [$0] } ?? []
-        let variant = selectedVariant(
+        let selected = selectedVariant(
             request: request,
             defaultUpperBound: variantCount(for: .retrieval),
             compatibleVariants: [
@@ -2188,6 +2451,18 @@ enum NFFallbackExerciseGenerator {
             ],
             random: &random
         )
+        // A subject-target rotation never spends a fresh target on an unrelated
+        // generic study-method task. Explicit focused method contracts remain.
+        if request.retrievalAssetPolicyVersion == 1, let form = NFRetrievalAssetContract.Form(variant: selected),
+           suppliedFact == nil, let asset = NFRetrievalAssetCatalog.asset(targetID: fact.id, form: form, locale: request.localeIdentifier) {
+            return retrievalAssetDraft(asset: asset, request: request)
+        }
+        let missingMixedAsset = request.retrievalAssetPolicyVersion == 1 && NFRetrievalAssetContract.Form(variant: selected) != nil
+            && request.preferredAssessmentMechanicID == nil && request.preferredAssessmentFormat == nil
+        let variant = missingMixedAsset ? 1 : request.retrievalAuthorityPolicyVersion == 1
+            && request.preferredAssessmentMechanicID == nil && request.preferredAssessmentFormat == nil
+            && [5, 8].contains(selected) ? 1 : selected
+        let methodOnly = request.retrievalAuthorityPolicyVersion == 1 && [5, 8].contains(variant)
         let interaction: NFExerciseInteraction
         let instructions: String
         let templateSlug: String
@@ -2200,8 +2475,8 @@ enum NFFallbackExerciseGenerator {
             interaction = .selfCheck(
                 NFSelfCheckResponseSchema(
                     referenceAnswer: fact.expectedAnswer,
-                    criteria: [localized("Names the central idea", request: request), localized("Preserves the causal or mathematical relationship", request: request), localized("Does not add unsupported detail", request: request)],
-                    asksForReflection: true
+                    criteria: NFRetrievalResponseAuthority.checklist(for: fact),
+                    asksForReflection: false
                 )
             )
             instructions = localized("Recall aloud or in writing, reveal the reference, then self-check honestly.", request: request)
@@ -2214,7 +2489,8 @@ enum NFFallbackExerciseGenerator {
                 NFShortTextResponseSchema(
                     expectedAnswer: fact.expectedAnswer,
                     scoringRule: .normalizedExact(acceptedAnswers: [fact.expectedAnswer] + fact.acceptedAlternatives),
-                    maximumCharacters: 280
+                    maximumCharacters: 280,
+                    authority: NFRetrievalResponseAuthority.authority(for: fact, policyVersion: request.retrievalAuthorityPolicyVersion)
                 )
             )
             instructions = localized("Enter a short answer before viewing the reference.", request: request)
@@ -2227,7 +2503,8 @@ enum NFFallbackExerciseGenerator {
                 NFShortTextResponseSchema(
                     expectedAnswer: fact.expectedAnswer,
                     scoringRule: .normalizedExact(acceptedAnswers: [fact.expectedAnswer] + fact.acceptedAlternatives),
-                    maximumCharacters: 280
+                    maximumCharacters: 280,
+                    authority: NFRetrievalResponseAuthority.authority(for: fact, policyVersion: request.retrievalAuthorityPolicyVersion)
                 )
             )
             instructions = localized("Complete the missing supported relationship; normalized reviewed alternatives are accepted.", request: request)
@@ -2239,8 +2516,8 @@ enum NFFallbackExerciseGenerator {
             interaction = .selfCheck(
                 NFSelfCheckResponseSchema(
                     referenceAnswer: fact.expectedAnswer,
-                    criteria: [localized("Defines the central entities", request: request), localized("Explains the supported relationship", request: request), localized("Marks any remaining uncertainty", request: request)],
-                    asksForReflection: true
+                    criteria: NFRetrievalResponseAuthority.checklist(for: fact),
+                    asksForReflection: false
                 )
             )
             instructions = localized("Explain the idea in your own words, reveal the supported reference, then rate the match.", request: request)
@@ -2286,7 +2563,8 @@ enum NFFallbackExerciseGenerator {
                 NFShortTextResponseSchema(
                     expectedAnswer: fact.expectedAnswer,
                     scoringRule: .normalizedExact(acceptedAnswers: [fact.expectedAnswer] + fact.acceptedAlternatives),
-                    maximumCharacters: 280
+                    maximumCharacters: 280,
+                    authority: NFRetrievalResponseAuthority.authority(for: fact, policyVersion: request.retrievalAuthorityPolicyVersion)
                 )
             )
             instructions = localized("Reconstruct the missing right-hand side from the bounded source relationship.", request: request)
@@ -2305,7 +2583,8 @@ enum NFFallbackExerciseGenerator {
                 NFShortTextResponseSchema(
                     expectedAnswer: fact.expectedAnswer,
                     scoringRule: .normalizedExact(acceptedAnswers: [fact.expectedAnswer] + fact.acceptedAlternatives),
-                    maximumCharacters: 280
+                    maximumCharacters: 280,
+                    authority: NFRetrievalResponseAuthority.authority(for: fact, policyVersion: request.retrievalAuthorityPolicyVersion)
                 )
             )
             instructions = localized("Interpret the compact source figure without reversing the relationship or adding scope.", request: request)
@@ -2328,7 +2607,7 @@ enum NFFallbackExerciseGenerator {
 
         default:
             var options = [
-                NFChoiceOption(id: "correct", text: fact.expectedAnswer, accessibilityLabel: nil, distractorCode: nil),
+                NFChoiceOption(id: "correct", text: methodOnly ? localized("Return the supported candidate.", request: request) : fact.expectedAnswer, accessibilityLabel: nil, distractorCode: nil),
                 NFChoiceOption(id: "reverse", text: localized("Return the reversed relationship without checking its conditions.", request: request), accessibilityLabel: nil, distractorCode: "relationship_reversed"),
                 NFChoiceOption(id: "none", text: localized("Return no supported relationship.", request: request), accessibilityLabel: nil, distractorCode: "relationship_omitted"),
                 NFChoiceOption(id: "scope", text: localized("Return a universal claim beyond the source scope.", request: request), accessibilityLabel: nil, distractorCode: "scope_added")
@@ -2354,15 +2633,16 @@ enum NFFallbackExerciseGenerator {
             ]
         }
         let materialPhrase = request.sourceContext.materialTitle.map { localized(" from “\($0)”", request: request) } ?? ""
-        let prompt = localized("\(promptLead): \(fact.statement)\(materialPhrase)", request: request)
+        let prompt = methodOnly ? localized(variant == 5 ? "Arrange the retrieval and review cycle." : "Trace the filter and select the candidate it returns.", request: request)
+            : localized("\(promptLead): \(fact.statement)\(materialPhrase)", request: request)
         return Draft(
             templateSlug: templateSlug,
             title: localized("Retrieval practice", request: request),
             prompt: prompt,
-            contextText: suppliedFact == nil
+            contextText: methodOnly ? localized("This practices a study method. It is not evidence of subject knowledge or subject retention.", request: request) : suppliedFact == nil
                 ? contextualLead(request) + localized(" This fallback uses a bundled, locally verified retrieval contract.", request: request)
                 : localized("This prompt uses the bounded, cited fact supplied for your material.", request: request),
-            instructions: instructions,
+            instructions: methodOnly ? localized(variant == 5 ? "Arrange the retrieval and review cycle." : "Trace the filter and select the candidate it returns.", request: request) : instructions,
             interaction: interaction,
             difficulty: difficulty(base: 0.38, steps: 2, shift: 0.15),
             skillWeights: ["skill.retrieval": 1],
@@ -2376,11 +2656,11 @@ enum NFFallbackExerciseGenerator {
                 )
             ],
             representations: representations,
-            citations: citations,
+            citations: methodOnly ? [] : citations,
             rubric: exactRubric(localized("Typed response against the reviewed or cited reference", request: request)),
-            correctExplanation: localized("The response preserves the central supported relationship.", request: request),
-            retryExplanation: localized("Compare the response with the reference and retrieve the missing relationship once more.", request: request),
-            decisiveStep: localized("Recall the relationship, not only isolated vocabulary.", request: request),
+            correctExplanation: methodOnly ? localized("The response matches the study method.", request: request) : localized("The response preserves the central supported relationship.", request: request),
+            retryExplanation: methodOnly ? localized("Check the order or return condition in the study method.", request: request) : localized("Compare the response with the reference and retrieve the missing relationship once more.", request: request),
+            decisiveStep: methodOnly ? localized("Practice the method before applying it to a subject question.", request: request) : localized("Recall the relationship, not only isolated vocabulary.", request: request),
             hints: [localized("Name the key entities first.", request: request), localized("State how they relate.", request: request)],
             errorExplanations: [
                 "text_answer": localized("The response does not match a reviewed accepted answer.", request: request),
@@ -2392,7 +2672,7 @@ enum NFFallbackExerciseGenerator {
             tags: [
                 "retrieval",
                 citations.isEmpty ? "bundled" : "source-grounded",
-                "knowledge-target.\(fact.id)"
+                methodOnly ? "learning-method-only" : "knowledge-target.\(fact.id)"
             ] + tags
         )
     }
@@ -2443,6 +2723,9 @@ enum NFFallbackExerciseGenerator {
             ],
             random: &random
         )
+        if variant == 2, request.transferPolicyVersion == 1 {
+            return linkedTransferDraft(request: request, random: &random)
+        }
         let interaction: NFExerciseInteraction
         let instructions: String
         let templateSlug: String
@@ -2518,7 +2801,7 @@ enum NFFallbackExerciseGenerator {
             templateSlug = "field-shift.rate-product"
             prompt = localized("A familiar rate × time relation is transferred into a \(profile.entity) context: \(rate) \(profile.countUnit) per minute for \(duration) minutes. What total follows?", request: request)
             instructions = localized("Enter the exact total with its unit.", request: request)
-            interaction = numericInteraction(answer: answer, tolerance: .absolute(0), unit: profile.countUnit)
+            interaction = numericInteraction(request: request, answer: answer, tolerance: .absolute(0), unit: profile.countUnit)
             representations = [
                 .table(
                     headers: [localized("Quantity", request: request), localized("Target-context value", request: request)],
@@ -2601,7 +2884,7 @@ enum NFFallbackExerciseGenerator {
             templateSlug = "interacting-variables.ratio"
             prompt = localized("A target quantity equals amount ÷ volume and initially equals \(baseline). If amount doubles while volume halves, what is the new value?", request: request)
             instructions = localized("Enter the transformed value in relative units.", request: request)
-            interaction = numericInteraction(
+            interaction = numericInteraction(request: request,
                 answer: answer,
                 tolerance: .absolute(0),
                 unit: localized("relative units", request: request),
@@ -2853,7 +3136,10 @@ enum NFFallbackExerciseGenerator {
 
         case .multiRepresentationTransform:
             let factor = 2 + random.int(upperBound: 4)
-            let intercept = 1 + random.int(upperBound: 4)
+            // A swapped-role distractor must represent a different function.
+            // Equal slope/intercept values would give two identical answers.
+            let intercepts = (1...4).filter { $0 != factor }
+            let intercept = intercepts[random.int(upperBound: intercepts.count)]
             var options = [
                 NFChoiceOption(id: "correct", text: localized("y = \(factor)x + \(intercept)", request: request), accessibilityLabel: nil, distractorCode: nil),
                 NFChoiceOption(id: "missing", text: localized("y = \(factor)x", request: request), accessibilityLabel: nil, distractorCode: "representation_intercept"),
@@ -2989,6 +3275,16 @@ enum NFFallbackExerciseGenerator {
         let accessibility: NFExerciseAccessibility
         let expectedDurationSeconds: Int
         let tags: [String]
+        var scienceStudy: NFScienceStudyContract? = nil
+        var graphConstruction: NFGraphConstructionContract? = nil
+        var transferRelationship: NFTransferRelationshipContract? = nil
+        var retrievalAsset: NFRetrievalAssetContract? = nil
+        var spatialStructure: NFSpatialStructureContract? = nil
+        var coordinateTransform: NFCoordinateTransformContract? = nil
+        var solidSection: NFSolidSectionContract? = nil
+        var netFolding: NFNetFoldingContract? = nil
+        var coordinateReasoning: NFCoordinateReasoningContract? = nil
+        var spatialAssembly: NFSpatialAssemblyContract? = nil
     }
 
     private struct FieldProfile {
@@ -3106,6 +3402,7 @@ enum NFFallbackExerciseGenerator {
     }
 
     private static func numericInteraction(
+        request: NFExerciseGenerationRequest,
         answer: Double,
         tolerance: NFNumericTolerance,
         unit: String?,
@@ -3126,11 +3423,11 @@ enum NFFallbackExerciseGenerator {
                 ),
                 placeholder: unit.map {
                     NFAppLocalization.localized("Value in \($0)",
-                        locale: NFAppLocalization.preferredLocale,
+                        locale: NFAppLocalization.locale(identifier: request.localeIdentifier),
                         comment: "Numeric exercise answer placeholder; the placeholder is the requested unit."
                     )
                 } ?? NFAppLocalization.localized("Value",
-                    locale: NFAppLocalization.preferredLocale,
+                    locale: NFAppLocalization.locale(identifier: request.localeIdentifier),
                     comment: "Unitless numeric exercise answer placeholder."
                 ),
                 permitsScientificNotation: true,
@@ -3154,25 +3451,9 @@ enum NFFallbackExerciseGenerator {
         _ difficulty: NFExerciseDifficulty,
         request: NFExerciseGenerationRequest
     ) -> NFExerciseDifficulty {
-        let purposeAdjustment: Double
-        switch request.purpose {
-        case .practice: purposeAdjustment = -0.08
-        case .documentPractice: purposeAdjustment = -0.04
-        case .retention: purposeAdjustment = 0
-        case .baseline: purposeAdjustment = 0.03
-        case .nearTransfer: purposeAdjustment = 0.08
-        case .assessmentHoldout: purposeAdjustment = 0.1
-        case .appliedTransfer: purposeAdjustment = 0.14
-        }
-        let target = request.targetDifficulty ?? min(1, max(0, difficulty.overall + purposeAdjustment))
-        return NFExerciseDifficulty(
-            overall: target,
-            reasoningSteps: difficulty.reasoningSteps,
-            abstraction: min(1, max(0, difficulty.abstraction + purposeAdjustment / 2)),
-            representationShift: min(1, max(0, difficulty.representationShift + purposeAdjustment)),
-            priorKnowledge: difficulty.priorKnowledge,
-            timePressure: difficulty.timePressure
-        )
+        // Legacy metadata records the generated task. Editorial band requests
+        // use reviewed demand records; a float never relabels this contract.
+        difficulty
     }
 
     private static func exactRubric(_ description: String) -> NFExerciseRubric {
@@ -3294,8 +3575,14 @@ enum NFFallbackExerciseGenerator {
         return hash
     }
 
-    private static func format(_ value: Double) -> String {
-        value.formatted(.number.precision(.fractionLength(0...2)))
+    /// Numeric response authority uses canonical rational syntax, never regional
+    /// display punctuation. Equivalent typed values are resolved by the scorer.
+    private static func canonicalNumericKey(_ value: Int) -> String {
+        (try! NFExactNumber(numerator: Int64(value))).canonicalString
+    }
+
+    private static func format(_ value: Double, request: NFExerciseGenerationRequest) -> String {
+        value.formatted(.number.precision(.fractionLength(0...2)).locale(Locale(identifier: request.localeIdentifier)))
     }
 }
 
@@ -3329,5 +3616,317 @@ private struct NFFallbackRandom: Sendable {
             let other = int(upperBound: index + 1)
             if index != other { values.swapAt(index, other) }
         }
+    }
+}
+
+
+extension NFFallbackExerciseGenerator {
+    private static func linkedScienceStudyDraft(request: NFExerciseGenerationRequest, random: inout NFFallbackRandom) -> Draft {
+        let contexts: [String] = [
+            localized("a puzzle-solving workshop", request: request),
+            localized("a map-reading workshop", request: request),
+            localized("a vocabulary practice workshop", request: request)
+        ]
+        let eligibleContexts = NFScienceStudyContract.contextIDs.indices.filter { NFScienceStudyContract.contextIDs[$0] != request.scienceStudyExcludedContextID }
+        let contextIndex = eligibleContexts[random.int(upperBound: eligibleContexts.count)]
+        let context = contexts[contextIndex]
+        let comparisonMean = 30 + random.int(upperBound: 30)
+        let difference = 3 + random.int(upperBound: 15)
+        let programMean = comparisonMean + (random.int(upperBound: 2) == 0 ? difference : -difference)
+        let baselineOther = 25 + random.int(upperBound: 20)
+        let baselineProgram = baselineOther + 5 + random.int(upperBound: 15)
+        let studyTitle = localized("Two groups in \(context)", request: request)
+        let description = localized("This is a synthetic teaching study. Participants chose whether to join \(context). Prior skill predicts the final score. Both groups completed the same final test, but assignment was not randomized.", request: request)
+        let claims = [
+            NFClaimOption(id: "claim.observed", text: programMean > comparisonMean
+                ? localized("The workshop group had the higher observed final score.", request: request)
+                : localized("The workshop group had the lower observed final score.", request: request)),
+            NFClaimOption(id: "claim.limit", text: localized("This comparison cannot separate a workshop effect from differences in prior skill.", request: request))
+        ]
+        let observations = [
+            NFEvidenceOption(id: "observation.means", text: localized("The workshop mean was \(programMean) points; the comparison mean was \(comparisonMean) points.", request: request), citationID: nil),
+            NFEvidenceOption(id: "observation.assignment", text: localized("Participants chose their group instead of being randomly assigned.", request: request), citationID: nil),
+            NFEvidenceOption(id: "observation.baseline", text: localized("Prior skill predicts the outcome, and its mean was \(baselineProgram) in the workshop group versus \(baselineOther) in the comparison group.", request: request), citationID: nil)
+        ]
+        var experiments = [
+            NFScienceStudyContract.Experiment(id: "experiment.random-common",
+                text: localized("Randomize participants within prior-skill blocks, then give both groups the same calibrated test under blinded scoring.", request: request),
+                randomizesWithinBaseline: true, commonCalibratedMeasurement: true,
+                explanation: localized("Randomization within prior-skill blocks separates assignment from prior skill; the common calibrated test keeps measurement comparable.", request: request),
+                interventionPrediction: localized("A workshop effect would change the expected mean score between randomized groups within prior-skill blocks.", request: request),
+                baselinePrediction: localized("If prior skill alone explains the original contrast, the randomized groups should have the same expected score within each block.", request: request)),
+            NFScienceStudyContract.Experiment(id: "experiment.common-only",
+                text: localized("Use blinded scoring and a common calibrated test, while participants continue choosing their group.", request: request),
+                randomizesWithinBaseline: false, commonCalibratedMeasurement: true,
+                explanation: localized("This improves measurement, but self-selection can still connect prior skill to workshop participation.", request: request),
+                interventionPrediction: localized("The workshop group could score differently because of the workshop.", request: request),
+                baselinePrediction: localized("The workshop group could also score differently because participants had different prior skill.", request: request)),
+            NFScienceStudyContract.Experiment(id: "experiment.random-only",
+                text: localized("Randomize participants within prior-skill blocks, but give the groups different tests whose score scales have not been calibrated together.", request: request),
+                randomizesWithinBaseline: true, commonCalibratedMeasurement: false,
+                explanation: localized("This improves assignment, but a score contrast could now come from the unmatched tests rather than the workshop.", request: request),
+                interventionPrediction: localized("A workshop effect could change the scores.", request: request),
+                baselinePrediction: localized("Even with balanced prior skill, unmatched test scales could create a score difference.", request: request))
+        ]
+        random.shuffle(&experiments)
+        let conclusion = localized("The means establish the observed sample contrast. Self-selection and prior-skill imbalance prevent a causal conclusion from this comparison. Randomized assignment within prior-skill blocks and a common calibrated outcome measure address those competing explanations without proving a universal effect.", request: request)
+        let study = NFScienceStudyContract(policyVersion: 1,
+            studyID: "nf.science-study.v1.\(String(mixedSeed(for: request), radix: 16)).\(request.index)", sourceKind: "syntheticTeachingStudy",
+            title: studyTitle, contextID: NFScienceStudyContract.contextIDs[contextIndex], designDescription: description,
+            unit: localized("points", request: request), baselineUnit: localized("prior-skill points", request: request),
+            groupHeader: localized("Group", request: request), meanHeader: localized("Final score", request: request), baselineHeader: localized("Prior skill", request: request),
+            groups: [.init(label: localized("Workshop", request: request), mean: programMean, baselineMean: baselineProgram),
+                .init(label: localized("Comparison", request: request), mean: comparisonMean, baselineMean: baselineOther)],
+            evidenceClaims: claims, observations: observations,
+            experimentClaim: .init(id: "claim.experiment", text: localized("Which follow-up separates the workshop's effect from both prior-skill differences and measurement differences?", request: request)),
+            experiments: experiments, conclusion: conclusion)
+        let prompt = localized("Study \(context): connect the claims to the evidence, then choose a follow-up experiment for this same study.", request: request)
+        let decisive = localized("Compare assignment and measurement together: improving just one can leave another explanation for the score difference.", request: request)
+        return Draft(templateSlug: "claim.evidence.bounds", title: localized("Linked study investigation", request: request),
+            prompt: prompt, contextText: description,
+            instructions: localized("First attach all and only the relevant evidence to each claim. Save those connections, then choose exactly one follow-up experiment. All three criteria contribute equally to the final score; no score is assigned at the intermediate save.", request: request),
+            interaction: .claimEvidence(study.responseSchema),
+            difficulty: difficulty(base: 0.58, steps: 4, shift: 0.5),
+            skillWeights: ["skill.scientificReasoning": 0.8, "skill.quantitative": 0.2],
+            strategies: [claimScopeStrategy(request: request)], representations: [study.table], citations: [],
+            rubric: weightedRubric(study.responseSchema.claims.map { ($0.id, $0.text, 1.0 / 3) }),
+            correctExplanation: conclusion,
+            retryExplanation: localized("Check the observed contrast, the two pieces that limit causal attribution, and whether the follow-up makes both assignment and measurement comparable.", request: request),
+            decisiveStep: decisive,
+            hints: [localized("Separate what the numbers describe from what the assignment process can establish.", request: request), decisive],
+            errorExplanations: ["claim_evidence_support": conclusion], accessibility: standardAccessibility(label: prompt),
+            expectedDurationSeconds: 140, tags: ["claim-evidence", "linked-study", "experimental-design", "educational-synthetic-scenario"], scienceStudy: study)
+    }
+}
+
+
+extension NFFallbackExerciseGenerator {
+    private static func linkedTransferDraft(request: NFExerciseGenerationRequest, random: inout NFFallbackRandom) -> Draft {
+        let sourceRate = 2 + random.int(upperBound: 9), sourceMinutes = 2 + random.int(upperBound: 6)
+        let targetRate = 4 * (1 + random.int(upperBound: 10)), targetSeconds = 15 * (2 + random.int(upperBound: 8))
+        let eligible = NFTransferRelationshipContract.contextIDs.indices.filter {
+            NFTransferRelationshipContract.contextIDs[$0] != request.transferExcludedContextID
+        }
+        let index = eligible[random.int(upperBound: eligible.count)]
+        let targetTitle = [localized("Filling a water tank", request: request), localized("Watering a garden", request: request), localized("Dispensing paint", request: request)][index]
+        let unit = index == 2 ? localized("millilitres", request: request) : localized("litres", request: request)
+        let sourceTitle = localized("Printing cards", request: request), sourceUnit = localized("cards", request: request)
+        let sourceDescription = localized("A printer starts with no completed cards. It prints steadily at \(sourceRate) cards per minute for \(sourceMinutes) minutes and completes \(sourceRate * sourceMinutes) cards.", request: request)
+        let targetDescription = localized("In the new task, liquid flows steadily at \(targetRate) \(unit) per minute for \(targetSeconds) seconds. The receiving container starts empty, and none of the liquid is lost. Find the delivered total.", request: request)
+        var choices = [
+            NFChoiceOption(id: NFTransferRelationshipContract.productID,
+                text: localized("Total = rate × duration, after matching the time units.", request: request), accessibilityLabel: nil, distractorCode: nil),
+            NFChoiceOption(id: "relationship.divide", text: localized("Total = rate ÷ duration, after matching the time units.", request: request), accessibilityLabel: nil, distractorCode: "transfer_division"),
+            NFChoiceOption(id: "relationship.add", text: localized("Total = rate + duration, using the displayed numbers.", request: request), accessibilityLabel: nil, distractorCode: "transfer_addition"),
+            NFChoiceOption(id: "relationship.copy", text: localized("Use the completed total from the printer example unchanged.", request: request), accessibilityLabel: nil, distractorCode: "transfer_copy")
+        ]
+        random.shuffle(&choices)
+        let headers = [localized("Context", request: request), localized("Output per minute", request: request), localized("Active duration", request: request), localized("Accumulated total", request: request)]
+        let summary = sourceDescription + "\n" + targetDescription
+        let structure = localized("Both tasks accumulate a total from a constant rate over time, starting from zero with no loss. The output nouns change, but multiplying a rate by a matching duration still gives the accumulated output.", request: request)
+        let conditions = localized("The source counts cards and gives time in minutes. The target measures liquid and gives time in seconds, so its duration must be divided by 60 before combining it with a per-minute rate. This mapping would need revision if the flow changed, liquid was lost, or the container already held liquid.", request: request)
+        let contract = NFTransferRelationshipContract(policyVersion: 1, contextID: NFTransferRelationshipContract.contextIDs[index],
+            sourceTitle: sourceTitle, targetTitle: targetTitle, sourceRate: sourceRate, sourceMinutes: sourceMinutes,
+            targetRate: targetRate, targetSeconds: targetSeconds, sourceUnit: sourceUnit, targetUnit: unit,
+            sourceDescription: sourceDescription, targetDescription: targetDescription, tableHeaders: headers, minuteUnit: localized("min", request: request), secondUnit: localized("seconds", request: request),
+            unknownTotalLabel: localized("To find", request: request), tableSummary: summary, relationships: choices, sharedStructure: structure, changedConditions: conditions,
+            requiredSkills: ["skill.quantitative", "skill.mentalMath"])
+        let prompt = localized("Use the printer example to solve a different task: \(targetTitle). First choose the useful relationship, then find the target total.", request: request)
+        let decisive = localized("Preserve the constant-rate accumulation, but convert the target seconds to minutes before calculating the total.", request: request)
+        return Draft(templateSlug: "field-shift.rate-product", title: localized("Choose a structure, then solve", request: request),
+            prompt: prompt, contextText: summary,
+            instructions: localized("Two skills: proportional reasoning and unit conversion. Save one relationship before entering the target total. Your relationship contributes 20% and the total contributes 80% of this practice answer; the first save is not scored. No written reflection is required.", request: request),
+            interaction: .logicState(contract.responseSchema), difficulty: difficulty(base: 0.60, steps: 3, shift: 0.65),
+            skillWeights: ["skill.transfer": 0.7, "skill.quantitative": 0.15, "skill.mentalMath": 0.15],
+            strategies: [.init(id: "strategy.transfer.constant-accumulation", title: localized("Map the quantities, then match units", request: request),
+                summary: decisive, orderedSteps: [localized("Identify the accumulated output", request: request), localized("Match the time units", request: request), localized("Apply the selected relationship", request: request), localized("Check the starting amount and losses", request: request)], whenToUse: localized("Constant-rate tasks in a changed context", request: request))],
+            representations: [contract.table], citations: [],
+            rubric: weightedRubric([("relationship", localized("Select the shared relationship", request: request), 0.2), ("total", localized("Compute the target total with matched units", request: request), 0.8)]),
+            correctExplanation: localized("The target total is \(contract.targetTotal) \(unit).", request: request) + " " + structure + " " + conditions,
+            retryExplanation: localized("Check both the relationship and the time conversion against the exact source and target. Your saved first relationship remains part of this answer.", request: request),
+            decisiveStep: decisive,
+            hints: [localized("Which quantities accumulate, and what must stay constant in both tasks?", request: request), decisive],
+            errorExplanations: ["logic_rule": localized("The saved relationship does not preserve the source's accumulation structure, even if the target number is right.", request: request), "logic_state": localized("Recheck the target's time unit and accumulated total. The per-minute rate cannot be combined directly with seconds.", request: request)],
+            accessibility: standardAccessibility(label: prompt), expectedDurationSeconds: 120,
+            tags: ["transfer", "two-skill-relationship", "constant-accumulation", "unit-conversion", "synthetic-teaching-task"], transferRelationship: contract)
+    }
+}
+
+
+extension NFFallbackExerciseGenerator {
+    private static func graphConstructionDraft(request: NFExerciseGenerationRequest, random: inout NFFallbackRandom) -> Draft {
+        let baseline = 1 + random.int(upperBound: 8)
+        let target = 2 + random.int(upperBound: 4)
+        let graph = NFGraphConstructionContract(policyVersion: 1, sourceKind: "syntheticDirectProportion",
+            xLabel: localized("Time", request: request), xUnit: "s",
+            yLabel: localized("Distance", request: request), yUnit: "m",
+            sourceDescription: localized("A cart starts at the origin and moves at a constant speed. The table gives one measurement.", request: request),
+            baseline: .init(x: 1, y: baseline), targetX: target, maximumX: 6, maximumY: 50)
+        let prompt = localized("The cart travels \(baseline) meters in 1 second at a constant speed. Place the point showing its distance after \(target) seconds.", request: request)
+        let decisive = localized("Scale both coordinates from the given point: \(target) × \(baseline) = \(target * baseline) meters.", request: request)
+        return Draft(templateSlug: "scaling.construct-point", title: localized("Build the distance graph", request: request),
+            prompt: prompt, contextText: graph.sourceDescription,
+            instructions: localized("Place one point on the integer grid. Drag on the graph or adjust Time and Distance with the labeled controls. Both coordinates must be correct for credit.", request: request),
+            interaction: .logicState(graph.responseSchema!), difficulty: difficulty(base: 0.4, steps: 2, shift: 0.4),
+            skillWeights: ["skill.quantitative": 0.8, "skill.mentalMath": 0.2],
+            strategies: [.init(id: "strategy.scaling.graph", title: localized("Scale a measured point", request: request),
+                summary: localized("Constant speed from the origin makes distance directly proportional to time.", request: request),
+                orderedSteps: [localized("Read the axis units", request: request), localized("Find the time multiplier", request: request),
+                    localized("Apply the same multiplier to distance", request: request), localized("Place the time and distance pair", request: request)],
+                whenToUse: localized("Direct-proportion graph construction", request: request))],
+            representations: [graph.table], citations: [], rubric: exactRubric(localized("Both plotted coordinates satisfy the stated target and constant-speed relationship", request: request)),
+            correctExplanation: decisive,
+            retryExplanation: localized("Check the horizontal time coordinate, then scale the measured distance by the same time multiplier. The display does not interpolate or change the scoring rule.", request: request),
+            decisiveStep: decisive,
+            hints: [localized("Read which quantity belongs to each axis before placing the point.", request: request),
+                localized("Compare the target time with 1 second, then multiply the given distance by that factor.", request: request), decisive],
+            errorExplanations: ["logic_state": localized("The saved coordinate pair does not match the requested time and proportional distance. Recheck both units and the multiplier.", request: request)],
+            accessibility: standardAccessibility(label: prompt), expectedDurationSeconds: 100,
+            tags: ["quantitative-intuition", "scaling", "direct-proportion", "graph-construction", "synthetic-measurements"],
+            graphConstruction: graph)
+    }
+}
+
+
+extension NFFallbackExerciseGenerator {
+    private static func retrievalAssetForm(_ mechanic: String?) -> NFRetrievalAssetContract.Form? {
+        guard let mechanic, let range = mechanic.range(of: ".fallback-variant-", options: .backwards),
+              let variant = Int(mechanic[range.upperBound...]) else { return nil }
+        return .init(variant: variant)
+    }
+    private static func retrievalAssetTargets(form: NFRetrievalAssetContract.Form, request: NFExerciseGenerationRequest) -> [NFRetrievalKnowledgeTarget] {
+        NFRetrievalAssetCatalog.targets(form: form).filter { request.sourceContext.primaryField == .general || $0.field == request.sourceContext.primaryField }
+    }
+    private static func retrievalAssetDraft(asset: NFRetrievalAssetContract, request: NFExerciseGenerationRequest) -> Draft {
+        Draft(templateSlug: asset.form.templateSlug, title: localized("Retrieval practice", request: request),
+            prompt: asset.prompt, contextText: nil, instructions: asset.instructions, interaction: asset.interaction,
+            difficulty: difficulty(base: 0.38, steps: 2, shift: 0.15), skillWeights: ["skill.retrieval": 1],
+            strategies: [.init(id: "strategy.retrieve-before-review", title: localized("Retrieve before reviewing", request: request),
+                summary: asset.correctiveAction, orderedSteps: [asset.correctiveAction], whenToUse: localized("Durable learning from notes and source material", request: request))],
+            representations: asset.representations, citations: [], rubric: exactRubric(localized("Exact answer", request: request)),
+            correctExplanation: asset.explanation, retryExplanation: asset.correctiveAction, decisiveStep: asset.correctiveAction,
+            hints: [asset.correctiveAction], errorExplanations: [:], accessibility: standardAccessibility(label: asset.prompt),
+            expectedDurationSeconds: 80, tags: ["retrieval", "bundled", "knowledge-target." + asset.targetID, "retained-retrieval-asset"],
+            retrievalAsset: asset)
+    }
+}
+
+
+extension NFFallbackExerciseGenerator {
+    private static func spatialStructureDraft(request: NFExerciseGenerationRequest, variant: Int, random: inout NFFallbackRandom) -> Draft {
+        let entries = NFSpatialStructureGeometry.structures.filter { $0.variant == variant }
+        let geometry = entries[random.int(upperBound: entries.count)]
+        let contract = NFSpatialStructureContract(structure:geometry,localeIdentifier:request.localeIdentifier)
+        return Draft(templateSlug:contract.templateSlug,title:contract.text("Spatial structure","空間構造"),
+            prompt:contract.prompt,contextText:nil,instructions:contract.instructions,interaction:contract.interaction,
+            difficulty:difficulty(base:geometry.dependentSteps == 1 ? 0.42 : 0.58,steps:geometry.dependentSteps,shift:0.5),
+            skillWeights:["skill.spatial":0.8,"skill.quantitative":0.2],
+            strategies:[.init(id:"strategy.spatial.invariants",title:localized("Track spatial invariants",request:request),
+                summary:contract.hint,orderedSteps:[contract.hint],whenToUse:localized("Rotation, projection, cross-section, folding, and coordinate tasks",request:request))],
+            representations:[.spatial(contract.representation)],citations:[],rubric:exactRubric(localized("Exact answer",request:request)),
+            correctExplanation:contract.explanation,retryExplanation:contract.hint,decisiveStep:contract.explanation,
+            hints:[contract.hint],errorExplanations:contract.errorExplanations,
+            accessibility:.init(promptAccessibilityLabel:contract.prompt,visualAlternative:contract.sourceDescription,
+                requiresVisualSpatialProcessing:true,supportsVoiceOver:true,supportsKeyboardOnly:true,usesMotion:false),
+            expectedDurationSeconds:geometry.dependentSteps == 1 ? 65 : 95,
+            tags:["spatial","retained-spatial-structure"],spatialStructure:contract)
+    }
+}
+
+
+extension NFFallbackExerciseGenerator {
+    private static func coordinateTransformDraft(request: NFExerciseGenerationRequest,variant: Int,random: inout NFFallbackRandom) -> Draft {
+        let entries=NFCoordinateTransformGeometry.tasks.filter { $0.kind.variant == variant }
+        let geometry=entries[random.int(upperBound:entries.count)]
+        let contract=NFCoordinateTransformContract(task:geometry,localeIdentifier:request.localeIdentifier)
+        return Draft(templateSlug:contract.templateSlug,title:contract.text("Coordinate transformations","座標変換"),
+            prompt:contract.prompt,contextText:nil,instructions:contract.instructions,interaction:contract.interaction,
+            difficulty:difficulty(base:geometry.operations.count == 1 ? 0.4 : 0.58,steps:geometry.operations.count,shift:0.5),
+            skillWeights:["skill.spatial":0.8,"skill.quantitative":0.2],
+            strategies:[.init(id:"strategy.spatial.invariants",title:localized("Track spatial invariants",request:request),
+                summary:contract.hint,orderedSteps:[contract.hint],whenToUse:localized("Rotation, projection, cross-section, folding, and coordinate tasks",request:request))],
+            representations:[.spatial(contract.representation)],citations:[],rubric:contract.rubric,
+            correctExplanation:contract.explanation,retryExplanation:contract.hint,decisiveStep:contract.explanation,
+            hints:[contract.hint],errorExplanations:["logic_state":contract.hint],
+            accessibility:.init(promptAccessibilityLabel:contract.prompt,visualAlternative:contract.sourceDescription,
+                requiresVisualSpatialProcessing:false,supportsVoiceOver:true,supportsKeyboardOnly:true,usesMotion:false),
+            expectedDurationSeconds:geometry.operations.count == 1 ? 70 : 100,tags:["spatial","retained-coordinate-transform"],coordinateTransform:contract)
+    }
+}
+
+
+extension NFFallbackExerciseGenerator {
+    private static func solidSectionDraft(request:NFExerciseGenerationRequest,random:inout NFFallbackRandom)->Draft {
+        let task=NFSolidSectionGeometry.representatives[random.int(upperBound:NFSolidSectionGeometry.representatives.count)]
+        let contract=NFSolidSectionContract(task:task,localeIdentifier:request.localeIdentifier)
+        let steps:Int = { if case .verify=task.query { return 3 };return task.plane.normal.vector.filter{$0 != 0}.count>1 ? 2:1 }()
+        return Draft(templateSlug:contract.templateSlug,title:contract.text("Solid and plane sections","立体と平面の断面"),
+            prompt:contract.prompt,contextText:nil,instructions:contract.instructions,interaction:contract.interaction,
+            difficulty:difficulty(base:steps == 1 ? 0.4:0.58,steps:steps,shift:0.5),
+            skillWeights:["skill.spatial":0.85,"skill.quantitative":0.15],
+            strategies:[.init(id:"strategy.spatial.section",title:contract.text("Intersect the stated constraints","指定された条件の交わりを求める"),
+                summary:contract.hint,orderedSteps:[contract.hint],whenToUse:contract.text("Solid and plane intersections","立体と平面の交わり"))],
+            representations:[.spatial(contract.representation)],citations:[],rubric:contract.rubric,
+            correctExplanation:contract.explanation,retryExplanation:contract.hint,decisiveStep:contract.explanation,
+            hints:[contract.hint],errorExplanations:contract.errors,
+            accessibility:.init(promptAccessibilityLabel:contract.prompt,visualAlternative:contract.sourceDescription,
+                requiresVisualSpatialProcessing:false,supportsVoiceOver:true,supportsKeyboardOnly:true,usesMotion:false),
+            expectedDurationSeconds:steps == 1 ? 70:110,tags:["spatial","retained-solid-section"],solidSection:contract)
+    }
+}
+
+
+extension NFFallbackExerciseGenerator {
+    private static func netFoldingDraft(request:NFExerciseGenerationRequest,random:inout NFFallbackRandom)->Draft {
+        let task=NFNetFoldingGeometry.tasks[random.int(upperBound:NFNetFoldingGeometry.tasks.count)]
+        let contract=NFNetFoldingContract(task:task,localeIdentifier:request.localeIdentifier)
+        let steps:Int={switch task.query{case .opposite:1;case .adjacent,.direction:2;default:3}}()
+        return Draft(templateSlug:"folding.retained-net",title:contract.text("Cube nets and face constraints","立方体の展開図と面の条件"),
+            prompt:contract.prompt,contextText:nil,instructions:contract.instructions,interaction:contract.interaction,
+            difficulty:difficulty(base:steps == 1 ? 0.4:0.6,steps:steps,shift:0.5),skillWeights:["skill.spatial":1],
+            strategies:[.init(id:"strategy.spatial.net-fold",title:contract.text("Track each hinged face","折り目でつながる各面を追う"),summary:contract.hint,orderedSteps:[contract.hint],whenToUse:contract.text("Cube-net face relations","立方体の展開図の面の関係"))],
+            representations:[.spatial(contract.representation)],citations:[],rubric:contract.rubric,
+            correctExplanation:contract.explanation,retryExplanation:contract.hint,decisiveStep:contract.explanation,hints:[contract.hint],errorExplanations:[:],
+            accessibility:.init(promptAccessibilityLabel:contract.prompt,visualAlternative:contract.sourceDescription,requiresVisualSpatialProcessing:false,supportsVoiceOver:true,supportsKeyboardOnly:true,usesMotion:false),
+            expectedDurationSeconds:steps == 1 ? 65:110,tags:["spatial","retained-cube-folding"],netFolding:contract)
+    }
+}
+
+
+extension NFFallbackExerciseGenerator {
+    @inline(never)
+    private static func coordinateReasoningDraft(request:NFExerciseGenerationRequest,variant:Int,random:inout NFFallbackRandom)->Draft {
+        let candidates=NFCoordinateReasoningGeometry.tasks.filter{$0.familyVariant==variant}
+        let task=candidates[random.int(upperBound:candidates.count)]
+        let contract=NFCoordinateReasoningContract(task:task,localeIdentifier:request.localeIdentifier)
+        return Draft(templateSlug:contract.templateSlug,title:contract.text("Inverse and transformation reasoning","逆変換と変換の推論"),
+            prompt:contract.prompt,contextText:nil,instructions:contract.instructions,interaction:contract.interaction,
+            difficulty:difficulty(base:task.query == .inverse ? 0.58:0.68,steps:task.query == .inferAffine ? 3:task.operations.count+1,shift:0.6),
+            skillWeights:["skill.spatial":0.8,"skill.quantitative":0.2],
+            strategies:[.init(id:"strategy.spatial.invariants",title:localized("Track spatial invariants",request:request),
+                summary:contract.hint,orderedSteps:[contract.hint],whenToUse:localized("Rotation, projection, cross-section, folding, and coordinate tasks",request:request))],
+            representations:[.spatial(contract.representation)],citations:[],rubric:contract.rubric,
+            correctExplanation:contract.explanation,retryExplanation:contract.hint,decisiveStep:contract.explanation,hints:[contract.hint],
+            errorExplanations:contract.errorExplanations,
+            accessibility:.init(promptAccessibilityLabel:contract.prompt,visualAlternative:contract.sourceDescription,
+                requiresVisualSpatialProcessing:false,supportsVoiceOver:true,supportsKeyboardOnly:true,usesMotion:false),
+            expectedDurationSeconds:task.query == .inverse ? 100:150,tags:["spatial","retained-coordinate-reasoning"],coordinateReasoning:contract)
+    }
+}
+
+extension NFFallbackExerciseGenerator {
+    @inline(never)
+    private static func spatialAssemblyDraft(request:NFExerciseGenerationRequest,variant:Int,random:inout NFFallbackRandom)->Draft {
+        let candidates=NFSpatialAssemblyGeometry.tasks.filter{$0.variant==variant}
+        let task=candidates[random.int(upperBound:candidates.count)]
+        let c=NFSpatialAssemblyContract(task:task,localeIdentifier:request.localeIdentifier)
+        return Draft(templateSlug:c.templateSlug,title:c.text("Spatial assembly reasoning","立体構成の推論"),prompt:c.prompt,contextText:nil,
+            instructions:c.instructions,interaction:c.interaction,difficulty:difficulty(base:0.72,steps:3,shift:0.7),
+            skillWeights:["skill.spatial":1],strategies:[.init(id:"strategy.spatial.invariants",title:localized("Track spatial invariants",request:request),
+                summary:c.hint,orderedSteps:[c.hint],whenToUse:localized("Rotation, projection, cross-section, folding, and coordinate tasks",request:request))],
+            representations:[.spatial(c.representation)],citations:[],rubric:c.rubric,correctExplanation:c.explanation,retryExplanation:c.hint,
+            decisiveStep:c.explanation,hints:[c.hint],errorExplanations:[:],accessibility:.init(promptAccessibilityLabel:c.prompt,
+                visualAlternative:c.sourceDescription,requiresVisualSpatialProcessing:false,supportsVoiceOver:true,supportsKeyboardOnly:true,usesMotion:false),
+            expectedDurationSeconds:180,tags:["spatial","retained-spatial-assembly"],spatialAssembly:c)
     }
 }

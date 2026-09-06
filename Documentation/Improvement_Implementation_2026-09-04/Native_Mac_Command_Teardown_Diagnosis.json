@@ -1,0 +1,28 @@
+{
+  "createdAt": "2026-09-05T08:53:24.663612+00:00",
+  "runID": "44B553CA-4B1A-4F46-B00A-B3B8FCD5C4F8",
+  "appPath": "/tmp/NeuroForge-Native-QA-44b553ca-4b1a-4f46-b00a-b3b8fcd5c4f8/NeuroForgeNativeQA.app",
+  "bundleID": "com.zacrotech.NeuroForge.nativeqa.44b553ca4b1a4f46b00ab3b8fcd5c4f8",
+  "purpose": "Disposable native command and continuation tracing with UUID test stores and isolated preferences",
+  "sourceManifest": "Replacement_Deferral_Integrated_Source_Hashes.json",
+  "sourceInputManifestDigest": "eda20071c54433c5c4cc9041fe1ed8b5b5044ed4a7a3c9c8232729ba2bfc84e1",
+  "fixtureRoot": "/var/folders/9s/lwj2ss7d679bl8hv9dx2qf6h0000gn/T/NeuroForge-UITests-44B553CA-4B1A-4F46-B00A-B3B8FCD5C4F8",
+  "NeuroForge": {
+    "builtSHA256": "a664ae4291bbfec57d86bec08832758797577eefe6e576130f12e413c673191a",
+    "copiedSHA256": "a664ae4291bbfec57d86bec08832758797577eefe6e576130f12e413c673191a"
+  },
+  "NeuroForge.debug.dylib": {
+    "builtSHA256": "6385ee32d6f95f8debd36b6ef37ccb9afc2978fc80041ae29e5509f64b85fc69",
+    "copiedSHA256": "6385ee32d6f95f8debd36b6ef37ccb9afc2978fc80041ae29e5509f64b85fc69"
+  },
+  "completedAt": "2026-09-05T09:12:47.419453+00:00",
+  "observations": [
+    "Cmd+W key did not emit window.command on this build.",
+    "Training > Save and close saved draft12, dismissed session and exited app.",
+    "Cold relaunch retained draft12 and paused continuation.",
+    "Cmd+Q saved and dismissed to Today but registry.close-acknowledged.count=1 remained; process did not terminate. Explicit per-token teardown source fix was applied after this binary was built."
+  ],
+  "trace": "registry.register.count=1\nwindow.command\nwindow.request\nwindow.dismiss-owned-presentations\nwindow.registry-remove.count=0.requested=true\ncontinuation.start.windows=1\nregistry.remove.count=0.pending=false\ncontinuation.inspect.attached=0\ncontinuation.finish\nwindow.retry-original-delegate\nquit.delegate\nregistry.register.count=1\nquit.command\nquit.dismiss-owned-presentations\nregistry.close-acknowledged.count=1\n",
+  "status": "Failed native quit continuation; source correction requires new compiled copy.",
+  "cleanup": "Terminated only verified isolated QA process21374 after recording durable checkpoint and trace; no file obstruction active."
+}

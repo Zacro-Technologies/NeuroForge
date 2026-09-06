@@ -335,7 +335,8 @@ final class AttemptRecord {
             accommodationFlags: Set(accommodationFlagsRaw.split(separator: ",").map(String.init)),
             wasTimed: wasTimed,
             spatialDifficultyParameters: spatialDifficultyParameters,
-            assessmentFormat: assessmentFormatRaw.flatMap(NFAssessmentItemFormat.init(rawValue:))
+            assessmentFormat: assessmentFormatRaw.flatMap(NFAssessmentItemFormat.init(rawValue:)),
+            responseFormatRaw: responseFormatRaw, wasSkipped: wasSkipped, hintCount: hintCount
         )
     }
 }
@@ -1030,6 +1031,20 @@ final class DailyPlanRecord {
 @Observable
 final class AppStore {
     let context: ModelContext
+    let localSessions: NFLocalSessionRepository
+    let requiresRestoreArtifactDeletionGate: Bool
+    @ObservationIgnored weak var restoreArtifactDeletionController: NFRestoreRuntimeController?
+    /// Disposable stores can exercise materialization without publishing into
+    /// the learner's shared app-group preferences or reloading live widgets.
+    let allowsSharedWidgetPublishing: Bool
+    let temporaryArtifactsRootURL: URL?
+    var localSessionRevision = 0
+    /// Ephemeral identity advances on physical reload and incremental evidence
+    /// publication/withdrawal. It is never serialized as learning evidence.
+    private(set) var progressReloadID = UUID()
+    @ObservationIgnored var cachedStudyMetadata: NFPrivateStudyMetadata?
+    @ObservationIgnored var cachedStudyMetadataRevision: UInt64?
+    @ObservationIgnored var cachedStudyMetadataIsUnavailable = false
     let nextDayEnhancementCache: NFNextDayEnhancementCache
     private let offlineQuestionRotation: NFOfflineQuestionRotation
     private let documentStorageRootURLOverride: URL?
@@ -1049,6 +1064,11 @@ final class AppStore {
     private(set) var progressAnnotations: [ProgressAnnotationRecord] = []
     private(set) var adaptivePlanHistory: [NFAdaptivePlanChangeRecord] = []
     private(set) var pendingAttemptRecords: [AttemptRecord] = []
+    private(set) var pendingAttemptConflicts: [NFAttemptConflictJournalEntry] = []
+    private(set) var unresolvedAttemptConflictIDs: Set<UUID> = []
+    /// Recomputed from every physical row before choosing one history row for
+    /// display. A display winner cannot resolve conflicting learning evidence.
+    private(set) var conflictingPhysicalAttemptIDs: Set<UUID> = []
     private(set) var readiness: Readiness = .normal {
         didSet {
             if oldValue != readiness { nextDayEnhancementCache.removeAll() }
@@ -1088,6 +1108,13 @@ final class AppStore {
     var lastErrorMessage: String?
     var notice: AppNotice?
     private(set) var persistenceRecoveryPackage: NFStoreRecoveryPackage?
+
+    func deferRootReselection(to destination: AppDestination) {
+        guard activeDirtyEditor != nil else { return }
+        pendingAppIntentAfterDirtyEditor = nil
+        pendingExternalRouteAfterDirtyEditor = nil
+        pendingDestinationAfterDirtyEditor = destination
+    }
 
     func requestSettingsSubroute(_ subroute: NFSettingsSubroute) {
         pendingSettingsSubroute = subroute
@@ -1239,19 +1266,44 @@ final class AppStore {
 
     init(
         context: ModelContext,
-        nextDayEnhancementCache: NFNextDayEnhancementCache = .shared,
+        nextDayEnhancementCache: NFNextDayEnhancementCache? = nil,
         documentStorageRootURL: URL? = nil,
-        adaptivePlanHistoryRepository: NFAdaptivePlanHistoryRepository = .processDefault(),
-        offlineQuestionRotation: NFOfflineQuestionRotation = NFOfflineQuestionRotation(
-            store: NFUserDefaultsOfflineQuestionRotationStateStore()
-        )
+        localSessionRepository: NFLocalSessionRepository? = nil,
+        adaptivePlanHistoryRepository: NFAdaptivePlanHistoryRepository? = nil,
+        offlineQuestionRotation: NFOfflineQuestionRotation? = nil,
+        temporaryArtifactsRootURL: URL? = nil,
+        restoreArtifactDeletionPolicy: NFRestoreArtifactDeletionPolicy = .automatic,
+        allowsSharedWidgetPublishing: Bool? = nil
     ) {
         self.context = context
+        let isEphemeral = context.container.configurations.allSatisfy(\.isStoredInMemoryOnly)
+        switch restoreArtifactDeletionPolicy {
+        case .automatic: requiresRestoreArtifactDeletionGate = !isEphemeral
+        case .required: requiresRestoreArtifactDeletionGate = true
+        case .isolatedNoRestoreArtifacts:
+            // A production durable store cannot opt out by passing only a flag.
+            // Disk fixtures explicitly provide every isolated private root.
+            let isolated = isEphemeral || (temporaryArtifactsRootURL != nil && documentStorageRootURL != nil
+                && localSessionRepository != nil && adaptivePlanHistoryRepository != nil && allowsSharedWidgetPublishing == false)
+            requiresRestoreArtifactDeletionGate = !isolated
+        }
+        let temporaryRoot = FileManager.default.temporaryDirectory
+            .appending(path: "NeuroForge-Ephemeral-\(UUID().uuidString)", directoryHint: .isDirectory)
+        self.allowsSharedWidgetPublishing = allowsSharedWidgetPublishing ?? !isEphemeral
+        self.temporaryArtifactsRootURL = temporaryArtifactsRootURL ?? (isEphemeral ? temporaryRoot : nil)
+        localSessions = localSessionRepository ?? (isEphemeral ? NFLocalSessionRepository() : NFLocalSessionRepository.shared)
         self.nextDayEnhancementCache = nextDayEnhancementCache
-        self.offlineQuestionRotation = offlineQuestionRotation
+            ?? (isEphemeral ? NFNextDayEnhancementCache(rootURL: temporaryRoot.appending(path: "Cache")) : .shared)
+        self.offlineQuestionRotation = offlineQuestionRotation ?? (isEphemeral
+            ? NFOfflineQuestionRotation(store: NFMemoryOfflineQuestionRotationStateStore())
+            : NFOfflineQuestionRotation(store: NFUserDefaultsOfflineQuestionRotationStateStore()))
         documentStorageRootURLOverride = documentStorageRootURL
-        self.adaptivePlanHistoryRepository = adaptivePlanHistoryRepository
-        adaptivePlanHistory = (try? adaptivePlanHistoryRepository.load()) ?? []
+            ?? (isEphemeral ? temporaryRoot.appending(path: "Documents", directoryHint: .isDirectory) : nil)
+        let history = adaptivePlanHistoryRepository ?? (isEphemeral
+            ? NFAdaptivePlanHistoryRepository(fileURL: temporaryRoot.appending(path: "AdaptivePlanHistory.json"))
+            : .processDefault())
+        self.adaptivePlanHistoryRepository = history
+        adaptivePlanHistory = (try? history.load()) ?? []
         reload()
         _ = refreshReassessmentSchedule()
     }
@@ -1446,7 +1498,6 @@ final class AppStore {
         }
         let candidates = dailyPlans.filter {
             $0.profileID == snapshot.profile.id
-                && $0.policyVersion == NFDailyScheduler.policyVersion
                 && $0.dayBoundaryHour == boundaryContext.dayBoundaryHour
         }
         let exact = candidates
@@ -1509,6 +1560,12 @@ final class AppStore {
                 ))
             }
         }
+        if !NFDailyScheduler.supportsFrozenPlanPolicy(canonical.policyVersion) {
+            lastErrorMessage = NFAppLocalization.localizedCatalogValue(
+                "This saved work needs a compatible version of NeuroForge. Your original answers remain saved.",
+                locale: NFAppLocalization.preferredLocale
+            )
+        }
         return canonical.domainPlan
     }
 
@@ -1566,6 +1623,12 @@ final class AppStore {
             record.profileID == profileID
                 && record.dayBoundaryHour == boundaryHour
                 && (record.localDayKey == dayKey || (record.travelPreservedUntil ?? .distantPast) > date)
+        }
+        // Readiness may rebuild a fresh current-policy plan before work starts,
+        // but must not reinterpret a previous or unknown policy's frozen blocks.
+        if currentRecords.contains(where: { $0.snapshot?.policyVersion != NFDailyScheduler.policyVersion }) {
+            readiness = newValue
+            return
         }
         let currentPlanIDs = Set(currentRecords.map(\.id))
         let hasStarted = attempts.contains { attempt in
@@ -1637,7 +1700,8 @@ final class AppStore {
     }
 
     var currentPriorityBreakdowns: [NFSchedulingScoreBreakdown] {
-        NFDailyScheduler.priorityBreakdowns(for: dailySchedulingSnapshot(at: Date(), calendar: .current))
+        let calendar = Calendar.current
+        return NFDailyScheduler.priorityBreakdowns(for: dailySchedulingSnapshot(at: Date(), calendar: calendar), calendar: calendar)
     }
 
     var weeklyTransferMission: NFWeeklyTransferMission? {
@@ -1745,50 +1809,83 @@ final class AppStore {
         }
     }
 
-    private func dailySchedulingSnapshot(at date: Date, calendar: Calendar) -> NFDailySchedulingSnapshot {
-        let evidenceAttempts = standardizedAttempts.filter { !$0.wasSkipped && $0.evidenceWeight > 0 }
-        let retentionStates = Dictionary(grouping: evidenceAttempts, by: \.templateID).compactMap { templateID, records -> NFRetentionItemState? in
-            guard let latest = records.max(by: { $0.submittedAt < $1.submittedAt }), !templateID.isEmpty else { return nil }
-            return NFRetentionItemState(
-                id: templateID,
-                templateFamily: latest.assessmentTemplateFamily
-                    ?? Self.retentionTemplateFamily(from: templateID),
-                lab: TrainingLab(rawValue: latest.gameID) ?? .mentalMath,
-                lastReviewedAt: latest.submittedAt,
-                stabilityDays: max(0.5, 1 + Double(records.filter(\.isCorrect).count) * 0.6),
-                repetitions: records.count,
-                lapses: records.filter { !$0.isCorrect }.count,
-                exposedSeeds: Set(records.map { $0.assessmentSeed ?? $0.seed }),
-                lastRepresentationID: latest.assessmentFormatRaw ?? latest.responseFormatRaw
-            )
+    /// Readiness is derived only from matching retained reviewed contracts and
+    /// the current effective disposition. Template names are never strategies.
+    func reviewedFluencyReadiness(lab: TrainingLab, mechanicID: String? = nil,
+                                 familyScope: NFEditorialFamilyScope? = nil, band: NFEditorialBand? = nil,
+                                 matchingScope: NFEditorialEvidenceGroup? = nil,
+                                 at date: Date = Date(), calendar: Calendar = .current) -> NFReviewedFluencyReadiness {
+        let snapshots = Dictionary(localSessions.archive.snapshots.map { ($0.attemptID, $0) },
+            uniquingKeysWith: { first, _ in first })
+        let observations = standardizedAttempts.compactMap { record -> NFEditorialObservation? in
+            let effective = effectiveAttemptDTO(record)
+            guard effective.lab == lab, effective.evidenceWeight > 0, !effective.wasSkipped,
+                  effective.hintCount == 0, effective.submittedAt <= date,
+                  var observation = effective.editorialObservation,
+                  UUID(uuidString: observation.id) == record.id,
+                  let retained = snapshots[record.id], let capture = retained.editorialCapture,
+                  capture.profileID == profile?.id, capture.attemptID == record.id,
+                  localSessions.hasEditorialAuthority(for: capture),
+                  let admission = localSessions.editorialAdmissions.entry(exercise: retained.exercise),
+                  capture.runtimeWitness?.admission == admission, capture.scorerVersion == record.scoringVersion,
+                  admission.demand == observation.item,
+                  familyScope.map({ $0.objectiveID == admission.demand.objectiveID && $0.familyID == admission.demand.familyID }) ?? true,
+                  band == nil || band == admission.demand.editorialBand,
+                  matchingScope == nil || EditorialBandEvidenceV1.group(for: observation) == matchingScope else { return nil }
+            if let mechanicID {
+                // Reviewed exact-bank runs intentionally have no legacy mechanic
+                // string. Bind the retained typed activity instead of trusting a label.
+                let matches = NFDefaultContentCatalog.activities.filter { $0.lab == lab && $0.mechanicID == mechanicID }
+                    .contains { activity in
+                        NFEditorialCatalogScope(catalogVersion: NFDefaultContentCatalog.version,
+                            activityID: activity.id, field: retained.exercise.sourceContext.primaryField).matches(retained.exercise)
+                    }
+                guard matches else { return nil }
+            }
+            observation.credit = effective.credit; observation.isFullCredit = effective.credit == 1
+            observation.isZeroCredit = effective.credit == 0
+            return observation
         }
+        // Use the same Gregorian training-day policy as immutable commit
+        // captures. Unix-day counts would classify every captured observation
+        // as future data; the caller's display calendar is not evidence identity.
+        guard let day = NFEditorialCapturedDay.capture(at: date,
+            dayBoundaryHour: profileSnapshot.dayBoundaryHour, calendar: calendar) else {
+            return .init(scope: nil, sampleCount: 0, reason: .reviewedPracticeUnavailable)
+        }
+        return NFEditorialPracticePolicy.reviewedFluencyReadiness(observations: observations, decisionDayOrdinal: day.ordinal)
+    }
+
+    func retentionReminderOrigins(at date: Date, calendar: Calendar) -> [NFCompatibilityReminderOrigin] {
+        let snapshots = Dictionary(localSessions.archive.snapshots.map { ($0.attemptID, $0.exercise) },
+            uniquingKeysWith: { first, _ in first })
+        let reminderInputs = standardizedAttempts.map { record in
+            let effective = effectiveAttemptDTO(record)
+            let snapshot = snapshots[record.id].flatMap { exercise in
+                exercise.id == record.itemID && exercise.prompt == record.prompt && !exercise.assessmentProtected
+                    ? exercise : nil
+            }
+            return NFCompatibilityReminderObservation(attempt: effective, memoryItemID: record.templateID,
+                templateFamily: record.assessmentTemplateFamily ?? Self.retentionTemplateFamily(from: record.templateID),
+                seed: record.assessmentSeed ?? record.seed,
+                representationID: record.assessmentFormatRaw ?? record.responseFormatRaw,
+                semanticID: snapshot.map { NFQuestionFingerprint.fingerprint(for: $0) })
+        }
+        return NFCompatibilityReminderPolicy.reduceWithOrigins(reminderInputs, at: date, calendar: calendar)
+    }
+
+    private func dailySchedulingSnapshot(at date: Date, calendar: Calendar) -> NFDailySchedulingSnapshot {
+        let retentionStates = reviewReminderStates(at: date, calendar: calendar)
         return NFDailySchedulingSnapshot(
             profile: profileSnapshot,
             date: date,
             dayBoundaryHour: profileSnapshot.dayBoundaryHour,
             skillSummaries: skillSummaries,
-            attempts: standardizedAttempts.map(\.dto),
+            attempts: standardizedAttempts.map(effectiveAttemptDTO),
             retentionStates: retentionStates,
             accessibilityExcludedLabs: profile?.excludeVisualSpatial == true ? [.spatial] : [],
             readiness: readiness,
-            mentalMathTimingEligible: NFMentalMathProgressionPolicy.status(
-                for: standardizedAttempts
-                    .filter {
-                        $0.gameID == TrainingLab.mentalMath.rawValue
-                            && $0.evidenceClassRaw != EvidenceClass.documentPractice.rawValue
-                    }
-                    .map {
-                        NFMentalMathProgressionObservation(
-                            submittedAt: $0.submittedAt,
-                            isCorrect: $0.isCorrect,
-                            errorCode: $0.errorCode,
-                            strategyID: $0.templateID,
-                            wasTimed: $0.wasTimed,
-                            wasSkipped: $0.wasSkipped,
-                            evidenceWeight: $0.evidenceWeight
-                        )
-                    }
-            ).timingEligible
+            mentalMathTimingEligible: reviewedFluencyReadiness(lab: .mentalMath, at: date, calendar: calendar).timingEligible
         )
     }
 
@@ -1800,7 +1897,7 @@ final class AppStore {
     }
 
     var skillSummaries: [SkillSummary] {
-        AdaptiveEngine.reduce(standardizedAttempts.map(\.dto))
+        AdaptiveEngine.reduce(standardizedAttempts.map(effectiveAttemptDTO))
     }
 
     /// Cosmetic engagement progression rebuilt from durable attempts and
@@ -1819,11 +1916,11 @@ final class AppStore {
     }
 
     var baselineSkillSummaries: [SkillSummary] {
-        AdaptiveEngine.reduce(baselineAssessmentAttempts.map(\.dto))
+        AdaptiveEngine.reduce(baselineAssessmentAttempts.map(effectiveAttemptDTO))
     }
 
     var baselineDimensionSummaries: [SkillSummary] {
-        NFAssessmentDimensionReducer.reduce(baselineAssessmentAttempts.map(\.dto))
+        NFAssessmentDimensionReducer.reduce(baselineAssessmentAttempts.map(effectiveAttemptDTO))
     }
 
     /// Current protected estimates may incorporate alternate-form reassessment,
@@ -1835,7 +1932,7 @@ final class AppStore {
                 && $0.evidenceClassRaw == EvidenceClass.assessmentHoldout.rawValue
                 && !$0.wasSkipped
                 && $0.evidenceWeight > 0
-        }.map(\.dto))
+        }.map(effectiveAttemptDTO))
     }
 
     private var baselineAssessmentAttempts: [AttemptRecord] {
@@ -2082,12 +2179,12 @@ final class AppStore {
         }.count
     }
 
-    var unsavedAttemptCount: Int { pendingAttemptRecords.count }
+    var unsavedAttemptCount: Int { Set(pendingAttemptRecords.map(\.id)).union(pendingAttemptConflicts.map(\.attemptID)).count }
     var attemptRecordsForExport: [AttemptRecord] { attempts + pendingAttemptRecords }
     var latestInputCalibration: InputCalibrationRecord? { inputCalibrations.first }
 
     @discardableResult
-    func completeOnboarding(_ draft: OnboardingDraft) -> Bool {
+    func completeOnboarding(_ draft: OnboardingDraft, startPractice: Bool = false) -> Bool {
         let record: UserProfileRecord
         if let profile {
             record = profile
@@ -2117,6 +2214,15 @@ final class AppStore {
             shouldOpenBaseline = draft.startBaselineImmediately
             lastErrorMessage = nil
             self.publishWidgetSnapshot()
+            if startPractice && !draft.startBaselineImmediately {
+                let plan = todayPlan
+                let block = plan.blocks.first { $0.evidenceClass == .practice }
+                _ = beginSession(lab: block?.lab ?? .mentalMath, source: .today,
+                    requestedMinutes: draft.dailyDuration, evidenceClass: .practice,
+                    requestedItemCount: 5,
+                    planID: plan.id, planBlockID: block?.id, isTimed: false,
+                    mechanicID: block?.mechanicID)
+            }
             return true
         } catch {
             context.rollback()
@@ -2455,6 +2561,7 @@ final class AppStore {
     }
 
     func deleteProgressAnnotation(_ annotation: ProgressAnnotationRecord) throws {
+        try requireRestoreArtifactDeletionAuthorization()
         context.delete(annotation)
         do {
             try context.save()
@@ -2466,6 +2573,101 @@ final class AppStore {
             lastErrorMessage = NFAppLocalization.localized("The private progress annotation could not be deleted.", locale: NFAppLocalization.preferredLocale, comment: "Private progress-annotation deletion error.")
             throw error
         }
+    }
+
+    func prepareAdaptiveItem(request: SessionRequest, predecessor: NFLocalItemCheckpoint?,
+                             at date: Date = Date(), command: NFSessionWriterCommand? = nil) throws -> NFLocalAdaptiveItemPreparation {
+        try localSessions.prepareAdaptiveItem(request: request, predecessor: predecessor,
+            rotation: offlineQuestionRotation, bank: NFOfflineQuestionBank.rotationBank,
+            quarantinedItemIDs: Set(itemReports.filter { $0.status == "quarantined" }.map(\.itemID)), at: date,
+            editorialRecords: editorialControllerRecords(),
+            editorialDay: NFEditorialCapturedDay.capture(at: date, dayBoundaryHour: profile?.dayBoundaryHour ?? 4,
+                calendar: .current), command: command)
+    }
+
+    func prepareAdaptiveReplacement(request: SessionRequest, predecessor: NFLocalItemCheckpoint,
+                                    at date: Date = Date(), overrideIntent: NFEditorialOverrideIntent? = nil,
+                                    command: NFSessionWriterCommand? = nil) throws -> NFLocalAdaptiveItemPreparation {
+        try localSessions.prepareAdaptiveReplacement(request: request, predecessor: predecessor,
+            rotation: offlineQuestionRotation, bank: NFOfflineQuestionBank.rotationBank,
+            quarantinedItemIDs: Set(itemReports.filter { $0.status == "quarantined" }.map(\.itemID)), at: date,
+            editorialRecords: editorialControllerRecords(),
+            editorialDay: NFEditorialCapturedDay.capture(at: date, dayBoundaryHour: profile?.dayBoundaryHour ?? 4,
+                calendar: .current), overrideIntent: overrideIntent, command: command)
+    }
+
+    func acceptAdaptiveItem(_ preparation: NFLocalAdaptiveItemPreparation,
+                            checkpoint: NFLocalItemCheckpoint) throws -> NFLocalSessionEnvelope {
+        let run = try localSessions.acceptAdaptiveItem(preparation, checkpoint: checkpoint,
+            rotation: offlineQuestionRotation,
+            quarantinedItemIDs: Set(itemReports.filter { $0.status == "quarantined" }.map(\.itemID)),
+            editorialRecords: editorialControllerRecords())
+        localSessionRevision += 1
+        return run
+    }
+
+    @discardableResult
+    func setEditorialNextQuestion(_ intent: NFEditorialOverrideIntent, request: SessionRequest,
+                                 predecessor: NFLocalItemCheckpoint, at date: Date = Date()) throws -> NFEditorialOverrideCommand {
+        guard let day = NFEditorialCapturedDay.capture(at: date,
+            dayBoundaryHour: profile?.dayBoundaryHour ?? 4, calendar: .current) else {
+            throw NFEditorialOverrideError.unsupported
+        }
+        let command = try localSessions.setEditorialNextQuestion(intent, request: request, predecessor: predecessor,
+            rotation: offlineQuestionRotation,
+            quarantinedItemIDs: Set(itemReports.filter { $0.status == "quarantined" }.map(\.itemID)),
+            records: editorialControllerRecords(),
+            day: day, at: date)
+        localSessionRevision += 1
+        return command
+    }
+
+    /// A fixed block cannot be amended invisibly. This explicit alternative
+    /// starts a different session after its original exact work has been saved.
+    /// Its remaining reserved positions stay consumed and its canonical plan
+    /// is not marked completed or rewritten by the new session.
+    func beginSeparateReviewedActivity(from fixedRequest: SessionRequest, band: NFEditorialBand,
+                                       commandID: UUID, writerAuthority: NFLocalWriterAuthority? = nil) -> Bool {
+        guard localSessions.isWriter(writerAuthority, sessionID: fixedRequest.id) else {
+            lastErrorMessage = NFEditorialOverrideError.staleOwner.localizedDescription
+            return false
+        }
+        guard localSessions.canStartSeparateReviewedActivity(sessionID: fixedRequest.id),
+              fixedRequest.ordinaryDelivery?.strategy == .fixedBlock,
+              fixedRequest.assessmentBlock == nil, fixedRequest.evidenceClass == .practice,
+              fixedRequest.mechanicID == nil,
+              let original = localSessions.archive.sessions.first(where: { $0.id == fixedRequest.id }),
+              let configuration = try? NFLocalReservationBridge.configurationDigest(fixedRequest),
+              configuration == (try? NFLocalReservationBridge.configurationDigest(original.request)),
+              original.ownerDeviceID == localSessions.ownerDeviceID, original.status == .suspended,
+              commandID != original.id,
+              original.checkpoint.phase == .item || original.checkpoint.phase == .feedback,
+              original.checkpoint.pendingOutcome == nil,
+              !localSessions.editorialAdmissions.entries.isEmpty else {
+            lastErrorMessage = NFEditorialOverrideError.unsupported.localizedDescription
+            return false
+        }
+        let active = activeSessionRequest
+        guard active == nil || active?.id == original.id else { return false }
+        activeSessionRequest = nil
+        let remaining = max(1, original.checkpoint.itemCount - original.checkpoint.index
+            - (original.checkpoint.committedAttemptID == nil ? 0 : 1))
+        let accepted = beginSession(lab: fixedRequest.lab, source: .focused,
+            preferredMentalMathKind: fixedRequest.preferredMentalMathKind,
+            field: fixedRequest.field, topic: fixedRequest.topic, targetDifficulty: fixedRequest.targetDifficulty,
+            requestedItemCount: remaining, seedOverride: fixedRequest.seed,
+            isTimed: fixedRequest.isTimed, timingCondition: original.checkpoint.timingConditionOverride ?? fixedRequest.timingCondition,
+            launchLocaleIdentifier: fixedRequest.localeIdentifier, launchCommandID: commandID,
+            reservationStrategy: .adaptiveItem, editorialStartingBand: band)
+        if !accepted { activeSessionRequest = active }
+        return accepted
+    }
+
+    private func editorialControllerRecords() throws -> [NFImmutableAttemptRecordSnapshot] {
+        guard !localSessions.editorialAdmissions.entries.isEmpty else { return [] }
+        // UI winners are a projection. The controller must see both physical
+        // rows when one stable ID carries conflicting immutable payloads.
+        return try context.fetch(FetchDescriptor<AttemptRecord>()).map(NFImmutableAttemptRecordSnapshot.init)
     }
 
     @discardableResult
@@ -2487,11 +2689,67 @@ final class AppStore {
         planID: String? = nil,
         planBlockID: String? = nil,
         isTimed: Bool? = nil,
+        timingCondition: NFSessionTimingCondition? = nil,
         mechanicID: String? = nil,
         retentionItemIDs: [String] = [],
         retentionTargets: [NFRetentionReviewTarget] = [],
-        transferBrief: NFExerciseTransferBrief? = nil
+        transferBrief: NFExerciseTransferBrief? = nil,
+        launchLocaleIdentifier: String? = nil,
+        additionalQuarantinedItemIDs: Set<String> = [],
+        additionalQuarantinedAssessmentDescriptorIDs: Set<String> = [],
+        launchCommandID: UUID? = nil,
+        repairOriginAttemptID: UUID? = nil,
+        repairSemanticExclusions: Set<String>? = nil,
+        reservationStrategy: NFReservationStrategy = .adaptiveItem,
+        reviewSchedulingDate: Date? = nil,
+        reviewSchedulingCalendar: Calendar? = nil,
+        tracePolicyVersion: Int? = 1,
+        scienceStudyPolicyVersion: Int? = 1,
+        scienceStudyExcludedContextID: String? = nil,
+        transferPolicyVersion: Int? = 1,
+        transferExcludedContextID: String? = nil,
+        graphConstructionPolicyVersion: Int? = nil,
+        retrievalAuthorityPolicyVersion: Int? = 1,
+        retrievalAssetPolicyVersion: Int? = 1,
+        spatialStructurePolicyVersion: Int? = 1,
+        coordinateTransformPolicyVersion: Int? = 1,
+        solidSectionPolicyVersion: Int? = 1,
+        netFoldingPolicyVersion: Int? = 1,
+        coordinateReasoningPolicyVersion: Int? = nil,
+        spatialAssemblyPolicyVersion: Int? = nil,
+        editorialStartingBand: NFEditorialBand? = nil,
+        editorialStartingFamilyScope: NFEditorialFamilyScope? = nil,
+        editorialCatalogActivityID: String? = nil,
+        editorialReviewIntent: NFEditorialReviewIntent? = nil
     ) -> Bool {
+        do { try localSessions.requireArchiveWriteAvailability() }
+        catch {
+            lastErrorMessage = NFAppLocalization.localizedCatalogValue(error.localizedDescription, locale: NFAppLocalization.preferredLocale)
+            return false
+        }
+
+        if let intent = editorialReviewIntent,
+           !intent.isSupported || requestedItemCount != 1 || editorialStartingBand == nil
+                || editorialStartingFamilyScope == nil || mechanicID != nil || evidenceClass != .practice
+                || reservationStrategy != .adaptiveItem || assessmentBlock != nil {
+            lastErrorMessage = NFEditorialOverrideError.unsupported.localizedDescription
+            return false
+        }
+        if editorialCatalogActivityID != nil && editorialStartingFamilyScope == nil {
+            lastErrorMessage = NFEditorialOverrideError.unsupported.localizedDescription
+            return false
+        }
+        if (editorialStartingBand != nil || editorialStartingFamilyScope != nil) && (reservationStrategy != .adaptiveItem || mechanicID != nil
+            || assessmentBlock != nil || evidenceClass != .practice || !retentionTargets.isEmpty || transferBrief != nil) {
+            lastErrorMessage = NFEditorialOverrideError.unsupported.localizedDescription
+            return false
+        }
+        guard graphConstructionPolicyVersion == nil || (graphConstructionPolicyVersion == 1
+            && lab == .quantitative && evidenceClass == .practice && assessmentBlock == nil
+            && NFGraphConstructionContract.matchesMechanic(mechanicID)) else {
+            lastErrorMessage = NFAppLocalization.localized("Graph construction requires the Scaling Law practice activity.", locale: NFAppLocalization.preferredLocale)
+            return false
+        }
         guard activeSessionRequest == nil else {
             lastErrorMessage = NFAppLocalization.localized("Finish or end the current session before starting another one.", locale: NFAppLocalization.preferredLocale, comment: "Error shown when a second session is requested while one is active.")
             notice = AppNotice(
@@ -2500,6 +2758,34 @@ final class AppStore {
             )
             return false
         }
+        if let planID, let storedPlan = dailyPlans.first(where: { $0.id == planID }),
+           storedPlan.snapshot.map({ NFDailyScheduler.supportsFrozenPlanPolicy($0.policyVersion) }) != true {
+            lastErrorMessage = NFAppLocalization.localizedCatalogValue(
+                "This saved work needs a compatible version of NeuroForge. Your original answers remain saved.",
+                locale: NFAppLocalization.preferredLocale
+            )
+            return false
+        }
+        if let timingCondition {
+            guard timingCondition.isSupported else {
+                lastErrorMessage = "This timing setting needs a compatible version of NeuroForge. Your saved work is unchanged."
+                return false
+            }
+            if timingCondition.mode == .timedFluency {
+                let readiness = reviewedFluencyReadiness(lab: lab, mechanicID: mechanicID,
+                    familyScope: editorialStartingFamilyScope, band: editorialStartingBand,
+                    matchingScope: timingCondition.fluencyScope)
+                guard reservationStrategy == .adaptiveItem, mechanicID == nil, evidenceClass == .practice,
+                      assessmentBlock == nil, transferBrief == nil,
+                      readiness.timingEligible, readiness.scope == timingCondition.fluencyScope else {
+                    lastErrorMessage = NFAppLocalization.localizedCatalogValue(readiness.explanation, locale: NFAppLocalization.preferredLocale)
+                    return false
+                }
+            }
+        }
+        let resolvedTiming = profileSnapshot.timingMode == .untimed || (source == .today && readiness == .low)
+            ? NFSessionTimingCondition(.untimed)
+            : timingCondition ?? NFSessionTimingCondition(isTimed == true ? .elapsedOnly : .untimed)
         let transferContractIsValid = if transferBrief != nil || source == .weeklyMission {
             lab == .transfer
                 && evidenceClass == .appliedTransfer
@@ -2523,65 +2809,14 @@ final class AppStore {
             )
             return false
         }
-        let resolvedRequestedItemCount = requestedItemCount.map { min(50, max(1, $0)) }
-        let rotationItemCount = resolvedRequestedItemCount
-            ?? requestedMinutes.map { max(3, min(12, $0 / 2)) }
-            ?? 5
-        let offlineRotationPlan: NFOfflineQuestionRotationPlan? = {
-            guard source == .focused,
-                  evidenceClass == .practice,
-                  assessmentBlock == nil,
-                  retentionTargets.isEmpty,
-                  retentionItemIDs.isEmpty,
-                  transferBrief == nil else { return nil }
-            return try? offlineQuestionRotation.reserve(
-                profileID: profileSnapshot.id,
-                lab: lab,
-                laneID: mechanicID ?? "mixed",
-                itemCount: rotationItemCount,
-                bank: NFOfflineQuestionBank.rotationBank
-            )
-        }()
-        if source == .focused,
-           evidenceClass == .practice,
-           assessmentBlock == nil,
-           retentionTargets.isEmpty,
-           retentionItemIDs.isEmpty,
-           transferBrief == nil,
-           offlineRotationPlan == nil {
-            lastErrorMessage = NFAppLocalization.localized(
-                "The offline question rotation could not be reserved. Your current catalog data was left unchanged.",
-                locale: NFAppLocalization.preferredLocale,
-                comment: "Error shown when a focused quiz cannot reserve a non-repeating offline question slice."
-            )
-            notice = AppNotice(
-                title: NFAppLocalization.localized(
-                    "Question set unavailable",
-                    locale: NFAppLocalization.preferredLocale,
-                    comment: "Title for a focused quiz whose offline question reservation failed."
-                ),
-                message: lastErrorMessage ?? ""
-            )
-            return false
-        }
-        let offlineQuestionOrdinals: [Int] = if mechanicID == nil,
-            let offlineRotationPlan {
-            offlineRotationPlan.items.compactMap {
-                NFOfflineQuestionBank.ordinal(forQuestionID: $0.questionID, lab: lab)
+        if let saved = resumableSessions.first(where: { run in
+            if let planBlockID { return run.request.planID == planID && run.request.planBlockID == planBlockID }
+            if source == .baseline || source == .reassessment {
+                return run.request.source == source && run.request.assessmentBlock == assessmentBlock
+                    && run.request.reassessmentCycle == reassessmentCycle
             }
-        } else {
-            []
-        }
-        if mechanicID == nil,
-           offlineRotationPlan != nil,
-           offlineQuestionOrdinals.count != rotationItemCount {
-            lastErrorMessage = NFAppLocalization.localized(
-                "The offline question set did not match the installed catalog version.",
-                locale: NFAppLocalization.preferredLocale,
-                comment: "Error shown when a reserved question set cannot be mapped to the installed catalog."
-            )
             return false
-        }
+        }) { return resumeSession(saved.id) }
         let resumableCheckpoint = sessionCheckpoints.first { checkpoint in
             guard !checkpoint.isComplete else { return false }
             if let planBlockID {
@@ -2598,6 +2833,55 @@ final class AppStore {
                     && checkpoint.assessmentCycle == reassessmentCycle
                     && checkpoint.assessmentStopReasonRaw == nil
             }
+            return false
+        }
+        let resolvedRequestedItemCount = requestedItemCount.map { min(50, max(1, $0)) }
+        // A minute-only request has not accepted a concrete question count.
+        // The duration-choice screen is disposable; opening or cancelling it
+        // must not mutate the legacy fixed-block cursor.
+        let awaitsCountAcceptance = resolvedRequestedItemCount == nil && requestedMinutes != nil
+        let rotationItemCount = resolvedRequestedItemCount
+            ?? requestedMinutes.map { max(3, min(12, $0 / 2)) }
+            ?? 5
+        let fixedCommandID = launchCommandID ?? UUID()
+        let supportsOrdinaryDelivery = [.focused, .today].contains(source) && startingIndex == 0 && mechanicID == nil
+            && preferredMentalMathKind == nil && evidenceClass == .practice && assessmentBlock == nil
+            && resumableCheckpoint == nil && retentionTargets.isEmpty && retentionItemIDs.isEmpty && transferBrief == nil
+        let delivery = supportsOrdinaryDelivery
+            ? NFOrdinaryDeliveryPin(strategy: reservationStrategy, profileID: profileSnapshot.id, bank: NFOfflineQuestionBank.rotationBank) : nil
+        let usesAdaptiveLaunch = delivery?.strategy == .adaptiveItem && !awaitsCountAcceptance
+        let usesFixedLaunch = !usesAdaptiveLaunch && source == .focused && !awaitsCountAcceptance
+            && evidenceClass == .practice && assessmentBlock == nil && resumableCheckpoint == nil
+            && retentionTargets.isEmpty && retentionItemIDs.isEmpty && transferBrief == nil
+        let fixedPreparation: NFLocalFixedLaunchPreparation?
+        do {
+            fixedPreparation = usesFixedLaunch ? try localSessions.prepareFixedLaunch(commandID: fixedCommandID,
+                rotation: offlineQuestionRotation, profileID: profileSnapshot.id, lab: lab,
+                laneID: mechanicID ?? "mixed", itemCount: rotationItemCount,
+                bank: NFOfflineQuestionBank.rotationBank) : nil
+        } catch {
+            lastErrorMessage = error.localizedDescription
+            notice = AppNotice(title: NFAppLocalization.localized("Question set unavailable", locale: NFAppLocalization.preferredLocale, comment: "Title for an unavailable fixed question set."),
+                message: lastErrorMessage ?? "")
+            return false
+        }
+        let offlineRotationPlan = fixedPreparation?.plan
+        let offlineQuestionOrdinals: [Int] = if mechanicID == nil,
+            let offlineRotationPlan {
+            offlineRotationPlan.items.compactMap {
+                NFOfflineQuestionBank.ordinal(forQuestionID: $0.questionID, lab: lab)
+            }
+        } else {
+            []
+        }
+        if mechanicID == nil,
+           offlineRotationPlan != nil,
+           offlineQuestionOrdinals.count != rotationItemCount {
+            lastErrorMessage = NFAppLocalization.localized(
+                "The offline question set did not match the installed catalog version.",
+                locale: NFAppLocalization.preferredLocale,
+                comment: "Error shown when a reserved question set cannot be mapped to the installed catalog."
+            )
             return false
         }
         let baselineAlreadyEstablished = assessmentBlock.map {
@@ -2711,7 +2995,7 @@ final class AppStore {
             ?? (source == .today ? assignedField(forPlanID: planID, blockID: planBlockID) : nil)
             ?? profileSnapshot.fields.sorted(by: { $0.rawValue < $1.rawValue }).first
             ?? .general
-        let resolvedRetentionTargets = retentionTargets.isEmpty
+        var resolvedRetentionTargets = retentionTargets.isEmpty
             ? retentionReviewTargets(
                 forPlanID: planID,
                 blockID: planBlockID,
@@ -2719,12 +3003,31 @@ final class AppStore {
                 fallbackSeed: resolvedSeed
             )
             : retentionTargets
-        activeSessionRequest = SessionRequest(
+        var acceptedItemCount = resolvedRequestedItemCount
+        var acceptedMinutes = requestedMinutes
+        var reviewExclusions: Set<String> = []
+        if evidenceClass == .retention, resumableCheckpoint == nil {
+            let date = reviewSchedulingDate ?? Date()
+            let calendar = reviewSchedulingCalendar ?? .current
+            resolvedRetentionTargets = Array(eligibleReviewTargets(resolvedRetentionTargets, lab: lab,
+                at: date, calendar: calendar).prefix(resolvedRequestedItemCount ?? 5))
+            guard !resolvedRetentionTargets.isEmpty else {
+                lastErrorMessage = NFAppLocalization.localizedCatalogValue(
+                    "These reviews are no longer ready. The queue has been refreshed.", locale: NFAppLocalization.preferredLocale)
+                return false
+            }
+            // Count is explicit: a short batch cannot cycle its frozen targets
+            // to fill a time-only request or silently substitute normal practice.
+            acceptedItemCount = resolvedRetentionTargets.count
+            acceptedMinutes = max(1, min(requestedMinutes ?? resolvedRetentionTargets.count, resolvedRetentionTargets.count))
+            reviewExclusions = reviewSemanticExclusions(memoryItemIDs: Set(resolvedRetentionTargets.map(\.memoryItemID)))
+        }
+        var preparedRequest = SessionRequest(
             lab: lab,
             source: source,
             seed: resolvedSeed,
-            localeIdentifier: profile?.preferredLanguageCode ?? Locale.current.identifier,
-            requestedMinutes: requestedMinutes,
+            localeIdentifier: launchLocaleIdentifier ?? profile?.preferredLanguageCode ?? Locale.current.identifier,
+            requestedMinutes: acceptedMinutes,
             preferredMentalMathKind: preferredMentalMathKind,
             evidenceClass: evidenceClass,
             field: resolvedField,
@@ -2732,7 +3035,7 @@ final class AppStore {
             recommendationRationale: recommendationRationale
                 ?? resumableCheckpoint?.recommendationRationale,
             targetDifficulty: targetDifficulty,
-            requestedItemCount: resolvedRequestedItemCount,
+            requestedItemCount: acceptedItemCount,
             offlineQuestionOrdinals: offlineQuestionOrdinals,
             startingIndex: max(startingIndex, resumeIndex),
             assessmentBlock: assessmentBlock,
@@ -2744,7 +3047,8 @@ final class AppStore {
             isTimed: profileSnapshot.timingMode == .untimed
                 || (source == .today && readiness == .low)
                 ? false
-                : (isTimed ?? true),
+                : (resolvedTiming.mode != .untimed),
+            timingCondition: resolvedTiming,
             resumeSessionID: resumedSessionID,
             resumedResults: resumedResults,
             resumedCredits: resumedCredits,
@@ -2763,19 +3067,126 @@ final class AppStore {
             resumedActiveDurationSeconds: resumedActiveDuration,
             resumedAssessmentPracticeDurationSeconds: resumedAssessmentPracticeDuration,
             mechanicID: mechanicID,
-            retentionItemIDs: retentionItemIDs,
+            retentionItemIDs: resolvedRetentionTargets.map(\.memoryItemID),
             retentionTargets: resolvedRetentionTargets,
             transferBrief: transferBrief,
             // Daily practice is intentionally model-free. External authoring
             // is used only through the explicit Question Writer Shortcut.
             presentationEnhancements: [:],
-            quarantinedItemIDs: Set(itemReports.filter { $0.status == "quarantined" }.map(\.itemID)),
+            quarantinedItemIDs: Set(itemReports.filter { $0.status == "quarantined" }.map(\.itemID))
+                .union(additionalQuarantinedItemIDs),
             quarantinedAssessmentDescriptorIDs: Set(
                 itemReports
                     .filter { $0.status == "quarantined" }
                     .compactMap(\.assessmentDescriptorID)
-            )
+            ).union(additionalQuarantinedAssessmentDescriptorIDs)
         )
+        preparedRequest.offlineRotationPlan = offlineRotationPlan
+        preparedRequest.ordinaryDelivery = delivery
+        preparedRequest.tracePolicyVersion = lab == .logicDebugging && assessmentBlock == nil ? tracePolicyVersion : nil
+        preparedRequest.scienceStudyPolicyVersion = lab == .scientificReasoning && assessmentBlock == nil && evidenceClass == .practice ? scienceStudyPolicyVersion : nil
+        preparedRequest.scienceStudyExcludedContextID = preparedRequest.scienceStudyPolicyVersion == 1 ? scienceStudyExcludedContextID : nil
+        preparedRequest.spatialAssemblyPolicyVersion = lab == .spatial && assessmentBlock == nil
+            && [.practice,.documentPractice].contains(evidenceClass) ? spatialAssemblyPolicyVersion : nil
+        preparedRequest.coordinateReasoningPolicyVersion = lab == .spatial && assessmentBlock == nil
+            && [.practice,.documentPractice].contains(evidenceClass) ? coordinateReasoningPolicyVersion : nil
+        preparedRequest.netFoldingPolicyVersion = lab == .spatial && assessmentBlock == nil
+            && [.practice,.documentPractice].contains(evidenceClass) ? netFoldingPolicyVersion : nil
+        preparedRequest.solidSectionPolicyVersion = lab == .spatial && assessmentBlock == nil
+            && [.practice,.documentPractice].contains(evidenceClass) ? solidSectionPolicyVersion : nil
+        preparedRequest.coordinateTransformPolicyVersion = lab == .spatial && assessmentBlock == nil
+            && [.practice,.documentPractice].contains(evidenceClass) ? coordinateTransformPolicyVersion : nil
+        preparedRequest.spatialStructurePolicyVersion = lab == .spatial && assessmentBlock == nil
+            && [.practice,.documentPractice].contains(evidenceClass) ? spatialStructurePolicyVersion : nil
+        preparedRequest.retrievalAssetPolicyVersion = lab == .retrieval && assessmentBlock == nil
+            && [.practice, .documentPractice].contains(evidenceClass) && retrievalAuthorityPolicyVersion == 1 ? retrievalAssetPolicyVersion : nil
+        preparedRequest.retrievalAuthorityPolicyVersion = lab == .retrieval && assessmentBlock == nil
+            && [.practice, .documentPractice].contains(evidenceClass) ? retrievalAuthorityPolicyVersion : nil
+        preparedRequest.graphConstructionPolicyVersion = lab == .quantitative && assessmentBlock == nil
+            && evidenceClass == .practice && NFGraphConstructionContract.matchesMechanic(mechanicID) ? graphConstructionPolicyVersion : nil
+        preparedRequest.transferPolicyVersion = lab == .transfer && assessmentBlock == nil && evidenceClass == .practice ? transferPolicyVersion : nil
+        preparedRequest.transferExcludedContextID = preparedRequest.transferPolicyVersion == 1 ? transferExcludedContextID : nil
+        preparedRequest.repairOriginAttemptID = repairOriginAttemptID
+        preparedRequest.repairSemanticExclusions = reviewExclusions.isEmpty
+            ? repairSemanticExclusions : (repairSemanticExclusions ?? []).union(reviewExclusions)
+        if usesAdaptiveLaunch {
+            // A catalog assertion cannot opt an existing session into new rules.
+            // Only a new request may acquire the compiled reviewed-policy pin.
+            if localSessions.archive.sessions.contains(where: { $0.id == fixedCommandID }) == false {
+                let catalogScope = editorialCatalogActivityID.map {
+                    NFEditorialCatalogScope(catalogVersion: NFDefaultContentCatalog.version, activityID: $0, field: resolvedField)
+                }
+                let goalPreferences = profile.map { profile in
+                    NFEditorialGoalPreferences(policyVersion: NFEditorialGoalRankingPolicy.preferenceVersion, profileID: profile.id,
+                        goalIDsRaw: profile.goalsRaw.isEmpty ? [] : profile.goalsRaw.split(separator: ",", omittingEmptySubsequences: false).map(String.init).sorted())
+                }
+                if localSessions.editorialAdmissions.hasGoalAlignments,
+                   !localSessions.editorialAdmissions.goalAlignmentsAreConsistent || goalPreferences?.isSupported == false {
+                    lastErrorMessage = NFEditorialOverrideError.unsupported.localizedDescription; return false
+                }
+                var editorialPin = localSessions.editorialAdmissions.sessionPin(for: preparedRequest, initialUserBand: editorialStartingBand,
+                    startingScope: editorialStartingFamilyScope, catalogScope: catalogScope, goalPreferences: goalPreferences)
+                if (editorialStartingBand != nil || editorialStartingFamilyScope != nil) && editorialPin == nil {
+                    lastErrorMessage = NFEditorialOverrideError.unsupported.localizedDescription
+                    return false
+                }
+                if let editorialReviewIntent {
+                    guard editorialPin?.usesDeclaredReviewSlots == true else {
+                        lastErrorMessage = NFEditorialOverrideError.unsupported.localizedDescription; return false
+                    }
+                    editorialPin?.reviewIntent = editorialReviewIntent
+                    guard editorialPin?.isSupported == true else { return false }
+                }
+                preparedRequest.ordinaryDelivery?.editorialPolicy = editorialPin
+            } else if let original = localSessions.archive.sessions.first(where: { $0.id == fixedCommandID }) {
+                guard editorialReviewIntent == original.request.ordinaryDelivery?.editorialPolicy?.reviewIntent,
+                      editorialStartingBand == original.request.ordinaryDelivery?.editorialPolicy?.initialUserBand,
+                      editorialCatalogActivityID == original.request.ordinaryDelivery?.editorialPolicy?.catalogScope?.activityID,
+                      editorialStartingFamilyScope.map({ scope in
+                          original.request.ordinaryDelivery?.editorialPolicy?.contains(objectiveID: scope.objectiveID, familyID: scope.familyID) == true
+                      }) ?? true else {
+                    lastErrorMessage = NFLocalSessionRepository.RepositoryError.conflictingAttempt.localizedDescription
+                    return false
+                }
+                preparedRequest.ordinaryDelivery?.editorialPolicy = original.request.ordinaryDelivery?.editorialPolicy
+            }
+            preparedRequest.id = fixedCommandID
+            preparedRequest.localSessionID = fixedCommandID
+            do {
+                let preparation = try prepareAdaptiveItem(request: preparedRequest, predecessor: nil)
+                let envelope = try acceptAdaptiveItem(preparation, checkpoint: preparation.checkpoint)
+                var accepted = envelope.request
+                accepted.localSessionID = envelope.id; accepted.localCheckpoint = envelope.checkpoint
+                accepted.freshlyAcceptedLaunch = preparation.replay == nil
+                activeSessionRequest = accepted
+            } catch {
+                lastErrorMessage = error.localizedDescription
+                notice = AppNotice(title: NFAppLocalization.localized("Question set unavailable", locale: NFAppLocalization.preferredLocale, comment: "Title for an unavailable fixed question set."),
+                    message: lastErrorMessage ?? "")
+                return false
+            }
+        } else if let fixedPreparation {
+            preparedRequest.id = fixedPreparation.commandID
+            preparedRequest.localSessionID = fixedPreparation.commandID
+            do {
+                let envelope = try localSessions.acceptFixedLaunch(fixedPreparation, request: preparedRequest,
+                    rotation: offlineQuestionRotation)
+                var accepted = envelope.request
+                accepted.localSessionID = envelope.id
+                accepted.localCheckpoint = envelope.checkpoint
+                accepted.freshlyAcceptedLaunch = fixedPreparation.replay == nil
+                activeSessionRequest = accepted
+                localSessionRevision += 1
+            } catch {
+                lastErrorMessage = error.localizedDescription
+                notice = AppNotice(title: NFAppLocalization.localized("Question set unavailable", locale: NFAppLocalization.preferredLocale, comment: "Title for an unavailable fixed question set."),
+                    message: lastErrorMessage ?? "")
+                return false
+            }
+        } else {
+            activeSessionRequest = preparedRequest
+        }
+        lastErrorMessage = nil
         return true
     }
 
@@ -2789,9 +3200,8 @@ final class AppStore {
         shouldOpenTodayPlan = false
     }
 
-    /// Opens the first genuinely due retention block, rather than conflating
-    /// scheduled review with arbitrary source-document practice. If no memory
-    /// item is due, the handoff lands on Today without manufacturing evidence.
+    /// Explicit review gets its own bounded run. The current effective queue
+    /// includes newly due entries without amending today's frozen circuit.
     @discardableResult
     func requestReviewsDue(
         at date: Date = Date(),
@@ -2799,37 +3209,24 @@ final class AppStore {
     ) -> Bool {
         guard !deferAppIntentIfDirty(
             .reviewsDue(date: date, calendar: calendar),
-            destination: .today
+            destination: .progress
         ) else { return true }
-        selectedDestination = .today
-        let plan = dailyPlan(at: date, calendar: calendar)
-        let completed = completedPlanBlockIDs(planID: plan.id)
-        guard let block = plan.blocks.first(where: {
-            $0.kindRaw == NFDailyPlanBlockKind.retentionReview.rawValue
-                && !$0.retentionItemIDs.isEmpty
-                && !completed.contains($0.id)
-        }) else {
-            shouldOpenTodayPlan = true
+        NFAppPreferenceScope.defaults.set("Review", forKey: "nf.progress.section")
+        selectedDestination = .progress
+        let targets = nextReviewBatch(at: date, calendar: calendar)
+        guard let first = targets.first,
+              let entry = readyReviewEntries(at: date, calendar: calendar).first(where: { $0.id == first.memoryItemID }) else {
+            shouldOpenTodayPlan = false
             return false
         }
         shouldOpenTodayPlan = false
         return beginSession(
-            lab: block.lab,
-            source: .today,
-            requestedMinutes: block.minutes,
-            evidenceClass: block.evidenceClass,
-            topic: block.mechanicID,
-            planID: plan.id,
-            planBlockID: block.id,
-            isTimed: block.timed,
-            mechanicID: block.mechanicID,
-            retentionItemIDs: block.retentionItemIDs,
-            retentionTargets: retentionReviewTargets(
-                forPlanID: plan.id,
-                blockID: block.id,
-                fallbackItemIDs: block.retentionItemIDs,
-                fallbackSeed: plan.seed
-            )
+            lab: entry.origin.state.lab, source: .focused,
+            requestedMinutes: targets.count, evidenceClass: .retention,
+            requestedItemCount: targets.count, isTimed: false,
+            mechanicID: "retention.\(entry.origin.state.lab.rawValue)",
+            retentionItemIDs: targets.map(\.memoryItemID), retentionTargets: targets,
+            reviewSchedulingDate: date, reviewSchedulingCalendar: calendar
         )
     }
 
@@ -2933,12 +3330,13 @@ final class AppStore {
         response: String,
         correctAnswer: String,
         isCorrect: Bool,
-        confidence: ConfidenceLevel,
+        confidence: ConfidenceLevel?,
         evidenceClass: EvidenceClass = .practice,
         source: SessionSource = .focused,
         sourceDocumentIDs: [UUID] = [],
         sourceChunkIDs: [String] = [],
-        responseFormat: String = "singleChoice"
+        responseFormat: String = "singleChoice",
+        attemptID: UUID? = nil
     ) throws {
         let record = AttemptRecord(
             sessionID: UUID(),
@@ -2948,13 +3346,21 @@ final class AppStore {
             response: response,
             correctAnswer: correctAnswer,
             isCorrect: isCorrect,
-            confidence: confidence,
+            confidence: confidence ?? .uncertain,
             evidenceClass: evidenceClass,
             source: source,
             sourceDocumentIDs: sourceDocumentIDs,
             sourceChunkIDs: sourceChunkIDs,
             responseFormat: responseFormat
         )
+        if let attemptID { record.id = attemptID }
+        record.confidenceRaw = confidence?.rawValue
+        if responseFormat == "selfCheck" {
+            record.isCorrect = false
+            record.deterministicCredit = 0
+            record.evidenceWeight = 0
+            record.confidenceRaw = nil
+        }
         try insertAttempt(record)
     }
 
@@ -3015,7 +3421,7 @@ final class AppStore {
         exercise: NFExercise,
         response: NFExerciseResponse,
         result: NFExerciseScoringResult,
-        confidence: ConfidenceLevel,
+        confidence: ConfidenceLevel?,
         shownAt: Date,
         activeDuration: TimeInterval,
         source: SessionSource,
@@ -3031,17 +3437,154 @@ final class AppStore {
         revisionCount: Int = 0,
         accommodationFlags: [String] = [],
         wasTimed: Bool = false,
-        generationID: UUID? = nil
+        generationID: UUID? = nil,
+        mathWork: NFMathWorkDraft? = nil,
+        traceInspection: NFTraceInspectionDraft? = nil,
+        dataInspection: NFDataInspectionDraft? = nil,
+        scienceStudy: NFScienceStudyDraft? = nil,
+        transferRelationship: NFTransferRelationshipDraft? = nil
     ) throws {
+        try persistExerciseAttempt(
+            attemptID: attemptID,
+            sessionID: sessionID,
+            exercise: exercise,
+            response: response,
+            result: result,
+            confidence: confidence,
+            shownAt: shownAt,
+            activeDuration: activeDuration,
+            source: source,
+            assessmentBlock: assessmentBlock,
+            assessmentDescriptorID: assessmentDescriptorID,
+            assessmentDescriptor: assessmentDescriptor,
+            assessmentCycle: assessmentCycle,
+            planID: planID,
+            planBlockID: planBlockID,
+            hintCount: hintCount,
+            inputMode: inputMode,
+            interruptionCount: interruptionCount,
+            revisionCount: revisionCount,
+            accommodationFlags: accommodationFlags,
+            wasTimed: wasTimed,
+            generationID: generationID,
+            conflictRecoveryOnly: false, mathWork: mathWork, traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy, transferRelationship: transferRelationship)
+    }
+
+    private func persistExerciseAttempt(
+        attemptID: UUID,
+        sessionID: UUID,
+        exercise: NFExercise,
+        response: NFExerciseResponse,
+        result: NFExerciseScoringResult,
+        confidence: ConfidenceLevel?,
+        shownAt: Date,
+        activeDuration: TimeInterval,
+        source: SessionSource,
+        assessmentBlock: NFAssessmentBlockKind? = nil,
+        assessmentDescriptorID: String? = nil,
+        assessmentDescriptor: NFAssessmentItemDescriptor? = nil,
+        assessmentCycle: Int? = nil,
+        planID: String? = nil,
+        planBlockID: String? = nil,
+        hintCount: Int = 0,
+        inputMode: String = "unknown",
+        interruptionCount: Int = 0,
+        revisionCount: Int = 0,
+        accommodationFlags: [String] = [],
+        wasTimed: Bool = false,
+        generationID: UUID? = nil,
+        conflictRecoveryOnly: Bool,
+        mathWork: NFMathWorkDraft? = nil,
+        traceInspection: NFTraceInspectionDraft? = nil,
+        dataInspection: NFDataInspectionDraft? = nil,
+        scienceStudy: NFScienceStudyDraft? = nil,
+        transferRelationship: NFTransferRelationshipDraft? = nil
+    ) throws {
+        let prepared = try prepareExerciseAttempt(
+            attemptID: attemptID,
+            sessionID: sessionID,
+            exercise: exercise,
+            response: response,
+            result: result,
+            confidence: confidence,
+            shownAt: shownAt,
+            activeDuration: activeDuration,
+            source: source,
+            assessmentBlock: assessmentBlock,
+            assessmentDescriptorID: assessmentDescriptorID,
+            assessmentDescriptor: assessmentDescriptor,
+            assessmentCycle: assessmentCycle,
+            planID: planID,
+            planBlockID: planBlockID,
+            hintCount: hintCount,
+            inputMode: inputMode,
+            interruptionCount: interruptionCount,
+            revisionCount: revisionCount,
+            accommodationFlags: accommodationFlags,
+            wasTimed: wasTimed,
+            generationID: generationID,
+            conflictRecoveryOnly: conflictRecoveryOnly, mathWork: mathWork, traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy, transferRelationship: transferRelationship)
+        if let original = prepared.conflictingOriginal {
+            try journalAttemptConflict(original: original, proposed: prepared.record, exercise: exercise, result: result)
+            if prepared.conflictRecoveryOnly { return }
+            throw NFLocalSessionRepository.RepositoryError.conflictingAttempt
+        }
+        if let snapshot = prepared.snapshot {
+            try localSessions.retainSnapshot(attemptID: snapshot.attemptID, exercise: snapshot.exercise,
+                editorialCapture: snapshot.editorialCapture, mathWork: snapshot.mathWork, traceInspection: snapshot.traceInspection,
+                dataInspection: snapshot.dataInspection, scienceStudy: snapshot.scienceStudy, transferRelationship: snapshot.transferRelationship)
+        }
+        try insertAttempt(prepared.record)
+    }
+
+    private func prepareExerciseAttempt(
+        attemptID: UUID,
+        sessionID: UUID,
+        exercise: NFExercise,
+        response: NFExerciseResponse,
+        result: NFExerciseScoringResult,
+        confidence: ConfidenceLevel?,
+        shownAt: Date,
+        activeDuration: TimeInterval,
+        source: SessionSource,
+        assessmentBlock: NFAssessmentBlockKind? = nil,
+        assessmentDescriptorID: String? = nil,
+        assessmentDescriptor: NFAssessmentItemDescriptor? = nil,
+        assessmentCycle: Int? = nil,
+        planID: String? = nil,
+        planBlockID: String? = nil,
+        hintCount: Int = 0,
+        inputMode: String = "unknown",
+        interruptionCount: Int = 0,
+        revisionCount: Int = 0,
+        accommodationFlags: [String] = [],
+        wasTimed: Bool = false,
+        generationID: UUID? = nil,
+        conflictRecoveryOnly: Bool,
+        mathWork: NFMathWorkDraft? = nil,
+        traceInspection: NFTraceInspectionDraft? = nil,
+        dataInspection: NFDataInspectionDraft? = nil,
+        scienceStudy: NFScienceStudyDraft? = nil,
+        transferRelationship: NFTransferRelationshipDraft? = nil
+    ) throws -> NFPreparedExerciseAttempt {
+        try localSessions.requireArchiveWriteAvailability()
+        guard traceInspection.map({ $0.isValid(for: exercise) }) ?? true,
+              traceInspection == nil || hintCount > 0 else { throw NFLocalSessionRepository.RepositoryError.corruptSnapshot }
+        guard NFTransferRelationshipDraft.permits(transferRelationship, exercise: exercise, response: response, committing: true),
+              NFScienceStudyDraft.permits(scienceStudy, exercise: exercise, response: response, committing: true),
+              dataInspection?.isCompatible(with: exercise) != false,
+              hintCount >= (traceInspection == nil ? 0 : 1) + (dataInspection?.supportCount ?? 0),
+              mathWork?.isCompatible(with: exercise, response: response) != false,
+              !(mathWork?.awaitsEstimate ?? false),
+              !(mathWork?.requiresCompensationSupport ?? false) || hintCount >= 2 else { throw NFLocalSessionRepository.RepositoryError.corruptSnapshot }
         let retentionTarget = retentionTarget(
             for: exercise,
             planID: planID,
             planBlockID: planBlockID
         )
-        let responseText = (try? String(
-            data: JSONEncoder().encode(response),
-            encoding: .utf8
-        )) ?? result.normalizedResponse ?? ""
+        let responseEncoder = JSONEncoder()
+        responseEncoder.outputFormatting = [.sortedKeys]
+        let responseText = String(decoding: try responseEncoder.encode(response), as: UTF8.self)
         let record = AttemptRecord(
             sessionID: sessionID,
             lab: exercise.lab,
@@ -3050,10 +3593,11 @@ final class AppStore {
             response: responseText,
             correctAnswer: result.expectedAnswerSummary ?? "Delayed assessment key",
             isCorrect: result.isCorrect,
-            confidence: confidence,
+            confidence: confidence ?? .uncertain,
             evidenceClass: exercise.evidenceClass,
             source: source
         )
+        record.confidenceRaw = confidence?.rawValue
         record.id = attemptID
         record.generationID = generationID
         // Retention evidence belongs to the scheduled memory item, while the
@@ -3105,9 +3649,62 @@ final class AppStore {
         record.revisionCount = max(0, revisionCount)
         record.accommodationFlagsRaw = accommodationFlags.sorted().joined(separator: ",")
         record.wasTimed = wasTimed
+        if case .selfCheck = exercise.interaction {
+            record.evidenceWeight = 0
+            record.deterministicCredit = 0
+            record.isCorrect = false
+            record.confidenceRaw = nil
+            if exercise.evidenceClass == .documentPractice, !exercise.provenance.sourceDocumentIDs.isEmpty {
+                // The reference remains in the private exact local snapshot;
+                // these shipped attempt columns may participate in cloud sync.
+                record.correctAnswerText = ""
+                record.correctAnswer = 0
+            }
+        }
+        if activeSessionRequest?.repairOriginAttemptID != nil { record.evidenceWeight = 0 }
+        // Check the immutable receipt before associating any proposed exercise
+        // with this identity. A rejected retry must never backfill its snapshot
+        // as if it were the authenticated original question.
+        if let original = (attempts + pendingAttemptRecords).first(where: { $0.id == attemptID }) {
+            if let retained = localSessions.archive.snapshots.first(where: { $0.attemptID == attemptID }),
+               !conflictRecoveryOnly, (retained.mathWork != mathWork || retained.dataInspection != dataInspection || retained.scienceStudy != scienceStudy || retained.transferRelationship != transferRelationship) { throw NFLocalSessionRepository.RepositoryError.conflictingAttempt }
+            if conflictRecoveryOnly || !isSameAttemptCommit(original, record)
+                || localSessions.archive.snapshots.first(where: { $0.attemptID == attemptID }).map({ $0.exercise == exercise && $0.traceInspection == traceInspection }) == false {
+                return NFPreparedExerciseAttempt(record: record, snapshot: nil, conflictingOriginal: original,
+                    conflictRecoveryOnly: conflictRecoveryOnly)
+            }
+            return NFPreparedExerciseAttempt(record: record, snapshot: nil, conflictingOriginal: nil, conflictRecoveryOnly: false)
+        }
+        guard !conflictRecoveryOnly else { throw NFLocalSessionRepository.RepositoryError.conflictingAttempt }
         try NFTransferTaxonomy.validate(exercise: exercise)
         try NFTransferTaxonomy.validate(attempt: record)
-        try insertAttempt(record)
+        // Snapshot and new-commit provenance share one atomic local publication.
+        // A prior failed core write retains its original capture for retry.
+        let retained = localSessions.archive.snapshots.first { $0.attemptID == attemptID }
+        if let capture = retained?.editorialCapture {
+            guard NFEditorialCommitCapturePolicy.matchesRetry(capture, record: NFImmutableAttemptRecordSnapshot(record),
+                exercise: exercise, result: result) else { throw NFLocalSessionRepository.RepositoryError.conflictingAttempt }
+            record.submittedAt = capture.submittedAt
+            record.deviceID = capture.originalRecordDeviceID
+        }
+        let editorialCapture = retained?.editorialCapture
+            ?? (retained == nil ? captureEditorialCommit(record: record, exercise: exercise, result: result) : nil)
+        if let originalWork = retained?.mathWork, let mathWork, originalWork != mathWork {
+            throw NFLocalSessionRepository.RepositoryError.conflictingAttempt
+        }
+        if let originalInspection = retained?.dataInspection, let dataInspection, originalInspection != dataInspection {
+            throw NFLocalSessionRepository.RepositoryError.conflictingAttempt
+        }
+        if let retained, retained.scienceStudy != scienceStudy { throw NFLocalSessionRepository.RepositoryError.conflictingAttempt }
+        let savedScience = retained?.scienceStudy ?? (retained == nil ? scienceStudy : nil)
+        if let retained, retained.transferRelationship != transferRelationship { throw NFLocalSessionRepository.RepositoryError.conflictingAttempt }
+        let savedTransfer = retained?.transferRelationship ?? (retained == nil ? transferRelationship : nil)
+        let savedInspection = retained?.dataInspection ?? (retained == nil ? dataInspection : nil)
+        let savedMathWork = retained?.mathWork ?? (retained == nil ? mathWork : nil)
+        let snapshot = exercise.assessmentProtected ? nil : NFLocalAttemptSnapshot(attemptID: attemptID,
+            exercise: exercise, editorialCapture: editorialCapture, mathWork: savedMathWork, traceInspection: traceInspection,
+            dataInspection: savedInspection, scienceStudy: savedScience, transferRelationship: savedTransfer)
+        return NFPreparedExerciseAttempt(record: record, snapshot: snapshot, conflictingOriginal: nil, conflictRecoveryOnly: false)
     }
 
     /// Persists a personal AI Practice Studio response using the exact typed
@@ -3117,13 +3714,20 @@ final class AppStore {
     func saveAuthoredExerciseAttempt(
         attemptID: UUID,
         generationID: UUID,
+        sessionID: UUID? = nil,
         question: NFAuthoredQuestion,
         response: NFExerciseResponse,
         score: NFExerciseScoringResult,
-        confidence: ConfidenceLevel,
+        confidence: ConfidenceLevel?,
         sourceDocumentIDs: [UUID],
         shownAt: Date,
-        activeDuration: TimeInterval
+        activeDuration: TimeInterval,
+        hintCount: Int = 0,
+        mathWork: NFMathWorkDraft? = nil,
+        traceInspection: NFTraceInspectionDraft? = nil,
+        dataInspection: NFDataInspectionDraft? = nil,
+        scienceStudy: NFScienceStudyDraft? = nil,
+        transferRelationship: NFTransferRelationshipDraft? = nil
     ) throws {
         let exercise = question.authoritativeExercise
         guard NFAuthoredExerciseAuthority.validatesBinding(question),
@@ -3135,7 +3739,7 @@ final class AppStore {
         }
         try saveExerciseAttempt(
             attemptID: attemptID,
-            sessionID: generationID,
+            sessionID: sessionID ?? generationID,
             exercise: exercise,
             response: response,
             result: score,
@@ -3143,8 +3747,27 @@ final class AppStore {
             shownAt: shownAt,
             activeDuration: activeDuration,
             source: .focused,
-            generationID: generationID
+            hintCount: hintCount,
+            generationID: generationID, mathWork: mathWork, traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy, transferRelationship: transferRelationship
         )
+    }
+
+    /// Used by generated receipt recovery before any attempted re-evaluation.
+    /// Successful return acknowledges diagnostics only, never a second answer.
+    func recordAuthoredExerciseAttemptConflict(
+        attemptID: UUID, generationID: UUID, sessionID: UUID? = nil, question: NFAuthoredQuestion,
+        response: NFExerciseResponse, score: NFExerciseScoringResult, confidence: ConfidenceLevel?,
+        sourceDocumentIDs: [UUID], shownAt: Date, activeDuration: TimeInterval, hintCount: Int = 0
+    ) throws {
+        let exercise = question.authoritativeExercise
+        guard Set(exercise.provenance.sourceDocumentIDs) == Set(sourceDocumentIDs.map(\.uuidString))
+            || exercise.provenance.sourceDocumentIDs == ["legacy-personal-document"] else {
+            throw LocalDataError.verificationFailed
+        }
+        try persistExerciseAttempt(attemptID: attemptID, sessionID: sessionID ?? generationID, exercise: exercise,
+            response: response, result: score, confidence: confidence, shownAt: shownAt,
+            activeDuration: activeDuration, source: .focused, hintCount: hintCount,
+            generationID: generationID, conflictRecoveryOnly: true)
     }
 
     func reflectionTrigger(
@@ -3192,13 +3815,25 @@ final class AppStore {
         guard attempts.contains(where: { $0.id == attemptID }) else {
             throw LocalDataError.missingAttempt
         }
-        if attemptReflections.contains(where: { $0.attemptID == attemptID }) { return }
-        if trigger != .weeklyTransfer, selectedErrorCode == nil {
-            throw LocalDataError.incompleteReflection
+        guard reflectionUnavailableReason(for: attemptID) == nil else {
+            throw NFLocalSessionRepository.RepositoryError.corruptSnapshot
         }
-        if trigger == .weeklyTransfer,
-           normalizedNote.isEmpty {
-            throw LocalDataError.incompleteReflection
+        if let original = attemptReflections.first(where: { $0.attemptID == attemptID }) {
+            let current = currentReflection(for: attemptID)
+            if current?.selectedErrorCodeRaw == selectedErrorCode?.rawValue,
+               current?.note == normalizedNote { return }
+            var annotation = privateStudyMetadata.annotations.first { $0.id == attemptID }
+                ?? NFStudyAnnotation(id: attemptID)
+            let previous = annotation.reflectionRevisions?.last
+            let revision = NFStudyReflectionRevision(
+                id: UUID(), attemptID: attemptID, originalReflectionID: original.id,
+                revision: (previous?.revision ?? 0) + 1, predecessorID: previous?.id,
+                selectedErrorCodeRaw: selectedErrorCode?.rawValue, note: normalizedNote, createdAt: Date())
+            annotation.reflectionRevisions = (annotation.reflectionRevisions ?? []) + [revision]
+            annotation.updatedAt = revision.createdAt
+            try saveStudyAnnotation(annotation)
+            lastErrorMessage = nil
+            return
         }
         let reflection = AttemptReflectionRecord(
             attemptID: attemptID,
@@ -3220,8 +3855,28 @@ final class AppStore {
     }
 
     func effectiveErrorCode(for attempt: AttemptRecord) -> String? {
-        attemptReflections.first(where: { $0.attemptID == attempt.id })?.selectedErrorCodeRaw
-            ?? attempt.errorCode
+        currentReflection(for: attempt.id)?.selectedErrorCodeRaw ?? attempt.errorCode
+    }
+
+    /// The currently confirmed interpretation; the original remains available
+    /// in attemptReflections and never changes when this projection is revised.
+    func currentReflection(for attemptID: UUID) -> (selectedErrorCodeRaw: String?, note: String, revision: Int)? {
+        guard reflectionUnavailableReason(for: attemptID) == nil else { return nil }
+        guard let original = attemptReflections.first(where: { $0.attemptID == attemptID }) else { return nil }
+        if let latest = privateStudyMetadata.annotations.first(where: { $0.id == attemptID })?.reflectionRevisions?.last {
+            return (latest.selectedErrorCodeRaw, latest.note, latest.revision)
+        }
+        return (original.selectedErrorCodeRaw, original.note, 0)
+    }
+
+    func reflectionUnavailableReason(for attemptID: UUID) -> String? {
+        if let reason = privateStudyMetadataUnavailableReason { return reason }
+        guard let latest = privateStudyMetadata.annotations.first(where: { $0.id == attemptID })?.reflectionRevisions?.last else { return nil }
+        guard let original = attemptReflections.first(where: { $0.attemptID == attemptID }),
+              latest.originalReflectionID == original.id else {
+            return NFAppLocalization.localizedCatalogValue("This saved work needs a compatible version of NeuroForge. Your original answers remain saved.", locale: NFAppLocalization.preferredLocale)
+        }
+        return nil
     }
 
     func saveSkippedExercise(
@@ -3238,8 +3893,59 @@ final class AppStore {
         planBlockID: String? = nil,
         interruptionCount: Int = 0,
         accommodationFlags: [String] = [],
-        wasTimed: Bool = false
+        wasTimed: Bool = false,
+        revealedSolution: Bool = false,
+        draftResponse: String = "",
+        hintCount: Int = 0,
+        traceInspection: NFTraceInspectionDraft? = nil,
+        dataInspection: NFDataInspectionDraft? = nil,
+        scienceStudy: NFScienceStudyDraft? = nil,
+        transferRelationship: NFTransferRelationshipDraft? = nil,
+        preserveDraftResponse: Bool = false,
+        generationID: UUID? = nil,
+        mathWork: NFMathWorkDraft? = nil
     ) throws {
+        let record = try prepareSkippedExercise(attemptID: attemptID, sessionID: sessionID,
+            exercise: exercise, shownAt: shownAt, activeDuration: activeDuration, source: source,
+            assessmentBlock: assessmentBlock, assessmentDescriptor: assessmentDescriptor,
+            assessmentCycle: assessmentCycle, planID: planID, planBlockID: planBlockID,
+            interruptionCount: interruptionCount, accommodationFlags: accommodationFlags, wasTimed: wasTimed,
+            revealedSolution: revealedSolution, draftResponse: draftResponse, hintCount: hintCount,
+            traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy,
+            transferRelationship: transferRelationship, preserveDraftResponse: preserveDraftResponse,
+            generationID: generationID, mathWork: mathWork)
+        try localSessions.retainSnapshot(attemptID: attemptID, exercise: exercise, mathWork: mathWork, traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy, transferRelationship: transferRelationship)
+        try insertAttempt(record)
+    }
+
+    private func prepareSkippedExercise(
+        attemptID: UUID,
+        sessionID: UUID,
+        exercise: NFExercise,
+        shownAt: Date,
+        activeDuration: TimeInterval,
+        source: SessionSource,
+        assessmentBlock: NFAssessmentBlockKind? = nil,
+        assessmentDescriptor: NFAssessmentItemDescriptor? = nil,
+        assessmentCycle: Int? = nil,
+        planID: String? = nil,
+        planBlockID: String? = nil,
+        interruptionCount: Int = 0,
+        accommodationFlags: [String] = [],
+        wasTimed: Bool = false,
+        revealedSolution: Bool = false,
+        draftResponse: String = "",
+        hintCount: Int = 0,
+        traceInspection: NFTraceInspectionDraft? = nil,
+        dataInspection: NFDataInspectionDraft? = nil,
+        scienceStudy: NFScienceStudyDraft? = nil,
+        transferRelationship: NFTransferRelationshipDraft? = nil,
+        preserveDraftResponse: Bool = false,
+        generationID: UUID? = nil,
+        mathWork: NFMathWorkDraft? = nil
+    ) throws -> AttemptRecord {
+        try localSessions.requireArchiveWriteAvailability()
+        guard traceInspection.map({ $0.isValid(for: exercise) }) ?? true, dataInspection?.isCompatible(with: exercise) != false, NFScienceStudyDraft.permits(scienceStudy, exercise: exercise), NFTransferRelationshipDraft.permits(transferRelationship, exercise: exercise) else { throw NFLocalSessionRepository.RepositoryError.corruptSnapshot }
         let retentionTarget = retentionTarget(
             for: exercise,
             planID: planID,
@@ -3250,7 +3956,7 @@ final class AppStore {
             lab: exercise.lab,
             itemID: exercise.id,
             prompt: exercise.prompt,
-            response: "",
+            response: (revealedSolution || preserveDraftResponse) ? draftResponse : "",
             correctAnswer: "Not evaluated",
             isCorrect: false,
             confidence: .guessing,
@@ -3258,6 +3964,8 @@ final class AppStore {
             source: source
         )
         record.id = attemptID
+        record.generationID = generationID
+        if generationID != nil { record.scoringVersion = NFExerciseScoringEngine.scoringVersion }
         record.templateID = retentionTarget?.memoryItemID ?? exercise.templateID
         record.seed = exercise.seed
         record.skillID = assessmentDescriptor?.skillID
@@ -3275,11 +3983,14 @@ final class AppStore {
         record.activeDurationSeconds = max(0, activeDuration)
         record.evidenceWeight = 0
         record.deterministicCredit = 0
-        record.errorCode = nil
+        record.errorCode = revealedSolution ? "solution_revealed" : nil
         record.correctAnswerText = "Not evaluated"
-        record.responseFormatRaw = "skipped"
-        record.inputModeRaw = "skipped"
+        record.responseFormatRaw = revealedSolution ? "revealed" : "skipped"
+        record.inputModeRaw = revealedSolution ? "revealed" : "skipped"
+        // The shipped compatibility flag also excludes revealed work from old
+        // objective-score consumers. The typed format retains its distinct cause.
         record.wasSkipped = true
+        record.hintCount = max(hintCount, (traceInspection == nil ? 0 : 1) + (dataInspection?.supportCount ?? 0))
         record.sourceDocumentIDsRaw = exercise.provenance.sourceDocumentIDs.joined(separator: ",")
         record.sourceChunkIDsRaw = exercise.provenance.sourceChunkIDs.joined(separator: ",")
         record.validationVersion = exercise.provenance.validatorVersion
@@ -3299,12 +4010,17 @@ final class AppStore {
         record.interruptionCount = max(0, interruptionCount)
         record.accommodationFlagsRaw = accommodationFlags.sorted().joined(separator: ",")
         record.wasTimed = wasTimed
-        try insertAttempt(record)
+        return record
     }
 
     func saveAIGeneration(request: NFAuthoringRequest, result: NFAuthoringResult) throws {
         if aiGenerations.contains(where: { $0.id == result.provenance.requestID }) { return }
         let record = try AIGenerationRecord(request: request, result: result)
+        // The live ready-set path must round-trip through the same structural
+        // contract used by recovery before publishing a saved generation.
+        guard record.recoverableResult(at: result.provenance.generatedAt) != nil else {
+            throw NFAIError.invalidOutput(["The generated set could not be recovered from its saved response contract."])
+        }
         context.insert(record)
         _ = enforceAIGenerationPayloadBounds(on: [record] + aiGenerations)
         do {
@@ -3318,16 +4034,27 @@ final class AppStore {
     }
 
     func recoverAIGeneration(id: UUID, at date: Date = Date()) -> NFAuthoringResult? {
-        aiGenerations.first(where: { $0.id == id })?.recoverableResult(at: date)
+        if let saved = localSessions.archive.savedSets?.first(where: { $0.id == id }) {
+            guard saved.unavailableReason == nil else { return nil }
+            return saved.result
+        }
+        return aiGenerations.first(where: { $0.id == id })?.recoverableResult(at: date)
     }
 
     func discardAIGenerationPayload(id: UUID) throws {
-        guard let record = aiGenerations.first(where: { $0.id == id }) else { return }
-        record.discardPayload()
+        try requireRestoreArtifactDeletionAuthorization()
+        let predecessor = localSessions.archive
+        let record = aiGenerations.first { $0.id == id }
+        record?.discardPayload()
         do {
+            // Remove reusable inventory and collection membership. An already
+            // accepted run retains its own exact set until the run is ended.
+            try localSessions.unsaveSet(id)
             try context.save()
+            localSessionRevision += 1
         } catch {
             context.rollback()
+            try? localSessions.restorePredecessor(predecessor)
             reload()
             lastErrorMessage = NFAppLocalization.localized(
                 "The question set could not be removed. Try again.",
@@ -3343,23 +4070,29 @@ final class AppStore {
     /// lightweight provenance record.
     @discardableResult
     func deleteAIGenerationAttempts(id: UUID) throws -> Int {
+        try requireRestoreArtifactDeletionAuthorization()
         let saved = attempts.filter { $0.generationID == id }
         let pending = pendingAttemptRecords.filter { $0.generationID == id }
         let identifiers = Set((saved + pending).map(\.id))
         guard !identifiers.isEmpty else { return 0 }
+        let predecessor = localSessions.archive
         let reflections = attemptReflections.filter { identifiers.contains($0.attemptID) }
 
         for attempt in saved { context.delete(attempt) }
         for attempt in pending { context.delete(attempt) }
         for reflection in reflections { context.delete(reflection) }
         do {
+            try localSessions.removeReferences(attemptIDs: identifiers)
             try context.save()
+            localSessionRevision += 1
             attempts.removeAll { identifiers.contains($0.id) }
             pendingAttemptRecords.removeAll { identifiers.contains($0.id) }
+            removePendingConflictReferences(attemptIDs: identifiers)
             attemptReflections.removeAll { identifiers.contains($0.attemptID) }
             return identifiers.count
         } catch {
             context.rollback()
+            try? localSessions.restorePredecessor(predecessor)
             reload()
             lastErrorMessage = NFAppLocalization.localized(
                 "The attempt history could not be deleted. Try again.",
@@ -3372,6 +4105,11 @@ final class AppStore {
 
     @discardableResult
     func purgeExpiredAIGenerationPayloads(at date: Date = Date()) throws -> Int {
+        try localSessions.requireArchiveWriteAvailability()
+        // Terminal run pins are collected independently of seven-day cache age.
+        // The repository replaces all eligible private payloads atomically and
+        // skips the currently owned presentation, unknown and foreign records.
+        if try localSessions.compactGeneratedTerminalInventory() > 0 { localSessionRevision += 1 }
         let expiredOrInvalidCount = aiGenerations.count { $0.discardExpiredOrInvalidPayload(at: date) }
         let overLimitCount = enforceAIGenerationPayloadBounds(on: aiGenerations)
         let discardedCount = expiredOrInvalidCount + overLimitCount
@@ -3465,6 +4203,7 @@ final class AppStore {
         do {
             try context.save()
             itemReports.insert(report, at: 0)
+            invalidateProgressProjection()
             nextDayEnhancementCache.removeAll()
             lastErrorMessage = nil
         } catch {
@@ -4170,6 +4909,13 @@ final class AppStore {
     }
 
     func deleteDocument(_ document: SourceDocumentRecord) throws {
+        try requireRestoreArtifactDeletionAuthorization()
+        let predecessor = localSessions.archive
+        let localGenerationIDs = Set((localSessions.archive.savedSets ?? [])
+            .filter { $0.result.provenance.sourceDocumentIDs.contains(document.id) }.map(\.id))
+        let linkedGenerationIDs = Set(aiGenerations.filter {
+            $0.sourceDocumentIDsRaw.split(separator: ",").contains(Substring(document.id.uuidString))
+        }.map(\.id)).union(localGenerationIDs)
         let fileManager = FileManager.default
         let originalURL = URL(fileURLWithPath: document.localPath)
         let stagedURL = originalURL.appendingPathExtension("pending-deletion-\(UUID().uuidString)")
@@ -4211,9 +4957,13 @@ final class AppStore {
         }
         context.delete(document)
         do {
+            try localSessions.removeReferences(attemptIDs: linkedAttemptIDs.union(linkedPendingAttemptIDs),
+                generationIDs: linkedGenerationIDs, sourceID: document.id)
             try context.save()
+            localSessionRevision += 1
         } catch {
             context.rollback()
+            try? localSessions.restorePredecessor(predecessor)
             if stagedFile, fileManager.fileExists(atPath: stagedURL.path) {
                 try? fileManager.moveItem(at: stagedURL, to: originalURL)
             }
@@ -4226,6 +4976,7 @@ final class AppStore {
             throw error
         }
         pendingAttemptRecords.removeAll { linkedPendingAttemptIDs.contains($0.id) }
+        removePendingConflictReferences(attemptIDs: linkedAttemptIDs.union(linkedPendingAttemptIDs), generationIDs: linkedGenerationIDs, sourceID: document.id)
         if stagedFile {
             do {
                 try fileManager.removeItem(at: stagedURL)
@@ -4248,6 +4999,7 @@ final class AppStore {
     }
 
     func deleteAllLocalData() throws {
+        try localSessions.requireArchiveWriteAvailability()
         let fileManager = FileManager.default
         var stagedFiles: [(original: URL, staged: URL)] = []
         var metadataCommitted = false
@@ -4278,6 +5030,8 @@ final class AppStore {
         do {
             try context.save()
             metadataCommitted = true
+            try localSessions.removeAll()
+            localSessionRevision += 1
             try nextDayEnhancementCache.removeAllVerifying()
             try NFUserDefaultsOfflineQuestionRotationStateStore.removeAll()
             reload()
@@ -4310,6 +5064,8 @@ final class AppStore {
             }
             activeSessionRequest = nil
             pendingAttemptRecords.removeAll()
+            pendingAttemptConflicts.removeAll()
+            unresolvedAttemptConflictIDs.removeAll()
             shouldPresentDocumentImporter = false
             shouldOpenTodayPlan = false
             shouldOpenSourceReviews = false
@@ -4343,7 +5099,11 @@ final class AppStore {
         }
     }
 
+    private func invalidateProgressProjection() { progressReloadID = UUID() }
+
     func reload() {
+        defer { invalidateProgressProjection() }
+        let mayMigrate = !localSessions.deferReloadUntilArchiveAvailable(owner: self) { [weak self] in self?.reload() }
         do {
             // CloudKit can briefly surface multiple profile objects when two
             // devices complete onboarding before their first import. Always
@@ -4356,12 +5116,18 @@ final class AppStore {
                 profile?.preferredLanguageCode ?? Locale.current.identifier
             )
             let attemptDescriptor = FetchDescriptor<AttemptRecord>(sortBy: [SortDescriptor(\.submittedAt, order: .reverse)])
+            let physicalAttempts = try context.fetch(attemptDescriptor)
+            conflictingPhysicalAttemptIDs = Set(Dictionary(grouping: physicalAttempts, by: \.id).compactMap { id, rows in
+                guard rows.count > 1, let first = rows.first else { return nil }
+                let original = NFImmutableAttemptRecordSnapshot(first)
+                return rows.dropFirst().contains { NFImmutableAttemptRecordSnapshot($0) != original } ? id : nil
+            })
             attempts = Self.deterministicWinners(
-                try context.fetch(attemptDescriptor),
+                physicalAttempts,
                 identifiedBy: \.id,
                 winnerPrecedes: Self.attemptPrecedes
             )
-            if NFTransferTaxonomy.migrateLegacyAttempts(attempts) {
+            if mayMigrate && NFTransferTaxonomy.migrateLegacyAttempts(attempts) {
                 try context.save()
             }
             attemptReflections = Self.deterministicWinners(
@@ -4371,7 +5137,7 @@ final class AppStore {
             )
             documents = try context.fetch(FetchDescriptor<SourceDocumentRecord>(sortBy: [SortDescriptor(\.importedAt, order: .reverse)]))
             var redactedLegacyDocumentDiagnostic = false
-            for document in documents {
+            for document in documents where mayMigrate {
                 let diagnosticContext: NFDiagnosticContext = document.indexError?.hasPrefix("document.ocr.") == true
                     ? .localOCR
                     : .documentExtraction
@@ -4409,14 +5175,15 @@ final class AppStore {
                 identifiedBy: \.id,
                 winnerPrecedes: Self.progressAnnotationPrecedes
             )
-            let weeklyMerge = Self.mergeWeeklyTransferStates(
-                try context.fetch(FetchDescriptor<WeeklyTransferStateRecord>())
-            )
+            let weeklyRecords = try context.fetch(FetchDescriptor<WeeklyTransferStateRecord>())
+            let weeklyMerge = mayMigrate ? Self.mergeWeeklyTransferStates(weeklyRecords)
+                : (record: weeklyRecords.sorted(by: Self.weeklyTransferStatePrecedes).first, didChange: false)
             weeklyTransferStateRecord = weeklyMerge.record
             if weeklyMerge.didChange { try? context.save() }
             reassessmentStateRecord = try context.fetch(FetchDescriptor<ReassessmentStateRecord>())
                 .sorted(by: Self.reassessmentStatePrecedes)
                 .first
+            if mayMigrate { try reconcileHistoricalAuthority() }
         } catch {
             lastErrorMessage = NFAppLocalization.localized("NeuroForge could not read all local records. Existing data was left untouched.", locale: NFAppLocalization.preferredLocale, comment: "Non-destructive local database reload error.")
         }
@@ -4751,6 +5518,7 @@ final class AppStore {
         }
         do {
             try context.save()
+            invalidateProgressProjection()
             lastErrorMessage = nil
         } catch {
             // A failed checkpoint must not remain visible through mutated
@@ -4778,12 +5546,25 @@ final class AppStore {
     }
 
     private func insertAttempt(_ record: AttemptRecord) throws {
-        if attempts.contains(where: { $0.id == record.id }) { return }
+        if let existing = attempts.first(where: { $0.id == record.id }) {
+            guard isSameAttemptCommit(existing, record) else {
+                try journalAttemptConflict(original: existing, proposed: record)
+                throw NFLocalSessionRepository.RepositoryError.conflictingAttempt
+            }
+            return
+        }
         if let pending = pendingAttemptRecords.first(where: { $0.id == record.id }) {
+            guard isSameAttemptCommit(pending, record) else {
+                try journalAttemptConflict(original: pending, proposed: record)
+                throw NFLocalSessionRepository.RepositoryError.conflictingAttempt
+            }
             do {
                 try context.save()
                 pendingAttemptRecords.removeAll { $0.id == pending.id }
-                if !attempts.contains(where: { $0.id == pending.id }) { attempts.insert(pending, at: 0) }
+                if !attempts.contains(where: { $0.id == pending.id }) {
+                    attempts.insert(pending, at: 0)
+                    invalidateProgressProjection()
+                }
                 if pending.sessionSourceRaw == SessionSource.today.rawValue { self.publishWidgetSnapshot() }
                 return
             } catch {
@@ -4795,12 +5576,14 @@ final class AppStore {
         do {
             try context.save()
             attempts.insert(record, at: 0)
+            invalidateProgressProjection()
             if record.sessionSourceRaw == SessionSource.today.rawValue { self.publishWidgetSnapshot() }
         } catch {
             do {
                 // One immediate retry handles transient file coordination and store-busy failures.
                 try context.save()
                 attempts.insert(record, at: 0)
+                invalidateProgressProjection()
                 if record.sessionSourceRaw == SessionSource.today.rawValue { self.publishWidgetSnapshot() }
             } catch {
                 if !pendingAttemptRecords.contains(where: { $0.id == record.id }) {
@@ -4812,23 +5595,93 @@ final class AppStore {
         }
     }
 
+    private func journalAttemptConflict(original: AttemptRecord, proposed: AttemptRecord,
+                                        exercise: NFExercise? = nil, result: NFExerciseScoringResult? = nil) throws {
+        if unresolvedAttemptConflictIDs.insert(original.id).inserted { invalidateProgressProjection() }
+        let entry = try NFAttemptConflictJournalEntry(original: NFImmutableAttemptRecordSnapshot(original),
+            proposed: NFImmutableAttemptRecordSnapshot(proposed),
+            originalExercise: localSessions.archive.snapshots.first(where: { $0.attemptID == original.id })?.exercise,
+            proposedExercise: exercise, proposedScore: result)
+        // Retain the first raw proposal even if its durable journal write fails.
+        // This queue is distinct from pendingAttemptRecords and cannot earn XP.
+        if !pendingAttemptConflicts.contains(where: { $0.id == entry.id }) { pendingAttemptConflicts.append(entry) }
+        let first = pendingAttemptConflicts.first(where: { $0.id == entry.id }) ?? entry
+        try localSessions.appendAttemptConflict(first)
+        pendingAttemptConflicts.removeAll { $0.id == entry.id }
+    }
+
+    private func isSameAttemptCommit(_ original: AttemptRecord, _ retry: AttemptRecord) -> Bool {
+        let sameResponse: Bool
+        if original.response == retry.response {
+            sameResponse = true
+        } else if let oldResponse = try? JSONDecoder().decode(NFExerciseResponse.self, from: Data(original.response.utf8)),
+                  let newResponse = try? JSONDecoder().decode(NFExerciseResponse.self, from: Data(retry.response.utf8)) {
+            // Old JSON key order and whitespace are not a second learner answer.
+            // The original byte sequence remains authoritative and is retained.
+            sameResponse = oldResponse == newResponse
+        } else {
+            sameResponse = false
+        }
+        // A retry constructs a transient record with a new submittedAt/deviceID.
+        // Keep the first acknowledged telemetry; compare the frozen answer,
+        // question, result and provenance rather than replacing any old fields.
+        return sameResponse && original.sessionID == retry.sessionID
+            && original.itemID == retry.itemID && original.templateID == retry.templateID
+            && original.seed == retry.seed && original.gameID == retry.gameID
+            && original.prompt == retry.prompt && original.scoringVersion == retry.scoringVersion
+            && original.correctAnswerText == retry.correctAnswerText && original.isCorrect == retry.isCorrect
+            && original.deterministicCredit == retry.deterministicCredit && original.errorCode == retry.errorCode
+            && original.confidenceRaw == retry.confidenceRaw && original.evidenceClassRaw == retry.evidenceClassRaw
+            && original.sessionSourceRaw == retry.sessionSourceRaw && original.responseFormatRaw == retry.responseFormatRaw
+            && original.wasSkipped == retry.wasSkipped && original.generationID == retry.generationID
+            && original.hintCount == retry.hintCount
+            && original.sourceDocumentIDsRaw == retry.sourceDocumentIDsRaw && original.sourceChunkIDsRaw == retry.sourceChunkIDsRaw
+            && original.assessmentDescriptorID == retry.assessmentDescriptorID && original.assessmentBlockRaw == retry.assessmentBlockRaw
+            && original.planID == retry.planID && original.planBlockID == retry.planBlockID
+    }
+
     func retryPendingWrites() {
-        guard !pendingAttemptRecords.isEmpty else { return }
+        guard !pendingAttemptRecords.isEmpty || !pendingAttemptConflicts.isEmpty else { return }
         do {
-            try context.save()
+            let hasAnswers = !pendingAttemptRecords.isEmpty
+            for entry in pendingAttemptConflicts {
+                try localSessions.appendAttemptConflict(entry)
+                pendingAttemptConflicts.removeAll { $0.id == entry.id }
+            }
+            if hasAnswers { try context.save() }
             for record in pendingAttemptRecords where !attempts.contains(where: { $0.id == record.id }) {
                 attempts.insert(record, at: 0)
+                invalidateProgressProjection()
             }
             pendingAttemptRecords.removeAll()
             lastErrorMessage = nil
             self.publishWidgetSnapshot()
             notice = AppNotice(
-                title: NFAppLocalization.localized("Pending answers saved", locale: NFAppLocalization.preferredLocale, comment: "Confirmation after queued response records are saved."),
-                message: NFAppLocalization.localized("NeuroForge recovered and verified the locally queued responses.", locale: NFAppLocalization.preferredLocale, comment: "Confirmation after queued response records are saved.")
+                title: hasAnswers
+                    ? NFAppLocalization.localized("Pending answers saved", locale: NFAppLocalization.preferredLocale, comment: "Confirmation after queued response records are saved.")
+                    : NFAppLocalization.localized("Recovery details saved", locale: NFAppLocalization.preferredLocale, comment: "Confirmation that conflicting payloads were durably journaled without creating an answer."),
+                message: hasAnswers
+                    ? NFAppLocalization.localized("NeuroForge recovered and verified the locally queued responses.", locale: NFAppLocalization.preferredLocale, comment: "Confirmation after queued response records are saved.")
+                    : NFAppLocalization.localized("Conflicting answers remain separate for recovery. Your original answer is unchanged.", locale: NFAppLocalization.preferredLocale, comment: "A conflict journal save is not an answer acknowledgement.")
             )
         } catch {
-            lastErrorMessage = NFAppLocalization.formattedQueuedResponseRecovery(pendingAttemptRecords.count)
+            lastErrorMessage = NFAppLocalization.formattedQueuedResponseRecovery(unsavedAttemptCount)
         }
+    }
+
+    private func removePendingConflictReferences(attemptIDs: Set<UUID>, generationIDs: Set<UUID> = [], sourceID: UUID? = nil) {
+        let removed = Set(pendingAttemptConflicts.filter { entry in
+            attemptIDs.contains(entry.attemptID)
+                || [entry.original.generationID, entry.proposed.generationID].compactMap { $0 }.contains(where: generationIDs.contains)
+                || sourceID.map { id in
+                    [entry.original.sourceDocumentIDsRaw, entry.proposed.sourceDocumentIDsRaw]
+                        .contains { $0.split(separator: ",").contains { UUID(uuidString: String($0).trimmingCharacters(in: .whitespacesAndNewlines)) == id } }
+                } == true
+        }.map(\.attemptID)).union(attemptIDs)
+        pendingAttemptConflicts.removeAll { removed.contains($0.attemptID) }
+        let changedAuthority = !unresolvedAttemptConflictIDs.isDisjoint(with: removed)
+        unresolvedAttemptConflictIDs.subtract(removed)
+        if changedAuthority { invalidateProgressProjection() }
     }
 }
 
@@ -4856,7 +5709,7 @@ enum AppDestination: String, CaseIterable, Identifiable, Sendable {
 
     var title: String {
         switch self {
-        case .today: NFAppLocalization.localized("Forge", locale: NFAppLocalization.preferredLocale, comment: "Primary app navigation destination for the daily training circuit.")
+        case .today: NFAppLocalization.localized("Today", locale: NFAppLocalization.preferredLocale, comment: "Primary app navigation destination for the daily training circuit.")
         case .train: NFAppLocalization.localized("Practice", locale: NFAppLocalization.preferredLocale, comment: "Primary app navigation destination for learner-directed ability practice.")
         case .progress: NFAppLocalization.localized("Progress", locale: NFAppLocalization.preferredLocale, comment: "Primary app navigation destination.")
         case .library: NFAppLocalization.localized("Sources", locale: NFAppLocalization.preferredLocale, comment: "Primary app navigation destination for imported study sources and personal practice.")
@@ -4896,7 +5749,7 @@ enum NFDeferredAppIntent: Equatable, Sendable {
     case mentalMathPractice(requestedMinutes: Int?, preferredKind: MentalMathKind?)
 }
 
-enum SessionSource: String, Sendable {
+enum SessionSource: String, Codable, Sendable {
     case today
     case focused
     case baseline
@@ -4904,8 +5757,130 @@ enum SessionSource: String, Sendable {
     case weeklyMission
 }
 
-struct SessionRequest: Identifiable, Sendable {
-    let id = UUID()
+struct SessionRequest: Identifiable, Codable, Sendable {
+    var id = UUID()
+    var localCheckpoint: NFLocalItemCheckpoint?
+    var localSessionID: UUID?
+    /// Ephemeral handoff only; launchOnly deliberately excludes this flag.
+    var freshlyAcceptedLaunch: Bool?
+    var repairOriginAttemptID: UUID?
+    var repairSemanticExclusions: Set<String>?
+    /// Preserve the actual epoch/position recipe independently from catalog
+    /// ordinals. Mechanic-filtered fallback items must not impersonate these IDs.
+    var offlineRotationPlan: NFOfflineQuestionRotationPlan?
+    var ordinaryDelivery: NFOrdinaryDeliveryPin?
+    /// Nil preserves the original fallback recipe for previously accepted work.
+    var tracePolicyVersion: Int?
+    var transferPolicyVersion: Int?
+    var transferExcludedContextID: String?
+    var hasSupportedTransferPolicy: Bool {
+        (transferPolicyVersion == nil || (transferPolicyVersion == 1 && lab == .transfer && assessmentBlock == nil && [.practice, .documentPractice].contains(evidenceClass)))
+            && (transferExcludedContextID.map { NFTransferRelationshipContract.contextIDs.contains($0) && transferPolicyVersion == 1 } ?? true)
+    }
+    func supportsTransferRecipe(in checkpoint: NFLocalItemCheckpoint) -> Bool {
+        guard hasSupportedTransferPolicy else { return false }
+        if let contract = checkpoint.exercise?.contractMetadata?.transferRelationship {
+            return transferPolicyVersion == contract.policyVersion
+        }
+        // Only this family adopts the new recipe; all other transfer families retain their exact prior contract.
+        return transferPolicyVersion != 1 || checkpoint.exercise?.templateID.hasSuffix(".field-shift.rate-product") != true
+    }
+    var scienceStudyPolicyVersion: Int?
+    var scienceStudyExcludedContextID: String?
+    var spatialAssemblyPolicyVersion:Int?
+    var hasSupportedSpatialAssemblyPolicy:Bool {
+        spatialAssemblyPolicyVersion == nil || (spatialAssemblyPolicyVersion == 1 && lab == .spatial
+            && assessmentBlock == nil && [.practice,.documentPractice].contains(evidenceClass) && coordinateReasoningPolicyVersion == nil)
+    }
+    func permitsSpatialAssembly(exercise:NFExercise?)->Bool {
+        guard hasSupportedSpatialAssemblyPolicy,exercise?.hasSupportedSpatialAssembly != false else{return false}
+        if let c=exercise?.contractMetadata?.spatialAssembly{return spatialAssemblyPolicyVersion == c.policyVersion}
+        let targetFamily=exercise?.contractMetadata?.spatialStructure.map{[1,3].contains($0.structure.variant)} == true
+            || [".rotation.3d-z-axis",".orthographic.top-view"].contains(where:{exercise?.templateID.hasSuffix($0) == true})
+        return spatialAssemblyPolicyVersion != 1 || !targetFamily
+    }
+    var coordinateReasoningPolicyVersion:Int?
+    var hasSupportedCoordinateReasoningPolicy:Bool {
+        coordinateReasoningPolicyVersion == nil || (coordinateReasoningPolicyVersion == 1 && lab == .spatial
+            && assessmentBlock == nil && [.practice,.documentPractice].contains(evidenceClass))
+    }
+    func permitsCoordinateReasoning(exercise:NFExercise?)->Bool {
+        guard hasSupportedCoordinateReasoningPolicy,exercise?.hasSupportedCoordinateReasoning != false else { return false }
+        if let value=exercise?.contractMetadata?.coordinateReasoning { return coordinateReasoningPolicyVersion == value.policyVersion }
+        let forwardFamily=exercise?.contractMetadata?.coordinateTransform != nil
+            || [".coordinate.rotate-ccw",".vector.reflect-y-axis"].contains(where:{exercise?.templateID.hasSuffix($0) == true})
+        return coordinateReasoningPolicyVersion != 1 || !forwardFamily
+    }
+    var netFoldingPolicyVersion:Int?
+    var hasSupportedNetFoldingPolicy:Bool {
+        netFoldingPolicyVersion == nil || (netFoldingPolicyVersion == 1 && lab == .spatial && assessmentBlock == nil && [.practice,.documentPractice].contains(evidenceClass))
+    }
+    func permitsNetFolding(exercise:NFExercise?)->Bool {
+        guard hasSupportedNetFoldingPolicy,exercise?.hasSupportedNetFolding != false else{return false}
+        if let value=exercise?.contractMetadata?.netFolding{return netFoldingPolicyVersion == value.policyVersion}
+        return netFoldingPolicyVersion != 1 || exercise?.templateID.hasSuffix(".folding.cube-net") != true
+    }
+    var solidSectionPolicyVersion:Int?
+    var hasSupportedSolidSectionPolicy:Bool {
+        solidSectionPolicyVersion == nil || (solidSectionPolicyVersion == 1 && lab == .spatial
+            && assessmentBlock == nil && [.practice,.documentPractice].contains(evidenceClass))
+    }
+    func permitsSolidSection(exercise:NFExercise?)->Bool {
+        guard hasSupportedSolidSectionPolicy,exercise?.hasSupportedSolidSection != false else { return false }
+        if let value=exercise?.contractMetadata?.solidSection { return solidSectionPolicyVersion == value.policyVersion }
+        return solidSectionPolicyVersion != 1 || ![".cross-section.cube",".cross-section.sphere",".cross-section.cylinder"].contains(where:{exercise?.templateID.hasSuffix($0) == true})
+    }
+    var coordinateTransformPolicyVersion: Int?
+    var hasSupportedCoordinateTransformPolicy: Bool {
+        coordinateTransformPolicyVersion == nil || (coordinateTransformPolicyVersion == 1 && lab == .spatial
+            && assessmentBlock == nil && [.practice,.documentPractice].contains(evidenceClass))
+    }
+    func permitsCoordinateTransform(exercise: NFExercise?) -> Bool {
+        guard hasSupportedCoordinateTransformPolicy,exercise?.hasSupportedCoordinateTransform != false else { return false }
+        if let value=exercise?.contractMetadata?.coordinateTransform { return coordinateTransformPolicyVersion == value.policyVersion }
+        return coordinateTransformPolicyVersion != 1 || !(exercise?.templateID.hasSuffix(".coordinate.rotate-ccw") == true || exercise?.templateID.hasSuffix(".vector.reflect-y-axis") == true)
+    }
+    var spatialStructurePolicyVersion: Int?
+    var hasSupportedSpatialStructurePolicy: Bool {
+        spatialStructurePolicyVersion == nil || (spatialStructurePolicyVersion == 1 && lab == .spatial
+            && assessmentBlock == nil && [.practice,.documentPractice].contains(evidenceClass))
+    }
+    func permitsSpatialStructure(exercise: NFExercise?) -> Bool {
+        guard hasSupportedSpatialStructurePolicy, exercise?.hasSupportedSpatialStructure != false else { return false }
+        if let value = exercise?.contractMetadata?.spatialStructure { return spatialStructurePolicyVersion == value.policyVersion }
+        return spatialStructurePolicyVersion != 1 || !(exercise?.templateID.hasSuffix(".rotation.3d-z-axis") == true || exercise?.templateID.hasSuffix(".orthographic.top-view") == true)
+    }
+    var retrievalAssetPolicyVersion: Int?
+    var hasSupportedRetrievalAssetPolicy: Bool {
+        retrievalAssetPolicyVersion == nil || (retrievalAssetPolicyVersion == 1 && retrievalAuthorityPolicyVersion == 1
+            && lab == .retrieval && assessmentBlock == nil && [.practice, .documentPractice].contains(evidenceClass))
+    }
+    func permitsRetrievalAsset(exercise: NFExercise?) -> Bool {
+        guard hasSupportedRetrievalAssetPolicy, exercise?.hasSupportedRetrievalAsset != false else { return false }
+        if let asset = exercise?.contractMetadata?.retrievalAsset { return retrievalAssetPolicyVersion == asset.policyVersion }
+        return retrievalAssetPolicyVersion != 1 || !NFRetrievalAssetContract.Form.allCases.contains { exercise?.templateID.hasSuffix(".v4." + $0.templateSlug) == true }
+    }
+    var retrievalAuthorityPolicyVersion: Int?
+    var hasSupportedRetrievalAuthorityPolicy: Bool {
+        retrievalAuthorityPolicyVersion == nil || (retrievalAuthorityPolicyVersion == 1 && lab == .retrieval
+            && assessmentBlock == nil && [.practice, .documentPractice].contains(evidenceClass))
+    }
+    func permitsRetrievalAuthority(exercise: NFExercise?) -> Bool {
+        hasSupportedRetrievalAuthorityPolicy && (exercise.map { $0.hasSupportedRetrievalAuthorityRecipe
+            && $0.contractMetadata?.retrievalAuthorityPolicyVersion == retrievalAuthorityPolicyVersion } ?? true)
+    }
+    var graphConstructionPolicyVersion: Int?
+    var hasSupportedGraphConstructionPolicy: Bool {
+        graphConstructionPolicyVersion == nil || (graphConstructionPolicyVersion == 1 && lab == .quantitative
+            && evidenceClass == .practice && assessmentBlock == nil && NFGraphConstructionContract.matchesMechanic(mechanicID))
+    }
+    func permitsGraphConstruction(exercise: NFExercise?) -> Bool {
+        hasSupportedGraphConstructionPolicy && ((exercise?.contractMetadata?.graphConstruction != nil) == (graphConstructionPolicyVersion == 1))
+    }
+    var hasSupportedScienceStudyPolicy: Bool {
+        (scienceStudyPolicyVersion == nil || scienceStudyPolicyVersion == 1)
+            && (scienceStudyExcludedContextID.map { NFScienceStudyContract.contextIDs.contains($0) && scienceStudyPolicyVersion == 1 } ?? true)
+    }
     let lab: TrainingLab
     let source: SessionSource
     let seed: UInt64
@@ -4928,6 +5903,7 @@ struct SessionRequest: Identifiable, Sendable {
     let planID: String?
     let planBlockID: String?
     let isTimed: Bool?
+    let timingCondition: NFSessionTimingCondition?
     let resumeSessionID: UUID?
     let resumedResults: [Bool]
     let resumedCredits: [Double]
@@ -4970,6 +5946,7 @@ struct SessionRequest: Identifiable, Sendable {
         planID: String? = nil,
         planBlockID: String? = nil,
         isTimed: Bool? = nil,
+        timingCondition: NFSessionTimingCondition? = nil,
         resumeSessionID: UUID? = nil,
         resumedResults: [Bool] = [],
         resumedCredits: [Double] = [],
@@ -5015,6 +5992,7 @@ struct SessionRequest: Identifiable, Sendable {
         self.planID = planID
         self.planBlockID = planBlockID
         self.isTimed = isTimed
+        self.timingCondition = timingCondition
         self.resumeSessionID = resumeSessionID
         self.resumedResults = resumedResults
         self.resumedCredits = resumedCredits.count == resumedResults.count
@@ -5029,11 +6007,10 @@ struct SessionRequest: Identifiable, Sendable {
         self.resumedReflectionTrigger = resumedReflectionTrigger
         self.resumedSelectedReflectionCode = resumedSelectedReflectionCode
         self.resumedReflectionNote = resumedReflectionNote
-        self.resumedActiveDurationSeconds = max(0, resumedActiveDurationSeconds)
-        self.resumedAssessmentPracticeDurationSeconds = min(
-            self.resumedActiveDurationSeconds,
-            max(0, resumedAssessmentPracticeDurationSeconds)
-        )
+        // Retain supplied recovery payloads; runtime validation must not turn
+        // corrupt timing into an apparently measured zero-second answer.
+        self.resumedActiveDurationSeconds = resumedActiveDurationSeconds
+        self.resumedAssessmentPracticeDurationSeconds = resumedAssessmentPracticeDurationSeconds
         self.mechanicID = mechanicID
         let resolvedRetentionTargets = retentionTargets.isEmpty
             ? retentionItemIDs.enumerated().map { index, memoryItemID in
@@ -5055,8 +6032,317 @@ struct SessionRequest: Identifiable, Sendable {
         self.quarantinedAssessmentDescriptorIDs = quarantinedAssessmentDescriptorIDs
     }
 
+    var hasValidTimingDurations: Bool {
+        NFSessionDurationPolicy.isValid(resumedActiveDurationSeconds)
+            && NFSessionDurationPolicy.isValid(resumedAssessmentPracticeDurationSeconds)
+            && (requestedMinutes.map { $0 > 0 && NFSessionDurationPolicy.isValid(Double($0) * 60) } ?? true)
+    }
+
     func retentionTarget(at index: Int) -> NFRetentionReviewTarget? {
         guard index >= 0, !retentionTargets.isEmpty else { return nil }
         return retentionTargets[index % retentionTargets.count]
+    }
+}
+
+extension AppStore {
+    /// The caller supplies the exact proposed content settings. Worker input is
+    /// immutable; preview never claims a writer or creates a selection receipt.
+    func reviewedStartingPreview(request: SessionRequest, catalogScope: NFEditorialCatalogScope?,
+                                 at date: Date = Date(), calendar: Calendar = .current) async throws -> NFEditorialPrelaunchPreview {
+        if localSessions.editorialAdmissions.entries.isEmpty {
+            return .init(state: .registryUnavailable, choices: [], catalogScope: catalogScope,
+                archiveRevision: localSessions.archive.transactionRevision ?? 0)
+        }
+        guard let day = NFEditorialCapturedDay.capture(at: date, dayBoundaryHour: profile?.dayBoundaryHour ?? 4, calendar: calendar) else {
+            throw NFEditorialOverrideError.unsupported
+        }
+        let input = try localSessions.editorialPrelaunchInput(request: request, catalogScope: catalogScope,
+            rotation: offlineQuestionRotation, records: editorialControllerRecords(), day: day, at: date)
+        let task = Task.detached(priority: .userInitiated) {
+            try NFEditorialPrelaunchPolicy.preview(input, checkCancellation: { try Task.checkCancellation() })
+        }
+        let result = try await withTaskCancellationHandler(operation: { try await task.value }, onCancel: { task.cancel() })
+        try Task.checkCancellation()
+        guard result.archiveRevision == (localSessions.archive.transactionRevision ?? 0) else {
+            throw NFLocalSessionRepository.RepositoryError.staleRevision
+        }
+        return result
+    }
+}
+
+/// MainActor-only construction plan. Its transient model never crosses the
+/// archive executor or enters ModelContext before the local snapshot is saved.
+@MainActor
+private struct NFPreparedExerciseAttempt {
+    let record: AttemptRecord
+    let snapshot: NFLocalAttemptSnapshot?
+    let conflictingOriginal: AttemptRecord?
+    let conflictRecoveryOnly: Bool
+}
+
+extension AppStore {
+    func saveExerciseAttemptAsync(
+        command: NFSessionWriterCommand,
+        generatedRunID: UUID? = nil,
+        attemptID: UUID,
+        sessionID: UUID,
+        exercise: NFExercise,
+        response: NFExerciseResponse,
+        result: NFExerciseScoringResult,
+        confidence: ConfidenceLevel?,
+        shownAt: Date,
+        activeDuration: TimeInterval,
+        source: SessionSource,
+        assessmentBlock: NFAssessmentBlockKind? = nil,
+        assessmentDescriptorID: String? = nil,
+        assessmentDescriptor: NFAssessmentItemDescriptor? = nil,
+        assessmentCycle: Int? = nil,
+        planID: String? = nil,
+        planBlockID: String? = nil,
+        hintCount: Int = 0,
+        inputMode: String = "unknown",
+        interruptionCount: Int = 0,
+        revisionCount: Int = 0,
+        accommodationFlags: [String] = [],
+        wasTimed: Bool = false,
+        generationID: UUID? = nil,
+        mathWork: NFMathWorkDraft? = nil,
+        traceInspection: NFTraceInspectionDraft? = nil,
+        dataInspection: NFDataInspectionDraft? = nil,
+        scienceStudy: NFScienceStudyDraft? = nil,
+        transferRelationship: NFTransferRelationshipDraft? = nil
+    ) async throws {
+        let writerSessionID = generatedRunID ?? sessionID
+        try localSessions.validateSessionCommand(command, sessionID: writerSessionID)
+        try Task.checkCancellation()
+        let prepared = try prepareExerciseAttempt(
+            attemptID: attemptID,
+            sessionID: sessionID,
+            exercise: exercise,
+            response: response,
+            result: result,
+            confidence: confidence,
+            shownAt: shownAt,
+            activeDuration: activeDuration,
+            source: source,
+            assessmentBlock: assessmentBlock,
+            assessmentDescriptorID: assessmentDescriptorID,
+            assessmentDescriptor: assessmentDescriptor,
+            assessmentCycle: assessmentCycle,
+            planID: planID,
+            planBlockID: planBlockID,
+            hintCount: hintCount,
+            inputMode: inputMode,
+            interruptionCount: interruptionCount,
+            revisionCount: revisionCount,
+            accommodationFlags: accommodationFlags,
+            wasTimed: wasTimed,
+            generationID: generationID,
+            conflictRecoveryOnly: false, mathWork: mathWork, traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy, transferRelationship: transferRelationship)
+        if let original = prepared.conflictingOriginal {
+            try await journalPreparedAttemptConflictAsync(original: original, proposed: prepared.record,
+                exercise: exercise, result: result, sessionID: sessionID, command: command, generatedRunID: generatedRunID)
+        }
+        if let snapshot = prepared.snapshot {
+            let acknowledgement: NFLocalArchiveWriteAcknowledgement
+            if let generatedRunID {
+                acknowledgement = try await localSessions.retainGeneratedAttemptSnapshotAsync(snapshot,
+                    proposed: NFImmutableAttemptRecordSnapshot(prepared.record), runID: generatedRunID, command: command)
+            } else {
+                acknowledgement = try await localSessions.retainAttemptSnapshotAsync(snapshot, sessionID: sessionID, command: command)
+            }
+            try localSessions.validateSessionCommand(command, sessionID: writerSessionID)
+            guard !acknowledgement.verificationNeeded else { throw NFLocalSessionRepository.RepositoryError.busy }
+            // Accepted snapshot bytes remain authoritative if this command was
+            // cancelled after rename. A cancelled command inserts no core row.
+            try Task.checkCancellation()
+        }
+        try Task.checkCancellation()
+        // A remote/core reload can reveal a conflicting row during suspension.
+        // Reconcile it before the synchronous insert so its conflict journal
+        // also uses the actor, never an unexpected whole-archive main-thread write.
+        if let original = (attempts + pendingAttemptRecords).first(where: { $0.id == attemptID }),
+           !isSameAttemptCommit(original, prepared.record) {
+            try await journalPreparedAttemptConflictAsync(original: original, proposed: prepared.record,
+                exercise: exercise, result: result, sessionID: sessionID, command: command, generatedRunID: generatedRunID)
+        }
+        try withSessionCommand(command, sessionID: writerSessionID) {
+            try insertAttempt(prepared.record)
+        }
+
+    }
+
+    private func journalPreparedAttemptConflictAsync(original: AttemptRecord, proposed: AttemptRecord,
+        exercise: NFExercise, result: NFExerciseScoringResult?, sessionID: UUID, command: NFSessionWriterCommand, generatedRunID: UUID? = nil) async throws {
+        try localSessions.validateSessionCommand(command, sessionID: generatedRunID ?? sessionID)
+        if unresolvedAttemptConflictIDs.insert(original.id).inserted { invalidateProgressProjection() }
+        let entry = try NFAttemptConflictJournalEntry(original: NFImmutableAttemptRecordSnapshot(original),
+            proposed: NFImmutableAttemptRecordSnapshot(proposed),
+            originalExercise: localSessions.archive.snapshots.first(where: { $0.attemptID == original.id })?.exercise,
+            proposedExercise: exercise, proposedScore: result)
+        if !pendingAttemptConflicts.contains(where: { $0.id == entry.id }) { pendingAttemptConflicts.append(entry) }
+        let first = pendingAttemptConflicts.first(where: { $0.id == entry.id }) ?? entry
+        let acknowledgement: NFLocalArchiveWriteAcknowledgement
+        if let generatedRunID {
+            acknowledgement = try await localSessions.appendGeneratedAttemptConflictAsync(first, runID: generatedRunID, command: command)
+        } else {
+            acknowledgement = try await localSessions.appendAttemptConflictAsync(first, sessionID: sessionID, command: command)
+        }
+        try localSessions.validateSessionCommand(command, sessionID: generatedRunID ?? sessionID)
+        guard !acknowledgement.verificationNeeded else { throw NFLocalSessionRepository.RepositoryError.busy }
+        pendingAttemptConflicts.removeAll { $0.id == entry.id }
+        throw NFLocalSessionRepository.RepositoryError.conflictingAttempt
+    }
+
+}
+
+extension AppStore {
+    func saveAuthoredExerciseAttemptAsync(
+        command: NFSessionWriterCommand, runID: UUID,
+        attemptID: UUID,
+        generationID: UUID,
+        sessionID: UUID? = nil,
+        question: NFAuthoredQuestion,
+        response: NFExerciseResponse,
+        score: NFExerciseScoringResult,
+        confidence: ConfidenceLevel?,
+        sourceDocumentIDs: [UUID],
+        shownAt: Date,
+        activeDuration: TimeInterval,
+        hintCount: Int = 0,
+        mathWork: NFMathWorkDraft? = nil,
+        traceInspection: NFTraceInspectionDraft? = nil,
+        dataInspection: NFDataInspectionDraft? = nil,
+        scienceStudy: NFScienceStudyDraft? = nil,
+        transferRelationship: NFTransferRelationshipDraft? = nil
+    ) async throws {
+        let exercise = question.authoritativeExercise
+        guard NFAuthoredExerciseAuthority.validatesBinding(question),
+              exercise.evidenceClass == .documentPractice,
+              score == NFExerciseScoringEngine.score(response, for: exercise),
+              Set(exercise.provenance.sourceDocumentIDs) == Set(sourceDocumentIDs.map(\.uuidString))
+                || exercise.provenance.sourceDocumentIDs == ["legacy-personal-document"] else {
+            throw LocalDataError.verificationFailed
+        }
+        try await saveExerciseAttemptAsync(command: command, generatedRunID: runID,
+            attemptID: attemptID,
+            sessionID: sessionID ?? generationID,
+            exercise: exercise,
+            response: response,
+            result: score,
+            confidence: confidence,
+            shownAt: shownAt,
+            activeDuration: activeDuration,
+            source: .focused,
+            hintCount: hintCount,
+            generationID: generationID, mathWork: mathWork, traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy, transferRelationship: transferRelationship
+        )
+    }
+    func recordAuthoredExerciseAttemptConflictAsync(
+        command: NFSessionWriterCommand, runID: UUID,
+        attemptID: UUID, generationID: UUID, sessionID: UUID? = nil, question: NFAuthoredQuestion,
+        response: NFExerciseResponse, score: NFExerciseScoringResult, confidence: ConfidenceLevel?,
+        sourceDocumentIDs: [UUID], shownAt: Date, activeDuration: TimeInterval, hintCount: Int = 0
+    ) async throws {
+        let exercise = question.authoritativeExercise
+        guard Set(exercise.provenance.sourceDocumentIDs) == Set(sourceDocumentIDs.map(\.uuidString))
+            || exercise.provenance.sourceDocumentIDs == ["legacy-personal-document"] else {
+            throw LocalDataError.verificationFailed
+        }
+        let prepared = try prepareExerciseAttempt(attemptID: attemptID, sessionID: sessionID ?? generationID, exercise: exercise,
+            response: response, result: score, confidence: confidence, shownAt: shownAt,
+            activeDuration: activeDuration, source: .focused, hintCount: hintCount,
+            generationID: generationID, conflictRecoveryOnly: true)
+        guard let original = prepared.conflictingOriginal else { throw NFLocalSessionRepository.RepositoryError.staleRevision }
+        do {
+            try await journalPreparedAttemptConflictAsync(original: original, proposed: prepared.record,
+                exercise: exercise, result: score, sessionID: sessionID ?? generationID, command: command, generatedRunID: runID)
+        } catch NFLocalSessionRepository.RepositoryError.conflictingAttempt {
+            // This API acknowledges only the durable diagnostic, never an answer.
+            return
+        }
+    }
+}
+
+
+extension AppStore {
+    @discardableResult
+    func beginEditorialRepair(from request: SessionRequest, commandID: UUID,
+        command: NFSessionWriterCommand) -> Bool {
+        do { try localSessions.validateSessionCommand(command, sessionID: request.id) }
+        catch { lastErrorMessage = error.localizedDescription; return false }
+        guard let origin = localSessions.editorialReviewOrigin(sessionID: request.id),
+              let original = localSessions.archive.sessions.first(where: { $0.id == request.id }),
+              original.ownerDeviceID == localSessions.ownerDeviceID,
+              (try? NFLocalReservationBridge.configurationDigest(original.request)) == (try? NFLocalReservationBridge.configurationDigest(request)),
+              activeSessionRequest?.id == request.id || activeSessionRequest == nil else {
+            lastErrorMessage = NFEditorialOverrideError.unsupported.localizedDescription; return false
+        }
+        let active = activeSessionRequest
+        activeSessionRequest = nil
+        let succeeded = beginSession(lab: request.lab, source: .focused, preferredMentalMathKind: request.preferredMentalMathKind,
+            field: request.field, topic: request.topic, targetDifficulty: request.targetDifficulty,
+            requestedItemCount: 1, seedOverride: request.seed,
+            isTimed: request.isTimed, timingCondition: original.checkpoint.timingConditionOverride ?? request.timingCondition,
+            launchLocaleIdentifier: request.localeIdentifier, launchCommandID: commandID,
+            repairOriginAttemptID: origin.observationID, repairSemanticExclusions: original.checkpoint.semanticExclusions,
+            reservationStrategy: .adaptiveItem, tracePolicyVersion: request.tracePolicyVersion,
+            scienceStudyPolicyVersion: request.scienceStudyPolicyVersion,
+            transferPolicyVersion: request.transferPolicyVersion,
+            graphConstructionPolicyVersion: request.graphConstructionPolicyVersion,
+            retrievalAuthorityPolicyVersion: request.retrievalAuthorityPolicyVersion,
+            retrievalAssetPolicyVersion: request.retrievalAssetPolicyVersion,
+            spatialStructurePolicyVersion: request.spatialStructurePolicyVersion,
+            coordinateTransformPolicyVersion: request.coordinateTransformPolicyVersion,
+            solidSectionPolicyVersion: request.solidSectionPolicyVersion,
+            netFoldingPolicyVersion: request.netFoldingPolicyVersion,
+            coordinateReasoningPolicyVersion: request.coordinateReasoningPolicyVersion,
+            spatialAssemblyPolicyVersion: request.spatialAssemblyPolicyVersion,
+            editorialStartingBand: origin.band, editorialStartingFamilyScope: origin.scope,
+            editorialCatalogActivityID: request.ordinaryDelivery?.editorialPolicy?.catalogScope?.activityID,
+            editorialReviewIntent: .init(role: .repair, originObservationID: origin.observationID.uuidString))
+        if !succeeded { activeSessionRequest = active }
+        return succeeded
+    }
+}
+
+extension AppStore {
+    /// The transient model stays on the MainActor. Its immutable value and exact
+    /// question snapshot are authenticated by the prepared generated draft.
+    func saveGeneratedSkippedExerciseAsync(command: NFSessionWriterCommand, runID: UUID,
+        attemptID: UUID, sessionID: UUID, generationID: UUID, exercise: NFExercise,
+        response: NFExerciseResponse, shownAt: Date, activeDuration: TimeInterval,
+        revealedSolution: Bool, hintCount: Int, mathWork: NFMathWorkDraft?,
+        traceInspection: NFTraceInspectionDraft?, dataInspection: NFDataInspectionDraft?,
+        scienceStudy: NFScienceStudyDraft?, transferRelationship: NFTransferRelationshipDraft?,
+        conflictRecoveryOnly: Bool = false) async throws {
+        try localSessions.validateSessionCommand(command, sessionID: runID)
+        let record = try prepareSkippedExercise(attemptID: attemptID, sessionID: sessionID,
+            exercise: exercise, shownAt: shownAt, activeDuration: activeDuration, source: .focused,
+            revealedSolution: revealedSolution,
+            draftResponse: String(decoding: try JSONEncoder().encode(response), as: UTF8.self),
+            hintCount: hintCount, traceInspection: traceInspection, dataInspection: dataInspection,
+            scienceStudy: scienceStudy, transferRelationship: transferRelationship,
+            preserveDraftResponse: true, generationID: generationID, mathWork: mathWork)
+        if let original = (attempts + pendingAttemptRecords).first(where: { $0.id == attemptID }),
+           conflictRecoveryOnly || !isSameAttemptCommit(original, record) {
+            try await journalPreparedAttemptConflictAsync(original: original, proposed: record,
+                exercise: exercise, result: nil, sessionID: sessionID, command: command, generatedRunID: runID)
+        }
+        guard !conflictRecoveryOnly else { throw NFLocalSessionRepository.RepositoryError.staleRevision }
+        let snapshot = NFLocalAttemptSnapshot(attemptID: attemptID, exercise: exercise, mathWork: mathWork,
+            traceInspection: traceInspection, dataInspection: dataInspection, scienceStudy: scienceStudy,
+            transferRelationship: transferRelationship)
+        let acknowledgement = try await localSessions.retainGeneratedAttemptSnapshotAsync(snapshot,
+            proposed: NFImmutableAttemptRecordSnapshot(record), runID: runID, command: command, unscored: true)
+        try localSessions.validateSessionCommand(command, sessionID: runID)
+        guard !acknowledgement.verificationNeeded else { throw NFLocalSessionRepository.RepositoryError.busy }
+        try Task.checkCancellation()
+        if let original = (attempts + pendingAttemptRecords).first(where: { $0.id == attemptID }),
+           !isSameAttemptCommit(original, record) {
+            try await journalPreparedAttemptConflictAsync(original: original, proposed: record,
+                exercise: exercise, result: nil, sessionID: sessionID, command: command, generatedRunID: runID)
+        }
+        try withSessionCommand(command, sessionID: runID) { try insertAttempt(record) }
     }
 }

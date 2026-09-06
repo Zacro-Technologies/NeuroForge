@@ -18,7 +18,7 @@ struct SeededGenerator: RandomNumberGenerator, Sendable {
 
 enum AdaptiveEngine {
     static let policyVersion = 1
-    static let reducerVersion = 2
+    static let reducerVersion = 3
 
     static func makeDailyPlan(
         profile: ProfileSnapshot,
@@ -89,62 +89,20 @@ enum AdaptiveEngine {
     }
 
     static func reduce(_ attempts: [AttemptDTO]) -> [SkillSummary] {
-        TrainingLab.allCases.map { lab in
-            let relevant = attempts
-                .filter {
-                    attributedWeight(of: $0, to: lab) > 0
-                        && $0.evidenceClass != .documentPractice
-                        && $0.evidenceWeight > 0
-                }
-                .sorted { lhs, rhs in
-                    if lhs.submittedAt == rhs.submittedAt { return lhs.id.uuidString < rhs.id.uuidString }
-                    return lhs.submittedAt < rhs.submittedAt
-                }
-
-            var theta = 0.0
-            for (index, attempt) in relevant.enumerated() {
-                let expected = 1.0 / (1.0 + exp(-theta))
-                let k = max(0.08, 0.34 / sqrt(Double(index + 1)))
-                let outcome = attempt.credit
-                let weightedEvidence = attempt.evidenceWeight * attributedWeight(of: attempt, to: lab)
-                theta = min(3, max(-3, theta + k * weightedEvidence * (outcome - expected)))
-            }
-
-            let count = relevant.count
-            let totalWeight = relevant.reduce(0) {
-                $0 + $1.evidenceWeight * attributedWeight(of: $1, to: lab)
-            }
-            let earnedCredit = relevant.reduce(0) {
-                $0 + $1.credit * $1.evidenceWeight * attributedWeight(of: $1, to: lab)
-            }
-            let accuracy = totalWeight == 0 ? nil : earnedCredit / totalWeight
-            let status: EstimateStatus
-            switch count {
-            case 0: status = .unassessed
-            case 1...5: status = .emergingEvidence
-            case 6...19: status = .developing
-            default: status = .stable
-            }
-
-            let confidenceAttempts = relevant.compactMap { attempt -> (Double, Double)? in
-                guard let confidence = attempt.confidence else { return nil }
-                return (confidence.probability, attempt.credit)
-            }
-            let bias: Double? = confidenceAttempts.isEmpty ? nil : confidenceAttempts.reduce(0) { partial, pair in
-                partial + pair.0 - pair.1
-            } / Double(confidenceAttempts.count)
-
-            return SkillSummary(
-                id: lab.skillID,
-                lab: lab,
-                theta: theta,
-                uncertainty: count == 0 ? 1 : max(0.12, 1 / sqrt(Double(count))),
-                evidenceCount: count,
-                accuracy: accuracy,
-                status: status,
-                calibrationBias: bias,
-                lastTrained: relevant.last?.submittedAt
-            )
+        let observations = attempts.compactMap(\.editorialObservation)
+        let day = observations.map(\.canonicalDayOrdinal).max() ?? 0
+        let evidence = EditorialBandEvidenceV1.reduce(observations, decisionDayOrdinal: day)
+        return TrainingLab.allCases.map { lab in
+            let relevant = attempts.filter { $0.lab == lab && $0.editorialObservation != nil }
+            let ids = Set(relevant.compactMap { $0.editorialObservation?.id })
+            let compatible = evidence.summaries.filter { !$0.observationIDs.filter(ids.contains).isEmpty && $0.group.lane == .practice }
+            // A legacy lab-level compatibility view may expose a single compatible bucket;
+            // it never averages unrelated editorial bands or resurrects a latent theta.
+            let selected = compatible.count == 1 ? compatible.first : nil
+            return SkillSummary(id: lab.skillID, lab: lab, theta: 0, uncertainty: 1,
+                evidenceCount: selected?.count ?? 0, accuracy: selected?.recentMeanCredit,
+                status: selected == nil ? .unassessed : .emergingEvidence,
+                calibrationBias: nil, lastTrained: relevant.map(\.submittedAt).max())
         }
     }
 

@@ -1,0 +1,64 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "00006020-000228AE0287401E",
+        "deviceName": "My Mac",
+        "modelName": "MacBook Pro",
+        "osBuildNumber": "26A5425a",
+        "osVersion": "27.0",
+        "platform": "macOS"
+      },
+      "expectedFailures": 0,
+      "failedTests": 2,
+      "passedTests": 1235,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "NeuroForge \u00b7 Built with macOS 27.0",
+  "expectedFailures": 0,
+  "failedTests": 2,
+  "finishTime": 1788641422.109,
+  "passedTests": 1235,
+  "result": "Failed",
+  "skippedTests": 0,
+  "startTime": 1788641098.025,
+  "statistics": [],
+  "testFailures": [
+    {
+      "failureText": "Crash: NeuroForge at <external symbol>",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 998,
+      "testIdentifierString": "RetrievalWorkerStackTests/testActualDetachedPrelaunchValidatesEveryRetrievalAssetFormWithoutChangingAuthorityOrStore()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/RetrievalWorkerStackTests/testActualDetachedPrelaunchValidatesEveryRetrievalAssetFormWithoutChangingAuthorityOrStore",
+      "testName": "testActualDetachedPrelaunchValidatesEveryRetrievalAssetFormWithoutChangingAuthorityOrStore()"
+    },
+    {
+      "failureText": "Crash: NeuroForge at <external symbol>",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 274,
+      "testIdentifierString": "DefaultContentCatalogTests/testTypedRetrievalAssetPreviewAndNextRemainInEquationActivity()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/DefaultContentCatalogTests/testTypedRetrievalAssetPreviewAndNextRemainInEquationActivity",
+      "testName": "testTypedRetrievalAssetPreviewAndNextRemainInEquationActivity()"
+    }
+  ],
+  "title": "Test - NeuroForge",
+  "topInsights": [
+    {
+      "category": "Common Failures",
+      "impact": "100% of failures",
+      "text": "2 runs of 2 tests failed with Crash: NeuroForge at <external symbol>"
+    },
+    {
+      "category": "Longest Test Runs",
+      "impact": "63% of duration",
+      "text": "13 longest test runs with outlier durations exceeding 4.56s (three standard deviations)"
+    }
+  ],
+  "totalTestCount": 1237
+}

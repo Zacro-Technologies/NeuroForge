@@ -1,0 +1,8 @@
+2026-09-05 scratch verification
+Pure Swift geometry: executed 370 cases / 132 conservative semantic query classes.
+Independent rational/geometry oracle: passed all cases and rendered boundary point checks.
+Swift syntax parse: passed 15 changed files; not a module typecheck.
+Catalog JSON: passed.
+git apply --check: passed after current root generator/factory frame splits.
+Xcode build / XCTest / installed UI: not run here; root verification pending.
+Patch SHA256: 10c80d5dbdb0032bca9e613353347b0f1748232bb9ec436bdc87d3736d79a5e7

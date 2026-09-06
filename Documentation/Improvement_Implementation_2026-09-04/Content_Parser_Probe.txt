@@ -1,0 +1,18 @@
+Executed 2026-09-05T01:50:19.115709+00:00
+Production parser compiled with NFExactArithmetic.swift, NFRestrictedSymbolicAuthority.swift and a standalone NFNumericTolerance stub (no app/runtime build claim).
+Command: xcrun swiftc Sources/TrainingEngine/NFExactArithmetic.swift Sources/TrainingEngine/NFRestrictedSymbolicAuthority.swift /tmp/NFSymbolicProbe.swift -o /tmp/NFSymbolicProbe
+
+4x equivalent
+4*x equivalent
+2x+2x equivalent
+4x^1 equivalent
+-(-4x) equivalent
+2x different
+4/x unsupported
+x^99 unsupported
+((x^12)^12)^12 unsupported
+0^0 unsupported
+F(b)-F(a) equivalent
+(F(b)) - ((F(a))) equivalent
+f(b)-f(a) different
+F*b-F*a unsupported

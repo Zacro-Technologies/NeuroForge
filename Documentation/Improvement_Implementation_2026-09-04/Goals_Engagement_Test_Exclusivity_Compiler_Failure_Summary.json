@@ -1,0 +1,16 @@
+{
+  "devicesAndConfigurations": [],
+  "environmentDescription": "NeuroForge \u00b7 Built with macOS 27.0",
+  "expectedFailures": 0,
+  "failedTests": 0,
+  "finishTime": 1788651842.7,
+  "passedTests": 0,
+  "result": "unknown",
+  "skippedTests": 0,
+  "startTime": 1788651775.82,
+  "statistics": [],
+  "testFailures": [],
+  "title": "Test - NeuroForge",
+  "topInsights": [],
+  "totalTestCount": 0
+}

@@ -1,0 +1,114 @@
+(lldb) target create "/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib"
+Current executable set to '/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib' (arm64).
+(lldb) disassemble -c 18 -n $s10NeuroForge27NFFallbackExerciseGeneratorO14buildCandidate33_3717C4C1F71A5AA83298DEBDFD9E9A58LLyAA10NFExerciseVAA0P17GenerationRequestVKFZ
+NeuroForge.debug.dylib`static NFFallbackExerciseGenerator.buildCandidate(_:):
+NeuroForge.debug.dylib[0xcb1924] <+0>:  stp    x28, x20, [sp, #-0x20]!
+NeuroForge.debug.dylib[0xcb1928] <+4>:  stp    x29, x30, [sp, #0x10]
+NeuroForge.debug.dylib[0xcb192c] <+8>:  add    x29, sp, #0x10
+NeuroForge.debug.dylib[0xcb1930] <+12>: mov    w9, #0x1220               ; =4640 
+NeuroForge.debug.dylib[0xcb1934] <+16>: adrp   x16, 6021
+NeuroForge.debug.dylib[0xcb1938] <+20>: ldr    x16, [x16, #0x448]
+NeuroForge.debug.dylib[0xcb193c] <+24>: blr    x16
+NeuroForge.debug.dylib[0xcb1940] <+28>: sub    sp, sp, #0x1, lsl #12     ; =0x1000 
+NeuroForge.debug.dylib[0xcb1944] <+32>: sub    sp, sp, #0x220
+NeuroForge.debug.dylib[0xcb1948] <+36>: str    x8, [sp, #0x28]
+NeuroForge.debug.dylib[0xcb194c] <+40>: str    x0, [sp, #0x30]
+NeuroForge.debug.dylib[0xcb1950] <+44>: str    xzr, [sp, #0x48]
+NeuroForge.debug.dylib[0xcb1954] <+48>: mov    x8, x0
+NeuroForge.debug.dylib[0xcb1958] <+52>: str    x8, [sp, #0x48]
+NeuroForge.debug.dylib[0xcb195c] <+56>: add    x8, sp, #0x50
+NeuroForge.debug.dylib[0xcb1960] <+60>: bl     0xcb1a24                  ; static NeuroForge.NFFallbackExerciseGenerator.makeDraft(NeuroForge.NFExerciseGenerationRequest) throws -> NeuroForge.NFFallbackExerciseGenerator.Draft at NFFallbackExerciseGenerator.swift:125
+NeuroForge.debug.dylib[0xcb1964] <+64>: str    x21, [sp, #0x38]
+NeuroForge.debug.dylib[0xcb1968] <+68>: mov    x8, x21
+
+(lldb) target create "/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib"
+Current executable set to '/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib' (arm64).
+(lldb) disassemble -c 18 -n $s10NeuroForge27NFFallbackExerciseGeneratorO9makeDraft33_3717C4C1F71A5AA83298DEBDFD9E9A58LLyAC0G0AELLVAA27NFExerciseGenerationRequestVKFZ
+NeuroForge.debug.dylib`static NFFallbackExerciseGenerator.makeDraft(_:):
+NeuroForge.debug.dylib[0xcb1a24] <+0>:  stp    x28, x20, [sp, #-0x20]!
+NeuroForge.debug.dylib[0xcb1a28] <+4>:  stp    x29, x30, [sp, #0x10]
+NeuroForge.debug.dylib[0xcb1a2c] <+8>:  add    x29, sp, #0x10
+NeuroForge.debug.dylib[0xcb1a30] <+12>: mov    w9, #0xbf80               ; =49024 
+NeuroForge.debug.dylib[0xcb1a34] <+16>: adrp   x16, 6021
+NeuroForge.debug.dylib[0xcb1a38] <+20>: ldr    x16, [x16, #0x448]
+NeuroForge.debug.dylib[0xcb1a3c] <+24>: blr    x16
+NeuroForge.debug.dylib[0xcb1a40] <+28>: sub    sp, sp, #0xb, lsl #12     ; =0xb000 
+NeuroForge.debug.dylib[0xcb1a44] <+32>: sub    sp, sp, #0xf80
+NeuroForge.debug.dylib[0xcb1a48] <+36>: add    x9, sp, #0xb, lsl #12     ; =0xb000 
+NeuroForge.debug.dylib[0xcb1a4c] <+40>: add    x9, x9, #0x630
+NeuroForge.debug.dylib[0xcb1a50] <+44>: str    x9, [sp, #0x738]
+NeuroForge.debug.dylib[0xcb1a54] <+48>: add    x9, sp, #0xb, lsl #12     ; =0xb000 
+NeuroForge.debug.dylib[0xcb1a58] <+52>: add    x9, x9, #0x597
+NeuroForge.debug.dylib[0xcb1a5c] <+56>: str    x9, [sp, #0x6f0]
+NeuroForge.debug.dylib[0xcb1a60] <+60>: add    x9, sp, #0x7, lsl #12     ; =0x7000 
+NeuroForge.debug.dylib[0xcb1a64] <+64>: add    x9, x9, #0x648
+NeuroForge.debug.dylib[0xcb1a68] <+68>: str    x9, [sp, #0x740]
+
+(lldb) target create "/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib"
+Current executable set to '/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib' (arm64).
+(lldb) disassemble -c 18 -n $s10NeuroForge27NFFallbackExerciseGeneratorO17assembleCandidate33_3717C4C1F71A5AA83298DEBDFD9E9A58LL_5draft13effectiveSeedAA10NFExerciseVAA0S17GenerationRequestV_AC5DraftAELLVs6UInt64VtKFZ
+NeuroForge.debug.dylib`static NFFallbackExerciseGenerator.assembleCandidate(_:draft:effectiveSeed:):
+NeuroForge.debug.dylib[0xcb633c] <+0>:  str    x28, [sp, #-0x60]!
+NeuroForge.debug.dylib[0xcb6340] <+4>:  stp    x27, x26, [sp, #0x10]
+NeuroForge.debug.dylib[0xcb6344] <+8>:  stp    x25, x24, [sp, #0x20]
+NeuroForge.debug.dylib[0xcb6348] <+12>: stp    x23, x22, [sp, #0x30]
+NeuroForge.debug.dylib[0xcb634c] <+16>: stp    x20, x19, [sp, #0x40]
+NeuroForge.debug.dylib[0xcb6350] <+20>: stp    x29, x30, [sp, #0x50]
+NeuroForge.debug.dylib[0xcb6354] <+24>: add    x29, sp, #0x50
+NeuroForge.debug.dylib[0xcb6358] <+28>: mov    w9, #0x8720               ; =34592 
+NeuroForge.debug.dylib[0xcb635c] <+32>: movk   w9, #0x1, lsl #16
+NeuroForge.debug.dylib[0xcb6360] <+36>: adrp   x16, 6016
+NeuroForge.debug.dylib[0xcb6364] <+40>: ldr    x16, [x16, #0x448]
+NeuroForge.debug.dylib[0xcb6368] <+44>: blr    x16
+NeuroForge.debug.dylib[0xcb636c] <+48>: sub    sp, sp, #0x18, lsl #12    ; =0x18000 
+NeuroForge.debug.dylib[0xcb6370] <+52>: sub    sp, sp, #0x720
+NeuroForge.debug.dylib[0xcb6374] <+56>: mov    x19, sp
+NeuroForge.debug.dylib[0xcb6378] <+60>: add    x9, x19, #0x17, lsl #12   ; =0x17000 
+NeuroForge.debug.dylib[0xcb637c] <+64>: add    x9, x9, #0xde8
+NeuroForge.debug.dylib[0xcb6380] <+68>: str    x9, [x19, #0x12f0]
+
+(lldb) target create "/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib"
+Current executable set to '/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib' (arm64).
+(lldb) disassemble -c 18 -n $s10NeuroForge37NFDeterministicSessionExerciseFactoryO011materializeE033_5BA6BCB667B390D5CCC75C2779E8A8A6LL7request5index20assessmentDescriptor28excludingContentFingerprints14unavailableLabAA10NFExerciseVSgAA0D7RequestV_SiAA016NFAssessmentItemT0VSgShySSGAA08TrainingY0OztFZ
+NeuroForge.debug.dylib`static NFDeterministicSessionExerciseFactory.materializeExercise(request:index:assessmentDescriptor:excludingContentFingerprints:unavailableLab:):
+NeuroForge.debug.dylib[0x112ed2c] <+0>:  stp    x28, x27, [sp, #-0x60]!
+NeuroForge.debug.dylib[0x112ed30] <+4>:  stp    x26, x25, [sp, #0x10]
+NeuroForge.debug.dylib[0x112ed34] <+8>:  stp    x24, x23, [sp, #0x20]
+NeuroForge.debug.dylib[0x112ed38] <+12>: stp    x22, x21, [sp, #0x30]
+NeuroForge.debug.dylib[0x112ed3c] <+16>: stp    x20, x19, [sp, #0x40]
+NeuroForge.debug.dylib[0x112ed40] <+20>: stp    x29, x30, [sp, #0x50]
+NeuroForge.debug.dylib[0x112ed44] <+24>: add    x29, sp, #0x50
+NeuroForge.debug.dylib[0x112ed48] <+28>: mov    w9, #0x4230               ; =16944 
+NeuroForge.debug.dylib[0x112ed4c] <+32>: movk   w9, #0x3, lsl #16
+NeuroForge.debug.dylib[0x112ed50] <+36>: adrp   x16, 4872
+NeuroForge.debug.dylib[0x112ed54] <+40>: ldr    x16, [x16, #0x448]
+NeuroForge.debug.dylib[0x112ed58] <+44>: blr    x16
+NeuroForge.debug.dylib[0x112ed5c] <+48>: sub    sp, sp, #0x34, lsl #12    ; =0x34000 
+NeuroForge.debug.dylib[0x112ed60] <+52>: sub    sp, sp, #0x230
+NeuroForge.debug.dylib[0x112ed64] <+56>: add    x9, sp, #0x32, lsl #12    ; =0x32000 
+NeuroForge.debug.dylib[0x112ed68] <+60>: add    x9, x9, #0x758
+NeuroForge.debug.dylib[0x112ed6c] <+64>: str    x9, [sp, #0x10b8]
+NeuroForge.debug.dylib[0x112ed70] <+68>: add    x9, sp, #0x2b, lsl #12    ; =0x2b000 
+
+(lldb) target create "/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib"
+Current executable set to '/tmp/NeuroForge-improvement-build/Build/Products/Debug/NeuroForge.app/Contents/MacOS/NeuroForge.debug.dylib' (arm64).
+(lldb) disassemble -c 18 -n $s10NeuroForge37NFDeterministicSessionExerciseFactoryO022materializeAlternativeE033_5BA6BCB667B390D5CCC75C2779E8A8A6LL7request11selectedLab7purpose7context16resolvedBaseSeed15generationIndex10probeCount15preferredFormat28excludingContentFingerprintsAA10NFExerciseVSgAA0D7RequestV_AA08TrainingT0OAA17NFExercisePurposeOAA23NFExerciseSourceContextVs6UInt64VS2iAA22NFAssessmentItemFormatOSgShySSGtFZ
+NeuroForge.debug.dylib`static NFDeterministicSessionExerciseFactory.materializeAlternativeExercise(request:selectedLab:purpose:context:resolvedBaseSeed:generationIndex:probeCount:preferredFormat:excludingContentFingerprints:):
+NeuroForge.debug.dylib[0x1136824] <+0>:  stp    x28, x27, [sp, #-0x60]!
+NeuroForge.debug.dylib[0x1136828] <+4>:  stp    x26, x25, [sp, #0x10]
+NeuroForge.debug.dylib[0x113682c] <+8>:  stp    x24, x23, [sp, #0x20]
+NeuroForge.debug.dylib[0x1136830] <+12>: stp    x22, x21, [sp, #0x30]
+NeuroForge.debug.dylib[0x1136834] <+16>: stp    x20, x19, [sp, #0x40]
+NeuroForge.debug.dylib[0x1136838] <+20>: stp    x29, x30, [sp, #0x50]
+NeuroForge.debug.dylib[0x113683c] <+24>: add    x29, sp, #0x50
+NeuroForge.debug.dylib[0x1136840] <+28>: mov    w9, #0xcdd0               ; =52688 
+NeuroForge.debug.dylib[0x1136844] <+32>: adrp   x16, 4864
+NeuroForge.debug.dylib[0x1136848] <+36>: ldr    x16, [x16, #0x448]
+NeuroForge.debug.dylib[0x113684c] <+40>: blr    x16
+NeuroForge.debug.dylib[0x1136850] <+44>: sub    sp, sp, #0xc, lsl #12     ; =0xc000 
+NeuroForge.debug.dylib[0x1136854] <+48>: sub    sp, sp, #0xdd0
+NeuroForge.debug.dylib[0x1136858] <+52>: add    x10, sp, #0x9, lsl #12    ; =0x9000 
+NeuroForge.debug.dylib[0x113685c] <+56>: add    x10, x10, #0xe28
+NeuroForge.debug.dylib[0x1136860] <+60>: str    x10, [sp, #0x320]
+NeuroForge.debug.dylib[0x1136864] <+64>: add    x9, sp, #0x8, lsl #12     ; =0x8000 
+NeuroForge.debug.dylib[0x1136868] <+68>: add    x9, x9, #0x7e8

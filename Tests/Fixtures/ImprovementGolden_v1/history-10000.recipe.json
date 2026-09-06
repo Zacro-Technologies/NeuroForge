@@ -1,0 +1,12 @@
+{
+  "attemptUUIDCategory": "0000a110",
+  "count": 10000,
+  "creator": "regenerate.py --output-dir /tmp/neuroforge-golden --large-count 10000",
+  "expandedJSONCommitted": false,
+  "fixedSeed": 347811,
+  "fixedTimestamp": "2026-09-04T12:00:00Z",
+  "kind": "synthetic-history",
+  "rawResponse": " { \"numeric\" : { \"_0\" : { \"value\" : \"24\", \"unit\" : null } } } ",
+  "recipeVersion": 1,
+  "sessionUUIDCategory": "0000a120"
+}

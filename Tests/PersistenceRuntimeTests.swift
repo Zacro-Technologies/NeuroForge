@@ -493,7 +493,7 @@ final class PersistenceRuntimeTests: XCTestCase {
     }
 
     @MainActor
-    func testRequiredReflectionDraftSurvivesCheckpointReloadAndClearsAfterSave() throws {
+    func testOptionalReflectionDraftSurvivesExactCheckpointReloadAndClearsAfterSave() throws {
         let (store, container) = try makeStore()
         defer { _ = container }
         let planID = "reflection-recovery-plan"
@@ -523,6 +523,8 @@ final class PersistenceRuntimeTests: XCTestCase {
         runtime.submitResponse()
         runtime.commit(confidence: .certain, store: store)
 
+        XCTAssertEqual(runtime.stage, .feedback)
+        runtime.reflect()
         XCTAssertEqual(runtime.stage, .reflection)
         XCTAssertEqual(store.attempts.count, 1)
         runtime.selectedReflectionCode = .inputError
@@ -535,19 +537,11 @@ final class PersistenceRuntimeTests: XCTestCase {
         XCTAssertEqual(saved.selectedReflectionCodeRaw, NFErrorReflectionCode.inputError.rawValue)
         XCTAssertEqual(saved.reflectionNote, "I entered the adjacent value.")
 
-        let restoredStore = AppStore(context: container.mainContext)
-        XCTAssertTrue(restoredStore.beginSession(
-            lab: .mentalMath,
-            source: .today,
-            evidenceClass: .practice,
-            requestedItemCount: itemCount,
-            seedOverride: runtime.request.seed,
-            planID: planID,
-            planBlockID: blockID
-        ))
+        runtime.releaseWriter()
+        let restoredStore = AppStore(context: container.mainContext, localSessionRepository: store.localSessions)
+        XCTAssertTrue(restoredStore.resumeSession(runtime.sessionID))
         let resumedRequest = try XCTUnwrap(restoredStore.activeSessionRequest)
-        XCTAssertEqual(resumedRequest.startingIndex, 0)
-        XCTAssertEqual(resumedRequest.resumedPendingReflectionAttemptID, saved.pendingReflectionAttemptID)
+        XCTAssertEqual(resumedRequest.localCheckpoint?.index, 0)
 
         let resumed = NFUniversalSessionRuntime(request: resumedRequest)
         XCTAssertEqual(resumed.stage, .reflection)
@@ -623,6 +617,7 @@ final class PersistenceRuntimeTests: XCTestCase {
         reflection.numericUnit = schema.answer.canonicalUnit ?? ""
         reflection.submitResponse()
         reflection.commit(confidence: .certain, store: store)
+        reflection.reflect()
         assertInjectedCheckpointFailure(reflection, expectedStage: .reflection)
 
         let feedback = NFUniversalSessionRuntime(request: SessionRequest(
@@ -687,11 +682,18 @@ final class PersistenceRuntimeTests: XCTestCase {
             $0.id == dimension.skillID
         }))
         let ongoing = try XCTUnwrap(store.skillSummaries.first(where: { $0.lab == .quantitative }))
-        XCTAssertEqual(baseline.evidenceCount, 8)
-        XCTAssertEqual(baseline.accuracy, 1)
-        XCTAssertEqual(baseline.status, .developing)
-        XCTAssertEqual(ongoing.evidenceCount, 9)
-        XCTAssertEqual(try XCTUnwrap(ongoing.accuracy), 8.0 / 9.0, accuracy: 0.000_001)
+        XCTAssertEqual(baseline.evidenceCount, 0)
+        XCTAssertNil(baseline.accuracy)
+        XCTAssertEqual(baseline.status, .unassessed)
+        XCTAssertEqual(ongoing.evidenceCount, 0)
+        XCTAssertNil(ongoing.accuracy)
+        let protectedHistory = try XCTUnwrap(NFHistoricalPracticeProjection.reduce(
+            attempts: store.attempts.filter { $0.evidenceClassRaw == EvidenceClass.assessmentHoldout.rawValue }.map(\.dto)).first)
+        XCTAssertEqual(protectedHistory.legacyCount, 8)
+        XCTAssertEqual(protectedHistory.legacyMeanCredit, 1)
+        let allHistory = try XCTUnwrap(NFHistoricalPracticeProjection.reduce(attempts: store.attempts.map(\.dto)).first)
+        XCTAssertEqual(allHistory.legacyCount, 9)
+        XCTAssertEqual(try XCTUnwrap(allHistory.legacyMeanCredit), 8.0 / 9.0, accuracy: 0.000_001)
     }
 
     @MainActor
@@ -819,12 +821,17 @@ final class PersistenceRuntimeTests: XCTestCase {
         while runtime.stage != .summary, safetyCounter < 20 {
             XCTAssertEqual(runtime.stage, .item)
             fillResponse(in: runtime)
-            runtime.advance(store: reloaded)
-            XCTAssertEqual(runtime.stage, .confidence)
-            runtime.commit(confidence: .fairlyConfident, store: reloaded)
+            runtime.chooseConfidence(.fairlyConfident)
+            let priorCount = reloaded.attempts.count
+            let descriptorBeforeSubmit = runtime.assessmentDescriptor?.id
+            runtime.submitInline(store: reloaded)
             finishSelfCheckComparisonIfNeeded(runtime, store: reloaded)
-            XCTAssertEqual(runtime.stage, .feedback)
-            runtime.advance(store: reloaded)
+            XCTAssertEqual(runtime.stage, .feedback,
+                "descriptor=\(descriptorBeforeSubmit ?? "none") paused=\(runtime.isPaused) confidence=\(String(describing: runtime.selectedConfidence)) save=\(runtime.saveError ?? "none") unavailable=\(runtime.unavailableReason ?? "none")")
+            XCTAssertEqual(reloaded.attempts.count, priorCount + 1, "One accepted answer must create one durable response.")
+            XCTAssertEqual(runtime.assessmentDescriptor?.id, descriptorBeforeSubmit,
+                "Submitting must retain the protected item until explicit Next.")
+            runtime.next(store: reloaded)
             safetyCounter += 1
         }
         XCTAssertLessThan(safetyCounter, 20)
@@ -878,6 +885,7 @@ final class PersistenceRuntimeTests: XCTestCase {
             seed: 0xD0C0,
             requestedMinutes: 5,
             evidenceClass: .documentPractice,
+            requestedItemCount: 1,
             isTimed: true
         ))
 
@@ -929,8 +937,6 @@ final class PersistenceRuntimeTests: XCTestCase {
 
         fillResponse(in: runtime)
         runtime.advance(store: store)
-        XCTAssertEqual(runtime.stage, .confidence)
-        runtime.commit(confidence: .fairlyConfident, store: store)
         finishSelfCheckComparisonIfNeeded(runtime, store: store)
 
         XCTAssertEqual(runtime.stage, .feedback)
@@ -1247,8 +1253,13 @@ final class PersistenceRuntimeTests: XCTestCase {
         let summary = try XCTUnwrap(
             store.baselineDimensionSummaries.first { $0.id == answeredDescriptor.skillID }
         )
-        XCTAssertEqual(summary.evidenceCount, 1)
-        XCTAssertEqual(try XCTUnwrap(summary.accuracy), 0.75, accuracy: 1e-12)
+        XCTAssertEqual(summary.evidenceCount, 0)
+        XCTAssertNil(summary.accuracy)
+        let history = try XCTUnwrap(NFHistoricalPracticeProjection.reduce(
+            attempts: [answeredRecord.dto, persistedSkip.dto]).first)
+        XCTAssertEqual(history.legacyCount, 1)
+        XCTAssertEqual(try XCTUnwrap(history.legacyMeanCredit), 0.75, accuracy: 1e-12)
+        XCTAssertEqual(history.excludedAttemptIDs, [skippedAttemptID.uuidString])
     }
 
     @MainActor
@@ -1432,6 +1443,66 @@ final class PersistenceRuntimeTests: XCTestCase {
     }
 
     @MainActor
+    func testPlanPolicyUpgradePreservesFrozenPayloadAcrossReadinessTravelAndRelaunch() throws {
+        let createdAt = try XCTUnwrap(ISO8601DateFormatter().date(from: "2026-08-05T23:00:00Z"))
+        var utc = Calendar(identifier: .gregorian)
+        utc.timeZone = try XCTUnwrap(TimeZone(identifier: "UTC"))
+        var tokyo = utc
+        tokyo.timeZone = try XCTUnwrap(TimeZone(identifier: "Asia/Tokyo"))
+        for version in [4, 999] {
+            let (store, container) = try makeStore()
+            defer { _ = container }
+            let profile = store.profileSnapshot
+            let fresh = NFDailyScheduler.canonicalPlan(for: .init(profile: profile, date: createdAt), calendar: utc)
+            var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(fresh)) as? [String: Any])
+            object["policyVersion"] = version
+            object["id"] = "frozen-policy-\(version)"
+            let frozen = try JSONDecoder().decode(NFCanonicalDailyPlan.self,
+                from: JSONSerialization.data(withJSONObject: object))
+            let record = try DailyPlanRecord(plan: frozen, boundaryContext: .make(
+                at: createdAt, dayBoundaryHour: profile.dayBoundaryHour, calendar: utc))
+            store.context.insert(record)
+            try store.context.save()
+            store.reload()
+            let originalPayload = record.payload
+            XCTAssertEqual(store.dailyPlan(at: createdAt, calendar: utc).id, frozen.id)
+            store.updateReadiness(.low, at: createdAt, calendar: utc)
+            XCTAssertEqual(record.payload, originalPayload)
+            XCTAssertEqual(store.dailyPlan(at: createdAt, calendar: utc).id, frozen.id)
+            let block = try XCTUnwrap(frozen.blocks.first)
+            if version == 4 {
+                let request = SessionRequest(lab: block.lab, source: .today, seed: frozen.seed,
+                    requestedMinutes: block.minutes, requestedItemCount: 1,
+                    planID: frozen.id, planBlockID: block.id)
+                try store.upsertCheckpoint(sessionID: request.id, request: request, currentIndex: 0,
+                    itemCount: 1, response: "saved draft", scratchpad: "retained scratchpad", results: [])
+                store.updateReadiness(.high, at: createdAt, calendar: utc)
+                XCTAssertEqual(record.payload, originalPayload)
+            } else {
+                let revision = store.localSessions.archive.transactionRevision
+                XCTAssertFalse(store.beginSession(lab: block.lab, source: .today,
+                    requestedItemCount: 5, planID: frozen.id, planBlockID: block.id))
+                XCTAssertNil(store.activeSessionRequest)
+                XCTAssertNotNil(store.lastErrorMessage)
+                XCTAssertEqual(store.localSessions.archive.transactionRevision, revision)
+                XCTAssertTrue(store.localSessions.archive.sessions.isEmpty)
+            }
+            let travelledAt = createdAt.addingTimeInterval(2 * 3_600)
+            XCTAssertEqual(store.dailyPlan(at: travelledAt, calendar: tokyo).id, frozen.id)
+            XCTAssertEqual(record.payload, originalPayload)
+            XCTAssertEqual(store.dailyPlans.count, 1)
+            let restored = AppStore(context: ModelContext(container))
+            XCTAssertEqual(restored.dailyPlan(at: travelledAt, calendar: tokyo).id, frozen.id)
+            XCTAssertEqual(restored.dailyPlans.first?.payload, originalPayload)
+            let next = restored.dailyPlan(at: createdAt.addingTimeInterval(19 * 3_600), calendar: tokyo)
+            XCTAssertEqual(next.policyVersion, 5)
+            XCTAssertNotEqual(next.id, frozen.id)
+            XCTAssertEqual(restored.dailyPlans.first(where: { $0.id == frozen.id })?.payload, originalPayload)
+            XCTAssertEqual(restored.dailyPlans.count, 2)
+        }
+    }
+
+    @MainActor
     func testReadinessRegenerationKeepsExactlyOneCanonicalPlanAndStartedPlanIsImmutable() throws {
         let (store, container) = try makeStore()
         defer { _ = container }
@@ -1479,81 +1550,181 @@ final class PersistenceRuntimeTests: XCTestCase {
     }
 
     @MainActor
+    func testReviewedTimingGateRejectsLegacyTemplateCountsButAllowsElapsedOnlyWithoutConsumingARejectedLaunch() throws {
+        let (store, container) = try makeStore(); defer { _ = container }
+        let now = Date()
+        for index in 0..<20 {
+            let record = AttemptRecord(sessionID: UUID(), lab: .mentalMath, itemID: "legacy.timing.\(index)",
+                prompt: "1 + 1", response: "2", correctAnswer: "2", isCorrect: true,
+                confidence: .certain, evidenceClass: .practice, source: .focused)
+            record.templateID = "legacy-template-\(index % 2)"
+            record.submittedAt = now.addingTimeInterval(Double(index - 100))
+            record.wasTimed = true; record.hintCount = index < 2 ? 1 : 0
+            container.mainContext.insert(record)
+        }
+        try container.mainContext.save(); store.reload()
+        let gate = store.reviewedFluencyReadiness(lab: .mentalMath, at: now)
+        XCTAssertFalse(gate.timingEligible); XCTAssertEqual(gate.reason, .reviewedPracticeUnavailable)
+        let scope = NFEditorialEvidenceGroup(lane: .practice, objectiveID: "synthetic.add", familyID: "synthetic.add",
+            band: .b1, bandContractVersion: "synthetic.v1", scoringComparabilityID: "exact.v1",
+            stimulusComparabilityID: "numeric", toolConditionID: "none", localeComparabilityID: "en",
+            pacingConditionID: "untimed", protocolScope: "practice.v1")
+        XCTAssertFalse(store.beginSession(lab: .mentalMath, source: .focused, requestedItemCount: 1,
+            timingCondition: .init(.timedFluency, fluencyScope: scope)))
+        XCTAssertNil(store.activeSessionRequest)
+        XCTAssertTrue(store.localSessions.archive.sessions.isEmpty)
+        XCTAssertNil(store.localSessions.archive.offlineRotationLedger)
+        XCTAssertTrue(store.beginSession(lab: .mentalMath, source: .focused, requestedItemCount: 1,
+            timingCondition: .init(.elapsedOnly)))
+        let request = try XCTUnwrap(store.activeSessionRequest)
+        XCTAssertEqual(request.timingCondition?.mode, .elapsedOnly)
+        let runtime = NFUniversalSessionRuntime(request: request)
+        XCTAssertTrue(runtime.showsTimer); XCTAssertFalse(runtime.usesTimedMode)
+        XCTAssertEqual(store.attempts.count, 20)
+    }
+
+    @MainActor
+    func testDailyPlanReminderUsesEffectiveChronologyInsteadOfRawAttemptCount() throws {
+        let (store, container) = try makeStore()
+        defer { _ = container }
+        let start = Date(timeIntervalSince1970: 1_800_000_000)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        for index in 0..<8 {
+            let attempt = AttemptRecord(sessionID: UUID(), lab: .logicDebugging, itemID: "legacy.\(index)",
+                prompt: "Trace a transition.", response: "2", correctAnswer: "2", isCorrect: true,
+                confidence: .certain, evidenceClass: .practice, source: .focused)
+            attempt.templateID = "logic.compatibility-reminder"
+            attempt.seed = UInt64(index)
+            attempt.submittedAt = start.addingTimeInterval(Double(index))
+            container.mainContext.insert(attempt)
+        }
+        try container.mainContext.save(); store.reload()
+        let plan = store.dailyPlan(at: start.addingTimeInterval(2 * 86_400), calendar: calendar)
+        let saved = try XCTUnwrap(store.dailyPlans.first { $0.id == plan.id }?.snapshot)
+        XCTAssertTrue(saved.blocks.flatMap(\.retentionItemIDs).contains("logic.compatibility-reminder"),
+            "Eight early legacy successes must not postpone a one-day reminder to the 30-day rung")
+        XCTAssertEqual(store.attempts.count, 8)
+        XCTAssertTrue(store.skillSummaries.allSatisfy { $0.status == .unassessed })
+    }
+
+    @MainActor
+    func testDailyPlanReminderRebuildExcludesCorrectedAndConflictedHistoryWithoutRewritingCommittedPlan() throws {
+        let (store, container) = try makeStore()
+        defer { _ = container }
+        let start = Date(timeIntervalSince1970: 1_800_000_000)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        var records: [AttemptRecord] = []
+        for name in ["corrected", "conflicted"] {
+            let record = AttemptRecord(sessionID: UUID(), lab: .logicDebugging, itemID: name,
+                prompt: "Trace a transition.", response: "2", correctAnswer: "2", isCorrect: true,
+                confidence: .certain, evidenceClass: .practice, source: .focused)
+            record.templateID = "logic.reminder.\(name)"; record.submittedAt = start
+            container.mainContext.insert(record); records.append(record)
+        }
+        try container.mainContext.save(); store.reload()
+        let before = store.dailyPlan(at: start.addingTimeInterval(2 * 86_400), calendar: calendar)
+        let originalPlan = try XCTUnwrap(store.dailyPlans.first { $0.id == before.id }?.snapshot)
+        XCTAssertFalse(originalPlan.blocks.flatMap(\.retentionItemIDs).isEmpty)
+        let corrected = records[0], conflicted = records[1]
+        try store.localSessions.appendDispositions([.init(id: "synthetic.reminder.correction", attemptID: corrected.id.uuidString,
+            revision: 1, policyVersion: NFHistoricalPracticeProjection.policyVersion, occurredAt: start,
+            disposition: .excludedContentCorrection, reason: "Synthetic invalid scoring contract",
+            correctedDerivedCredit: nil, supersedesDispositionID: nil)])
+        let proposed = AttemptRecord(sessionID: conflicted.sessionID, lab: .logicDebugging, itemID: conflicted.itemID,
+            prompt: conflicted.prompt, response: "3", correctAnswer: "2", isCorrect: false,
+            confidence: .certain, evidenceClass: .practice, source: .focused)
+        proposed.id = conflicted.id; proposed.templateID = conflicted.templateID
+        try store.localSessions.appendAttemptConflict(.init(original: .init(conflicted), proposed: .init(proposed),
+            originalExercise: nil, proposedExercise: nil, proposedScore: nil))
+        XCTAssertEqual(store.effectiveAttemptDTO(corrected).evidenceWeight, 0)
+        XCTAssertEqual(store.effectiveAttemptDTO(conflicted).evidenceWeight, 0)
+        let after = store.dailyPlan(at: start.addingTimeInterval(4 * 86_400), calendar: calendar)
+        let nextPlan = try XCTUnwrap(store.dailyPlans.first { $0.id == after.id }?.snapshot)
+        XCTAssertTrue(nextPlan.blocks.flatMap(\.retentionItemIDs).isEmpty,
+            "Raw correct flags cannot put excluded conflict/correction payloads back into the queue")
+        XCTAssertEqual(store.dailyPlans.first { $0.id == before.id }?.snapshot, originalPlan)
+        XCTAssertTrue(records.allSatisfy(\.isCorrect)); XCTAssertEqual(store.attempts.count, 2)
+        XCTAssertTrue(records.allSatisfy { $0.response == "2" })
+    }
+
+    @MainActor
     func testReviewsDueHandoffStartsOnlyARealRetentionAssignment() throws {
         let (store, container) = try makeStore()
         defer { _ = container }
         let now = Date()
-        let attempt = AttemptRecord(
-            sessionID: UUID(),
-            lab: .logicDebugging,
-            itemID: "due-review-item",
-            prompt: "Trace a bounded state transition.",
-            response: "supported",
-            correctAnswer: "supported",
-            isCorrect: true,
-            confidence: .fairlyConfident,
-            evidenceClass: .practice,
-            source: .focused
-        )
-        attempt.templateID = "logic.retention.template"
+        let source = try NFFallbackExerciseGenerator.generate(.init(seed: 20260905, index: 0,
+            lab: .mentalMath, purpose: .practice, localeIdentifier: "en",
+            preferredAssessmentMechanicID: "fixture.fallback-variant-1"))
+        guard case .numeric(let sourceSchema) = source.interaction else { return XCTFail("Expected the pinned numeric source contract") }
+        let sourceResponse = NFExerciseResponse.numeric(.init(value: String(sourceSchema.answer.value), unit: sourceSchema.answer.canonicalUnit))
+        let sourceScore = NFExerciseScoringEngine.score(sourceResponse, for: source)
+        XCTAssertTrue(sourceScore.isCorrect)
+        let attempt = AttemptRecord(sessionID: UUID(), lab: source.lab, itemID: source.id,
+            prompt: source.prompt, response: String(decoding: try JSONEncoder().encode(sourceResponse), as: UTF8.self),
+            correctAnswer: sourceScore.expectedAnswerSummary ?? "", isCorrect: true,
+            confidence: .fairlyConfident, evidenceClass: .practice, source: .focused)
+        attempt.templateID = source.templateID; attempt.assessmentTemplateFamily = source.templateFamily
+        attempt.seed = source.seed; attempt.scoringVersion = sourceScore.scoringVersion
+        attempt.responseFormatRaw = sourceResponse.responseFormatRaw
         attempt.submittedAt = now.addingTimeInterval(-30 * 86_400)
-        attempt.deterministicCredit = 1
+        attempt.deterministicCredit = sourceScore.credit; attempt.evidenceWeight = 1
         container.mainContext.insert(attempt)
         try container.mainContext.save()
+        try store.localSessions.retainSnapshot(attemptID: attempt.id, exercise: source)
         store.reload()
+        let plan = store.todayPlan
+        let originalPlan = try XCTUnwrap(store.dailyPlans.first { $0.id == plan.id }?.snapshot)
+        let originalAttempt = try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(attempt))
 
-        // The typed notification URL routes through the same store boundary
-        // on a cold launch and while the app is already running.
+        // Notification entry and direct Review use the same current effective
+        // queue, even when the already frozen Today plan has no due target.
         NFExternalRouteRouter.apply(.dueTodayReview, to: store)
-        XCTAssertEqual(store.selectedDestination, .today)
+        XCTAssertEqual(store.selectedDestination, .progress)
         XCTAssertFalse(store.shouldOpenTodayPlan)
         let request = try XCTUnwrap(store.activeSessionRequest)
         XCTAssertEqual(request.evidenceClass, .retention)
-        XCTAssertEqual(request.source, .today)
+        XCTAssertEqual(request.source, .focused)
+        XCTAssertEqual(request.requestedItemCount, 1)
         XCTAssertEqual(request.retentionItemIDs, [attempt.templateID])
         let target = try XCTUnwrap(request.retentionTargets.first)
         XCTAssertEqual(target.memoryItemID, attempt.templateID)
-        XCTAssertEqual(target.templateFamily, attempt.templateID)
-        XCTAssertTrue(target.requiresRepresentationShift)
+        XCTAssertEqual(target.templateFamily, source.templateFamily)
+        XCTAssertFalse(target.requiresRepresentationShift, "The compatibility reminder does not fabricate a reviewed representation-shift policy")
         XCTAssertEqual(target.priorRepresentationID, attempt.responseFormatRaw)
-        XCTAssertNotNil(request.planID)
-        XCTAssertNotNil(request.planBlockID)
+        XCTAssertNil(request.planID); XCTAssertNil(request.planBlockID)
+        XCTAssertEqual(store.dailyPlans.first { $0.id == plan.id }?.snapshot, originalPlan)
 
-        let exercise = NFDeterministicSessionExerciseFactory.makeExercise(
-            request: request,
-            index: 0,
-            assessmentDescriptor: nil
-        )
+        let exercise = NFDeterministicSessionExerciseFactory.makeExercise(request: request, index: 0,
+            assessmentDescriptor: nil, excludingContentFingerprints: request.repairSemanticExclusions ?? [])
+        XCTAssertNil(exercise.availabilityReason)
+        XCTAssertEqual(exercise.purpose, .retention)
+        XCTAssertNotEqual(NFQuestionFingerprint.fingerprint(for: exercise), NFQuestionFingerprint.fingerprint(for: source))
+        guard case .numeric(let schema) = exercise.interaction else { return XCTFail("The selected numeric mechanic must remain numeric") }
+        let response = NFExerciseResponse.numeric(.init(value: String(schema.answer.value), unit: schema.answer.canonicalUnit))
+        let result = NFExerciseScoringEngine.score(response, for: exercise)
+        XCTAssertTrue(result.isCorrect)
         let savedAttemptID = UUID()
-        try store.saveExerciseAttempt(
-            attemptID: savedAttemptID,
-            sessionID: UUID(),
-            exercise: exercise,
-            response: .shortText("deterministic retention response"),
-            result: makeScoringResult(for: exercise, credit: 1),
-            confidence: .certain,
-            shownAt: now,
-            activeDuration: 8,
-            source: .today,
-            planID: request.planID,
-            planBlockID: request.planBlockID
-        )
+        try store.saveExerciseAttempt(attemptID: savedAttemptID, sessionID: request.id, exercise: exercise,
+            response: response, result: result, confidence: .certain, shownAt: now,
+            activeDuration: 8, source: request.source)
         let persistedReview = try XCTUnwrap(store.attempts.first { $0.id == savedAttemptID })
         XCTAssertEqual(persistedReview.itemID, exercise.id, "Generated provenance identity remains immutable")
         XCTAssertEqual(persistedReview.templateID, target.memoryItemID)
         XCTAssertEqual(persistedReview.assessmentTemplateFamily, target.templateFamily)
         XCTAssertEqual(persistedReview.assessmentSeed, target.alternateSeed)
-        XCTAssertEqual(
-            persistedReview.assessmentFormatRaw,
-            NFRetentionRepresentation.identifier(for: exercise)
-        )
+        XCTAssertEqual(persistedReview.assessmentFormatRaw, NFRetentionRepresentation.identifier(for: exercise))
+        XCTAssertEqual(try NFImmutableAttemptRecordSnapshot.encoded(NFImmutableAttemptRecordSnapshot(attempt)), originalAttempt)
+        XCTAssertEqual(store.dailyPlans.first { $0.id == plan.id }?.snapshot, originalPlan)
 
         let (emptyStore, emptyContainer) = try makeStore()
         defer { _ = emptyContainer }
         NFExternalRouteRouter.apply(.dueTodayReview, to: emptyStore)
         XCTAssertNil(emptyStore.activeSessionRequest)
-        XCTAssertTrue(emptyStore.shouldOpenTodayPlan)
-        XCTAssertEqual(emptyStore.selectedDestination, .today)
+        XCTAssertFalse(emptyStore.shouldOpenTodayPlan)
+        XCTAssertEqual(emptyStore.selectedDestination, .progress)
+        XCTAssertTrue(emptyStore.readyReviewEntries(at: now, calendar: .current).isEmpty)
     }
 
     @MainActor
@@ -1746,9 +1917,14 @@ final class PersistenceRuntimeTests: XCTestCase {
 
         for lab in [TrainingLab.transfer, .quantitative, .logicDebugging] {
             let summary = try XCTUnwrap(store.skillSummaries.first { $0.lab == lab })
-            XCTAssertEqual(summary.evidenceCount, 1)
-            XCTAssertEqual(try XCTUnwrap(summary.accuracy), 1, accuracy: 1e-12)
+            XCTAssertEqual(summary.evidenceCount, 0)
+            XCTAssertNil(summary.accuracy)
         }
+        let history = NFHistoricalPracticeProjection.reduce(attempts: [persisted.dto])
+        XCTAssertEqual(history.count, 1, "A transfer response remains one historical event, regardless of its descriptive skill tags.")
+        XCTAssertEqual(history.first?.labID, TrainingLab.transfer.rawValue)
+        XCTAssertEqual(history.first?.legacyCount, 1)
+        XCTAssertEqual(history.first?.legacyMeanCredit, 1)
 
         let exportURLs = try NFDataExportService.makeExports(from: store)
         defer { removeExportFolder(for: exportURLs) }
@@ -2214,5 +2390,213 @@ final class PersistenceRuntimeTests: XCTestCase {
     private func removeExportFolder(for exportURLs: [URL]) {
         guard let folder = exportURLs.first?.deletingLastPathComponent() else { return }
         try? FileManager.default.removeItem(at: folder)
+    }
+}
+
+
+@MainActor
+final class BackgroundLocalSessionStartupTests: XCTestCase {
+    private final class ThreadProbe: @unchecked Sendable {
+        let lock = NSLock()
+        private var values: [Bool] = []
+        func record() { lock.withLock { values.append(Thread.isMainThread) } }
+        var ranOnlyOffMain: Bool { lock.withLock { !values.isEmpty && !values.contains(true) } }
+    }
+    private func location() throws -> (URL, URL) {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "NFBackgroundStartup-\(UUID())")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        return (folder, folder.appending(path: "sessions.json"))
+    }
+    private func history(count: Int = 1) throws -> (NFLocalSessionRepository.Archive, NFExercise) {
+        let exercise = try NFFallbackExerciseGenerator.generate(.init(seed: 20260904, index: 0, lab: .mentalMath, purpose: .practice))
+        var archive = NFLocalSessionRepository.Archive()
+        archive.transactionRevision = 17
+        archive.snapshots = (0..<count).map { _ in .init(attemptID: UUID(), exercise: exercise) }
+        return (archive, exercise)
+    }
+    private func malformedHistory() throws -> (Data, UUID, UUID) {
+        let (archive, _) = try history(count: 2)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(archive)) as? [String: Any])
+        var snapshots = object["snapshots"] as! [[String: Any]], bad = snapshots[1]["exercise"] as! [String: Any]
+        bad["interaction"] = ["futureUnknownResponse": ["privateOriginal": "STARTUP_RECOVERY_CANARY"]]
+        snapshots[1]["exercise"] = bad; object["snapshots"] = snapshots
+        return (Data("\n ".utf8) + (try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys])) + Data(" \n".utf8), archive.snapshots[0].attemptID, archive.snapshots[1].attemptID)
+    }
+
+    func testLargeAuthenticHistoryPreparesOffMainAndPublishesSameBytesRevisionAndOwner() async throws {
+        let (folder, url) = try location(); defer { try? FileManager.default.removeItem(at: folder) }
+        let (archive, exercise) = try history(count: 2_000), owner = UUID()
+        let bytes = try JSONEncoder().encode(archive)
+        XCTAssertGreaterThan(bytes.count, 1_024 * 1_024); XCTAssertLessThan(bytes.count, NFLocalSessionRepository.maximumBytes)
+        try bytes.write(to: url)
+        let probe = ThreadProbe()
+        let prepared = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner) { _ in probe.record() }
+        XCTAssertTrue(probe.ranOnlyOffMain)
+        XCTAssertEqual(prepared.sourceDigest, NFReservationSnapshot.digest(bytes)); XCTAssertEqual(prepared.archiveRevision, 17)
+        XCTAssertNil(prepared.loadError)
+        let repository = try NFLocalSessionRepository.adoptPreparedStartup(prepared, at: url, ownerDeviceID: owner)
+        XCTAssertEqual(repository.ownerDeviceID, owner); XCTAssertEqual(repository.archive.transactionRevision, 17)
+        XCTAssertEqual(repository.archive.snapshots.map(\.attemptID), archive.snapshots.map(\.attemptID))
+        XCTAssertTrue(repository.archive.snapshots.allSatisfy { $0.exercise == exercise })
+        XCTAssertEqual(try Data(contentsOf: url), bytes, "Startup is read-only for the authoritative archive.")
+    }
+
+    func testCancellationReleasesRealWriterLeaseAndKeepsMainActorResponsive() async throws {
+        let (folder, url) = try location(); defer { try? FileManager.default.removeItem(at: folder) }
+        let (archive, _) = try history(), owner = UUID(), bytes = try JSONEncoder().encode(archive)
+        try bytes.write(to: url)
+        let began = XCTestExpectation(description: "Detached decode began"), release = DispatchSemaphore(value: 0)
+        let probe = ThreadProbe()
+        let task = Task {
+            try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner) { stage in
+                probe.record()
+                if case .decoding = stage { began.fulfill(); _ = release.wait(timeout: .now() + 5) }
+            }
+        }
+        let result = await XCTWaiter.fulfillment(of: [began], timeout: 5)
+        XCTAssertEqual(result, .completed)
+        // This code executes on MainActor while the worker is deliberately held.
+        XCTAssertTrue(Thread.isMainThread); XCTAssertTrue(probe.ranOnlyOffMain)
+        task.cancel(); release.signal()
+        do { _ = try await task.value; XCTFail("A cancelled prepared state must never be published.") }
+        catch { XCTAssertTrue(error is CancellationError) }
+        XCTAssertEqual(try Data(contentsOf: url), bytes)
+        let repository = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+        try repository.dismissCorrections(["synthetic-after-cancellation"])
+        XCTAssertEqual(repository.archive.transactionRevision, 18, "Cancellation must release the same lock used by real writers.")
+    }
+
+    func testPreparedLeaseBlocksRealWriterUntilAcknowledgedPublication() async throws {
+        let (folder, url) = try location(); defer { try? FileManager.default.removeItem(at: folder) }
+        let (archive, _) = try history(), owner = UUID(), bytes = try JSONEncoder().encode(archive)
+        try bytes.write(to: url)
+        let original = NFLocalSessionRepository(url: url, ownerDeviceID: owner)
+        let prepared = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        XCTAssertThrowsError(try original.dismissCorrections(["synthetic-concurrent"])) {
+            guard case NFLocalSessionRepository.RepositoryError.busy = $0 else { return XCTFail("Expected the actual repository writer lock: \($0)") }
+        }
+        XCTAssertEqual(original.archive.transactionRevision, 17); XCTAssertEqual(try Data(contentsOf: url), bytes)
+        let adopted = try NFLocalSessionRepository.adoptPreparedStartup(prepared, at: url, ownerDeviceID: owner)
+        try adopted.dismissCorrections(["synthetic-after-adoption"])
+        XCTAssertEqual(adopted.archive.transactionRevision, 18)
+        XCTAssertThrowsError(try NFLocalSessionRepository.adoptPreparedStartup(prepared, at: url, ownerDeviceID: owner), "A released receipt cannot be adopted twice.")
+    }
+
+    func testWrongOwnerStaleLaunchAndSameRevisionReplacedFileCannotPublish() async throws {
+        let (folder, url) = try location(); defer { try? FileManager.default.removeItem(at: folder) }
+        let (archive, _) = try history(), owner = UUID(), bytes = try JSONEncoder().encode(archive)
+        try bytes.write(to: url)
+        let wrongOwner = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        XCTAssertThrowsError(try NFLocalSessionRepository.adoptPreparedStartup(wrongOwner, at: url, ownerDeviceID: UUID())) {
+            guard case NFLocalSessionRepository.RepositoryError.wrongOwner = $0 else { return XCTFail("Wrong owner must be rejected.") }
+        }
+        let obsolete = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        XCTAssertThrowsError(try NFLocalSessionRepository.adoptPreparedStartup(obsolete, at: url, ownerDeviceID: owner, isCurrentLaunch: { false })) {
+            XCTAssertTrue($0 is CancellationError)
+        }
+        let stale = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        var changed = archive; changed.dismissedCorrectionIDs = ["synthetic-uncoordinated-change"]
+        let replacement = try JSONEncoder().encode(changed)
+        try replacement.write(to: url, options: .atomic) // Simulates an external writer that ignores the advisory protocol.
+        XCTAssertThrowsError(try NFLocalSessionRepository.adoptPreparedStartup(stale, at: url, ownerDeviceID: owner)) {
+            guard case NFLocalSessionRepository.RepositoryError.staleRevision = $0 else { return XCTFail("Same revision with different original bytes must be stale.") }
+        }
+        XCTAssertEqual(try Data(contentsOf: url), replacement)
+        let latest = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        XCTAssertNotEqual(latest.sourceDigest, stale.sourceDigest)
+        let repository = try NFLocalSessionRepository.adoptPreparedStartup(latest, at: url, ownerDeviceID: owner)
+        XCTAssertEqual(repository.archive.dismissedCorrectionIDs, changed.dismissedCorrectionIDs)
+    }
+
+    func testGranularRecoveryBacksUpExactOriginalBeforeAdoptionAndFailedAdoptionPreservesIt() async throws {
+        let (folder, url) = try location(); defer { try? FileManager.default.removeItem(at: folder) }
+        let (bytes, good, bad) = try malformedHistory(), owner = UUID()
+        try bytes.write(to: url)
+        let prepared = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        XCTAssertNil(prepared.loadError)
+        let directory = url.appendingPathExtension("history-recovery")
+        let backup = try XCTUnwrap(FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil).first)
+        XCTAssertEqual(try Data(contentsOf: backup), bytes)
+        XCTAssertThrowsError(try NFLocalSessionRepository.adoptPreparedStartup(prepared, at: url, ownerDeviceID: owner, isCurrentLaunch: { false }))
+        XCTAssertEqual(try Data(contentsOf: backup), bytes); XCTAssertEqual(try Data(contentsOf: url), bytes)
+        let retry = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        let repository = try NFLocalSessionRepository.adoptPreparedStartup(retry, at: url, ownerDeviceID: owner)
+        XCTAssertEqual(repository.archive.snapshots.map(\.attemptID), [good])
+        XCTAssertEqual(repository.archive.unavailableHistorySnapshots?.map(\.attemptID), [bad])
+        XCTAssertFalse(String(decoding: try JSONEncoder().encode(repository.exportArchive), as: UTF8.self).contains("STARTUP_RECOVERY_CANARY"))
+        XCTAssertEqual(try Data(contentsOf: backup), bytes)
+    }
+
+    func testFailedOriginalBackupAndFutureArchiveRemainRecoveryOnlyWithoutRewritingBytes() async throws {
+        let (folder, url) = try location(); defer { try? FileManager.default.removeItem(at: folder) }
+        let (bytes, _, _) = try malformedHistory(), owner = UUID()
+        try bytes.write(to: url)
+        let blocked = url.appendingPathExtension("history-recovery")
+        try Data("Do not replace this original fixture".utf8).write(to: blocked)
+        let prepared = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        XCTAssertNotNil(prepared.loadError)
+        let repository = try NFLocalSessionRepository.adoptPreparedStartup(prepared, at: url, ownerDeviceID: owner)
+        XCTAssertEqual(repository.archive.snapshots.count, 1); XCTAssertNotNil(repository.loadError)
+        XCTAssertThrowsError(try repository.dismissCorrections(["must-not-write"]))
+        XCTAssertEqual(try Data(contentsOf: url), bytes)
+        var future = NFLocalSessionRepository.Archive(); future.schemaVersion = 999
+        let futureBytes = try JSONEncoder().encode(future); try futureBytes.write(to: url, options: .atomic)
+        let unknown = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        XCTAssertNotNil(unknown.loadError)
+        _ = try NFLocalSessionRepository.adoptPreparedStartup(unknown, at: url, ownerDeviceID: owner)
+        XCTAssertEqual(try Data(contentsOf: url), futureBytes)
+    }
+
+    func testOversizedSymlinkAndFIFOInputsNeverDecodeOrReplaceOriginal() async throws {
+        let (folder, url) = try location(); defer { try? FileManager.default.removeItem(at: folder) }
+        FileManager.default.createFile(atPath: url.path, contents: nil)
+        let file = try FileHandle(forWritingTo: url)
+        try file.truncate(atOffset: UInt64(NFLocalSessionRepository.maximumBytes + 1)); try file.close()
+        let prepared = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: UUID())
+        XCTAssertNotNil(prepared.loadError); XCTAssertNil(prepared.sourceDigest); prepared.discard()
+        XCTAssertEqual(try FileManager.default.attributesOfItem(atPath: url.path)[.size] as? NSNumber, NSNumber(value: NFLocalSessionRepository.maximumBytes + 1))
+        try FileManager.default.removeItem(at: url)
+        let target = folder.appending(path: "original.txt"), canary = Data("Original source stays unchanged".utf8)
+        try canary.write(to: target); try FileManager.default.createSymbolicLink(at: url, withDestinationURL: target)
+        do { _ = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: UUID()); XCTFail("Symlink must not be followed.") } catch {}
+        XCTAssertEqual(try Data(contentsOf: target), canary)
+        try FileManager.default.removeItem(at: url)
+        XCTAssertEqual(mkfifo(url.path, S_IRUSR | S_IWUSR), 0)
+        do { _ = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: UUID()); XCTFail("FIFO must not be opened for reading.") } catch {}
+        var info = stat(); XCTAssertEqual(lstat(url.path, &info), 0); XCTAssertEqual(info.st_mode & S_IFMT, S_IFIFO)
+    }
+
+    func testMissingArchiveAndReplacedLockIdentityCannotBeMistakenForVerifiedInput() async throws {
+        let (folder, url) = try location(); defer { try? FileManager.default.removeItem(at: folder) }
+        let owner = UUID()
+        let missing = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        XCTAssertNil(missing.sourceDigest); XCTAssertNil(missing.archiveRevision); XCTAssertNil(missing.loadError)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
+        let bytes = try JSONEncoder().encode(NFLocalSessionRepository.Archive())
+        try bytes.write(to: url)
+        XCTAssertThrowsError(try NFLocalSessionRepository.adoptPreparedStartup(missing, at: url, ownerDeviceID: owner))
+        XCTAssertEqual(try Data(contentsOf: url), bytes)
+        let prepared = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        let lock = URL(fileURLWithPath: url.path + ".lock")
+        try FileManager.default.moveItem(at: lock, to: folder.appending(path: "original.lock"))
+        try Data().write(to: lock)
+        XCTAssertThrowsError(try NFLocalSessionRepository.adoptPreparedStartup(prepared, at: url, ownerDeviceID: owner)) {
+            guard case NFLocalSessionRepository.RepositoryError.staleRevision = $0 else { return XCTFail("Adoption must use the same live lock identity as writers.") }
+        }
+        XCTAssertEqual(try Data(contentsOf: url), bytes)
+        let fresh = try await NFLocalSessionRepository.prepareStartup(at: url, ownerDeviceID: owner)
+        let repository = try NFLocalSessionRepository.adoptPreparedStartup(fresh, at: url, ownerDeviceID: owner)
+        try repository.dismissCorrections(["fresh-lock-accepted"])
+        XCTAssertEqual(repository.archive.transactionRevision, 1)
+    }
+
+    func testStartupSourceWiresAwaitedPreparationAfterColdReplayAndBeforeAppStore() throws {
+        let sourceURL = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().appending(path: "Sources/App/NeuroForgeApp.swift")
+        let source = try String(contentsOf: sourceURL, encoding: .utf8)
+        let production = try XCTUnwrap(source.range(of: "let recovery = try await NFRestoreColdCoordinator.recover"))
+        let load = try XCTUnwrap(source.range(of: "localRepository = try await NFLocalSessionRepository.loadForDurableStore"))
+        let appStore = try XCTUnwrap(source.range(of: "let appStore = AppStore(context: container.mainContext, localSessionRepository: localRepository)"))
+        XCTAssertLessThan(production.lowerBound, load.lowerBound); XCTAssertLessThan(load.lowerBound, appStore.lowerBound)
+        XCTAssertFalse(source[load.upperBound..<appStore.lowerBound].contains("forDurableStore(at:"))
     }
 }

@@ -435,6 +435,9 @@ actor NFAuthoringEngine: NFQuestionAuthoring {
                 "The selected material does not contain a complete, distinct proposition that supports this question style."
             ])
         }
+        guard authorityQuestions.allSatisfy(\.hasValidResponseSchema) else {
+            throw NFAIError.invalidOutput(["The generated questions did not pass the response and content checks."])
+        }
         var validationNotes: [String] = []
         var repairCount = 0
         // The Studio owns the localized partial-source notice because it can
@@ -3883,7 +3886,7 @@ private enum NFDeterministicAuthoringFallback {
         return makeQuestion(
             request: request,
             basis: basis,
-            prompt: localized("Debug this \(basis.topic.lowercased()) reasoning:\n\n“\(faultyMove)”\n\nIdentify the first unsupported move and give the smallest topic-valid repair.", request: request),
+            prompt: localized("Debug this \(topicWithoutTrailingQualifier(basis.topic.lowercased(), qualifier: "reasoning")) reasoning:\n\n“\(faultyMove)”\n\nIdentify the first unsupported move and give the smallest topic-valid repair.", request: request),
             correctAnswer: answer,
             acceptedAnswers: [profile.facets[variant]],
             explanation: answer,

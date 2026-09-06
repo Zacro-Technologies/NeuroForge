@@ -1,0 +1,32 @@
+LATEST VERIFIED BASELINE (supersedes earlier results below):
+/tmp/neuroforge-final-recovery-unit-tests.log completed 2026-09-05 01:49:57.048.
+784 tests, 0 failures. Corrected generated Next transient-write fixture and all other formerly failing methods passed.
+Subsequent DATA020 scratchpad guards add6 cross-platform tests plus1 conditional PencilKit test; authored/parsed, not included in that784-test binary. Current-source integrated execution remains required.
+
+Latest completed root-owned macOS Xcode test run, 5 September 2026.
+Source log: /tmp/neuroforge-coordinated-recovery-unit-tests.log
+Completed 01:40:36.720: 784 tests, 16 failed assertions (1 unexpected) across four methods.
+
+Passing relevant suites:
+ContentImprovementRegressionTests: 19 tests, 0 failures; passed 01:38:24.472.
+ExperienceImprovementTests: 18 tests, 0 failures; passed 01:38:28.696.
+GoldenArchiveFixtureTests: 6 tests, 0 failures; passed 01:39:36.347.
+GranularHistorySnapshotRecoveryTests: 6 tests, 0 failures; passed 01:39:36.421.
+HistoricalContentCorrectionPolicyTests: 21 tests, 0 failures; passed 01:39:36.503.
+ProtectedPortableArchiveTests: 4 tests, 0 failures; passed 01:40:28.107.
+SessionIntegrityReviewTests: 28 tests, 0 failures; passed 01:40:30.051.
+
+AIAndSourceTests: 65 tests, 10 assertion failures from the single method testGeneratedNextWriteFailureRetainsFeedbackThenPublishesExactSavedQuestion. Its fixture deleted the journal before retry, correctly triggering a revision refusal. The test now moves the accepted directory aside and restores it exactly before retry; source parses and diff check passes, but the corrected fixture awaits execution. All other generated methods passed, including durable clarification, failed reference exposure, conflicting receipt journaling, typed/version compatibility, and writer ownership.
+Other failures: two FocusedQuizRotationIntegrationTests methods produced five failed assertions expecting the former unavailable state; one LocalReservationBridgeTests presentation-pin fixture threw invalidSequence. These were outside the granular/content/golden/history/session-integrity suites.
+
+The latest installed UI run was identified as using stale tests; it is not current-source acceptance evidence. Root is preparing current installed verification. No current-source all-project pass is claimed.
+
+Protection coverage includes exact response-string bytes, immutable original receipts, opaque receipt/disposition restore, every archive version 14–18, nested evaluator/report canaries, private base64 canonicalization, malformed history protected markers, marker-only protected import/reexport and bounded private original-file recovery. General malformed portable top-level import and media rendering remain explicit limits.
+Golden coverage includes deterministic regeneration, actual 10,000-attempt restore and exact UUID identity for duplicate/deleted references. These are synthetic fixtures, not frozen real user stores or performance percentile claims.
+
+Prior execution history:
+/tmp/neuroforge-atomic-golden-unit-tests.log: 722 tests, 1 failed UUID-case assertion; later corrected with parsed UUID identity/count/set checks.
+/tmp/neuroforge-reviewed-recovery-unit-tests.log: 742 tests, 2 failures (localization key and unauthorized future reserved-snapshot test setup); later corrected.
+/tmp/neuroforge-session-recovery-unit-tests.log and ...-installed-ui.log stopped65 before tests due Swift6.3.3 optional ConfidenceLevel setter IRGen crash. Explicit-closure correction compiled in the latest completed run above.
+
+Subsequent historical context work adds5 HistoricalReviewContextTests (existingLocalLearningLifecycleTests file): original logic starting state/hintprefix, source identity+digest+version, missing/changed source fallback, protected-first redaction and actual beforecommit/marker-only route guards. Authored/parsed; not part of the784/0 baseline. No source-citationnumericversion or genericexcerpt fields were invented.

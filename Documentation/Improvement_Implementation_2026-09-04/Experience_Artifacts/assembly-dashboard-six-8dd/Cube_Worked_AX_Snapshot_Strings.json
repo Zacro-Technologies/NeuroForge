@@ -1,0 +1,20 @@
+[
+  {
+    "file": "6C9D94AE-02F8-43F6-8461-C58D7FEF44A4",
+    "name": "UI Snapshot 2026-09-05 at 19.31.17",
+    "timestamp": 1788651077.049,
+    "strings": [
+      "The completed face frames are: A normal 0,0,1, arrow 0,1,0; B normal 0,1,0, arrow 0,0,-1; C normal 1,0,0, arrow 0,0,-1; D normal 0,0,-1, arrow -1,0,0; E normal -1,0,0, arrow 0,0,1; F normal 0,-1,0, arrow 0,0,1. Opposite faces have opposite normals; edge-adjacent faces have perpendicular normals. Both proposed conditions must hold in the fixed frame.",
+      "The completed face frames are: A normal 0,0,1, arrow 0,1,0; B normal 0,1,0, arrow 0,0,-1; C normal 1,0,0, arrow 0,0,-1; D normal 0,0,-1, arrow -1,0,0; E normal -1,0,0, arrow 0,0,1; F normal 0,-1,0, arrow 0,0,1. Opposite faces have opposite normals; edge-adjacent faces have perpendicular normals. Both proposed conditions must hold in the fixed frame."
+    ]
+  },
+  {
+    "file": "41A029FE-4D6E-4ED9-ACBB-543A8438DFF0",
+    "name": "UI Snapshot 2026-09-05 at 19.31.17",
+    "timestamp": 1788651077.28,
+    "strings": [
+      "The completed face frames are: A normal 0,0,1, arrow 0,1,0; B normal 0,1,0, arrow 0,0,-1; C normal 1,0,0, arrow 0,0,-1; D normal 0,0,-1, arrow -1,0,0; E normal -1,0,0, arrow 0,0,1; F normal 0,-1,0, arrow 0,0,1. Opposite faces have opposite normals; edge-adjacent faces have perpendicular normals. Both proposed conditions must hold in the fixed frame.",
+      "The completed face frames are: A normal 0,0,1, arrow 0,1,0; B normal 0,1,0, arrow 0,0,-1; C normal 1,0,0, arrow 0,0,-1; D normal 0,0,-1, arrow -1,0,0; E normal -1,0,0, arrow 0,0,1; F normal 0,-1,0, arrow 0,0,1. Opposite faces have opposite normals; edge-adjacent faces have perpendicular normals. Both proposed conditions must hold in the fixed frame."
+    ]
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "bundle": "/tmp/NeuroForge-improvement-ios/Logs/Test/Test-NeuroForgeUISmoke-2026.09.05_02-42-38--0400.xcresult",
+  "sourceInput": "fae6a233 (see Expanded_iOS_Source_Hashes.json)",
+  "runnerSHA256": "a95464399f9059356ed9b0edfef9e7dec12d16ec3f0407f4a3611643aa5a09ed",
+  "result": "21 passed; energy Cancel selector failed before sending a tap",
+  "captures": [
+    {
+      "artifact": "SE-energy-preview-before-apply-prior-title.png",
+      "test": "NavigationSmokeUITests/testEnergyPreviewCancelPreservesSavedPreferenceAfterRelaunch()",
+      "sourceAttachment": "2F96C862-F9BB-43EF-BA0A-C9A5CDDF9267.png",
+      "caption": "energy-change-preview-before-apply-en_0_7A652C00-4AE1-4C3A-9AF6-3D78A0DA4223.png",
+      "sha256": "fbbd8e2ca698756d0e5eeaef25174002131310757942c76a09b1ac9142f18028",
+      "testPassed": false
+    },
+    {
+      "artifact": "SE-source-chooser-selection-search.png",
+      "test": "NavigationSmokeUITests/testQuestionSetSourceChooserPreservesSelectionAcrossSearchAndReopen()",
+      "sourceAttachment": "52EB20F8-0FB8-409C-82FC-D5FE4A4A5B67.png",
+      "caption": "source-chooser-preserves-selection-after-search-en_0_4FB19CFF-11C0-4051-9085-B1C6CF7BA4CC.png",
+      "sha256": "90a44fe784cd74a0969f2ab324d936e1ca9d66c820731938921e4750638762bc",
+      "testPassed": true
+    }
+  ]
+}

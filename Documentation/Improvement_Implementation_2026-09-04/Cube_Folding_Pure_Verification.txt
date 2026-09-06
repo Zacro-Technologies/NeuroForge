@@ -1,0 +1,8 @@
+2026-09-05 scratch verification
+Pure Swift geometry: executed 469 delivery forms / 417 semantic targets.
+Independent exhaustive closed-cube edge-assignment oracle: passed 35 proposals (11 valid / 24 invalid), all full/partial face frames and all exact response sets.
+Swift syntax parse: passed 16 changed files; not a module typecheck.
+Catalog JSON: passed.
+git apply --check: passed against recorded current inputs.
+App build, nine XCTest methods, installed UI and VoiceOver: pending root execution.
+Patch SHA256: 569535a8458a5d39de78a3b7dbc21aff6f26ab6d3f595b61bb6371f154562274

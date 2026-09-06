@@ -1,0 +1,632 @@
+{
+  "kind": "provisional-authored-source-inventory",
+  "schemaVersion": 1,
+  "generatorVersion": 10,
+  "exerciseSchemaVersion": 7,
+  "retrievalAssetPolicyVersion": 1,
+  "executionStatus": "All8 RetrievalAssetContractTests passed in89/89 Mac scope oned785a62; inventory assertions verified through real generator/scorer. No reviewed admission.",
+  "distinctTargets": 38,
+  "targetFormPairs": 98,
+  "countsByForm": {
+    "cloze": 38,
+    "equation": 30,
+    "figure": 30
+  },
+  "countsByField": {
+    "general": {
+      "cloze": 21,
+      "equation": 20,
+      "figure": 20
+    },
+    "mathematics": {
+      "cloze": 11,
+      "equation": 10,
+      "figure": 10
+    },
+    "physics": {
+      "cloze": 1,
+      "equation": 0,
+      "figure": 0
+    },
+    "computing": {
+      "cloze": 1,
+      "equation": 0,
+      "figure": 0
+    },
+    "engineering": {
+      "cloze": 1,
+      "equation": 0,
+      "figure": 0
+    },
+    "life-sciences": {
+      "cloze": 1,
+      "equation": 0,
+      "figure": 0
+    },
+    "chemistry": {
+      "cloze": 1,
+      "equation": 0,
+      "figure": 0
+    },
+    "data-science": {
+      "cloze": 1,
+      "equation": 0,
+      "figure": 0
+    }
+  },
+  "targetFormPairsAreNotIndependentQuotaSlots": true,
+  "reviewedBandsAssigned": 0,
+  "approvedEditionSlots": 0,
+  "existingCatalogTargetCount": 1000,
+  "existingTargetsWithoutNewAssets": 962,
+  "notCovered": [
+    "Most editorial relations and 962 remaining target assets",
+    "Equation/figure assets outside general and mathematics",
+    "Multiple dependent slots, conditional or symbolic reconstruction",
+    "New target-specific retention asset recipe and form exposure scheduling",
+    "Independent bilingual review, demand bands, calibrated/admitted release inventory",
+    "All58 family demand/structure expansion"
+  ],
+  "targets": [
+    {
+      "targetID": "nf.retrieval.v1.chemistry.cation-charge",
+      "field": "chemistry",
+      "compatibleRenderings": [
+        "cloze"
+      ],
+      "sourceKind": "authored-concept-omission",
+      "parameters": [],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.computing.byte-size",
+      "field": "computing",
+      "compatibleRenderings": [
+        "cloze"
+      ],
+      "sourceKind": "authored-concept-omission",
+      "parameters": [],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.data-science.feature-definition",
+      "field": "data-science",
+      "compatibleRenderings": [
+        "cloze"
+      ],
+      "sourceKind": "authored-concept-omission",
+      "parameters": [],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.engineering.static-force-equilibrium",
+      "field": "engineering",
+      "compatibleRenderings": [
+        "cloze"
+      ],
+      "sourceKind": "authored-concept-omission",
+      "parameters": [],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.rectangle-area-10-9",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "coordinate-rectangle",
+      "parameters": [
+        10,
+        9
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.rectangle-area-11-10",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "coordinate-rectangle",
+      "parameters": [
+        11,
+        10
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.rectangle-area-12-11",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "coordinate-rectangle",
+      "parameters": [
+        12,
+        11
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.rectangle-area-3-2",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "coordinate-rectangle",
+      "parameters": [
+        3,
+        2
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.rectangle-area-4-3",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "coordinate-rectangle",
+      "parameters": [
+        4,
+        3
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.rectangle-area-5-4",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "coordinate-rectangle",
+      "parameters": [
+        5,
+        4
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.rectangle-area-6-5",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "coordinate-rectangle",
+      "parameters": [
+        6,
+        5
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.rectangle-area-7-6",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "coordinate-rectangle",
+      "parameters": [
+        7,
+        6
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.rectangle-area-8-7",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "coordinate-rectangle",
+      "parameters": [
+        8,
+        7
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.rectangle-area-9-8",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "coordinate-rectangle",
+      "parameters": [
+        9,
+        8
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.si-time-unit",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze"
+      ],
+      "sourceKind": "authored-concept-omission",
+      "parameters": [],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.three-value-mean-10",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "equally-weighted-observations",
+      "parameters": [
+        10,
+        14,
+        18
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.three-value-mean-11",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "equally-weighted-observations",
+      "parameters": [
+        11,
+        15,
+        19
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.three-value-mean-12",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "equally-weighted-observations",
+      "parameters": [
+        12,
+        16,
+        20
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.three-value-mean-13",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "equally-weighted-observations",
+      "parameters": [
+        13,
+        17,
+        21
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.three-value-mean-4",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "equally-weighted-observations",
+      "parameters": [
+        4,
+        8,
+        12
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.three-value-mean-5",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "equally-weighted-observations",
+      "parameters": [
+        5,
+        9,
+        13
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.three-value-mean-6",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "equally-weighted-observations",
+      "parameters": [
+        6,
+        10,
+        14
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.three-value-mean-7",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "equally-weighted-observations",
+      "parameters": [
+        7,
+        11,
+        15
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.three-value-mean-8",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "equally-weighted-observations",
+      "parameters": [
+        8,
+        12,
+        16
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.general.three-value-mean-9",
+      "field": "general",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "equally-weighted-observations",
+      "parameters": [
+        9,
+        13,
+        17
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.life-sciences.enzyme-active-site",
+      "field": "life-sciences",
+      "compatibleRenderings": [
+        "cloze"
+      ],
+      "sourceKind": "authored-concept-omission",
+      "parameters": [],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.mathematics.additive-identity",
+      "field": "mathematics",
+      "compatibleRenderings": [
+        "cloze"
+      ],
+      "sourceKind": "authored-concept-omission",
+      "parameters": [],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.mathematics.slope-0-1-4-9",
+      "field": "mathematics",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "two-point-slope",
+      "parameters": [
+        0,
+        1,
+        4,
+        9
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.mathematics.slope-1-3-5-15",
+      "field": "mathematics",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "two-point-slope",
+      "parameters": [
+        1,
+        3,
+        5,
+        15
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.mathematics.slope-2-5-6-21",
+      "field": "mathematics",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "two-point-slope",
+      "parameters": [
+        2,
+        5,
+        6,
+        21
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.mathematics.slope-3-7-7-27",
+      "field": "mathematics",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "two-point-slope",
+      "parameters": [
+        3,
+        7,
+        7,
+        27
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.mathematics.slope-4-9-8-33",
+      "field": "mathematics",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "two-point-slope",
+      "parameters": [
+        4,
+        9,
+        8,
+        33
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.mathematics.slope-5-11-9-39",
+      "field": "mathematics",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "two-point-slope",
+      "parameters": [
+        5,
+        11,
+        9,
+        39
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.mathematics.slope-6-13-10-45",
+      "field": "mathematics",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "two-point-slope",
+      "parameters": [
+        6,
+        13,
+        10,
+        45
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.mathematics.slope-7-15-11-51",
+      "field": "mathematics",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "two-point-slope",
+      "parameters": [
+        7,
+        15,
+        11,
+        51
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.mathematics.slope-8-17-12-57",
+      "field": "mathematics",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "two-point-slope",
+      "parameters": [
+        8,
+        17,
+        12,
+        57
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.mathematics.slope-9-19-13-63",
+      "field": "mathematics",
+      "compatibleRenderings": [
+        "cloze",
+        "equation",
+        "figure"
+      ],
+      "sourceKind": "two-point-slope",
+      "parameters": [
+        9,
+        19,
+        13,
+        63
+      ],
+      "editorialAdmission": "unreviewed"
+    },
+    {
+      "targetID": "nf.retrieval.v1.physics.force-si-unit",
+      "field": "physics",
+      "compatibleRenderings": [
+        "cloze"
+      ],
+      "sourceKind": "authored-concept-omission",
+      "parameters": [],
+      "editorialAdmission": "unreviewed"
+    }
+  ]
+}

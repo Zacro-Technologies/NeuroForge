@@ -4,9 +4,10 @@ import XCTest
 
 final class OfflineQuestionBankTests: XCTestCase {
     func testEveryLabShipsOneThousandCanonicalUniqueScorableQuestions() throws {
-        XCTAssertEqual(NFOfflineQuestionBank.version, 2)
+        XCTAssertEqual(NFOfflineQuestionBank.version, 3)
         XCTAssertEqual(NFOfflineQuestionBank.questionsPerLab, 1_000)
         XCTAssertEqual(NFOfflineQuestionBank.audit(), [])
+        var concreteInventory: [NFExercise] = []
 
         for lab in TrainingLab.allCases {
             let descriptors = NFOfflineQuestionBank.descriptors(for: lab)
@@ -26,6 +27,7 @@ final class OfflineQuestionBankTests: XCTestCase {
                         sourceContext: NFExerciseSourceContext(primaryField: .general)
                     )
                 )
+                concreteInventory.append(exercise)
                 XCTAssertNoThrow(try NFExerciseSchemaValidator.validate(exercise), descriptor.id)
                 XCTAssertEqual(
                     NFQuestionFingerprint.fingerprint(for: exercise),
@@ -39,8 +41,13 @@ final class OfflineQuestionBankTests: XCTestCase {
                 templateSlugs.insert(exercise.templateID)
 
                 let result = NFExerciseScoringEngine.score(correctResponse(for: exercise.interaction), for: exercise)
-                XCTAssertTrue(result.isCorrect, descriptor.id)
-                XCTAssertEqual(result.credit, 1, accuracy: 0.000_001, descriptor.id)
+                if case .selfCheck = exercise.interaction {
+                    XCTAssertEqual(result.outcome, .selfReported, descriptor.id)
+                    XCTAssertNil(result.objectiveCorrectness, descriptor.id)
+                } else {
+                    XCTAssertTrue(result.isCorrect, descriptor.id)
+                    XCTAssertEqual(result.credit, 1, accuracy: 0.000_001, descriptor.id)
+                }
             }
 
             XCTAssertGreaterThanOrEqual(
@@ -49,6 +56,15 @@ final class OfflineQuestionBankTests: XCTestCase {
                 "\(lab.rawValue) bank collapsed one or more reviewed activity families"
             )
         }
+        let census = NFContentInventoryAudit.census(concreteInventory)
+        XCTAssertEqual(census.labs.reduce(0) { $0 + $1.concreteContractCount }, 7_000)
+        XCTAssertTrue(census.labs.allSatisfy { $0.invalidContractCount == 0 })
+        XCTAssertTrue(census.labs.allSatisfy { !$0.admission.isFeasible })
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("NeuroForge-Corrective-Inventory-Census.json")
+        try encoder.encode(census).write(to: url, options: .atomic)
+        print("CONTENT_INVENTORY_CENSUS=\(url.path)")
     }
 
     func testAdaptivePopulationRemainsBlockedUntilTheNewBankIsSigned() {

@@ -167,8 +167,9 @@ enum NFCalculationChainEngine {
         let submitted = NFExactNumber(parsing: submittedFinalValue)
         let originalCorrect = submitted == expectedFinal
         let firstMismatch = learnerCheckpoints.enumerated().first { index, source in
+            guard !source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
             guard checkpoints.indices.contains(index),
-                  let learnerValue = NFExactNumber(parsing: source) else { return true }
+                  let learnerValue = NFStateValueAuthority.exactNumber(source) else { return true }
             return learnerValue != checkpoints[index].output
         }?.offset
         return NFCalculationChainDiagnostic(

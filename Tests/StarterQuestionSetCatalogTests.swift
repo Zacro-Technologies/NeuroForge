@@ -451,7 +451,7 @@ final class StarterQuestionSetCatalogTests: XCTestCase {
                         "\(field.rawValue) / \(style.rawValue): \(question.prompt)"
                     )
                     XCTAssertTrue(
-                        scoresWithAuthoritativeResponse(question.authoritativeExercise),
+                        acceptsAuthoredResponseWithHonestAuthority(question.authoritativeExercise),
                         "\(field.rawValue) / \(style.rawValue): \(question.prompt)"
                     )
                     XCTAssertTrue(
@@ -486,7 +486,7 @@ final class StarterQuestionSetCatalogTests: XCTestCase {
                     "\(descriptor.id): \(question.prompt)"
                 )
                 XCTAssertNoThrow(try NFExerciseSchemaValidator.validate(question.authoritativeExercise))
-                XCTAssertTrue(scoresWithAuthoritativeResponse(question.authoritativeExercise), descriptor.id)
+                XCTAssertTrue(acceptsAuthoredResponseWithHonestAuthority(question.authoritativeExercise), descriptor.id)
                 XCTAssertTrue(displayMathIsBalanced(in: question.prompt), descriptor.id)
             }
         }
@@ -549,7 +549,7 @@ final class StarterQuestionSetCatalogTests: XCTestCase {
                 sourceStudyAuditChunks.first { question.citationChunkIDs.contains($0.id) }
             )
             XCTAssertTrue(cited.text.contains(question.correctAnswer))
-            XCTAssertTrue(scoresWithAuthoritativeResponse(question.authoritativeExercise))
+            XCTAssertTrue(acceptsAuthoredResponseWithHonestAuthority(question.authoritativeExercise))
         }
     }
 
@@ -1375,7 +1375,7 @@ final class StarterQuestionSetCatalogTests: XCTestCase {
         return contrastTerms.contains(where: normalized.contains)
     }
 
-    private func scoresWithAuthoritativeResponse(_ exercise: NFExercise) -> Bool {
+    private func acceptsAuthoredResponseWithHonestAuthority(_ exercise: NFExercise) -> Bool {
         let response: NFExerciseResponse = switch exercise.interaction {
         case let .numeric(schema):
             .numeric(NFNumericSubmission(
@@ -1403,7 +1403,11 @@ final class StarterQuestionSetCatalogTests: XCTestCase {
                 violatedRuleID: schema.expectedViolatedRuleID
             ))
         }
-        return NFExerciseScoringEngine.score(response, for: exercise).isCorrect
+        let result = NFExerciseScoringEngine.score(response, for: exercise)
+        if case .selfCheck = exercise.interaction {
+            return result.outcome == .selfReported && result.objectiveCorrectness == nil && result.credit == 0
+        }
+        return result.isCorrect
     }
 
 

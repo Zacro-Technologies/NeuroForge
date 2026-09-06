@@ -1,0 +1,1058 @@
+{
+  "recordedAt": "2026-09-05T07:32:37.034224+00:00",
+  "scope": "Frozen coordinated adaptive-item delivery, safe exit, effective progress charts, native scratchpad, mental-math adapter and 23 installed UI journeys. Counts pending execution.",
+  "fileCount": 210,
+  "manifestDigest": "2ae6133776674dd7d70f3b5b7b85b628ddb4fc10e5d523e62f58d90b208806a0",
+  "files": [
+    {
+      "path": "NeuroForge.xcodeproj/project.pbxproj",
+      "sha256": "b21528b58adf38e4533412ee0e94afba93becb3203fdcaa0c457c327cae4a5b2",
+      "bytes": 121051
+    },
+    {
+      "path": "Sources/AI/AIModels.swift",
+      "sha256": "b50af264643f4ee0dd7c3dc8c9af991a4df7a0606b52f6886113cc04161bc306",
+      "bytes": 27059
+    },
+    {
+      "path": "Sources/AI/NFAdaptiveQuestionPopulationAppBridge.swift",
+      "sha256": "49542e817e5cd14e045f55ca25a9f8a6a5294916cd61be86600caa1dd35084c1",
+      "bytes": 1040
+    },
+    {
+      "path": "Sources/AI/NFAdaptiveQuestionPopulationPolicy.swift",
+      "sha256": "e9aed491949e171ca640b6e5b35374aac8572f54f2f0605f59cd9049e504b4a9",
+      "bytes": 18055
+    },
+    {
+      "path": "Sources/AI/NFAuthoredExerciseAuthority.swift",
+      "sha256": "89d3f3f0adb67003587f54f0ea7f8adb7dde1843a3da3c7ede3e1eb75f13b552",
+      "bytes": 18806
+    },
+    {
+      "path": "Sources/AI/NFAuthoringEngine.swift",
+      "sha256": "c770681217eaa90a81189a4d06854deac1bb60172f222261fa69f1214249e422",
+      "bytes": 456432
+    },
+    {
+      "path": "Sources/AI/NFDocumentImportPipeline.swift",
+      "sha256": "f13d898d76f4419ff9db2123206ce4b03ca9bb772eec465ff85a671ed13a7dcf",
+      "bytes": 15229
+    },
+    {
+      "path": "Sources/AI/NFModelAuthoringValidator.swift",
+      "sha256": "245cce87e1d4f0c46ac6e4c8b160c9b9db6b8d6669d37d263f145ab2b6982307",
+      "bytes": 54768
+    },
+    {
+      "path": "Sources/AI/NFNextDayEnhancementCache.swift",
+      "sha256": "f1d95fd38da6b047f6c3d0d0ecfc0becf0810da738a6ddaa8dfd7a39d7d2dd81",
+      "bytes": 24915
+    },
+    {
+      "path": "Sources/AI/NFNextDayPlanPreparationService.swift",
+      "sha256": "795e4493b4a13c362716c0dacc10325e286b963dcfa96d567876a70ca54333ba",
+      "bytes": 20743
+    },
+    {
+      "path": "Sources/AI/NFOCRService.swift",
+      "sha256": "c684a7fca05aeb9e2d0ecfd7368c97bf48cb4e789dfe035c4fb6f0025b072178",
+      "bytes": 7008
+    },
+    {
+      "path": "Sources/AI/SourceGrounding.swift",
+      "sha256": "944ce7997cf05611cb3b6297df860380370ae5d6036c46062cb8ba178de52ca5",
+      "bytes": 65757
+    },
+    {
+      "path": "Sources/Adaptive/AdaptiveEngine.swift",
+      "sha256": "e4689771f170d4d30f3326de55c7dfd0316ea12448942fcbad068a387de06489",
+      "bytes": 14064
+    },
+    {
+      "path": "Sources/Adaptive/EditorialBandEvidenceV1.swift",
+      "sha256": "457c397f6e42a9e05a24efdc0256e0dd65785a1353538fe93acbe9627c9c3173",
+      "bytes": 27052
+    },
+    {
+      "path": "Sources/Adaptive/NFAdaptivePlanHistory.swift",
+      "sha256": "c037703bc16f41ba0679ada5578637fecbef6521ee0fc45f01f6baeddb094eee",
+      "bytes": 7978
+    },
+    {
+      "path": "Sources/Adaptive/NFEditorialPracticePolicy.swift",
+      "sha256": "4e19b72b247ddb390a6a4f20847aa829e91a41a9a1b28fb8b94ec05214a86bc1",
+      "bytes": 20748
+    },
+    {
+      "path": "Sources/Adaptive/NFHistoricalPracticeProjection.swift",
+      "sha256": "7fdd1102460a18c1749211c3b69ba832a85e741d4ff22cc0caefcb8c28017a01",
+      "bytes": 5970
+    },
+    {
+      "path": "Sources/Adaptive/NFImprovementClaimEngine.swift",
+      "sha256": "941da7f573d6a9f25c32c5571cce84e620aa5a4ed598c399b4844f248ac5324f",
+      "bytes": 4596
+    },
+    {
+      "path": "Sources/Adaptive/NFLegacyRotationMigrationBridge.swift",
+      "sha256": "a08611b50cf01305734a88679f048aaa1b69902a0fcad3c444676b25ec5affac",
+      "bytes": 2588
+    },
+    {
+      "path": "Sources/Adaptive/NFLocalReservationBridge.swift",
+      "sha256": "80b36358921af76cc7703471f0133674e19ff176a3ccfbd4a37a5094bd741dca",
+      "bytes": 21208
+    },
+    {
+      "path": "Sources/Adaptive/NFMentalMathProgressAdapter.swift",
+      "sha256": "5372af97e2c828b165b40a83a01148b47a14e215ba113efa46e935d1d00eac67",
+      "bytes": 6557
+    },
+    {
+      "path": "Sources/Adaptive/NFProgressInsightEngine.swift",
+      "sha256": "200de1a97aa37e552d3e5def7419563d0ffcf6177ed9acd8f39a3ffbf64d29e6",
+      "bytes": 24242
+    },
+    {
+      "path": "Sources/Adaptive/NFSelectionReservationLedger.swift",
+      "sha256": "83c6aa4dc13732333bcfedec90b0c45c6cc883e56a6c06db0869785264a5dbbb",
+      "bytes": 27257
+    },
+    {
+      "path": "Sources/Adaptive/NFSpeedEvidenceEngine.swift",
+      "sha256": "f5b3553eaa7816ea2e1fc49eadbaf7e3e3fc41d78ee31e8d1ac5849ecebea6dc",
+      "bytes": 3695
+    },
+    {
+      "path": "Sources/Adaptive/NFTransferTaxonomy.swift",
+      "sha256": "aa06c699383048e36d9cf9e360712ca1c868ad41ad7a29c667547f172ae85062",
+      "bytes": 6429
+    },
+    {
+      "path": "Sources/App/AppRootView.swift",
+      "sha256": "61c31c20c1465e4d91b09dd7ffe1c8172265f4451fd70a2e179a8d57870740ef",
+      "bytes": 21331
+    },
+    {
+      "path": "Sources/App/NFExternalRoute.swift",
+      "sha256": "7c90ef79adc381592652aa4f40ef451f3c353e79ef3f956ae29f20dfcaffaa19",
+      "bytes": 7201
+    },
+    {
+      "path": "Sources/App/NFNavigationState.swift",
+      "sha256": "5ac41adebeebd9b449bc17eb18f3cd166a0a4aac19b77e3d045ac638a8ff14bc",
+      "bytes": 1876
+    },
+    {
+      "path": "Sources/App/NeuroForgeApp.swift",
+      "sha256": "42ee4b30c668b33387a159719267bfa7230fc5b9f40da0eb46a1f9199bc5f07e",
+      "bytes": 40232
+    },
+    {
+      "path": "Sources/Assessment/NFAssessmentEngine.swift",
+      "sha256": "a46cfaab2b8f85f8d52ae5ade0d0d8c0a4dccb251fe9c93ae0716528b8e896f5",
+      "bytes": 52197
+    },
+    {
+      "path": "Sources/Assessment/NFDailyScheduler.swift",
+      "sha256": "8606ae0757bf22e6b577676d785fbe965ea3984360303d3acfd55618e0c8ebf4",
+      "bytes": 39547
+    },
+    {
+      "path": "Sources/Assessment/NFEditorialSchedulingPolicy.swift",
+      "sha256": "e73a11e9ae4eb9a4b1dc15cf77f06615480683169d1b1fb033db20a551691e8a",
+      "bytes": 17904
+    },
+    {
+      "path": "Sources/Assessment/NFPlanBoundaryPolicy.swift",
+      "sha256": "bbd07f366156f292e5b749a4a05f43900de4c3ee56a4f3b2aae11aa61e21c19c",
+      "bytes": 2726
+    },
+    {
+      "path": "Sources/Assessment/NFReassessmentScheduler.swift",
+      "sha256": "a3d01d756def13f6fe54e03e2760d09efd89c049d757b8eea030cea6544de5c0",
+      "bytes": 5740
+    },
+    {
+      "path": "Sources/Assessment/NFRetentionTransferScheduler.swift",
+      "sha256": "c703c7c6423e3ac5bafe2a580757074da6f968e93f48a8d62ea2b5d787a74209",
+      "bytes": 23702
+    },
+    {
+      "path": "Sources/DesignSystem/NFDirtyEditorGuard.swift",
+      "sha256": "3249776cbf15d0e68916266e1ac41f1ac041d409ce703dc1a62c535ab6f453d3",
+      "bytes": 1593
+    },
+    {
+      "path": "Sources/DesignSystem/NFLaTeXEquationView.swift",
+      "sha256": "2bede14b3b3f682e10f1b1b143eeced2f6198d75611ea4d0eaabc185c00842e7",
+      "bytes": 4596
+    },
+    {
+      "path": "Sources/DesignSystem/Theme.swift",
+      "sha256": "6090ff2db273f2fb0588a0497cc9780adaa0a561cda1d4cff4b3925b6b0fe63b",
+      "bytes": 35946
+    },
+    {
+      "path": "Sources/Domain/DomainModels.swift",
+      "sha256": "daee48b1fc76d0ed3ea870abae265395b357c6e7855b187e47b2c83fd028a131",
+      "bytes": 38566
+    },
+    {
+      "path": "Sources/Features/AI/AIStudioView.swift",
+      "sha256": "77dd75bbe55810d732a090fd80059185c81e37ab3819c365a0c24070f496019f",
+      "bytes": 186137
+    },
+    {
+      "path": "Sources/Features/AI/NFGeneratedPracticeDraft.swift",
+      "sha256": "dc0570c9c24fb21cf2b043de0c1d774829e740acaf1e80593ce4c59a5388ddd7",
+      "bytes": 7046
+    },
+    {
+      "path": "Sources/Features/Assessment/BaselineOverviewView.swift",
+      "sha256": "b744c4e85ba6bb4924e3140b750c2b06b85280ffa071d754afd524d732acb71a",
+      "bytes": 15249
+    },
+    {
+      "path": "Sources/Features/Library/LibraryView.swift",
+      "sha256": "c39c3648b0fd3895bc47bee387670863c8844ba941065e57eb2dfa7c9244b9f3",
+      "bytes": 155207
+    },
+    {
+      "path": "Sources/Features/Library/NFPrivateStudyMetadata.swift",
+      "sha256": "2ddce37df483dd87bab99804f1a0d3978023499a81ae297374cd3be5ed8458c0",
+      "bytes": 5816
+    },
+    {
+      "path": "Sources/Features/Library/NFStudyResourcesView.swift",
+      "sha256": "c1f26e3e25b9b2d3acfed013141836487bba5eac4fe7e70fdd4303406bc67956",
+      "bytes": 10387
+    },
+    {
+      "path": "Sources/Features/Methodology/MethodologyLibraryView.swift",
+      "sha256": "19d9d4bb80bf1076d5f742a40340cd337d9d59f9f4f7c72c7d066b7581598d2b",
+      "bytes": 10351
+    },
+    {
+      "path": "Sources/Features/Onboarding/NFOnboardingSampleView.swift",
+      "sha256": "3d8ac22d9a90e58b35fc79f2e677750ecd284f257e5f785c0da14ac62045b7c9",
+      "bytes": 5728
+    },
+    {
+      "path": "Sources/Features/Onboarding/OnboardingView.swift",
+      "sha256": "1e0ac2227d0effceda2df09b11a9615c9c02fa1e320f945c5e7d258104b3e42a",
+      "bytes": 36010
+    },
+    {
+      "path": "Sources/Features/Progress/NFAttemptAnnotationView.swift",
+      "sha256": "c1deddf44abbf9b77ef1c4e22e91804bb1a5aebf9ca4d8b1d7f39e58b247de7a",
+      "bytes": 5616
+    },
+    {
+      "path": "Sources/Features/Progress/NFResponsePresentation.swift",
+      "sha256": "a85d64f0787532bd7aa1f3b46ef1fd06706d9db40ee6bb421e1593be7e480020",
+      "bytes": 5027
+    },
+    {
+      "path": "Sources/Features/Progress/NFReviewQueueView.swift",
+      "sha256": "8a9c4f59f493dccf9899e268a9fd05fd15195200a640593185e6fa46d1a18322",
+      "bytes": 19074
+    },
+    {
+      "path": "Sources/Features/Progress/ProgressAnnotationsView.swift",
+      "sha256": "8da1da3cae504dfd3266782a4acde32b7afd6989923371cface4504153d90429",
+      "bytes": 17710
+    },
+    {
+      "path": "Sources/Features/Progress/ProgressDashboardView.swift",
+      "sha256": "9f8d5be0a6dd2a88ac44cc88677c1044c00bb07dec0ef154c6b17c2cb000add8",
+      "bytes": 153954
+    },
+    {
+      "path": "Sources/Features/Settings/InputCalibrationSettingsView.swift",
+      "sha256": "b03208b0c256d0ca0b3b529c66676e6e7bbb0298ccc429bc31e2cd3b61bb5757",
+      "bytes": 9572
+    },
+    {
+      "path": "Sources/Features/Settings/NotificationSettingsControls.swift",
+      "sha256": "92a1c7b3accb272756b5249311ed2712c8ad1a63e41248674bd02870590be1d6",
+      "bytes": 10738
+    },
+    {
+      "path": "Sources/Features/Settings/ProfileEditorView.swift",
+      "sha256": "8bd0691480a64b23f2a2c5f62a3579e58d0b9dd115f971ad277c231b66352565",
+      "bytes": 10622
+    },
+    {
+      "path": "Sources/Features/Settings/SettingsView.swift",
+      "sha256": "b8682409d99a97a629ce1ed8582f388252cb543416c7b7062535ed75052f0f6a",
+      "bytes": 79384
+    },
+    {
+      "path": "Sources/Features/Settings/SpotlightSettingsControls.swift",
+      "sha256": "54236097aa7252b515068e900ee4a90be0adb87de7367fe42d464b1d5c377bf3",
+      "bytes": 3136
+    },
+    {
+      "path": "Sources/Features/Settings/SystemControlsCard.swift",
+      "sha256": "a2b52c7139dec8f54263742b4c15cb4f6e90052aac636abca4798047c88ad52f",
+      "bytes": 548
+    },
+    {
+      "path": "Sources/Features/Today/NFContinueSessionsCard.swift",
+      "sha256": "78c59ff506987a8d2ae3a2c53ff942fa24440026f664a631a96f390be29e53cd",
+      "bytes": 4826
+    },
+    {
+      "path": "Sources/Features/Today/TodayView.swift",
+      "sha256": "cfd6607aae2c055b262f247eaa40b07d57960628e3650a168abe8261cb7decc3",
+      "bytes": 103016
+    },
+    {
+      "path": "Sources/Features/Train/TrainCatalogView.swift",
+      "sha256": "56bc7475712a00b519453423f4e32a61078c564bfbd01e607c3279e7d18bb801",
+      "bytes": 59162
+    },
+    {
+      "path": "Sources/Features/Training/NFClaimEvidenceEditor.swift",
+      "sha256": "cff6355bcc55e62c0f19394842c9de10fa5215087e03322bb81fb4beeed4880a",
+      "bytes": 4722
+    },
+    {
+      "path": "Sources/Features/Training/NFCodeTraceSampleView.swift",
+      "sha256": "53e61749648d670bb6e5a8c2c7bc5c05c312090a1d017a53f13abde4dda3cc77",
+      "bytes": 4079
+    },
+    {
+      "path": "Sources/Features/Training/NFDataInspectionView.swift",
+      "sha256": "5cca5dc784044f6d9b501c4c3774ba37aa53bf675a0cc72092a6b3b61286784f",
+      "bytes": 3040
+    },
+    {
+      "path": "Sources/Features/Training/NFSessionCommandBridge.swift",
+      "sha256": "28fb16d84f5eb91e08dfe3f232100979f17af38a51078e6d2eda15225f145e26",
+      "bytes": 3843
+    },
+    {
+      "path": "Sources/Features/Training/NFTodaySessionSequence.swift",
+      "sha256": "a4a345d9cc6b3bd93b854642ef4412817a06eed6f07cff32a2f632077b97cde6",
+      "bytes": 4891
+    },
+    {
+      "path": "Sources/Features/Training/ScratchpadView.swift",
+      "sha256": "3d9aca5815f6a560d35940bb233137cbc67845bec366b0b6c2dddcd6e4edbaf0",
+      "bytes": 37450
+    },
+    {
+      "path": "Sources/Features/Training/SessionView.swift",
+      "sha256": "585da0b89b1236d2997e7ff4c4fe3a359d0024186c3179d0d2657b6396dc9fec",
+      "bytes": 1488
+    },
+    {
+      "path": "Sources/Features/Training/SpatialDiagramView.swift",
+      "sha256": "922e91d4219f6a31adce950e772a144c306ca7f7d18acd109d6c0d289a7691ab",
+      "bytes": 20925
+    },
+    {
+      "path": "Sources/Features/Training/UniversalSessionView.swift",
+      "sha256": "26ebbde8d6f292d94d9750d319a4565c25006a2e5eb61cde727ae48057f3645b",
+      "bytes": 192449
+    },
+    {
+      "path": "Sources/Integrations/NFShortcutAuthoringBridge.swift",
+      "sha256": "d83a3b9cccef496d5b7c34a7f1626837450e0ce0039dd9701681c240070293ca",
+      "bytes": 51583
+    },
+    {
+      "path": "Sources/Integrations/NFWidgetSnapshot.swift",
+      "sha256": "f6d1755608fc9a66f963e29e20478b122120e2217bd56a28f0e0b11d012f8914",
+      "bytes": 8747
+    },
+    {
+      "path": "Sources/Integrations/NFWidgetSnapshotPublishing.swift",
+      "sha256": "162fa81a069015c3f5caad1a005df533ba127362be7bade2387e01baa7b09bd2",
+      "bytes": 3557
+    },
+    {
+      "path": "Sources/Integrations/NeuroForgeIntents.swift",
+      "sha256": "786f9a1f947f86ee36d34459c7dca94cc50c014d2fcf7a9cbc72f834fe9b7a53",
+      "bytes": 14254
+    },
+    {
+      "path": "Sources/Integrations/System/NFBackgroundTaskIntegration.swift",
+      "sha256": "10cf2845cff49e8e01c1b029c8a76ff3d70f108a097ebb19cff8d63e46dc26e2",
+      "bytes": 8777
+    },
+    {
+      "path": "Sources/Integrations/System/NFMetricKitIntegration.swift",
+      "sha256": "dfef2be26eb28f76dba7d83e96530e80b5a4be7bcf4afa397b614ff1767d5ccc",
+      "bytes": 2241
+    },
+    {
+      "path": "Sources/Integrations/System/NFNotificationIntegration.swift",
+      "sha256": "a8defe78862881c438af3085f57d7d4b0127bde5f518614bccd81a914de6233f",
+      "bytes": 20626
+    },
+    {
+      "path": "Sources/Integrations/System/NFPrivateCloudCapability.swift",
+      "sha256": "5fb49884bd29edc24a9b619d44b03a18c14feed3a2f076da8e7d116d7445a846",
+      "bytes": 16007
+    },
+    {
+      "path": "Sources/Integrations/System/NFPrivateDocumentAssetCloudKitAdapter.swift",
+      "sha256": "c4c9dacbb9f267a6cce7b31d80bbab91119fa663ebdeaf8e81f90005c8b3dd68",
+      "bytes": 38998
+    },
+    {
+      "path": "Sources/Integrations/System/NFPrivateDocumentAssetQueue.swift",
+      "sha256": "0f2cdcea55140c86c958d540ef3e337f880cce796b49e9ef6d4f505a7fe2911c",
+      "bytes": 51402
+    },
+    {
+      "path": "Sources/Integrations/System/NFReinforcementFeedback.swift",
+      "sha256": "4b0a3c634ecec9a1a2fc4afe2c8362e02ad7707df2e3ec8e400b780846d4289f",
+      "bytes": 442
+    },
+    {
+      "path": "Sources/Integrations/System/NFSpotlightIntegration.swift",
+      "sha256": "1c8ac41179adcbb0a83ba15711fb2617c24dcdca8c017cf9077822c111cef654",
+      "bytes": 9274
+    },
+    {
+      "path": "Sources/Integrations/System/NFSyncIntegration.swift",
+      "sha256": "a0ba1e160363b5acc704b75efb5fd6db77db8c0bd2c37d3af5aadfc313475239",
+      "bytes": 88701
+    },
+    {
+      "path": "Sources/Integrations/System/NFSystemIntegrationCoordinator.swift",
+      "sha256": "fecfa5d7369380b5d4662dbd1324a0f8537339d48e652c7cebf5333154929e16",
+      "bytes": 74663
+    },
+    {
+      "path": "Sources/Persistence/NFLocalSessionRepository.swift",
+      "sha256": "afbd7719329730a7a15644d631a754ec8c5dde06da8ad850895e76ddbd8643f1",
+      "bytes": 114629
+    },
+    {
+      "path": "Sources/Persistence/NFPlanReplacementPersistence.swift",
+      "sha256": "27a54e334c6b09492aeff799baf86545adac2be46dbc82d20903f0a1068114a4",
+      "bytes": 6629
+    },
+    {
+      "path": "Sources/Persistence/NFSchemaMigration.swift",
+      "sha256": "9e9a1ae85ae486d175f2f09cfe7d51c33f1e50026ded8b425300623fd5eec8b4",
+      "bytes": 51331
+    },
+    {
+      "path": "Sources/Persistence/PersistenceModels.swift",
+      "sha256": "58135a395267ff3031d4128e6c24b3d34c147b412c46dca9f1a3a6085423d864",
+      "bytes": 255240
+    },
+    {
+      "path": "Sources/Privacy/NFDataArchiveRestoreService.swift",
+      "sha256": "5f1f6c30345ac76b4a4738ceb17db3d20fc403330d8f54e3f8d906ef8eb8788d",
+      "bytes": 56660
+    },
+    {
+      "path": "Sources/Privacy/NFDataExportRoundTripValidator.swift",
+      "sha256": "6f9c577126a90d57846554b74c504a1cc0db6533c9cd75d74a77a4a797a5ff7b",
+      "bytes": 6661
+    },
+    {
+      "path": "Sources/Privacy/NFDataExportService.swift",
+      "sha256": "4cf932c0078d8ce4f68debbc492d5617d7cdf047d683f58726fe30ea1ce273e6",
+      "bytes": 50824
+    },
+    {
+      "path": "Sources/Privacy/NFDiagnosticRedactor.swift",
+      "sha256": "2df47345f8e1f2ffe35b52c455e9f295acf3483c8c534642b8ba0538a0f6b03a",
+      "bytes": 16175
+    },
+    {
+      "path": "Sources/Resources/AppShortcuts.xcstrings",
+      "sha256": "1f9260d2999ed4400b70a5def4782fd513b86c3d52410b60d5addbb7287c0310",
+      "bytes": 3260
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "sha256": "80b5adbfa223d3b797f9e56f69c660fc9ff9cf1d5859cd1104e51002f5faf84c",
+      "bytes": 1536
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/AppIcon.appiconset/NeuroForge-AppIcon-1024.png",
+      "sha256": "aef723a880f17881563496a6667c3215e21347993cc411dfc5d1478d89655622",
+      "bytes": 1062001
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/AppIcon.appiconset/NeuroForge-AppIcon-128.png",
+      "sha256": "de9392a728cbf475d084c0b460db92310798d83186b390435ceeff1ea3a2a4db",
+      "bytes": 21398
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/AppIcon.appiconset/NeuroForge-AppIcon-16.png",
+      "sha256": "b52ec17657e585138a7966770a1927df19cd23efbc884fa7821c66291e2dbe8a",
+      "bytes": 1222
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/AppIcon.appiconset/NeuroForge-AppIcon-256.png",
+      "sha256": "c0ea1d3232913074d8d3a6d099ff1a9bfc15d6b949753d93f08d812e35246418",
+      "bytes": 77119
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/AppIcon.appiconset/NeuroForge-AppIcon-32.png",
+      "sha256": "78bed83326fa200ec5fc8f005ccb114023e3a50a255567f621eaa1b309803897",
+      "bytes": 2417
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/AppIcon.appiconset/NeuroForge-AppIcon-512.png",
+      "sha256": "93d11aa65b48464434bb915e0293082f416be0cf5638c10f51652405fb4e9d8c",
+      "bytes": 285871
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/AppIcon.appiconset/NeuroForge-AppIcon-64.png",
+      "sha256": "4298d33c0bc2103b1111876bd9c24abb1c251b068a57666d3eb737584c5a58c6",
+      "bytes": 6527
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/Contents.json",
+      "sha256": "0fd49ba3c3585c709678e0046a821c3c60685ec7063720d30d3a3448be3a208b",
+      "bytes": 63
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/LaunchBackground.colorset/Contents.json",
+      "sha256": "8d061600879022a61e11a535247f946e7517057780b9059b7c8548d906e290ec",
+      "bytes": 695
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/LaunchMark.imageset/Contents.json",
+      "sha256": "b5420d4876628a850c14ff4273becf8feb8dc3f7491f554c54a8ec6b01455f98",
+      "bytes": 229
+    },
+    {
+      "path": "Sources/Resources/Assets.xcassets/LaunchMark.imageset/LaunchMark.svg",
+      "sha256": "a4caa53c1db2e7038f60534bf181f837eea13e0667a891bca30f773837440fac",
+      "bytes": 589
+    },
+    {
+      "path": "Sources/Resources/Info.plist",
+      "sha256": "0acc6c6292a69bd0c1337bac97156ad120233182d1f97401833d1136b06ece49",
+      "bytes": 3408
+    },
+    {
+      "path": "Sources/Resources/Localizable.xcstrings",
+      "sha256": "262f1b5f680583a5c8d1a9fe2d076c141c1c47167e9c55af566ea0bdc2058442",
+      "bytes": 2708948
+    },
+    {
+      "path": "Sources/Resources/NFAppLocalization.swift",
+      "sha256": "a9a6343b8358c739b9ce26923f467b41501a12c709d340022b7ca7bfad6d0ca9",
+      "bytes": 20165
+    },
+    {
+      "path": "Sources/Resources/NFManualLocalizationInventory.swift",
+      "sha256": "c220961484db2ac18989fc3eb1a1c7bf790826b039ee283964dc95fb3e9455c7",
+      "bytes": 237402
+    },
+    {
+      "path": "Sources/Resources/NeuroForgeMac.entitlements",
+      "sha256": "0db34d9e5b7db77164ff2782d806881f53345b42f28828ef141cc9bf0d38cd46",
+      "bytes": 906
+    },
+    {
+      "path": "Sources/Resources/NeuroForgeReleaseContentManifest.json",
+      "sha256": "d2329cfd756d6126245380a4ee73dfbbc0ab0b09c72e06f2d167a958881bb2c8",
+      "bytes": 2443
+    },
+    {
+      "path": "Sources/Resources/NeuroForgeReleaseContentManifest.signature.txt",
+      "sha256": "4fb6ae1c2790436049716a855a3c9a1641dca7054ebc2b9f8021429e0df59fdc",
+      "bytes": 97
+    },
+    {
+      "path": "Sources/Resources/NeuroForgeTestFlight.entitlements",
+      "sha256": "8c7a51dce68b4faec89954db851c6f33db55fad298170e7d96457397d75751c4",
+      "bytes": 737
+    },
+    {
+      "path": "Sources/Resources/PrivacyInfo.xcprivacy",
+      "sha256": "81ea0827ea52de223f91d49e7451d704970768f5c4b123aa79df2ba8b35eae83",
+      "bytes": 889
+    },
+    {
+      "path": "Sources/Resources/ThirdPartyNotices.txt",
+      "sha256": "c7850f93575217857623a9cbd92d8895706e3341511ab8a422bac80ef6ddac0d",
+      "bytes": 1150
+    },
+    {
+      "path": "Sources/TrainingEngine/NFBundledRetrievalCatalog.swift",
+      "sha256": "3f371e56a9949b491bd06290a7ee9943fe34c0014ad15ca65c47be32ec8bc5d4",
+      "bytes": 139696
+    },
+    {
+      "path": "Sources/TrainingEngine/NFCalculationChainEngine.swift",
+      "sha256": "0167a051f4d5bba0a91eea5051749f5a5a2b7b698cb80417bdb5be12750503b7",
+      "bytes": 8232
+    },
+    {
+      "path": "Sources/TrainingEngine/NFContentAdmission.swift",
+      "sha256": "96b8b31ea888847f3456f1747c5ce2658b6b00974bf86767b9fdf8ca14bd465a",
+      "bytes": 12270
+    },
+    {
+      "path": "Sources/TrainingEngine/NFContentCorrectionPolicy.swift",
+      "sha256": "cd28feb4c38796597fba4d1b751d25144c945c6f87938213e276aafc24efd1c7",
+      "bytes": 31645
+    },
+    {
+      "path": "Sources/TrainingEngine/NFContentInventoryAudit.swift",
+      "sha256": "7edd94b94ccc8844c18a5c4c80bc71ae9870256f26e3ea04d40453d940bd93ad",
+      "bytes": 3901
+    },
+    {
+      "path": "Sources/TrainingEngine/NFCubeNetEngine.swift",
+      "sha256": "3a2428fa5b82ec24ac827398a146795e0ec9e19cdfb4ddc6fd41d330a2af6a11",
+      "bytes": 10219
+    },
+    {
+      "path": "Sources/TrainingEngine/NFDefaultContentCatalog.swift",
+      "sha256": "82ab0e386b80fcd88405df2cbb4821c8f15a12e5cb4dd65f9b4a3f323c16328a",
+      "bytes": 33136
+    },
+    {
+      "path": "Sources/TrainingEngine/NFEstimateExactContract.swift",
+      "sha256": "8d9e92bae4f2dda43ebc6200d8d53a3b6822878638dc53dd8d5980e6974317ad",
+      "bytes": 5311
+    },
+    {
+      "path": "Sources/TrainingEngine/NFExactArithmetic.swift",
+      "sha256": "d06d687bde311f853392538269a847570aa5d7fdc0d6b06ae135171afdaf8501",
+      "bytes": 11993
+    },
+    {
+      "path": "Sources/TrainingEngine/NFExerciseContractMetadata.swift",
+      "sha256": "941c454109f26c59eefd0ebd76ae434d9bcabbe7868d3090cfee79b93211d4b8",
+      "bytes": 3803
+    },
+    {
+      "path": "Sources/TrainingEngine/NFExerciseModels.swift",
+      "sha256": "43df9a445de03fd22ee8d7b66e69c4602ce50bd3e6037338e85592cdddb843f6",
+      "bytes": 35290
+    },
+    {
+      "path": "Sources/TrainingEngine/NFExerciseScoringEngine.swift",
+      "sha256": "b0fa591852574ebf31cdbee9a073d1f5fc13a10d82e1260fe5cdff8de7834b09",
+      "bytes": 89407
+    },
+    {
+      "path": "Sources/TrainingEngine/NFFallbackExerciseGenerator.swift",
+      "sha256": "a415359f5bd3c61b4128544428c0971fa2db7d10f1a8a40f5506d10ababa961b",
+      "bytes": 234371
+    },
+    {
+      "path": "Sources/TrainingEngine/NFMentalMathDomainPacks.swift",
+      "sha256": "c42bf63760b69fd0ff3030eed842e61c0de0bf717b0fbf1ee71171eb0dea44ab",
+      "bytes": 9693
+    },
+    {
+      "path": "Sources/TrainingEngine/NFMentalMathEvidence.swift",
+      "sha256": "6e05e01475ccab90316a262a1fa163c40707e189b172b56a1d39b58bec966134",
+      "bytes": 12539
+    },
+    {
+      "path": "Sources/TrainingEngine/NFOfflineQuestionBank.swift",
+      "sha256": "c6f2d7ff5bafa877d99140bd4e0e452980dd8818cfa21405f514f37337474728",
+      "bytes": 7382
+    },
+    {
+      "path": "Sources/TrainingEngine/NFOfflineQuestionRotation.swift",
+      "sha256": "f55aca29e053e9c7b16ea9d41c3e8cee1ba3b3e85a434cfc5491eba69bbf3aa6",
+      "bytes": 23561
+    },
+    {
+      "path": "Sources/TrainingEngine/NFQuestionFingerprint.swift",
+      "sha256": "9836d3ae63759b3558a38f2d3108671d0cf1739058925aa051f5441230113c8e",
+      "bytes": 5883
+    },
+    {
+      "path": "Sources/TrainingEngine/NFReleaseContentCatalog.swift",
+      "sha256": "4c497e1f474ba9c1e94731af618397b20552a92a3aaa31435b6242de22f7ef74",
+      "bytes": 33313
+    },
+    {
+      "path": "Sources/TrainingEngine/NFReleaseContentIntegrity.swift",
+      "sha256": "61c135b37c174299db022138ad60bfedade3ae5ea2e077e45bcfcc195e120389",
+      "bytes": 8897
+    },
+    {
+      "path": "Sources/TrainingEngine/NFReleaseContentRuntimeBridge.swift",
+      "sha256": "7c85b3fc8c72d8528326aa872717020cf06c124befcb8131dda9c309342a0ea8",
+      "bytes": 3350
+    },
+    {
+      "path": "Sources/TrainingEngine/NFResponseAuthority.swift",
+      "sha256": "c69156de5ce320bd924b0f0160d074d42ab05a0e051c70a572988bb20ab77fd9",
+      "bytes": 5144
+    },
+    {
+      "path": "Sources/TrainingEngine/NFRestrictedPseudocodeInterpreter.swift",
+      "sha256": "468486e81fe6687955a824d798fb073584cc157867228a56a39baa0839790446",
+      "bytes": 12050
+    },
+    {
+      "path": "Sources/TrainingEngine/NFRestrictedSymbolicAuthority.swift",
+      "sha256": "c8af7d7bc46251d78b70d68d9c7d3c4018456dbf4065ec26ce2f2de9bcfd7d79",
+      "bytes": 10464
+    },
+    {
+      "path": "Sources/TrainingEngine/NFRetrievalResponseAuthority.swift",
+      "sha256": "1164dd50d627f11985ffee903ff2bb4e65e145492115943836b9077b537216d6",
+      "bytes": 4457
+    },
+    {
+      "path": "Sources/TrainingEngine/NFScoringErrorCopy.swift",
+      "sha256": "8dff68799b4c99b2024f02c025cbf0de9669f0e30a60a40a8f17893227b297d3",
+      "bytes": 4086
+    },
+    {
+      "path": "Sources/TrainingEngine/NFStarterQuestionSetCatalog.swift",
+      "sha256": "40dfeb1c4863cd45e347fc7beb4836951fbec036e105a58d8d21907a8fbdf8be",
+      "bytes": 38020
+    },
+    {
+      "path": "Sources/TrainingEngine/NFUserFacingContentLinter.swift",
+      "sha256": "a6000f7a64f444139752da28d93e7df9b8f7e045b83ac22e4ad270a0cac0ef78",
+      "bytes": 12509
+    },
+    {
+      "path": "Tests/AIAndSourceTests.swift",
+      "sha256": "1204e8987536762bff1dc675749512d6fded7e984be866bbc06ab7dfda55fbf0",
+      "bytes": 230686
+    },
+    {
+      "path": "Tests/AdaptiveEngineTests.swift",
+      "sha256": "e8f2c4f83106ebc5c7ae8af95d261b65cf002759c3408d0f7e6be8fb1ddece82",
+      "bytes": 24056
+    },
+    {
+      "path": "Tests/AdaptivePlanHistoryTests.swift",
+      "sha256": "02e13cc0125cad8359e318be7e0f9a42a1253b19aca54bdf79911fff3307af1b",
+      "bytes": 5277
+    },
+    {
+      "path": "Tests/AdaptiveQuestionPopulationPolicyTests.swift",
+      "sha256": "98f8a0fe631e46e189411fa4633076cd0eb3ab0618d4720ca390dedb106af8e9",
+      "bytes": 17695
+    },
+    {
+      "path": "Tests/AssessmentSchedulerTests.swift",
+      "sha256": "d278a1b4cb4ce58f7d37e604d90c8153ec6a6187f1244500b75e3844a1a6d9c7",
+      "bytes": 68376
+    },
+    {
+      "path": "Tests/AttemptReflectionContractTests.swift",
+      "sha256": "0d5953ed7671af23eee6b45f51eba3b0494b56866b93a37a122cc54c92a7a971",
+      "bytes": 16294
+    },
+    {
+      "path": "Tests/BundledRetrievalCatalogTests.swift",
+      "sha256": "aceb7bfaef9f2bdab86795ad1fa7f3b2ce9c6c30bf3a3138938de6c8196e2784",
+      "bytes": 13861
+    },
+    {
+      "path": "Tests/CloudAuthoringTests.swift",
+      "sha256": "187b71862d9922ec190e1f0e119dabc04dc34ca2144af10c47556a432a1b941e",
+      "bytes": 13445
+    },
+    {
+      "path": "Tests/ContentImprovementRegressionTests.swift",
+      "sha256": "2202d75874ed85ad547465fcb199ca5310583c1c1bc623278e61a617e078da8a",
+      "bytes": 51765
+    },
+    {
+      "path": "Tests/DataExportRoundTripTests.swift",
+      "sha256": "6705b269cf81bbcb91fab5bcef272a694e56253d9609572292c62ed386158a88",
+      "bytes": 53199
+    },
+    {
+      "path": "Tests/DataExportTests.swift",
+      "sha256": "b15eed4c39f5e2d63e8113977d77e666d6d29d0c46c24c09795a968ff45b2b4e",
+      "bytes": 18880
+    },
+    {
+      "path": "Tests/DefaultContentCatalogTests.swift",
+      "sha256": "5f9c34fe38917a2eaf61a426f3537032d41bbcfd0a6b722fa9d99c10cfc1f9bb",
+      "bytes": 15256
+    },
+    {
+      "path": "Tests/DocumentImportLifecycleTests.swift",
+      "sha256": "d6a09d6096eb706f73e55a6451494aec13ec11fe451293b41693a185ed30875d",
+      "bytes": 7359
+    },
+    {
+      "path": "Tests/EditorialBandEvidenceTests.swift",
+      "sha256": "00cc59ee25435b4eae8a6febefc21ef66cd112b38254a71f837457949eebd5f5",
+      "bytes": 38649
+    },
+    {
+      "path": "Tests/ExactSessionContinuityTests.swift",
+      "sha256": "58fd4698b67e9285b9906ab9a28dd54e21174ad2ccb68c13d93b5b55d116226d",
+      "bytes": 32889
+    },
+    {
+      "path": "Tests/ExperienceImprovementTests.swift",
+      "sha256": "749ae8f646b7ee7811dea3fd2d8470f64d53e6356c45e8a83991d585396c2421",
+      "bytes": 38785
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/disputed-science-v18.json",
+      "sha256": "6ad8e6ec6df81e064f034f97fd7dd9f8d4d92871fd8bd93daff086497a51098f",
+      "bytes": 3315
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/external-self-check-v18.json",
+      "sha256": "4cd3b5ded31ca520cb069beaa999129850651c74c1881083b8e0b30b8867f190",
+      "bytes": 3320
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/fresh-v18.json",
+      "sha256": "bffb71ac0c2620d08e6dfb567d20d93795b51acb5909b0240733aacf3d40f2df",
+      "bytes": 1355
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/future-v99.json",
+      "sha256": "ab6d81e0e8f06bd8e7b266c44b4c446795b979fdd9e2e9e96037cbb86246fa42",
+      "bytes": 1355
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/history-10000.recipe.json",
+      "sha256": "7bb4a3688abe0967ddbb90727c3bafb9034649f0fae62a91cfb6a0e54a3d4d26",
+      "bytes": 428
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/invalid-duplicate-attempt-v18.json",
+      "sha256": "b2453f2c41527048a852550bab8f83d6612b255b69f73464d2d1c719e7128df2",
+      "bytes": 4871
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/invalid-source-reference-v18.json",
+      "sha256": "610b2509182be76adcdf03a48d05641b7febe6021f4078f9595dbf7d92370f82",
+      "bytes": 5694
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/legacy-v14.json",
+      "sha256": "886128a15978accd23b39c9e1ce6df8402e6c7963aef0bf6a24cdc3a0ad75612",
+      "bytes": 6978
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/legacy-v15.json",
+      "sha256": "f4c84d2c6ced3d68e42be7c143156d86c16d11e2c48e4f9b656d3e3a615fc264",
+      "bytes": 7006
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/legacy-v16.json",
+      "sha256": "efb08065eb8d6c4e2cd8ad10101994423c5df8e0dea672bd6564762e82ba5d21",
+      "bytes": 7035
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/legacy-v17.json",
+      "sha256": "fd21c2b7176021fd25902d160f09ba884d91b1173102cc82dba53617379920c5",
+      "bytes": 7035
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/legacy-v18.json",
+      "sha256": "572f39f18f03ed8c5d8b031114fce3c1700a45f007ff531e0e4d4516fe08d652",
+      "bytes": 7035
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/malformed-truncated.json",
+      "sha256": "7538fe1e2783f5e7d6349fc32fc60446f78766e6d20aed0e750939fd5f672ae2",
+      "bytes": 33
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/manifest.json",
+      "sha256": "1a105355da4b21eec222c1dc77aeaf3d6fa8ca7df132e58c8eb5f06e3690da40",
+      "bytes": 5638
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/regenerate.py",
+      "sha256": "f7a3d931f678778bfddf5bcfe5432b8b730d50804be7455482e5f3149f41ff24",
+      "bytes": 11707
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/runtime-phases.recipe.json",
+      "sha256": "8c46605f7a0061347fd5ba2753620bed9dfe796a03ed03d2bffc6b3c08b899e2",
+      "bytes": 790
+    },
+    {
+      "path": "Tests/Fixtures/ImprovementGolden_v1/source-duplicates-deleted-reference-v18.json",
+      "sha256": "f7e6812ebcd22dd5ce769342ca7857cf972348261b2005d9edc7e2fd75f9a3c0",
+      "bytes": 5694
+    },
+    {
+      "path": "Tests/FocusedQuizRotationIntegrationTests.swift",
+      "sha256": "46dcf76656ca776e3e895dc023d64cd353834c928abd1ac82d9dc07c18fb884a",
+      "bytes": 84846
+    },
+    {
+      "path": "Tests/GeneralExerciseEngineTests.swift",
+      "sha256": "1db5d42140c05e4ac79157103629e1d3b8c7230a567796347ed832635fab344e",
+      "bytes": 58542
+    },
+    {
+      "path": "Tests/HistoricalContentCorrectionPolicyTests.swift",
+      "sha256": "5f9278a2608db76c792c09a28766852cac857b3aeab44ff96b0e0a0b215bd41f",
+      "bytes": 37619
+    },
+    {
+      "path": "Tests/LocalLearningLifecycleTests.swift",
+      "sha256": "a3919b6cf184a486e79f4c6bdb5c046c9c934d30575a0edc5a96d14f1905494a",
+      "bytes": 48758
+    },
+    {
+      "path": "Tests/LocalReservationBridgeTests.swift",
+      "sha256": "aa1abeac1d27da3f8a721e81d3b4da1552c1be39d1be0607a1ee6f79e9a09638",
+      "bytes": 13345
+    },
+    {
+      "path": "Tests/LocalizationCatalogTests.swift",
+      "sha256": "18e44b20b17cd73db4debc593fb2dad83e325c1b429a3582cf1e2451cc711f90",
+      "bytes": 46671
+    },
+    {
+      "path": "Tests/LocalizationResidualTests.swift",
+      "sha256": "2b518f6845d88cef296e5b7c1d28ff465eb07b8c5e566ee8540899a2e0c6c023",
+      "bytes": 3253
+    },
+    {
+      "path": "Tests/MathContentContractTests.swift",
+      "sha256": "8afd9d93f1e13c9eab5784845db2242c8666a8de041682c6dfe57d03646b278f",
+      "bytes": 21007
+    },
+    {
+      "path": "Tests/NextDayEnhancementCacheTests.swift",
+      "sha256": "993436181d4bf442c5e38e6c791b834fbc68de5c9092bc5634c5635bc501fda3",
+      "bytes": 19961
+    },
+    {
+      "path": "Tests/OfflineQuestionBankTests.swift",
+      "sha256": "5e311b37e2a3be33cf5aadf2aa725d1f727dba1543fd8cd5141512bc30c596d2",
+      "bytes": 4918
+    },
+    {
+      "path": "Tests/OfflineQuestionRotationTests.swift",
+      "sha256": "acfdb0a960d50aaf8c365026ba7d3862de594c22b390d887d6bd20e880046c79",
+      "bytes": 21045
+    },
+    {
+      "path": "Tests/PersistenceRuntimeTests.swift",
+      "sha256": "c774f99d258b752d2b31f27ec37d19224604a4c7b1b0f629397498e1679f3e43",
+      "bytes": 110417
+    },
+    {
+      "path": "Tests/PrivacyLifecycleTests.swift",
+      "sha256": "ee4570b1e3a0d3b422e48e68c8998b37e3737cc11ede4ed82e09c0c524a80a8b",
+      "bytes": 11369
+    },
+    {
+      "path": "Tests/PrivateCloudTransportTests.swift",
+      "sha256": "8f461a11976d881d7c9e076256a0c49b1270baa519d178a1d503ec1b3c7df737",
+      "bytes": 109735
+    },
+    {
+      "path": "Tests/ProfileProgressContractsTests.swift",
+      "sha256": "0fc5a6389ef97791b9676171ab4751b91bb2799a37b58e175084c269d8c40b40",
+      "bytes": 59734
+    },
+    {
+      "path": "Tests/ProgressEvidenceTests.swift",
+      "sha256": "37941cd368f692825afd6ca510db14a1738906a3eccbf4701d38f5f46ad9761a",
+      "bytes": 33833
+    },
+    {
+      "path": "Tests/ProtectedPortableArchiveTests.swift",
+      "sha256": "f68d06bcbfd24f3b411f46fe2be68a08d2714ef60399b4d94853a204b26eff2d",
+      "bytes": 10815
+    },
+    {
+      "path": "Tests/RecoveryMigrationTests.swift",
+      "sha256": "5bbfe0bdc48589c58a2a828a705de17c44adaa111957be1dbda7e33aef302cf4",
+      "bytes": 7828
+    },
+    {
+      "path": "Tests/ReleaseContentIntegrityTests.swift",
+      "sha256": "a6fc6fe105908d9b0d285f3ade637ee5897f65eb5e4a11e30ad867ab8127867c",
+      "bytes": 10819
+    },
+    {
+      "path": "Tests/ResidualIntegrationContractTests.swift",
+      "sha256": "6e31692b99effe1c9efe416336554944f63f266013ac6f18dbb31a0a9f6e86cc",
+      "bytes": 9535
+    },
+    {
+      "path": "Tests/RetrievalMechanicsContractTests.swift",
+      "sha256": "b0236e471905d4840669868c925a3561303c4fcff577b75d5c6ac550aa79be1e",
+      "bytes": 6619
+    },
+    {
+      "path": "Tests/RetrievalRuntimeScoringTests.swift",
+      "sha256": "48058cadcd7c1d18425aca28aaa256e742daf5d7466e8111e20442efe8b0d63e",
+      "bytes": 5573
+    },
+    {
+      "path": "Tests/SelectionReservationLedgerTests.swift",
+      "sha256": "8b910e8937196c1123e417f61ba08a4e7f66e7e46e90605bef54ff16082557e8",
+      "bytes": 11998
+    },
+    {
+      "path": "Tests/SemanticSourceImportTests.swift",
+      "sha256": "85202a1b802ed8a76c8b60700b2ac873717d2d6e02c142c5bd6c8f478b78d411",
+      "bytes": 39916
+    },
+    {
+      "path": "Tests/SessionFlowContractTests.swift",
+      "sha256": "2b4f17783199b15b1d827a50dc6cc9f023a20bfb472287a5d30cc5c810e0e8a2",
+      "bytes": 16007
+    },
+    {
+      "path": "Tests/SessionIntegrityReviewTests.swift",
+      "sha256": "5ac1e0649ef8f904f432547c4d6557cecd0f9195a923dc7986df7417e7aceb16",
+      "bytes": 47173
+    },
+    {
+      "path": "Tests/SessionWorkloadBudgetTests.swift",
+      "sha256": "1b029ccf11398a90d5c409a1471dbce72a4ce41ea21c5d74125195e5842259a6",
+      "bytes": 14775
+    },
+    {
+      "path": "Tests/StarterQuestionSetCatalogTests.swift",
+      "sha256": "d6f4a1ad3d401a32aa2cfa3c25d80ac12196e654fab862d9d94a694e0d40df0b",
+      "bytes": 75872
+    },
+    {
+      "path": "Tests/SystemIntegrationTests.swift",
+      "sha256": "418ebaf6f1e3e249f3f5a40ebe33e987050bbd413eaaf6be7c0f016f3b41a093",
+      "bytes": 85769
+    },
+    {
+      "path": "Tests/TransferTaxonomyTests.swift",
+      "sha256": "9620a910e204260a6361798efceeebcc645fe697751673f125b77869d3f2a465",
+      "bytes": 7247
+    },
+    {
+      "path": "Tests/UserFacingContentLintTests.swift",
+      "sha256": "9f69154b8e0313c1f94c699290be8f5863f8450daefdfe9bb0ef060384359bdf",
+      "bytes": 6644
+    },
+    {
+      "path": "UITests/NavigationSmokeUITests.swift",
+      "sha256": "ea26fe2e9ab217decb39251b03e21066d0bbd3bcf37b99781a99809d1488fcac",
+      "bytes": 55237
+    },
+    {
+      "path": "project.yml",
+      "sha256": "8ef7b0d322f99079bceb34c53b133ab9fc4a81fbead76659577bd3d48b723fcd",
+      "bytes": 3604
+    }
+  ]
+}

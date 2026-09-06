@@ -32,7 +32,7 @@ struct NFSpeedEvidence: Codable, Equatable, Sendable {
 /// ability, plan completion, or improvement claims. Only fully correct,
 /// explicitly timed, uninterrupted scored attempts are eligible.
 enum NFSpeedEvidenceEngine {
-    static let version = 1
+    static let version = 2
     static let minimumEligibleAttempts = 5
 
     static func estimate(for lab: TrainingLab, attempts: [AttemptRecord]) -> NFSpeedEvidence {
@@ -41,14 +41,9 @@ enum NFSpeedEvidenceEngine {
                 && !$0.wasSkipped
                 && $0.evidenceWeight > 0
         }
-        let eligibleDurations = labAttempts.compactMap { attempt -> Double? in
-            guard attempt.wasTimed,
-                  attempt.interruptionCount == 0,
-                  attempt.deterministicCredit >= 0.999,
-                  attempt.activeDurationSeconds.isFinite,
-                  attempt.activeDurationSeconds > 0 else { return nil }
-            return attempt.activeDurationSeconds
-        }.sorted()
+        // The shipped legacy record lacks complete timing, relaunch, tool and band
+        // provenance. Preserve its duration in history; a clean-speed claim is unavailable.
+        let eligibleDurations: [Double] = []
 
         if eligibleDurations.isEmpty,
            !labAttempts.isEmpty,

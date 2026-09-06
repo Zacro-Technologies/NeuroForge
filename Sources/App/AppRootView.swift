@@ -9,6 +9,10 @@ struct AppRootView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.scenePhase) private var scenePhase
 
+    @State private var visitedDestinations: Set<AppDestination> = [.today]
+    @State private var navigation = NFNavigationState()
+    @State private var pendingRootReset: AppDestination?
+
     var body: some View {
         @Bindable var store = store
 
@@ -18,7 +22,8 @@ struct AppRootView: View {
             ReleaseContentIntegrityFailureView()
         } else {
         #if os(iOS)
-        rootContent(selection: $store.selectedDestination)
+        rootContent(selection: destinationSelection)
+            .environment(navigation)
             .transaction { transaction in
                 if store.profile?.reducedMotion == true { transaction.animation = nil }
             }
@@ -26,6 +31,12 @@ struct AppRootView: View {
                 UniversalSessionView(request: request)
                     .id(request.id)
                     .environment(store)
+            }
+            .onChange(of: store.activeDirtyEditor?.id) { _, editorID in
+                if editorID == nil, let destination = pendingRootReset {
+                    navigation.returnToRoot(destination)
+                    pendingRootReset = nil
+                }
             }
             .onAppear(perform: consumePendingShortcutIfPossible)
             .onOpenURL(perform: handleDeepLink)
@@ -46,6 +57,7 @@ struct AppRootView: View {
                 }
             }
             .onChange(of: spotlightSourceFingerprint) { _, _ in
+                navigation.prune(documentIDs: Set(store.documents.map(\.id)), attemptIDs: Set(store.attempts.map(\.id)))
                 Task { await refreshSpotlightIfAppropriate() }
             }
             .onChange(of: store.isOnboardingComplete) { _, isComplete in
@@ -53,6 +65,9 @@ struct AppRootView: View {
             }
             .onChange(of: preferredLanguageCode) { _, _ in
                 store.publishWidgetSnapshot()
+                Task { await refreshNotificationLanguageIfAppropriate() }
+            }
+            .onChange(of: reviewDeferralSignature) { _, _ in
                 Task { await refreshNotificationLanguageIfAppropriate() }
             }
             .onReceive(NotificationCenter.default.publisher(for: .neuroForgeShortcutQueued)) { _ in
@@ -67,6 +82,7 @@ struct AppRootView: View {
             }
             .alert("Leave unsaved work?", isPresented: dirtyNavigationAlertBinding) {
                 Button("Keep editing", role: .cancel) {
+                    pendingRootReset = nil
                     store.cancelPendingDestinationChange()
                 }
                 Button("Discard and navigate", role: .destructive) {
@@ -76,7 +92,8 @@ struct AppRootView: View {
                 Text("\(store.activeDirtyEditor?.title ?? NFAppLocalization.localized("This editor", comment: "Fallback editor name in the global unsaved-navigation warning.")) has unsaved changes. Keep editing or explicitly discard them before changing sections.")
             }
         #else
-        rootContent(selection: $store.selectedDestination)
+        rootContent(selection: destinationSelection)
+            .environment(navigation)
             .transaction { transaction in
                 if store.profile?.reducedMotion == true { transaction.animation = nil }
             }
@@ -84,6 +101,12 @@ struct AppRootView: View {
                 UniversalSessionView(request: request)
                     .id(request.id)
                     .environment(store)
+            }
+            .onChange(of: store.activeDirtyEditor?.id) { _, editorID in
+                if editorID == nil, let destination = pendingRootReset {
+                    navigation.returnToRoot(destination)
+                    pendingRootReset = nil
+                }
             }
             .onAppear(perform: consumePendingShortcutIfPossible)
             .onOpenURL(perform: handleDeepLink)
@@ -104,6 +127,7 @@ struct AppRootView: View {
                 }
             }
             .onChange(of: spotlightSourceFingerprint) { _, _ in
+                navigation.prune(documentIDs: Set(store.documents.map(\.id)), attemptIDs: Set(store.attempts.map(\.id)))
                 Task { await refreshSpotlightIfAppropriate() }
             }
             .onChange(of: store.isOnboardingComplete) { _, isComplete in
@@ -111,6 +135,9 @@ struct AppRootView: View {
             }
             .onChange(of: preferredLanguageCode) { _, _ in
                 store.publishWidgetSnapshot()
+                Task { await refreshNotificationLanguageIfAppropriate() }
+            }
+            .onChange(of: reviewDeferralSignature) { _, _ in
                 Task { await refreshNotificationLanguageIfAppropriate() }
             }
             .onReceive(NotificationCenter.default.publisher(for: .neuroForgeShortcutQueued)) { _ in
@@ -125,6 +152,7 @@ struct AppRootView: View {
             }
             .alert("Leave unsaved work?", isPresented: dirtyNavigationAlertBinding) {
                 Button("Keep editing", role: .cancel) {
+                    pendingRootReset = nil
                     store.cancelPendingDestinationChange()
                 }
                 Button("Discard and navigate", role: .destructive) {
@@ -137,6 +165,21 @@ struct AppRootView: View {
         }
     }
 
+    private var destinationSelection: Binding<AppDestination> {
+        Binding(get: { store.selectedDestination }, set: { destination in
+            if destination == store.selectedDestination {
+                guard store.activeDirtyEditor == nil else {
+                    pendingRootReset = destination
+                    store.deferRootReselection(to: destination)
+                    return
+                }
+                navigation.returnToRoot(destination)
+            } else {
+                store.selectedDestination = destination
+            }
+        })
+    }
+
     private var dirtyNavigationAlertBinding: Binding<Bool> {
         Binding(
             get: {
@@ -144,7 +187,7 @@ struct AppRootView: View {
                     && store.pendingDestinationAfterDirtyEditor != nil
             },
             set: { isPresented in
-                if !isPresented { store.cancelPendingDestinationChange() }
+                if !isPresented { pendingRootReset = nil; store.cancelPendingDestinationChange() }
             }
         )
     }
@@ -161,6 +204,12 @@ struct AppRootView: View {
         guard !NFUITestLaunchConfiguration.isEnabled else { return }
         #endif
         systemIntegrations.prepareForBackground(store: store)
+    }
+
+    /// The metadata getter observes local revision, but only a changed saved
+    /// deferral signature reschedules. Ordinary per-keystroke checkpoints do not.
+    private var reviewDeferralSignature: [NFReviewDeferral] {
+        store.privateStudyMetadata.reviewDeferrals ?? []
     }
 
     private func refreshNotificationLanguageIfAppropriate() async {
@@ -239,7 +288,7 @@ struct AppRootView: View {
             rootNavigation(selection: selection)
         } else {
             OnboardingView { draft in
-                let didSave = store.completeOnboarding(draft)
+                let didSave = store.completeOnboarding(draft, startPractice: true)
                 if didSave { store.selectedDestination = .today }
                 return didSave
             }
@@ -262,7 +311,6 @@ struct AppRootView: View {
                                 .frame(height: 68)
                                 .accessibilityHidden(true)
                         }
-                        .id("\(destination.rawValue)-\(preferredLanguageCode)")
                         .tag(destination)
                         .tabItem {
                             Label(destination.title, systemImage: destination.symbol)
@@ -304,8 +352,22 @@ struct AppRootView: View {
             }
             .navigationTitle("NeuroForge")
         } detail: {
-            destinationView(selection.wrappedValue)
-                .id("\(selection.wrappedValue.rawValue)-\(preferredLanguageCode)")
+            // Keep each destination's own navigation host alive for this app run.
+            // A shared detail stack lets stale children cover an unrelated root.
+            ZStack {
+                ForEach(AppDestination.allCases) { destination in
+                    if visitedDestinations.contains(destination) || destination == selection.wrappedValue {
+                        destinationView(destination)
+                                .opacity(destination == selection.wrappedValue ? 1 : 0)
+                            .allowsHitTesting(destination == selection.wrappedValue)
+                            .accessibilityHidden(destination != selection.wrappedValue)
+                            .zIndex(destination == selection.wrappedValue ? 1 : 0)
+                    }
+                }
+            }
+            .onChange(of: selection.wrappedValue, initial: true) { _, destination in
+                visitedDestinations.insert(destination)
+            }
         }
         .navigationSplitViewStyle(.balanced)
     }
@@ -326,8 +388,14 @@ struct AppRootView: View {
             LibraryView()
                 .accessibilityIdentifier("destination-library")
         case .settings:
-            SettingsView()
-                .accessibilityIdentifier("destination-settings")
+            NavigationStack(path: Binding(get: { navigation.settings }, set: { navigation.settings = $0 })) {
+                SettingsView()
+                    .navigationDestination(for: NFSettingsRoute.self) { route in
+                        switch route { case .methodology: MethodologyLibraryView() }
+                    }
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("destination-settings")
         }
     }
 }

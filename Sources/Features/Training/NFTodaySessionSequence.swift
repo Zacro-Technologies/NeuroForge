@@ -16,9 +16,12 @@ final class NFTodaySessionSequence {
     func start(
         plan: DailyPlan,
         blockIDs: [String],
-        store: AppStore
+        store: AppStore,
+        at date: Date = Date(),
+        calendar: Calendar = .current
     ) -> Bool {
         guard store.activeSessionRequest == nil else { return false }
+        let plan = store.reviewExecutionPlan(plan, at: date, calendar: calendar)
         let completed = store.completedPlanBlockIDs(planID: plan.id)
         let availableIDs = Set(plan.blocks.map(\.id))
         let normalized = blockIDs.filter {
@@ -30,13 +33,17 @@ final class NFTodaySessionSequence {
         }
         activePlanID = plan.id
         queuedBlockIDs = normalized
-        return begin(first, plan: plan, store: store)
+        let started = begin(first, plan: plan, store: store, at: date, calendar: calendar)
+        if !started { clear() }
+        return started
     }
 
     func nextBlock(
         after blockID: String?,
         planID: String?,
-        store: AppStore
+        store: AppStore,
+        at date: Date = Date(),
+        calendar: Calendar = .current
     ) -> PlanBlock? {
         guard let blockID,
               let planID,
@@ -46,10 +53,11 @@ final class NFTodaySessionSequence {
         }
         let completed = store.completedPlanBlockIDs(planID: planID)
         let candidates = queuedBlockIDs.dropFirst(currentIndex + 1)
+        let plan = store.reviewExecutionPlan(store.todayPlan, at: date, calendar: calendar)
         return candidates.lazy
             .filter { !completed.contains($0) }
             .compactMap { candidateID in
-                store.todayPlan.blocks.first(where: { $0.id == candidateID })
+                plan.blocks.first(where: { $0.id == candidateID })
             }
             .first
     }
@@ -84,26 +92,26 @@ final class NFTodaySessionSequence {
         queuedBlockIDs = []
     }
 
-    private func begin(_ block: PlanBlock, plan: DailyPlan, store: AppStore) -> Bool {
+    private func begin(_ block: PlanBlock, plan: DailyPlan, store: AppStore,
+                       at date: Date = Date(), calendar: Calendar = .current) -> Bool {
         let transferBrief = dailyTransferBrief(for: block, in: plan)
+        let targets = store.retentionReviewTargets(forPlanID: plan.id, blockID: block.id,
+            fallbackItemIDs: block.retentionItemIDs, fallbackSeed: plan.seed)
         return store.beginSession(
             lab: block.lab,
             source: .today,
             requestedMinutes: block.minutes,
             evidenceClass: block.evidenceClass,
             topic: block.mechanicID,
+            requestedItemCount: block.evidenceClass == .retention ? block.retentionItemIDs.count : nil,
             planID: plan.id,
             planBlockID: block.id,
             isTimed: block.timed,
             mechanicID: block.mechanicID,
             retentionItemIDs: block.retentionItemIDs,
-            retentionTargets: store.retentionReviewTargets(
-                forPlanID: plan.id,
-                blockID: block.id,
-                fallbackItemIDs: block.retentionItemIDs,
-                fallbackSeed: plan.seed
-            ),
-            transferBrief: transferBrief
+            retentionTargets: targets,
+            transferBrief: transferBrief,
+            reviewSchedulingDate: date, reviewSchedulingCalendar: calendar
         )
     }
 

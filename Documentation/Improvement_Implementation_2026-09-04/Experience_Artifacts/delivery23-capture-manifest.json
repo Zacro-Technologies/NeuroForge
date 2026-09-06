@@ -1,0 +1,22 @@
+{
+  "result": "22 passed; 1 failed before chart navigation",
+  "tests": 23,
+  "durationSeconds": 958.8,
+  "bundle": "/tmp/NeuroForge-improvement-ios/Logs/Test/Test-NeuroForgeUISmoke-2026.09.05_03-56-34--0400.xcresult",
+  "log": "/tmp/neuroforge-delivery-recovery-current-installed-ui.log",
+  "captures": [
+    {
+      "attachment": "9E7C0996-28A8-462D-A261-8646896ADE9D.png",
+      "file": "SE-energy-preview-before-apply.png",
+      "sha256": "5c4676938e9c95ef85f3b0a79b9c2188a176b73df2c1e9644bdb3740779f7170",
+      "caption": "Energy preview title fits; Cancel and Apply visible. Actual cancel/relaunch journey passed."
+    },
+    {
+      "attachment": "377F4940-FFCA-4E2C-BFC8-FD772FE97B6D.png",
+      "file": "SE-source-chooser-selection-search.png",
+      "sha256": "dcd313f9094d33f84e7ea9b04628344572a0be943e4e6eff6a476b1d744420ba",
+      "caption": "Synthetic source remains selected after searching and reopening; actual journey passed."
+    }
+  ],
+  "failure": "Weekly history journey: Submit visibly highlighted under a standard tap, but no commit occurred. Original movie retained in exported attachments; charts were not reached. New keyboard-Done journey and continuous UI require rerun."
+}

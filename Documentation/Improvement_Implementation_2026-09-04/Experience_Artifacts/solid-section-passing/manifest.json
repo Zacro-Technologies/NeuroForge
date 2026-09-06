@@ -1,0 +1,26 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "746F7126-B47D-40DC-AA0D-A69B96072611.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lab-response-feedback-spatial_0_F6FD291D-41AE-40D6-90AC-C83A53020EE1.cross-section-en",
+        "timestamp" : 1788644794.486
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+        "deviceName" : "NeuroForge Improvement QA",
+        "exportedFileName" : "78B2AD34-2C5A-42F1-BA2F-8BE946101015.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "solid-section-saved-worked-geometry-en_0_5B9025A8-7BBC-4E1E-AAE8-F37B44F64E92.png",
+        "timestamp" : 1788644787.346
+      }
+    ],
+    "testIdentifier" : "NavigationSmokeUITests/testSolidSectionUsesOriginalConstraintsBeforeSavedWorkedSection()",
+    "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeUITests/NavigationSmokeUITests/testSolidSectionUsesOriginalConstraintsBeforeSavedWorkedSection"
+  }
+]

@@ -5,6 +5,21 @@ import XCTest
 @testable import NeuroForge
 
 final class AdaptiveEngineTests: XCTestCase {
+    func testRawInvalidCreditIsPreservedAndExcludedInsteadOfConvertedToCorrectness() throws {
+        for supplied in [Double.nan, .infinity, -.infinity, -0.1, 1.1] {
+            let attempt = AttemptDTO(id: UUID(), skillID: TrainingLab.mentalMath.skillID,
+                lab: .mentalMath, correct: true, credit: supplied, confidence: .certain,
+                submittedAt: Date(timeIntervalSince1970: 1_700_000_000),
+                evidenceClass: .practice, evidenceWeight: 1)
+            if supplied.isNaN { XCTAssertTrue(attempt.credit.isNaN) }
+            else { XCTAssertEqual(attempt.credit, supplied) }
+            let history = try XCTUnwrap(NFHistoricalPracticeProjection.reduce(attempts: [attempt]).first)
+            XCTAssertEqual(history.legacyCount, 0)
+            XCTAssertNil(history.legacyMeanCredit)
+            XCTAssertEqual(history.excludedAttemptIDs, [attempt.id.uuidString])
+        }
+    }
+
     func testImprovementClaimRequiresSeparatedComparableWindowsAndAlternateTransferForms() {
         let base = Date(timeIntervalSince1970: 1_700_000_000)
         let early = (0..<6).map { index in
@@ -43,9 +58,7 @@ final class AdaptiveEngineTests: XCTestCase {
             evidenceClass: .nearTransfer,
             attempts: early + late
         )
-        XCTAssertEqual(claim?.code, .nearTransferImproved)
-        XCTAssertEqual(claim?.evidence.earlierCount, 6)
-        XCTAssertEqual(claim?.evidence.laterCount, 6)
+        XCTAssertNil(claim, "Legacy alternate seeds are not reviewed equivalent forms or a validated comparison protocol.")
 
         let repeatedForms = late.map {
             AttemptDTO(
@@ -307,8 +320,8 @@ final class AdaptiveEngineTests: XCTestCase {
             XCTAssertEqual(summaries.count, TrainingLab.allCases.count)
             let summary = try XCTUnwrap(summaries.first { $0.lab == .mentalMath })
 
-            XCTAssertEqual(summary.evidenceCount, testCase.count)
-            XCTAssertEqual(summary.status.rawValue, testCase.status.rawValue)
+            XCTAssertEqual(summary.evidenceCount, 0, "Legacy metadata does not establish editorial band evidence.")
+            XCTAssertEqual(summary.status, .unassessed)
             if testCase.count == 0 {
                 XCTAssertNil(summary.accuracy)
                 XCTAssertNil(summary.calibrationBias)
@@ -339,15 +352,11 @@ final class AdaptiveEngineTests: XCTestCase {
         let summary = try XCTUnwrap(
             AdaptiveEngine.reduce(attempts).first { $0.lab == .mentalMath }
         )
-        let accuracy = try XCTUnwrap(summary.accuracy)
-        let calibrationBias = try XCTUnwrap(summary.calibrationBias)
-        let expectedBias = (6 * ConfidenceLevel.certain.probability - 4) / 6
-
-        XCTAssertEqual(summary.evidenceCount, 6)
-        XCTAssertEqual(summary.status, .developing)
-        XCTAssertEqual(accuracy, 4.0 / 6.0, accuracy: 1e-12)
-        XCTAssertEqual(calibrationBias, expectedBias, accuracy: 1e-12)
-        XCTAssertEqual(summary.lastTrained, makeAttemptDate(index: 5))
+        XCTAssertEqual(summary.evidenceCount, 0)
+        XCTAssertEqual(summary.status, .unassessed)
+        XCTAssertNil(summary.accuracy)
+        XCTAssertNil(summary.calibrationBias, "Legacy confidence timing and compatibility are unknown.")
+        XCTAssertEqual(attempts.filter { $0.evidenceClass == .practice }.count, 6)
     }
 
     func testReducerPreservesDeterministicPartialCredit() throws {
@@ -369,9 +378,10 @@ final class AdaptiveEngineTests: XCTestCase {
             AdaptiveEngine.reduce(attempts).first { $0.lab == .scientificReasoning }
         )
 
-        XCTAssertEqual(try XCTUnwrap(summary.accuracy), 0.5, accuracy: 1e-12)
+        XCTAssertNil(summary.accuracy)
         XCTAssertEqual(summary.theta, 0, accuracy: 1e-12)
-        XCTAssertEqual(try XCTUnwrap(summary.calibrationBias), ConfidenceLevel.certain.probability - 0.5, accuracy: 1e-12)
+        XCTAssertNil(summary.calibrationBias)
+        XCTAssertTrue(attempts.allSatisfy { $0.credit == 0.5 }, "Original partial credit remains intact in history.")
     }
 
     @MainActor
@@ -418,7 +428,8 @@ final class AdaptiveEngineTests: XCTestCase {
         XCTAssertEqual(store.todayAttemptCount, 1)
         XCTAssertEqual(store.attempts.first { $0.evidenceClassRaw == EvidenceClass.documentPractice.rawValue }?.evidenceWeight, 0)
         XCTAssertEqual(store.skillSummaries.first { $0.lab == .retrieval }?.evidenceCount, 0)
-        XCTAssertEqual(store.skillSummaries.first { $0.lab == .transfer }?.evidenceCount, 1)
+        XCTAssertEqual(store.skillSummaries.first { $0.lab == .transfer }?.evidenceCount, 0)
+        XCTAssertEqual(NFHistoricalPracticeProjection.reduce(attempts: store.attempts.map(\.dto)).first { $0.labID == TrainingLab.transfer.rawValue }?.legacyCount, 1)
     }
 
     @MainActor

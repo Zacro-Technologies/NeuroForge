@@ -43,7 +43,7 @@ struct NFImprovementClaim: Equatable, Sendable, Identifiable {
 }
 
 enum NFImprovementClaimEngine {
-    static let version = 1
+    static let version = 2
     static let minimumWindowCount = 6
     static let minimumSeparationDays = 7
 
@@ -76,87 +76,10 @@ enum NFImprovementClaimEngine {
         minimumWindowCount: Int = minimumWindowCount,
         minimumSeparationDays: Int = minimumSeparationDays
     ) -> NFImprovementClaim? {
-        guard evidenceClass != .documentPractice,
-              minimumWindowCount > 1,
-              minimumSeparationDays > 0 else { return nil }
-
-        let relevant = attempts.filter {
-            $0.lab == lab
-                && $0.evidenceClass == evidenceClass
-                && $0.evidenceWeight > 0
-        }.sorted(by: stableAttemptOrder)
-
-        guard relevant.count >= minimumWindowCount * 2,
-              relevant.allSatisfy({ $0.interruptionCount == 0 && $0.accommodationFlags.isEmpty }) else {
-            return nil
-        }
-
-        let earlier = Array(relevant.prefix(minimumWindowCount))
-        let later = Array(relevant.suffix(minimumWindowCount))
-        guard let earlierStart = earlier.first?.submittedAt,
-              let earlierEnd = earlier.last?.submittedAt,
-              let laterStart = later.first?.submittedAt,
-              let laterEnd = later.last?.submittedAt,
-              laterStart.timeIntervalSince(earlierEnd) >= Double(minimumSeparationDays) * 86_400 else {
-            return nil
-        }
-
-        let earlierForms = Set(earlier.map(\.alternateFormID))
-        let laterForms = Set(later.map(\.alternateFormID))
-        if evidenceClass != .practice {
-            guard !earlierForms.isEmpty,
-                  !laterForms.isEmpty,
-                  earlierForms.isDisjoint(with: laterForms) else { return nil }
-        }
-
-        // Comparing timed with untimed work would create a material condition
-        // change, so both windows must use the same timing mode.
-        guard Set(earlier.map(\.wasTimed)).count == 1,
-              Set(later.map(\.wasTimed)).count == 1,
-              earlier.first?.wasTimed == later.first?.wasTimed else { return nil }
-
-        let earlierCredit = weightedCredit(earlier)
-        let laterCredit = weightedCredit(later)
-        let earlierWeight = earlier.reduce(0) { $0 + $1.evidenceWeight }
-        let laterWeight = later.reduce(0) { $0 + $1.evidenceWeight }
-        guard earlierWeight > 0, laterWeight > 0 else { return nil }
-
-        let earlierUncertainty = proportionUncertainty(credit: earlierCredit, weight: earlierWeight)
-        let laterUncertainty = proportionUncertainty(credit: laterCredit, weight: laterWeight)
-        let requiredMargin = 1.64 * sqrt(
-            earlierUncertainty * earlierUncertainty
-                + laterUncertainty * laterUncertainty
-        )
-        guard laterCredit - earlierCredit > requiredMargin else { return nil }
-
-        let code: NFImprovementClaimCode
-        switch evidenceClass {
-        case .practice: code = .practiceImproved
-        case .nearTransfer: code = .nearTransferImproved
-        case .appliedTransfer: code = .appliedTransferImproved
-        case .retention: code = .retentionImproved
-        case .assessmentHoldout: code = .protectedAssessmentImproved
-        case .documentPractice: return nil
-        }
-
-        return NFImprovementClaim(
-            code: code,
-            evidence: NFImprovementEvidenceBundle(
-                lab: lab,
-                evidenceClass: evidenceClass,
-                earlierWindowStart: earlierStart,
-                earlierWindowEnd: earlierEnd,
-                laterWindowStart: laterStart,
-                laterWindowEnd: laterEnd,
-                earlierCount: earlier.count,
-                laterCount: later.count,
-                earlierCredit: earlierCredit,
-                laterCredit: laterCredit,
-                requiredMargin: requiredMargin,
-                earlierAlternateFormIDs: earlierForms,
-                laterAlternateFormIDs: laterForms
-            )
-        )
+        // Formal improvement claims require a validated comparison protocol. Legacy
+        // lab percentages and alternate seed namespaces cannot establish equivalence.
+        // EditorialBandEvidenceV1 supplies factual compatible-band summaries instead.
+        return nil
     }
 
     private static func stableAttemptOrder(_ lhs: AttemptDTO, _ rhs: AttemptDTO) -> Bool {

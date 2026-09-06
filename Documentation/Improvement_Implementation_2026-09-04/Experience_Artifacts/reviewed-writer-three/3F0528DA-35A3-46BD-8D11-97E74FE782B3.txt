@@ -1,0 +1,208 @@
+Application, 0x105c85e00, pid: 12957, label: 'NeuroForge' <App element pid: 12957>
+  Window (Main), 0x105c87ac0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4389636096.4>
+    Other, 0x105c857c0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446789632.5>
+      Other, 0x105c86940, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4448012160.6>
+        Other, 0x105c86440, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4389635072.7>
+          Other, 0x105c85680, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446228864.8>
+            Other, 0x105c85040, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446806336.9>
+              Other, 0x105c86800, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446794240.10>
+                Other, 0x105c87200, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4391107456.12>
+                  Other, 0x105c86a80, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4389642240.124>
+                    Other, 0x105c843c0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446298880.125>
+                      Other, 0x105c86d00, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446298432.126>
+                        Other, 0x105c86e40, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'destination-train' <AX element pid: 12957, elementOrHash.elementID: 4446265216.127>
+                          NavigationBar, 0x105c84000, {{0.0, 20.0}, {375.0, 54.0}}, identifier: 'Scaling Law' <AX element pid: 12957, elementOrHash.elementID: 4722017024.129>
+                            Button, 0x105c85540, {{16.0, 20.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Practice' <AX element pid: 12957, elementOrHash.elementID: 4775018688.228>
+                            StaticText, 0x105c87480, {{140.0, 31.5}, {94.5, 21.0}}, label: 'Scaling Law' <AX element pid: 12957, elementOrHash.elementID: 4722602240.303>
+                            Button, 0x105c87980, {{319.0, 24.0}, {36.0, 36.0}}, label: 'Favorite activity' <AX element pid: 12957, elementOrHash.elementID: 4734359168.339>
+                          Other, 0x105c85cc0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446269696.130>
+                            Other, 0x105c84b40, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446280704.134>
+                              Other, 0x105c87d40, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4722593280.230>
+                                Other, 0x105cc8500, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446449472.231>
+                                  ScrollView, 0x105cc9180, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4389118976.232>
+                                    Other, 0x105ccad00, {{0.0, -1440.5}, {375.0, 2212.5}} <AX element pid: 12957, elementOrHash.elementID: 4790251520.236>
+                                      StaticText, 0x105cc8140, {{104.0, -1420.5}, {202.5, 82.0}}, label: 'Quantitative Intuition' <AX element pid: 12957, elementOrHash.elementID: 4446498176.241>
+                                      StaticText, 0x105cc8b40, {{104.0, -1333.5}, {217.0, 42.5}}, label: 'Magnitude, uncertainty, and probability' <AX element pid: 12957, elementOrHash.elementID: 4446497728.242>
+                                      StaticText, 0x105cc9540, {{38.0, -1249.0}, {97.0, 39.0}}, label: 'Unassessed, Current level' <AX element pid: 12957, elementOrHash.elementID: 4446500416.243>
+                                        StaticText, 0x105cc8dc0, {{38.0, -1249.0}, {97.0, 20.5}}, label: 'Unassessed' <AX element pid: 12957, elementOrHash.elementID: 4446499072.261>
+                                        StaticText, 0x105cc8280, {{38.0, -1224.5}, {72.5, 14.5}}, label: 'Current level' <AX element pid: 12957, elementOrHash.elementID: 4446497280.262>
+                                      StaticText, 0x105cc8f00, {{38.0, -1185.5}, {48.0, 39.0}}, label: '0, Answers' <AX element pid: 12957, elementOrHash.elementID: 4446280256.244>
+                                        StaticText, 0x105cc8640, {{38.0, -1185.5}, {11.0, 20.5}}, label: '0' <AX element pid: 12957, elementOrHash.elementID: 4446500864.263>
+                                        StaticText, 0x105cc83c0, {{38.0, -1161.0}, {48.0, 14.5}}, label: 'Answers' <AX element pid: 12957, elementOrHash.elementID: 4446501760.264>
+                                      StaticText, 0x105ccb340, {{38.0, -1122.0}, {101.5, 39.0}}, label: '—, Practice accuracy' <AX element pid: 12957, elementOrHash.elementID: 4446392256.245>
+                                        StaticText, 0x105ccb480, {{38.0, -1122.0}, {15.0, 20.5}}, label: '—' <AX element pid: 12957, elementOrHash.elementID: 4446279360.265>
+                                        StaticText, 0x105cc8780, {{38.0, -1097.5}, {101.5, 14.5}}, label: 'Practice accuracy' <AX element pid: 12957, elementOrHash.elementID: 4446396288.266>
+                                      StaticText, 0x105ccabc0, {{38.0, -1023.0}, {157.5, 26.5}}, label: 'Choose a focus' <AX element pid: 12957, elementOrHash.elementID: 4446391808.246>
+                                      StaticText, 0x105ccb980, {{38.0, -982.5}, {295.0, 58.0}}, label: 'Every bundled activity is available here; mixed practice continues to rotate formats automatically.' <AX element pid: 12957, elementOrHash.elementID: 4446398976.247>
+                                      Other, 0x105cc8a00, {{38.0, -453.5}, {299.0, 598.0}} <AX element pid: 12957, elementOrHash.elementID: 4446361728.248>
+                                        Button, 0x105cc9cc0, {{38.0, -453.5}, {299.0, 117.0}}, label: 'Scaling Law, Apply the input multiplier through the direct, inverse, or power-law relationship before changing the output., Practice', value: Selected, Selected <AX element pid: 12957, elementOrHash.elementID: 4446490112.305>
+                                          Image, 0x105cc88c0, {{51.5, -440.5}, {17.0, 17.0}}, identifier: 'checkmark.circle.fill', label: 'Selected', Selected <AX element pid: 12957, elementOrHash.elementID: 4446447680.312>
+                                          StaticText, 0x105ccbc00, {{78.0, -441.0}, {85.0, 18.0}}, label: 'Scaling Law' <AX element pid: 12957, elementOrHash.elementID: 4446448576.313>
+                                          StaticText, 0x105ccb200, {{50.0, -415.5}, {254.5, 46.5}}, label: 'Apply the input multiplier through the direct, inverse, or power-law relationship before changing the output.' <AX element pid: 12957, elementOrHash.elementID: 4446448128.314>
+                                          StaticText, 0x105cc92c0, {{50.0, -362.0}, {57.5, 13.5}}, label: 'Practice' <AX element pid: 12957, elementOrHash.elementID: 4446446336.315>
+                                        Button, 0x105cc9400, {{38.0, -326.5}, {299.0, 104.0}}, label: 'Base-Rate Bayes, Convert rates to counts, then divide true positives by every positive result., Investigation', value: Not selected <AX element pid: 12957, elementOrHash.elementID: 4446491904.306>
+                                          Image, 0x105ccae40, {{52.0, -313.5}, {16.5, 16.5}}, identifier: 'magnifyingglass', label: 'Search' <AX element pid: 12957, elementOrHash.elementID: 4446491456.316>
+                                          StaticText, 0x105cc9900, {{78.5, -314.3}, {116.5, 18.0}}, label: 'Base-Rate Bayes' <AX element pid: 12957, elementOrHash.elementID: 4446491008.317>
+                                          StaticText, 0x105ccbac0, {{50.0, -289.0}, {232.5, 30.5}}, label: 'Convert rates to counts, then divide true positives by every positive result.' <AX element pid: 12957, elementOrHash.elementID: 4446489216.318>
+                                          StaticText, 0x105ccb840, {{50.0, -251.5}, {89.5, 13.5}}, label: 'Investigation' <AX element pid: 12957, elementOrHash.elementID: 4446492352.319>
+                                        Button, 0x105ccaf80, {{38.0, -212.5}, {299.0, 104.0}}, label: 'Expected Value, Multiply each signed outcome by its probability and add the contributions., Puzzle', value: Not selected <AX element pid: 12957, elementOrHash.elementID: 4446506048.324>
+                                          Image, 0x1026230c0, {{52.0, -199.5}, {20.0, 16.5}}, identifier: 'puzzlepiece.extension.fill', label: 'puzzlepiece.extension.fill' <AX element pid: 12957, elementOrHash.elementID: 4446502912.326>
+                                          StaticText, 0x102623ac0, {{81.5, -200.3}, {106.0, 18.0}}, label: 'Expected Value' <AX element pid: 12957, elementOrHash.elementID: 4446504256.327>
+                                          StaticText, 0x112da4000, {{50.0, -175.0}, {270.5, 30.5}}, label: 'Multiply each signed outcome by its probability and add the contributions.' <AX element pid: 12957, elementOrHash.elementID: 4446503808.328>
+                                          StaticText, 0x112da4140, {{50.0, -137.5}, {44.5, 13.5}}, label: 'Puzzle' <AX element pid: 12957, elementOrHash.elementID: 4446505152.329>
+                                        Button, 0x112da4280, {{38.0, -98.5}, {299.0, 116.5}}, label: 'Regression Detective, Extreme observations tend to be followed by less extreme observations when measurement contains noise., Investigation', value: Not selected <AX element pid: 12957, elementOrHash.elementID: 4446508736.325>
+                                          Image, 0x112da43c0, {{52.0, -85.5}, {16.5, 16.5}}, identifier: 'magnifyingglass', label: 'Search' <AX element pid: 12957, elementOrHash.elementID: 4446506496.330>
+                                          StaticText, 0x112da4500, {{78.5, -86.3}, {145.5, 18.0}}, label: 'Regression Detective' <AX element pid: 12957, elementOrHash.elementID: 4446506944.331>
+                                          StaticText, 0x112da4640, {{50.0, -61.0}, {265.5, 46.5}}, label: 'Extreme observations tend to be followed by less extreme observations when measurement contains noise.' <AX element pid: 12957, elementOrHash.elementID: 4446507840.332>
+                                          StaticText, 0x112da4780, {{50.0, -7.5}, {89.5, 13.5}}, label: 'Investigation' <AX element pid: 12957, elementOrHash.elementID: 4446508288.333>
+                                        Button, 0x112da48c0, {{38.0, 28.0}, {299.0, 116.5}}, label: 'Interval Inspector, Identify the estimated quantity and the repeated-sampling or modeled procedure before interpreting an interval., Investigation', value: Not selected <AX element pid: 12957, elementOrHash.elementID: 4446510976.334>
+                                          Image, 0x112da4a00, {{52.0, 41.0}, {16.5, 16.5}}, identifier: 'magnifyingglass', label: 'Search' <AX element pid: 12957, elementOrHash.elementID: 4446509632.335>
+                                          StaticText, 0x112da4b40, {{78.5, 40.2}, {119.5, 18.0}}, label: 'Interval Inspector' <AX element pid: 12957, elementOrHash.elementID: 4446510080.336>
+                                          StaticText, 0x112da4c80, {{50.0, 65.5}, {239.5, 46.5}}, label: 'Identify the estimated quantity and the repeated-sampling or modeled procedure before interpreting an interval.' <AX element pid: 12957, elementOrHash.elementID: 4446509184.337>
+                                          StaticText, 0x112da4dc0, {{50.0, 119.0}, {89.5, 13.5}}, label: 'Investigation' <AX element pid: 12957, elementOrHash.elementID: 4446510528.338>
+                                      StaticText, 0x112da4f00, {{40.0, 171.0}, {130.0, 18.0}}, label: 'Evidence limits' <AX element pid: 12957, elementOrHash.elementID: 4446513216.341>
+                                      StaticText, 0x112da5040, {{38.0, 197.0}, {283.0, 52.0}}, label: 'Feedback targets this named mechanic. Gains are not treated as evidence of general intelligence or far transfer.' <AX element pid: 12957, elementOrHash.elementID: 4446511872.342>
+                                      StaticText, 0x112da5180, {{38.0, 309.0}, {148.5, 26.5}}, label: 'Practice setup' <AX element pid: 12957, elementOrHash.elementID: 4446362176.249>
+                                      Other, 0x112da52c0, {{38.0, 349.5}, {299.0, 84.0}}, label: 'Number of questions', value: 5 questions selected <AX element pid: 12957, elementOrHash.elementID: 4446295296.250>
+                                        StaticText, 0x112da5400, {{38.0, 349.5}, {72.5, 18.0}}, label: 'Questions' <AX element pid: 12957, elementOrHash.elementID: 4446363968.271>
+                                        Other, 0x112da5540, {{38.0, 375.5}, {299.0, 58.0}} <AX element pid: 12957, elementOrHash.elementID: 4446370240.272>
+                                          Button, 0x112da5680, {{38.0, 375.5}, {69.0, 58.0}}, label: '5 questions', value: Selected, Selected <AX element pid: 12957, elementOrHash.elementID: 4446596032.343>
+                                          Button, 0x112da57c0, {{115.0, 375.5}, {68.5, 58.0}}, label: '10 questions', value: Not selected <AX element pid: 12957, elementOrHash.elementID: 4446595136.344>
+                                          Button, 0x112da5900, {{191.5, 375.5}, {69.0, 58.0}}, label: '20 questions', value: Not selected <AX element pid: 12957, elementOrHash.elementID: 4446593344.345>
+                                          Button, 0x112da5a40, {{268.5, 375.5}, {68.5, 58.0}}, label: '30 questions', value: Not selected <AX element pid: 12957, elementOrHash.elementID: 4446594688.346>
+                                      Button, 0x112da5b80, {{38.0, 447.5}, {139.5, 34.5}}, label: 'Difficulty, Starting level' <AX element pid: 12957, elementOrHash.elementID: 4722028544.251>
+                                        StaticText, 0x112da5cc0, {{50.0, 454.5}, {99.5, 20.5}}, label: 'Starting level' <AX element pid: 12957, elementOrHash.elementID: 4722594176.273>
+                                      StaticText, 0x112da5e00, {{38.0, 496.0}, {237.5, 34.0}}, label: 'Difficulty changes the task. Timing is a separate choice.' <AX element pid: 12957, elementOrHash.elementID: 4446296192.252>
+                                      Button, 0x112da5f40, {{38.0, 544.0}, {105.0, 34.5}}, label: 'Timing, Untimed' <AX element pid: 12957, elementOrHash.elementID: 4722030080.253>
+                                        StaticText, 0x112da6080, {{50.0, 551.0}, {65.0, 20.5}}, label: 'Untimed' <AX element pid: 12957, elementOrHash.elementID: 4722596864.274>
+                                      StaticText, 0x112da61c0, {{39.0, 592.5}, {283.5, 52.0}}, label: 'Timed fluency needs reviewed practice for this activity. Untimed and elapsed-only practice are available.' <AX element pid: 12957, elementOrHash.elementID: 4446439616.255>
+                                      Button, 0x112da6300, {{38.0, 704.5}, {299.0, 29.5}}, label: 'About this lab' <AX element pid: 12957, elementOrHash.elementID: 4446437824.256>
+                                        Image, 0x112da6440, {{40.0, 710.0}, {14.5, 18.5}}, identifier: 'text.book.closed', label: 'text.book.closed' <AX element pid: 12957, elementOrHash.elementID: 4446438720.276>
+                                        StaticText, 0x112da6580, {{38.0, 704.5}, {299.0, 29.5}}, label: 'About this lab' <AX element pid: 12957, elementOrHash.elementID: 4446440960.277>
+                                        Image, 0x112da66c0, {{329.0, 713.5}, {7.0, 12.0}}, identifier: 'collapsed' <AX element pid: 12957, elementOrHash.elementID: 4446440512.278>
+                                    Other, 0x112da6800, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446365312.234>
+                                      Other, 0x112da6940, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 12957, elementOrHash.elementID: 4446402112.238>
+                                      Other, 0x112da6a80, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 12957, elementOrHash.elementID: 4446449920.239>
+                                    Other, 0x112da6bc0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446364864.235>
+                                      Other, 0x112da6d00, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 12957, elementOrHash.elementID: 4773655680.304>
+                                        Image, 0x112da6e40, {{-120.0, -124.0}, {615.0, 248.0}}, identifier: 'AdditionalDimmingOverlay' <AX element pid: 12957, elementOrHash.elementID: 4792250368.307>
+                                        Other, 0x112da6f80, {{0.0, 0.0}, {375.0, 64.0}} <AX element pid: 12957, elementOrHash.elementID: 4446403904.308>
+                                        Other, 0x112da70c0, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 12957, elementOrHash.elementID: 4792028160.309>
+                                          Other, 0x112da7200, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 12957, elementOrHash.elementID: 4446402560.320>
+                                        Other, 0x112da7340, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 12957, elementOrHash.elementID: 4792249344.310>
+                                          Other, 0x112da7480, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 12957, elementOrHash.elementID: 4446453056.321>
+                                        Other, 0x112da75c0, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 12957, elementOrHash.elementID: 4773656320.311>
+                                          Other, 0x112da7700, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 12957, elementOrHash.elementID: 4446403008.322>
+                                          Other, 0x112da7840, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 12957, elementOrHash.elementID: 4446486976.323>
+                                      Other, 0x112da7980, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 12957, elementOrHash.elementID: 4773657600.240>
+                                        Image, 0x112da7ac0, {{-120.0, 524.0}, {615.0, 286.0}}, identifier: 'AdditionalDimmingOverlay' <AX element pid: 12957, elementOrHash.elementID: 4790254592.258>
+                                        Other, 0x112da7c00, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 12957, elementOrHash.elementID: 4792029696.259>
+                                          Other, 0x112da7d40, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 12957, elementOrHash.elementID: 4446450368.279>
+                                        Other, 0x112da7e80, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 12957, elementOrHash.elementID: 4734357248.260>
+                                          Other, 0x1139a4000, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 12957, elementOrHash.elementID: 4446451264.280>
+                                          Other, 0x1139a4140, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 12957, elementOrHash.elementID: 4446488320.281>
+                                    Other, 0x1139a4280, {{342.0, 74.0}, {30.0, 351.5}}, label: 'Vertical scroll bar, 7 pages', value: 81% <AX element pid: 12957, elementOrHash.elementID: 4792243712.237>
+                                      Other, 0x1139a43c0, {{369.0, 284.0}, {3.0, 91.0}} <AX element pid: 12957, elementOrHash.elementID: 4446395392.257>
+                                    Other, 0x1139a4500, {{342.0, 74.0}, {30.0, 351.5}}, label: 'Vertical scroll bar, 7 pages', value: 81% <AX element pid: 12957, elementOrHash.elementID: 4792243712.237>
+                                      Other, 0x1139a4640, {{369.0, 284.0}, {3.0, 91.0}} <AX element pid: 12957, elementOrHash.elementID: 4446395392.257>
+                                  Button, 0x1139a4780, {{116.0, 449.5}, {143.5, 50.5}}, identifier: 'train-start-practice', label: 'Start practice' <AX element pid: 12957, elementOrHash.elementID: 4446449024.233>
+                                  Button, 0x1139a48c0, {{16.0, 510.0}, {343.0, 58.0}}, identifier: 'train-start-graph-construction', label: 'Construct a graph (untimed)' <AX element pid: 12957, elementOrHash.elementID: 4446512320.340>
+                          Other, 0x1139a4a00, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4732541440.131>
+                            Other, 0x1139a4b40, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4732543488.135>
+                        Other, 0x1139a4c80, {{0.0, 516.0}, {375.0, 68.0}} <AX element pid: 12957, elementOrHash.elementID: 4446297984.128>
+              Other, 0x1139a4dc0, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 12957, elementOrHash.elementID: 4446806784.11>
+                Other, 0x1139a4f00, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4446813504.13>
+                  TabBar, 0x1139a5040, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar' <AX element pid: 12957, elementOrHash.elementID: 4448012800.16>
+                    Other, 0x1139a5180, {{21.0, 584.0}, {333.0, 62.0}} <AX element pid: 12957, elementOrHash.elementID: 4446807232.19>
+                      Other, 0x1139a52c0, {{21.0, 584.0}, {74.0, 54.0}} <AX element pid: 12957, elementOrHash.elementID: 4391107904.22>
+                      Other, 0x1139a5400, {{21.0, 584.0}, {333.0, 62.0}} <AX element pid: 12957, elementOrHash.elementID: 4446807680.23>
+                        Button, 0x1139a5540, {{25.0, 588.0}, {74.0, 54.0}}, label: 'Today' <AX element pid: 12957, elementOrHash.elementID: 4389559808.29>
+                          Image, 0x1139a5680, {{50.0, 592.5}, {23.5, 29.0}}, identifier: 'flame.fill', label: 'Flame' <AX element pid: 12957, elementOrHash.elementID: 4446794752.40>
+                        Button, 0x1139a57c0, {{87.2, 588.0}, {74.0, 54.0}}, label: 'Practice', Selected <AX element pid: 12957, elementOrHash.elementID: 4389562368.30>
+                          Image, 0x1139a5900, {{108.2, 592.5}, {31.5, 31.5}}, identifier: 'scope', label: 'scope' <AX element pid: 12957, elementOrHash.elementID: 4446796288.41>
+                        Button, 0x1139a5a40, {{149.5, 588.0}, {76.0, 54.0}}, label: 'Progress' <AX element pid: 12957, elementOrHash.elementID: 4389564928.31>
+                          Image, 0x1139a5b80, {{172.5, 595.5}, {31.0, 25.5}}, identifier: 'chart.line.uptrend.xyaxis', label: 'chart line' <AX element pid: 12957, elementOrHash.elementID: 4446797312.42>
+                        Button, 0x1139a5cc0, {{213.8, 588.0}, {74.0, 54.0}}, label: 'Sources' <AX element pid: 12957, elementOrHash.elementID: 4707975168.32>
+                          Image, 0x1139a5e00, {{233.8, 593.0}, {33.5, 29.5}}, identifier: 'books.vertical.fill', label: 'Bookshelf' <AX element pid: 12957, elementOrHash.elementID: 4446526976.43>
+                        Button, 0x1139a5f40, {{276.0, 588.0}, {74.0, 54.0}}, label: 'Settings' <AX element pid: 12957, elementOrHash.elementID: 4707977728.33>
+                          Image, 0x1139a6080, {{299.0, 594.0}, {28.0, 28.0}}, identifier: 'gearshape.fill', label: 'gearshape.fill' <AX element pid: 12957, elementOrHash.elementID: 4708024832.44>
+                      Other, 0x1139a61c0, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 12957, elementOrHash.elementID: 4448016000.24>
+                        Other, 0x1139a6300, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 12957, elementOrHash.elementID: 4446809472.34>
+                          Other, 0x1139a6440, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 12957, elementOrHash.elementID: 4446808128.45>
+                          Other, 0x1139a6580, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 12957, elementOrHash.elementID: 4446809920.46>
+                            Other, 0x1139a66c0, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 12957, elementOrHash.elementID: 4446811264.51>
+                              Other, 0x1139a6800, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 12957, elementOrHash.elementID: 4446811712.54>
+                                Other, 0x1139a6940, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 12957, elementOrHash.elementID: 4446812160.57>
+                              Other, 0x1139a6a80, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 12957, elementOrHash.elementID: 4446810368.55>
+                            Other, 0x1139a6bc0, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 12957, elementOrHash.elementID: 4446810816.52>
+                Other, 0x1139a6d00, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 12957, elementOrHash.elementID: 4446790656.14>
+                  Other, 0x1139a6e40, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 12957, elementOrHash.elementID: 4391248640.17>
+                    Other, 0x1139a6f80, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 12957, elementOrHash.elementID: 4389978112.20>
+                      Other, 0x1139a70c0, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 12957, elementOrHash.elementID: 4389979456.25>
+                        Other, 0x1139a7200, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 12957, elementOrHash.elementID: 4708026880.35>
+                          Other, 0x1139a7340, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 12957, elementOrHash.elementID: 4389981248.47>
+                      Other, 0x1139a7480, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 12957, elementOrHash.elementID: 4708027392.26>
+                        Other, 0x1139a75c0, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 12957, elementOrHash.elementID: 4389987520.36>
+    Other, 0x1139a7700, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4803644928.347>
+      Other, 0x1139a7840, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4389551104.348>
+        Other, 0x1139a7980, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 12957, elementOrHash.elementID: 4806303168.349>
+          Alert, 0x1139a7ac0, {{-187.5, -191.5}, {780.0, 1080.0}}, identifier: 'universal-session' <AX element pid: 12957, elementOrHash.elementID: 4806302720.350>
+            Button, 0x1139a7c00, {{20.0, 32.0}, {44.0, 44.0}}, identifier: 'pause.fill', label: 'Pause session' <AX element pid: 12957, elementOrHash.elementID: 4446597824.351>
+            Image, 0x1139a7d40, {{74.0, 35.0}, {38.0, 38.0}}, identifier: 'chart.xyaxis.line', label: 'chart.xyaxis.line' <AX element pid: 12957, elementOrHash.elementID: 4446273984.352>
+            StaticText, 0x1139a7e80, {{122.0, 35.5}, {49.0, 14.5}}, label: 'Practice' <AX element pid: 12957, elementOrHash.elementID: 4446763904.353>
+            StaticText, 0x114d7c000, {{122.0, 52.0}, {193.0, 20.5}}, label: 'Build the distance graph' <AX element pid: 12957, elementOrHash.elementID: 4446256448.354>
+            StaticText, 0x114d7c140, {{20.0, 97.0}, {31.0, 18.0}}, label: '1 / 5' <AX element pid: 12957, elementOrHash.elementID: 4446243456.355>
+            StaticText, 0x114d7c280, {{59.0, 98.8}, {50.5, 14.5}}, label: 'Untimed session' <AX element pid: 12957, elementOrHash.elementID: 4446243008.356>
+            Button, 0x114d7c3c0, {{117.5, 99.0}, {38.5, 14.5}}, label: 'Timing' <AX element pid: 12957, elementOrHash.elementID: 4446618496.357>
+              Button, 0x114d7c500, {{117.5, 99.0}, {38.5, 14.5}} <AX element pid: 12957, elementOrHash.elementID: 4722597760.364>
+                StaticText, 0x114d7c640, {{117.5, 98.8}, {38.5, 14.5}}, label: 'Timing' <AX element pid: 12957, elementOrHash.elementID: 4446617600.370>
+            Button, 0x114d7c780, {{215.0, 84.0}, {44.0, 44.0}}, identifier: 'session-header-save-close', label: 'Save and close session' <AX element pid: 12957, elementOrHash.elementID: 4446618944.358>
+            Button, 0x114d7c8c0, {{263.0, 84.0}, {44.0, 44.0}}, identifier: 'square.and.pencil', label: 'Open scratchpad' <AX element pid: 12957, elementOrHash.elementID: 4446619392.359>
+            Button, 0x114d7ca00, {{311.0, 84.0}, {44.0, 44.0}}, label: 'Session controls' <AX element pid: 12957, elementOrHash.elementID: 4446620736.360>
+              Button, 0x114d7cb40, {{311.0, 84.0}, {44.0, 44.0}} <AX element pid: 12957, elementOrHash.elementID: 4722599552.365>
+                Image, 0x114d7cc80, {{311.0, 84.0}, {44.0, 44.0}}, identifier: 'ellipsis.circle', label: 'More' <AX element pid: 12957, elementOrHash.elementID: 4446619840.372>
+            ProgressIndicator, 0x114d7cdc0, {{20.0, 138.0}, {335.0, 4.0}}, identifier: 'session-position', label: 'Session progress', value: 1 / 5 <AX element pid: 12957, elementOrHash.elementID: 4446621632.361>
+              ProgressIndicator, 0x114d7cf00, {{20.0, 128.0}, {335.0, 24.0}}, value: 0% <AX element pid: 12957, elementOrHash.elementID: 4790246400.366>
+            ScrollView, 0x114d7d040, {{0.0, 154.5}, {375.0, 512.5}} <AX element pid: 12957, elementOrHash.elementID: 4796121088.362>
+              Other, 0x114d7d180, {{0.0, -140.5}, {375.0, 1617.0}} <AX element pid: 12957, elementOrHash.elementID: 4803641344.367>
+                StaticText, 0x114d7d2c0, {{24.0, -116.5}, {113.5, 26.5}}, label: 'Quantitative' <AX element pid: 12957, elementOrHash.elementID: 4446622976.374>
+                  Image, 0x114d7d400, {{35.5, -109.0}, {13.0, 11.5}}, identifier: 'chart.xyaxis.line', label: 'chart.xyaxis.line' <AX element pid: 12957, elementOrHash.elementID: 4446622080.397>
+                  StaticText, 0x114d7d540, {{55.0, -110.5}, {72.5, 14.5}}, label: 'Quantitative' <AX element pid: 12957, elementOrHash.elementID: 4446622528.398>
+                StaticText, 0x114d7d680, {{24.0, -70.0}, {281.5, 60.0}}, label: 'A cart starts at the origin and moves at a constant speed. The table gives one measurement.' <AX element pid: 12957, elementOrHash.elementID: 4446623424.375>
+                StaticText, 0x114d7d7c0, {{38.0, 23.5}, {291.5, 99.0}}, label: 'Place one point on the integer grid. Drag on the graph or adjust Time and Distance with the labeled controls. Both coordinates must be correct for credit.' <AX element pid: 12957, elementOrHash.elementID: 4446624320.376>
+                Other, 0x114d7d900, {{24.0, 154.5}, {300.0, 114.5}}, identifier: 'session-prompt', label: 'The cart travels 5 meters in 1 second at a constant speed. Place the point showing its distance after 2 seconds.' <AX element pid: 12957, elementOrHash.elementID: 4446625216.377>
+                  StaticText, 0x114d7da40, {{24.0, 154.5}, {300.0, 114.5}}, label: 'The cart travels 5 meters in 1 second at a constant speed. Place the point showing its distance after 2 seconds.' <AX element pid: 12957, elementOrHash.elementID: 4446624768.399>
+                StaticText, 0x114d7db80, {{40.0, 305.0}, {158.0, 20.5}}, identifier: 'session-graph-construction', label: 'Construct one point' <AX element pid: 12957, elementOrHash.elementID: 4446625664.378>
+                StaticText, 0x114d7dcc0, {{40.0, 339.5}, {295.0, 118.0}}, identifier: 'session-graph-construction', label: 'The horizontal axis shows time in seconds; the vertical axis shows distance in meters. Both scales start at zero. Time grid lines are 1 second apart and distance grid lines are 5 meters apart. Coordinates adjust in one-unit steps.' <AX element pid: 12957, elementOrHash.elementID: 4446626112.379>
+                StaticText, 0x114d7de00, {{40.0, 471.5}, {76.0, 14.5}}, identifier: 'session-graph-construction', label: 'Distance (m)' <AX element pid: 12957, elementOrHash.elementID: 4446627456.380>
+                StaticText, 0x114d7df40, {{286.0, 737.0}, {49.0, 14.5}}, identifier: 'session-graph-construction', label: 'Time (s)' <AX element pid: 12957, elementOrHash.elementID: 4446627904.381>
+                StaticText, 0x114d7e080, {{40.0, 765.5}, {286.5, 52.0}}, identifier: 'session-graph-construction', label: 'Given measurement: square. Your point: circle. The expected point appears as a diamond only after saving.' <AX element pid: 12957, elementOrHash.elementID: 4446628352.382>
+                Stepper, 0x114d7e1c0, {{40.0, 837.5}, {295.0, 32.0}}, identifier: 'session-graph-construction', label: 'Time (s), —, Time (s)', value: — <AX element pid: 12957, elementOrHash.elementID: 4734356608.383>
+                  Button, 0x114d7e300, {{241.0, 837.5}, {47.0, 32.0}}, identifier: 'session-graph-construction-Decrement', label: 'Time (s), —, Time (s), Decrement', value: — <AX element pid: 12957, elementOrHash.elementID: 4794134288.400>
+                  Button, 0x114d7e440, {{288.0, 837.5}, {47.0, 32.0}}, identifier: 'session-graph-construction-Increment', label: 'Time (s), —, Time (s), Increment', value: — <AX element pid: 12957, elementOrHash.elementID: 4794137504.401>
+                Stepper, 0x114d7e580, {{40.0, 895.5}, {295.0, 32.0}}, identifier: 'session-graph-construction', label: 'Distance (m), —, Distance (m)', value: — <AX element pid: 12957, elementOrHash.elementID: 4734354048.384>
+                  Button, 0x114d7e6c0, {{241.0, 895.5}, {47.0, 32.0}}, identifier: 'session-graph-construction-Decrement', label: 'Distance (m), —, Distance (m), Decrement', value: — <AX element pid: 12957, elementOrHash.elementID: 4794128768.402>
+                  Button, 0x114d7e800, {{288.0, 895.5}, {47.0, 32.0}}, identifier: 'session-graph-construction-Increment', label: 'Distance (m), —, Distance (m), Increment', value: — <AX element pid: 12957, elementOrHash.elementID: 4794125840.403>
+                Button, 0x114d7e940, {{40.0, 952.5}, {203.5, 34.5}}, identifier: 'session-graph-construction', label: 'Place point at the origin' <AX element pid: 12957, elementOrHash.elementID: 4446631488.385>
+                Button, 0x114d7ea80, {{40.0, 1010.5}, {169.0, 34.5}}, identifier: 'session-graph-construction', label: 'Undo point change', Disabled <AX element pid: 12957, elementOrHash.elementID: 4446631936.386>
+                StaticText, 0x114d7ebc0, {{40.0, 1063.5}, {285.5, 20.5}}, identifier: 'session-graph-construction', label: 'No point has been placed on the grid.' <AX element pid: 12957, elementOrHash.elementID: 4446632384.387>
+                Other, 0x114d7ed00, {{40.0, 1098.0}, {281.5, 145.5}}, identifier: 'session-graph-construction' <AX element pid: 12957, elementOrHash.elementID: 4806297792.388>
+                  StaticText, 0x114d7ee40, {{40.0, 1098.0}, {129.0, 20.5}}, label: 'Given data table' <AX element pid: 12957, elementOrHash.elementID: 4446632832.404>
+                  StaticText, 0x114d7ef80, {{40.0, 1127.5}, {281.5, 58.0}}, label: 'A cart starts at the origin and moves at a constant speed. The table gives one measurement.' <AX element pid: 12957, elementOrHash.elementID: 4446633280.405>
+                  Other, 0x114d7f0c0, {{40.0, 1194.5}, {192.0, 49.0}}, label: 'Time (s): 1; Distance (m): 5' <AX element pid: 12957, elementOrHash.elementID: 4806297344.406>
+                    StaticText, 0x114d7f200, {{40.0, 1194.5}, {65.5, 20.5}}, label: 'Time (s)' <AX element pid: 12957, elementOrHash.elementID: 4806295552.409>
+                    StaticText, 0x114d7f340, {{129.5, 1194.5}, {102.5, 20.5}}, label: 'Distance (m)' <AX element pid: 12957, elementOrHash.elementID: 4806296000.410>
+                    StaticText, 0x114d7f480, {{40.0, 1223.0}, {7.5, 20.5}}, label: '1' <AX element pid: 12957, elementOrHash.elementID: 4806296448.411>
+                    StaticText, 0x114d7f5c0, {{129.5, 1223.0}, {10.5, 20.5}}, label: '5' <AX element pid: 12957, elementOrHash.elementID: 4806296896.412>
+                Button, 0x114d7f700, {{24.0, 1279.5}, {327.0, 28.5}}, label: 'Confidence (optional)' <AX element pid: 12957, elementOrHash.elementID: 4806299136.389>
+                  StaticText, 0x114d7f840, {{24.0, 1279.5}, {327.0, 28.5}}, label: 'Confidence (optional)' <AX element pid: 12957, elementOrHash.elementID: 4806298240.407>
+                  Image, 0x114d7f980, {{343.0, 1288.0}, {7.0, 12.0}}, identifier: 'collapsed' <AX element pid: 12957, elementOrHash.elementID: 4806298688.408>
+                Button, 0x114d7fac0, {{24.0, 1328.0}, {100.5, 34.5}}, label: 'Use a hint' <AX element pid: 12957, elementOrHash.elementID: 4806299584.390>
+                Button, 0x114d7fc00, {{132.5, 1328.0}, {146.0, 34.5}}, label: 'Skip — no score' <AX element pid: 12957, elementOrHash.elementID: 4806300032.391>
+                StaticText, 0x114d7fd40, {{25.0, 1382.5}, {270.5, 16.0}}, identifier: 'session-response-requirement', label: 'Complete every required final-state field.' <AX element pid: 12957, elementOrHash.elementID: 4806300928.392>
+                StaticText, 0x114d7fe80, {{24.0, 1418.5}, {292.0, 34.0}}, label: 'Confidence is optional. Your answer determines the result.' <AX element pid: 12957, elementOrHash.elementID: 4806301376.393>
+              Other, 0x114d88000, {{342.0, 154.5}, {30.0, 430.0}}, label: 'Vertical scroll bar, 4 pages', value: 25% <AX element pid: 12957, elementOrHash.elementID: 4805628416.368>
+                Other, 0x114d88140, {{369.0, 231.0}, {3.0, 128.0}} <AX element pid: 12957, elementOrHash.elementID: 4446503360.394>
+              Other, 0x114d88280, {{342.0, 154.5}, {30.0, 430.0}}, label: 'Vertical scroll bar, 4 pages', value: 25% <AX element pid: 12957, elementOrHash.elementID: 4805628416.368>
+                Other, 0x114d883c0, {{369.0, 231.0}, {3.0, 128.0}} <AX element pid: 12957, elementOrHash.elementID: 4446503360.394>
+            Button, 0x114d88500, {{98.5, 604.5}, {178.0, 50.5}}, identifier: 'session-submit', label: 'Submit response', Disabled <AX element pid: 12957, elementOrHash.elementID: 4806302272.363>

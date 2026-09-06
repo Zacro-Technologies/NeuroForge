@@ -54,9 +54,9 @@ final class AssessmentSchedulerTests: XCTestCase {
 
         let summaries = NFAssessmentDimensionReducer.reduce(attempts)
         XCTAssertEqual(summaries.map(\.id), NFAssessmentDimension.allCases.map(\.skillID))
-        XCTAssertTrue(summaries.allSatisfy { $0.evidenceCount == 8 })
-        XCTAssertTrue(summaries.allSatisfy { $0.status == .developing })
-        XCTAssertTrue(summaries.allSatisfy { $0.uncertainty < 1 })
+        XCTAssertTrue(summaries.allSatisfy { $0.evidenceCount == 0 })
+        XCTAssertTrue(summaries.allSatisfy { $0.status == .unassessed })
+        XCTAssertTrue(summaries.allSatisfy { $0.uncertainty == 1 })
 
         let probabilityOnlyOneFormat = attempts.map { attempt in
             guard attempt.assessmentDimension == .probability else { return attempt }
@@ -87,7 +87,7 @@ final class AssessmentSchedulerTests: XCTestCase {
         )
         XCTAssertEqual(probability.status, .unassessed)
         XCTAssertGreaterThanOrEqual(probability.uncertainty, 0.72)
-        XCTAssertEqual(estimation.status, .developing)
+        XCTAssertEqual(estimation.status, .unassessed)
     }
 
     func testAssessmentFormConstructionIsDeterministicAndUsesAlternateForms() {
@@ -402,7 +402,7 @@ final class AssessmentSchedulerTests: XCTestCase {
         XCTAssertEqual(Set(original.items.map(\.id)).count, original.items.count)
     }
 
-    func testObservedResponseMovesEstimateAndChangesNextDifficulty() throws {
+    func testLegacyResponseDoesNotInventCalibratedThetaFromNominalDifficulty() throws {
         let anchor = assessmentDescriptor(id: "anchor", difficulty: 0.5)
         let easy = assessmentDescriptor(id: "easy", difficulty: 0.25)
         let hard = assessmentDescriptor(id: "hard", difficulty: 0.75)
@@ -427,12 +427,11 @@ final class AssessmentSchedulerTests: XCTestCase {
             tieBreakSeed: 19
         ))
 
-        XCTAssertGreaterThan(afterCorrect.theta, 0)
-        XCTAssertLessThan(afterIncorrect.theta, 0)
-        XCTAssertEqual(correctNext.id, hard.id)
-        XCTAssertEqual(incorrectNext.id, easy.id)
-        XCTAssertLessThan(afterCorrect.uncertainty, initial.uncertainty)
-        XCTAssertLessThan(afterIncorrect.uncertainty, initial.uncertainty)
+        XCTAssertEqual(afterCorrect.theta, 0)
+        XCTAssertEqual(afterIncorrect.theta, 0)
+        XCTAssertEqual(correctNext.id, incorrectNext.id, "Legacy floats do not support a calibrated response-based selector.")
+        XCTAssertEqual(afterCorrect.uncertainty, initial.uncertainty)
+        XCTAssertEqual(afterIncorrect.uncertainty, initial.uncertainty)
     }
 
     func testRecordingAssessmentResponseIsIdempotent() {
@@ -442,7 +441,7 @@ final class AssessmentSchedulerTests: XCTestCase {
 
         XCTAssertEqual(replayed, once)
         XCTAssertEqual(once.completedScorableItems, 1)
-        XCTAssertGreaterThan(once.accumulatedInformation, 0)
+        XCTAssertEqual(once.accumulatedInformation, 0, "Legacy difficulty values do not establish calibrated information.")
     }
 
     func testAssessmentNextStepEnforcesInformationDurationAndItemCapStops() throws {
@@ -470,7 +469,7 @@ final class AssessmentSchedulerTests: XCTestCase {
                 .recordingResponse(to: descriptor, credit: index.isMultiple(of: 2) ? 1 : 0)
         }
         XCTAssertTrue(session.hasSufficientEvidence(in: informationComplete))
-        XCTAssertGreaterThanOrEqual(informationComplete.accumulatedInformation, session.targetInformation)
+        XCTAssertEqual(informationComplete.accumulatedInformation, 0, "Coverage completion does not manufacture psychometric information.")
         XCTAssertEqual(
             NFAssessmentEngine.nextStep(
                 in: session,
@@ -479,6 +478,9 @@ final class AssessmentSchedulerTests: XCTestCase {
             ).stopReason,
             .targetInformationReached
         )
+        XCTAssertEqual(NFAssessmentEngine.nextStep(in: session, state: informationComplete,
+            activeElapsedSeconds: session.maximumDurationSeconds + 1).stopReason, .targetInformationReached,
+            "Completing a valid final response does not erase sufficient coverage when the learner crosses the sitting target.")
 
         XCTAssertEqual(
             NFAssessmentEngine.nextStep(
@@ -513,6 +515,11 @@ final class AssessmentSchedulerTests: XCTestCase {
 
         XCTAssertNil(step.item)
         XCTAssertEqual(step.stopReason, .maximumActiveDurationReached)
+        let lacksConfidenceOverhead = NFAssessmentEngine.nextStep(in: session,
+            state: NFAdaptiveAssessmentState(),
+            activeElapsedSeconds: session.maximumDurationSeconds - shortest)
+        XCTAssertNil(lacksConfidenceOverhead.item,
+            "A protected item must reserve its response estimate plus six seconds for confidence interaction.")
     }
 
     func testAdaptiveReplayIsDeterministicForDurableOutcomes() {
@@ -576,6 +583,36 @@ final class AssessmentSchedulerTests: XCTestCase {
         XCTAssertEqual(restoredNext.format, liveNext.format)
         XCTAssertEqual(restoredNext.mechanicID, liveNext.mechanicID)
         XCTAssertEqual(restoredNext.seed, liveNext.seed)
+    }
+
+    func testDailyPlanV5PreservesFrozenPreviousAndUnknownPoliciesUntilNextDay() throws {
+        let now = Date(timeIntervalSince1970: 1_780_000_000)
+        let profile = makeProfile(duration: 15, goals: [.spatialReasoning])
+        let snapshot = NFDailySchedulingSnapshot(profile: profile, date: now)
+        let fresh = NFDailyScheduler.canonicalPlan(for: snapshot, calendar: utcCalendar())
+        XCTAssertEqual(fresh.policyVersion, 5)
+        for version in [4, 999] {
+            var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(fresh)) as? [String: Any])
+            object["policyVersion"] = version
+            object["id"] = "frozen-policy-\(version)"
+            let frozen = try JSONDecoder().decode(NFCanonicalDailyPlan.self,
+                from: JSONSerialization.data(withJSONObject: object))
+            let changed = NFDailySchedulingSnapshot(profile: profile, date: now.addingTimeInterval(60), readiness: .low)
+            XCTAssertEqual(NFDailyScheduler.canonicalPlan(for: changed, existingPlan: frozen, calendar: utcCalendar()), frozen)
+            XCTAssertEqual(NFDailyScheduler.supportsFrozenPlanPolicy(version), version == 4)
+            let tomorrow = NFDailyScheduler.canonicalPlan(
+                for: NFDailySchedulingSnapshot(profile: profile, date: now.addingTimeInterval(86_400)),
+                existingPlan: frozen, calendar: utcCalendar())
+            XCTAssertEqual(tomorrow.policyVersion, 5)
+            XCTAssertNotEqual(tomorrow.id, frozen.id)
+            if version == 999 {
+                XCTAssertThrowsError(try NFDailyScheduler.replacingBlock(in: frozen,
+                    blockID: try XCTUnwrap(frozen.blocks.first?.id), reason: .needVariety, at: now)) {
+                    XCTAssertEqual($0 as? NFPlanReplacementError, .unsupportedPolicy)
+                }
+            }
+        }
+        XCTAssertFalse(NFDailyScheduler.supportsFrozenPlanPolicy(3), "An unverified older contract must not be declared executable")
     }
 
     func testDailyPlanIsDeterministicAndExistingCanonicalPlanDoesNotRewrite() {
@@ -869,7 +906,7 @@ final class AssessmentSchedulerTests: XCTestCase {
             retentionStates: [logicRetention]
         )
 
-        let scores = NFDailyScheduler.priorityBreakdowns(for: snapshot)
+        let scores = NFDailyScheduler.priorityBreakdowns(for: snapshot, calendar: utcCalendar())
         let spatial = try XCTUnwrap(scores.first { $0.lab == .spatial })
         let logic = try XCTUnwrap(scores.first { $0.lab == .logicDebugging })
         let mental = try XCTUnwrap(scores.first { $0.lab == .mentalMath })
@@ -912,6 +949,96 @@ final class AssessmentSchedulerTests: XCTestCase {
         )
     }
 
+    func testDailyReviewAssignmentsCapAtFiveAndRetainTheRemainingBacklog() throws {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let states = (0..<20).map { ordinal in
+            NFRetentionItemState(id: "backlog.\(ordinal)", templateFamily: "math.review", lab: .mentalMath,
+                lastReviewedAt: now.addingTimeInterval(-3 * 86_400), stabilityDays: 1, repetitions: 1)
+        }
+        let snapshot = NFDailySchedulingSnapshot(profile: makeProfile(duration: 20, goals: [.mentalMath]),
+            date: now, retentionStates: states)
+        let plan = NFDailyScheduler.canonicalPlan(for: snapshot, calendar: utcCalendar())
+        let review = try XCTUnwrap(plan.blocks.first { $0.kind == .retentionReview })
+        XCTAssertEqual(review.retentionTargets.count, 5)
+        XCTAssertEqual(snapshot.retentionStates, states)
+        XCTAssertEqual(NFRetentionScheduler.schedule(states: states, at: now, maximumItems: 20,
+            calendar: utcCalendar()).count, 20, "Explicit review choice retains access to the backlog")
+        XCTAssertEqual(NFDailyScheduler.canonicalPlan(for: snapshot, calendar: utcCalendar()), plan)
+    }
+
+    func testCompatibilityRemindersNeverTurnRawCountsOrHelpIntoRetentionRungs() throws {
+        let start = Date(timeIntervalSince1970: 1_800_000_000)
+        func input(_ ordinal: Int, credit: Double = 1, hintCount: Int = 0,
+                   weight: Double = 1, skipped: Bool = false, format: String = "numeric") -> NFCompatibilityReminderObservation {
+            let attempt = AttemptDTO(id: UUID(), itemID: "legacy.\(ordinal)", skillID: "logic.trace",
+                lab: .logicDebugging, correct: credit == 1, credit: credit, confidence: .certain,
+                submittedAt: start.addingTimeInterval(Double(ordinal)), evidenceClass: .practice,
+                evidenceWeight: weight, responseFormatRaw: format, wasSkipped: skipped, hintCount: hintCount)
+            return .init(attempt: attempt, memoryItemID: "legacy-family", templateFamily: "legacy-family",
+                seed: UInt64(ordinal), representationID: "numeric")
+        }
+        let repeatedSuccesses = (0..<8).map { input($0) }
+        let state = try XCTUnwrap(NFCompatibilityReminderPolicy.reduce(repeatedSuccesses,
+            at: start.addingTimeInterval(2 * 86_400), calendar: utcCalendar()).first)
+        XCTAssertEqual(state.repetitions, 1)
+        XCTAssertEqual(state.stabilityDays, 1)
+        XCTAssertEqual(state.lastReviewedAt, start, "Early practice must not postpone the initial reminder")
+        XCTAssertEqual(state.exposedSeeds.count, 8)
+        XCTAssertEqual(NFRetentionScheduler.schedule(states: [state], at: start.addingTimeInterval(2 * 86_400),
+            maximumItems: 1, calendar: utcCalendar()).count, 1)
+        let unsupported = (0..<8).map { input($0, credit: 0) }
+            + [input(9, hintCount: 1), input(10, weight: 0), input(11, skipped: true),
+               input(12, format: "selfCheck"), input(13, format: "revealed"), input(14, credit: .nan)]
+        XCTAssertTrue(NFCompatibilityReminderPolicy.reduce(unsupported,
+            at: start.addingTimeInterval(2 * 86_400), calendar: utcCalendar()).isEmpty)
+    }
+
+    func testCompatibilityReminderDueRefreshStaysOneDayAndFamiliarOrEarlyWorkDoesNotPostpone() throws {
+        let start = Date(timeIntervalSince1970: 1_800_000_000)
+        func input(_ day: Double, semantic: String) -> NFCompatibilityReminderObservation {
+            let attempt = AttemptDTO(id: UUID(), itemID: "item.\(day)", skillID: "logic.trace",
+                lab: .logicDebugging, correct: true, confidence: nil,
+                submittedAt: start.addingTimeInterval(day * 86_400), evidenceClass: .retention, evidenceWeight: 1)
+            return .init(attempt: attempt, memoryItemID: "legacy-family", templateFamily: "legacy-family",
+                seed: UInt64(day * 10), representationID: "numeric", semanticID: semantic)
+        }
+        let original = input(0, semantic: "original")
+        let early = input(0.5, semantic: "early")
+        let familiarDue = input(1, semantic: "original")
+        let dueFresh = input(2, semantic: "fresh")
+        let earlyAfterRefresh = input(2.5, semantic: "later")
+        let now = start.addingTimeInterval(3 * 86_400)
+        let before = try XCTUnwrap(NFCompatibilityReminderPolicy.reduce([familiarDue, early, original],
+            at: now, calendar: utcCalendar()).first)
+        XCTAssertEqual(before.lastReviewedAt, start)
+        let inputs = [original, early, familiarDue, dueFresh, earlyAfterRefresh]
+        let state = try XCTUnwrap(NFCompatibilityReminderPolicy.reduce(inputs,
+            at: now, calendar: utcCalendar()).first)
+        XCTAssertEqual(state.lastReviewedAt, dueFresh.submittedAt)
+        XCTAssertEqual(state.repetitions, 1)
+        XCTAssertEqual(NFRetentionScheduler.nextReviewDate(for: state, after: dueFresh.submittedAt,
+            calendar: utcCalendar()), now)
+        XCTAssertEqual(NFCompatibilityReminderPolicy.reduce(Array(inputs.reversed()) + [original],
+            at: now, calendar: utcCalendar()), [state])
+    }
+
+    func testCompatibilityReminderRejectsFuturePersonalProtectedAndConflictingIdentityInputs() {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let id = UUID()
+        func input(_ lane: EvidenceClass, credit: Double = 1, date: Date? = nil) -> NFCompatibilityReminderObservation {
+            .init(attempt: AttemptDTO(id: id, itemID: "legacy", skillID: "logic.trace", lab: .logicDebugging,
+                correct: credit == 1, credit: credit, confidence: nil, submittedAt: date ?? now,
+                evidenceClass: lane, evidenceWeight: 1), memoryItemID: "legacy-family",
+                templateFamily: "legacy-family", seed: 3, representationID: nil)
+        }
+        XCTAssertTrue(NFCompatibilityReminderPolicy.reduce([input(.documentPractice), input(.assessmentHoldout)],
+            at: now, calendar: utcCalendar()).isEmpty)
+        XCTAssertTrue(NFCompatibilityReminderPolicy.reduce([input(.practice), input(.practice, credit: 0)],
+            at: now, calendar: utcCalendar()).isEmpty)
+        XCTAssertTrue(NFCompatibilityReminderPolicy.reduce([input(.practice, date: now.addingTimeInterval(1))],
+            at: now, calendar: utcCalendar()).isEmpty)
+    }
+
     func testRetentionScheduleUsesPredictedMemoryAndAlternateSeeds() throws {
         let now = Date(timeIntervalSince1970: 1_780_000_000)
         let older = NFRetentionItemState(
@@ -943,14 +1070,14 @@ final class AssessmentSchedulerTests: XCTestCase {
             repetitions: 5
         )
 
-        let first = NFRetentionScheduler.schedule(states: [stable, newer, older], at: now, maximumItems: 3)
-        let duplicate = NFRetentionScheduler.schedule(states: [older, stable, newer], at: now, maximumItems: 3)
+        let first = NFRetentionScheduler.schedule(states: [stable, newer, older], at: now, maximumItems: 3, calendar: utcCalendar())
+        let duplicate = NFRetentionScheduler.schedule(states: [older, stable, newer], at: now, maximumItems: 3, calendar: utcCalendar())
 
         XCTAssertEqual(first, duplicate)
         XCTAssertEqual(first.map(\.memoryItemID), ["older", "newer"])
         let olderAssignment = try XCTUnwrap(first.first)
         XCTAssertFalse(older.exposedSeeds.contains(olderAssignment.alternateSeed))
-        XCTAssertTrue(olderAssignment.requiresRepresentationShift)
+        XCTAssertFalse(olderAssignment.requiresRepresentationShift, "A cosmetic format change cannot establish comparable retention.")
 
         let success = NFRetentionScheduler.updatedState(
             older,
@@ -961,11 +1088,54 @@ final class AssessmentSchedulerTests: XCTestCase {
                 itemDifficulty: 0.6,
                 seed: olderAssignment.alternateSeed,
                 representationID: "graph"
-            )
+            ),
+            calendar: utcCalendar()
         )
         XCTAssertGreaterThan(success.stabilityDays, older.stabilityDays)
         XCTAssertTrue(success.exposedSeeds.contains(olderAssignment.alternateSeed))
-        XCTAssertGreaterThan(NFRetentionScheduler.nextReviewDate(for: success, after: now), now)
+        XCTAssertGreaterThan(NFRetentionScheduler.nextReviewDate(for: success, after: now, calendar: utcCalendar()), now)
+    }
+
+    func testRetentionCalendarIsExplicitAcrossDSTAndPropagatesIntoTheCanonicalPlanner() throws {
+        let formatter = ISO8601DateFormatter()
+        let reviewed = try XCTUnwrap(formatter.date(from: "2026-03-07T17:00:00Z"))
+        let now = try XCTUnwrap(formatter.date(from: "2026-03-08T16:30:00Z"))
+        var toronto = Calendar(identifier: .gregorian)
+        toronto.timeZone = try XCTUnwrap(TimeZone(identifier: "America/Toronto"))
+        let utc = utcCalendar()
+        let state = NFRetentionItemState(id: "explicit-local-day", templateFamily: "math.percent.v1",
+            lab: .mentalMath, lastReviewedAt: reviewed, stabilityDays: 1, repetitions: 1,
+            exposedSeeds: [7], lastRepresentationID: "equation")
+        // Noon-to-noon crosses the actual March DST transition:23 hours in
+        // Toronto,24 hours in UTC. Both are intentional explicit policies.
+        XCTAssertEqual(NFRetentionScheduler.nextReviewDate(for: state, after: reviewed, calendar: toronto),
+            formatter.date(from: "2026-03-08T16:00:00Z"))
+        XCTAssertEqual(NFRetentionScheduler.nextReviewDate(for: state, after: reviewed, calendar: utc),
+            formatter.date(from: "2026-03-08T17:00:00Z"))
+        XCTAssertEqual(NFRetentionScheduler.predictedRetention(for: state, at: now, calendar: toronto), 0)
+        XCTAssertEqual(NFRetentionScheduler.predictedRetention(for: state, at: now, calendar: utc), 1)
+        XCTAssertGreaterThan(NFRetentionScheduler.urgency(for: state, at: now, calendar: toronto), 1)
+        XCTAssertEqual(NFRetentionScheduler.urgency(for: state, at: now, calendar: utc), 0)
+        let due = NFRetentionScheduler.schedule(states: [state], at: now, maximumItems: 1, calendar: toronto)
+        XCTAssertEqual(due.map(\.memoryItemID), [state.id])
+        XCTAssertTrue(NFRetentionScheduler.schedule(states: [state], at: now, maximumItems: 1, calendar: utc).isEmpty)
+        let outcome = NFRetentionReviewOutcome(reviewedAt: now, correct: true, confidence: .certain,
+            itemDifficulty: 0.5, seed: 8, representationID: "equation")
+        XCTAssertEqual(NFRetentionScheduler.updatedState(state, after: outcome, calendar: toronto).repetitions, 2)
+        XCTAssertEqual(NFRetentionScheduler.updatedState(state, after: outcome, calendar: utc).repetitions, 1)
+        let snapshot = NFDailySchedulingSnapshot(profile: makeProfile(duration: 15, goals: [.mentalMath]),
+            date: now, retentionStates: [state])
+        let localScores = NFDailyScheduler.priorityBreakdowns(for: snapshot, calendar: toronto)
+        let utcScores = NFDailyScheduler.priorityBreakdowns(for: snapshot, calendar: utc)
+        XCTAssertEqual(localScores.first { $0.lab == .mentalMath }?.reviewUrgency, 1)
+        XCTAssertEqual(utcScores.first { $0.lab == .mentalMath }?.reviewUrgency, 0)
+        let localPlan = NFDailyScheduler.canonicalPlan(for: snapshot, calendar: toronto)
+        let utcPlan = NFDailyScheduler.canonicalPlan(for: snapshot, calendar: utc)
+        XCTAssertEqual(localPlan.prioritySnapshot, localScores)
+        XCTAssertEqual(utcPlan.prioritySnapshot, utcScores)
+        XCTAssertEqual(localPlan.blocks.flatMap(\.retentionItemIDs), [state.id])
+        XCTAssertTrue(utcPlan.blocks.flatMap(\.retentionItemIDs).isEmpty)
+        XCTAssertEqual(NFDailyScheduler.canonicalPlan(for: snapshot, existingPlan: localPlan, calendar: toronto), localPlan)
     }
 
     func testCanonicalPlanCarriesRetentionTargetsAndDecodesLegacyItemIDs() throws {
@@ -991,7 +1161,8 @@ final class AssessmentSchedulerTests: XCTestCase {
         let assignment = try XCTUnwrap(NFRetentionScheduler.schedule(
             states: [state],
             at: now,
-            maximumItems: 7
+            maximumItems: 7,
+            calendar: utcCalendar()
         ).first)
 
         XCTAssertEqual(review.retentionTargets, [assignment.reviewTarget])
@@ -1073,6 +1244,8 @@ final class AssessmentSchedulerTests: XCTestCase {
         )
 
         XCTAssertEqual(first, duplicate)
+        XCTAssertNil(first.availabilityReason)
+        XCTAssertNotNil(retentionMechanicToken(source.templateID), "The oracle must recognize the actual shipped edition")
         XCTAssertEqual(retentionMechanicToken(first.templateID), retentionMechanicToken(source.templateID))
         XCTAssertNotEqual(first.id, alternate.id, "The scheduled alternate seed must affect generated identity")
 
@@ -1100,6 +1273,54 @@ final class AssessmentSchedulerTests: XCTestCase {
         )
         XCTAssertEqual(shifted.lab, source.lab)
         XCTAssertEqual(shifted.purpose, .retention)
+    }
+
+    func testRetentionFactoryHonorsKnownV3AndV4MechanicsAndRejectsUnknownTarget() throws {
+        let source = try NFFallbackExerciseGenerator.generate(.init(seed: 20260905, index: 0,
+            lab: .mentalMath, purpose: .practice, localeIdentifier: "en",
+            preferredAssessmentMechanicID: "fixture.fallback-variant-1"))
+        let slug = try XCTUnwrap(retentionMechanicToken(source.templateID))
+        for edition in ["v3", "v4"] {
+            let memoryID = "nf.fallback.mentalMath.practice.\(edition).\(slug)"
+            for family in ["nf.fallback.mentalMath.practice.\(edition)", memoryID] {
+                let target = NFRetentionReviewTarget(memoryItemID: memoryID, templateFamily: family,
+                    alternateSeed: 20260906, requiresRepresentationShift: false, priorRepresentationID: "numeric")
+                let request = SessionRequest(lab: .mentalMath, source: .focused, seed: 123,
+                    evidenceClass: .retention, requestedItemCount: 1, retentionTargets: [target])
+                let exercise = NFDeterministicSessionExerciseFactory.makeExercise(request: request, index: 0,
+                    assessmentDescriptor: nil)
+                XCTAssertNil(exercise.availabilityReason)
+                XCTAssertEqual(retentionMechanicToken(exercise.templateID), slug)
+                XCTAssertTrue(exercise.templateID.contains(".v4."), "This is a new review, not a reinterpreted saved snapshot")
+                XCTAssertEqual(request.retentionTargets, [target])
+            }
+        }
+        let unknown = NFRetentionReviewTarget(memoryItemID: "future.unavailable.objective",
+            templateFamily: "future.unavailable.family", alternateSeed: 20260906,
+            requiresRepresentationShift: false, priorRepresentationID: "numeric")
+        let unavailable = NFDeterministicSessionExerciseFactory.makeExercise(request: SessionRequest(
+            lab: .mentalMath, source: .focused, seed: 123, evidenceClass: .retention,
+            requestedItemCount: 1, retentionTargets: [unknown]), index: 0, assessmentDescriptor: nil)
+        XCTAssertNotNil(unavailable.availabilityReason)
+        XCTAssertEqual(NFExerciseScoringEngine.score(.numeric(.init(value: "0", unit: nil)), for: unavailable).outcome, .invalidItem)
+    }
+
+    func testRetentionFiniteMechanicExhaustionCannotSubstituteAnotherLogicActivity() throws {
+        let source = try NFFallbackExerciseGenerator.generate(.init(seed: 20260905, index: 0,
+            lab: .logicDebugging, purpose: .practice, localeIdentifier: "en",
+            preferredAssessmentMechanicID: "fixture.fallback-variant-1"))
+        XCTAssertEqual(retentionMechanicToken(source.templateID), "conditions.divisibility")
+        let target = NFRetentionReviewTarget(memoryItemID: source.templateID, templateFamily: source.templateFamily,
+            alternateSeed: 20260906, requiresRepresentationShift: false, priorRepresentationID: "singleChoice")
+        let request = SessionRequest(lab: .logicDebugging, source: .focused, seed: 123,
+            evidenceClass: .retention, requestedItemCount: 1, retentionTargets: [target])
+        let first = NFDeterministicSessionExerciseFactory.makeExercise(request: request, index: 0, assessmentDescriptor: nil)
+        XCTAssertNil(first.availabilityReason)
+        XCTAssertEqual(retentionMechanicToken(first.templateID), "conditions.divisibility")
+        let exhausted = NFDeterministicSessionExerciseFactory.makeExercise(request: request, index: 0,
+            assessmentDescriptor: nil, excludingContentFingerprints: [NFQuestionFingerprint.fingerprint(for: first)])
+        XCTAssertNotNil(exhausted.availabilityReason)
+        XCTAssertEqual(request.retentionTargets, [target], "Failure cannot change the accepted target")
     }
 
     func testFocusedSessionMechanicPinsRequestedSubskillVariant() {
@@ -1287,8 +1508,10 @@ final class AssessmentSchedulerTests: XCTestCase {
     }
 
     private func retentionMechanicToken(_ templateID: String) -> String? {
-        guard let marker = templateID.range(of: ".v3.", options: .backwards) else { return nil }
-        return String(templateID[marker.upperBound...])
+        let components = templateID.split(separator: ".", omittingEmptySubsequences: false)
+        guard let version = components.firstIndex(where: { $0 == "v3" || $0 == "v4" }),
+              version + 1 < components.count else { return nil }
+        return components.dropFirst(version + 1).joined(separator: ".")
     }
 
     private func utcCalendar() -> Calendar {

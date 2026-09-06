@@ -1,0 +1,38 @@
+{
+  "resultBundle": "/tmp/NeuroForge-improvement-ios/Logs/Test/Test-NeuroForgeUISmoke-2026.09.05_05-28-09--0400.xcresult",
+  "log": "/tmp/neuroforge-native-citation-five-installed-ui.log",
+  "sourceInputSHA256": "412f2d3b5163cfdec90c5146e493923c287d24e4a2b141d051066caf38d99714",
+  "installedManifest": "../Native_Citation_UI_Installed_Manifest.json",
+  "testsRun": 5,
+  "testsPassed": 4,
+  "testsFailed": 1,
+  "elapsedSeconds": 352.576,
+  "failedTest": "Weekly chart matching history: selector expected \"1 answer\" but actual accessible row says \"1 scored answer\". Selector corrected without removing chart/history/detail assertions; not rerun yet.",
+  "captures": [
+    {
+      "file": "SE-logic-state-visible-feedback.png",
+      "attachment": "518AE399-8A4A-4CF5-B971-44F471CA043E.png",
+      "sha256": "6efc9b56df35e5ea55cc5e94a2e3004ffdc0db5683f1341af699da2bc6c7a7bc",
+      "caption": "PASS: retained state and invariant controls are disabled in visible feedback; 60% task credit and sticky Next."
+    },
+    {
+      "file": "SE-source-exact-cold-recall-neutral-feedback.png",
+      "attachment": "164D3D8C-8C34-460E-9F83-D34547AC674D.png",
+      "sha256": "72978398e2c6fc7663c060b10a1e1a57ed117f86a136d192f1356935c7e59979",
+      "caption": "PASS: cold-restored source answer, original reference and Not yet self-check; neutral personal-study feedback."
+    },
+    {
+      "file": "SE-finite-transfer-retained-feedback.png",
+      "attachment": "FF1CC389-8A7E-4D15-B073-E94F0E31DEE5.png",
+      "sha256": "c04e25e930d82f3d85d644da15fca18df88f320f12e899bb3c92b1953b65b72d",
+      "caption": "PASS: retained correct selection at 1/5 with truthful finite shortage and End session. This capture predates the checkbox-icon parity fix."
+    },
+    {
+      "file": "SE-quantitative-table-values-not-visible.png",
+      "attachment": "962B0078-5759-45BB-891E-E0FDB2E37D06.png",
+      "sha256": "5cbf749eb341c79b4348ef0045c7a3f9f6ad42663658d023c62fc159379234f9",
+      "caption": "VISUAL DEFECT: table units/outcome labels appear, but original numeric counts are not visually drawn despite AX values. Explicit Text fix applied after this binary, awaiting installed verification."
+    }
+  ],
+  "scope": "Only these five installed journeys and captured states. No completed weekly chart/history journey, no post-fix visual numeric-table verification, and no physical-device/VoiceOver/manual pointer certification."
+}

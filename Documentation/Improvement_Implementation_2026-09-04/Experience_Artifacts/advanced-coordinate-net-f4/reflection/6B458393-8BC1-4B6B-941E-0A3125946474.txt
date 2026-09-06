@@ -1,0 +1,8 @@
+Public givens:
+Coordinates use grid units. The x-axis points right and the y-axis points up. These fixed axes and all named centers/lines stay unchanged; transformations move the points, not the viewpoint.
+The final point is Q = (0, 0).
+1. Reflect across x = 1.
+2. Reflect across x = 1.
+Recover the original point P before the listed operations. Enter both original coordinates.
+Independent numeric answer: ["y": 0, "x": 0]
+Independent options: []

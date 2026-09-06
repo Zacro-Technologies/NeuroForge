@@ -219,10 +219,10 @@ enum NFDefaultContentCatalog {
 
         // Spatial reasoning — 6/6 generator variants.
         activity("spatial.coordinate-rotation", "Coordinate Rotation", "座標回転", "Rotate a 2D coordinate counterclockwise while preserving its distance from the origin.", .spatial, .puzzle, 0, "coordinate.rotate-ccw", 0.42, .spatialPractice, ["coordinate", "rotation", "2d", "orientation"]),
-        activity("spatial.object-rotation", "3D Object Rotation", "3D物体の回転", "Track labeled faces through a quarter-turn about a stated three-dimensional axis.", .spatial, .puzzle, 1, "rotation.3d-z-axis", 0.50, .spatialPractice, ["3d", "object", "axis", "rotation"]),
+        activity("spatial.object-rotation", "3D Object Rotation", "3D物体の回転", "Track labeled cube faces through single or composed rotations about fixed axes.", .spatial, .puzzle, 1, "rotation.3d-z-axis", 0.50, .spatialPractice, ["3d", "object", "axis", "rotation"]),
         activity("spatial.cross-section", "Cross-Section Puzzle", "断面パズル", "Infer the planar shape produced when a named solid is sliced by a stated plane.", .spatial, .puzzle, 2, "cross-section", 0.56, .spatialPractice, ["cross section", "solid", "plane", "geometry"]),
-        activity("spatial.top-view", "Top-View Decoder", "上面図の解読", "Translate occupied positions into a top-view footprint without counting hidden height.", .spatial, .puzzle, 3, "orthographic.top-view", 0.52, .spatialPractice, ["orthographic", "projection", "top view", "diagram"]),
-        activity("spatial.cube-net", "Cube-Net Puzzle", "立方体の展開図パズル", "Fold a validated cube net mentally and identify which labeled faces become opposite.", .spatial, .puzzle, 4, "folding.cube-net", 0.60, .spatialPractice, ["cube", "net", "folding", "opposite faces"]),
+        activity("spatial.top-view", "Top-View Decoder", "上面図の解読", "Interpret occupied-cell footprints and identify every assembly consistent with supplied views.", .spatial, .puzzle, 3, "orthographic.top-view", 0.52, .spatialPractice, ["orthographic", "projection", "top view", "diagram"]),
+        activity("spatial.cube-net", "Cube-Net Puzzle", "立方体の展開図パズル", "Track opposite and adjacent faces, printed-arrow directions, and whether a proposed pattern can form a cube.", .spatial, .puzzle, 4, "folding.cube-net", 0.60, .spatialPractice, ["cube", "net", "folding", "opposite faces"]),
         activity("spatial.vector-reflection", "Vector Reflection", "ベクトルの反射", "Reflect a vector across the y-axis by changing its horizontal component and preserving its vertical component.", .spatial, .puzzle, 5, "vector.reflect-y-axis", 0.54, .spatialPractice, ["vector", "reflection", "axis", "transformation"]),
 
         // Quantitative intuition — 8/8 generator variants.
@@ -260,12 +260,12 @@ enum NFDefaultContentCatalog {
         // Retrieval — 9/9 generator variants.
         activity("retrieval.free-recall", "Free Recall", "自由再生", "Recall the central relationship without cues, then reveal the reference and rate the match.", .retrieval, .reconstruction, 0, "free-recall.self-check", 0.38, .retrievalAndSpacing, ["free recall", "self check", "reference", "memory"]),
         activity("retrieval.precision-recall", "Precision Recall", "正確な想起", "Enter a concise reviewed answer from memory before viewing the reference.", .retrieval, .reconstruction, 1, "short-answer", 0.42, .retrievalAndSpacing, ["short answer", "precision", "recall", "reference"]),
-        activity("retrieval.cloze", "Relationship Cloze", "関係の穴埋め", "Reconstruct the missing part of a supported relationship before checking the answer.", .retrieval, .reconstruction, 2, "cloze.relationship", 0.44, .retrievalAndSpacing, ["cloze", "relationship", "missing", "recall"]),
+        activity("retrieval.cloze", "Relationship Cloze", "関係の穴埋め", "Complete a meaningful blank in a relationship or calculation.", .retrieval, .reconstruction, 2, "cloze.relationship", 0.44, .retrievalAndSpacing, ["cloze", "relationship", "missing", "recall"]),
         activity("retrieval.teach-back", "Teach It Back", "自分の言葉で説明", "Explain the central entities and relationship in your own words before review.", .retrieval, .reconstruction, 3, "explain-concept.self-check", 0.46, .retrievalAndSpacing, ["explain", "concept", "self check", "teach"]),
         activity("retrieval.recognition", "Recognition Audit", "再認の監査", "Choose the statement whose direction, conditions, and scope are supported by the bounded reference.", .retrieval, .investigation, 4, "source-supported.recognition", 0.42, .scopeOnly, ["recognition", "source", "scope", "supported"]),
         activity("retrieval.repair-cycle", "Retrieval Cycle Builder", "想起サイクルの構成", "Order an evidence-aware cycle of attempt, comparison, error location, and closed-reference retry.", .retrieval, .puzzle, 5, "reconstruction.ordered-cycle", 0.50, .scopeOnly, ["retrieve", "compare", "repair", "retry"]),
-        activity("retrieval.equation", "Equation Reconstruction", "数式の再構成", "Rebuild the missing side of a source-backed equation before checking the reviewed answer.", .retrieval, .reconstruction, 6, "equation-reconstruction", 0.52, .retrievalAndSpacing, ["equation", "reconstruction", "relationship", "recall"]),
-        activity("retrieval.figure", "Figure Interpretation", "図の解釈", "Interpret a compact source figure while preserving the supported direction, conditions, and scope.", .retrieval, .investigation, 7, "figure-interpretation", 0.54, .scopeOnly, ["figure", "interpretation", "scope", "source"]),
+        activity("retrieval.equation", "Equation Reconstruction", "数式の再構成", "Complete a specific equation using the shown quantities and symbol roles.", .retrieval, .reconstruction, 6, "equation-reconstruction", 0.52, .retrievalAndSpacing, ["equation", "reconstruction", "relationship", "recall"]),
+        activity("retrieval.figure", "Figure Interpretation", "図の解釈", "Read a graph or diagram and answer from its plotted quantities or geometry.", .retrieval, .investigation, 7, "figure-interpretation", 0.54, .scopeOnly, ["figure", "interpretation", "scope", "source"]),
         activity("retrieval.source-filter", "Source-Filter Trace", "出典フィルターのトレース", "Trace a source-support filter and select the candidate justified by its direction, conditions, and scope.", .retrieval, .puzzle, 8, "code-tracing.source-filter", 0.56, .scopeOnly, ["source", "filter", "code trace", "support"]),
 
         // Transfer — 7/7 generator variants.
@@ -416,5 +416,76 @@ enum NFDefaultContentCatalog {
             .split { !$0.isLetter && !$0.isNumber }
             .map(String.init)
             .filter { $0.count >= 2 })
+    }
+}
+
+
+/// Authored interface examples contain roles and blank placeholders only. They
+/// never borrow an unused bank prompt, its quantities, a reference, an answer
+/// option or an evaluator. Reading these labels is not a scored observation.
+enum NFActivityTaskExamples {
+    static let examples: [String: String] = [
+        "nf.default.mental.rapid-recall": "factor × factor = □ · Enter the product.",
+        "nf.default.mental.compensation": "quantity × near-round factor = □ · Enter an exact value.",
+        "nf.default.mental.representation-relay": "given fraction, decimal or unit → □ in the requested form",
+        "nf.default.mental.scientific-notation": "coefficient × 10ᵉ → □ × 10ⁿ in standard form",
+        "nf.default.mental.missing-factor": "known factor × □ = given product",
+        "nf.default.mental.error-detective": "percentage claim + stated base → select the first error",
+        "nf.default.mental.calculation-chain": "starting value → operation → operation → □",
+        "nf.default.mental.estimate-first": "multiplication → rough estimate → lock estimate → exact value",
+        "nf.default.mental.tool-judgment": "precision, repetitions and consequences → choose a suitable tool",
+        "nf.default.mental.strategy-duel": "one expression + candidate methods → select a valid strategy",
+        "nf.default.spatial.coordinate-rotation": "point (x, y) + stated rotation → new x: □, new y: □",
+        "nf.default.spatial.object-rotation": "labeled faces + ordered rotations → identify the final face",
+        "nf.default.spatial.cross-section": "solid + stated cutting plane → classify the section, determine an exact squared radius or verify a proposed section",
+        "nf.default.spatial.top-view": "given views → select every compatible arrangement",
+        "nf.default.spatial.cube-net": "labeled crease pattern or stated partial fold → answer the requested face relation, direction or validity question",
+        "nf.default.spatial.vector-reflection": "point or vector + stated reflection line or sequence of transformations → resulting x: □, y: □",
+        "nf.default.quantitative.proportion": "observed part / observed total → percentage: □",
+        "nf.default.quantitative.fermi": "stated assumptions about groups and use → estimated total: □",
+        "nf.default.quantitative.unit-bridge": "measurement in unit A → □ in unit B",
+        "nf.default.quantitative.scaling": "given relationship + input multiplier → output multiplier: □",
+        "nf.default.quantitative.bayes": "base rate + true/false positive counts → conditional chance: □",
+        "nf.default.quantitative.expected-value": "possible outcomes + their probabilities → average payoff: □",
+        "nf.default.quantitative.regression": "an extreme first result + a repeat → choose what can explain the change",
+        "nf.default.quantitative.interval": "an estimated interval + candidate interpretations → choose a supported meaning",
+        "nf.default.science.claim-evidence": "study design → make a prediction → inspect results and explain the evidence",
+        "nf.default.science.confound": "exposure, outcome and a third variable → identify a confound",
+        "nf.default.science.next-experiment": "two hypotheses + candidate experiments → choose a discriminating test",
+        "nf.default.science.figure-uncertainty": "figure + uncertainty display + claim → identify the supported conclusion",
+        "nf.default.science.bias-repair": "a study weakness + proposed safeguards → choose a repair",
+        "nf.default.science.competing-predictions": "rival explanations → compare their predicted observations",
+        "nf.default.science.reviewer": "method and figure → match concerns to the relevant evidence",
+        "nf.default.science.experiment-sequence": "unordered study steps → arrange a testable procedure",
+        "nf.default.science.paper-sprint": "a short study account → arrange labeled sections into a coherent summary",
+        "nf.default.logic.state-trace": "initial variables → code updates → final state: □; violated rule: □",
+        "nf.default.logic.conditions": "if P then Q → judge the necessity or sufficiency of a statement",
+        "nf.default.logic.counterexample": "a universal claim + candidate cases → choose a counterexample",
+        "nf.default.logic.proof-builder": "unordered proof lines → arrange a valid argument",
+        "nf.default.logic.invalid-step": "a line-by-line derivation → select the first invalid step",
+        "nf.default.logic.boundary-bug": "short code + boundary inputs → identify the failing case",
+        "nf.default.logic.complexity": "two procedures + growing input → compare operation counts",
+        "nf.default.logic.loop-repair": "loop contract + candidate patches → select a valid repair",
+        "nf.default.logic.calibration": "previous predictions + observed outcomes → estimated hit rate: □",
+        "nf.default.retrieval.free-recall": "a topic cue → recall from memory → compare with the reference",
+        "nf.default.retrieval.precision-recall": "a bounded question → enter a concise answer before review",
+        "nf.default.retrieval.cloze": "a relationship with one blank → □",
+        "nf.default.retrieval.teach-back": "a concept cue → explain it in your own words → self-check",
+        "nf.default.retrieval.recognition": "reference constraints + candidate statements → choose what is supported",
+        "nf.default.retrieval.repair-cycle": "unordered practice steps → arrange the retrieval-and-review cycle",
+        "nf.default.retrieval.equation": "named symbols + incomplete equation → reconstruct the missing part",
+        "nf.default.retrieval.figure": "plotted quantities or a diagram → answer about the shown relationship",
+        "nf.default.retrieval.source-filter": "support rules + candidate sources → trace which candidate qualifies",
+        "nf.default.transfer.sequence": "a new context + unordered solution steps → arrange the approach",
+        "nf.default.transfer.conditions": "familiar relationship + new setting → select the conditions to preserve",
+        "nf.default.transfer.rate": "two contexts with different labels → map the relationship, then solve",
+        "nf.default.transfer.representation": "table of inputs and outputs → select the matching equation",
+        "nf.default.transfer.causal-map": "two systems → match their feedback and delay roles",
+        "nf.default.transfer.interacting-variables": "interacting quantities + changed context → preserved ratio: □",
+        "nf.default.transfer.saturation": "a trend + a limiting constraint → identify where the rule changes",
+    ]
+    static func exampleKey(activityID: String) -> String? {
+        guard NFDefaultContentCatalog.activity(id: activityID) != nil else { return nil }
+        return examples[activityID]
     }
 }

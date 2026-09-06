@@ -181,13 +181,23 @@ final class ResidualIntegrationContractTests: XCTestCase {
     func testGeneratedPracticeCommandCapabilitiesExposeSubmitAndFeedbackNext() {
         XCTAssertEqual(
             NFAIGeneratedPracticeCommandPolicy.resolve(stage: 0, canSubmit: false),
-            .inactive
+            .init(canAdvance: false, canTogglePause: true, canShowScratchpad: false),
+            "A saved editable question may be paused even before its answer is ready"
         )
 
         let response = NFAIGeneratedPracticeCommandPolicy.resolve(stage: 0, canSubmit: true)
         XCTAssertTrue(response.canAdvance)
-        XCTAssertFalse(response.canTogglePause)
+        XCTAssertTrue(response.canTogglePause)
         XCTAssertFalse(response.canShowScratchpad)
+
+        for stage in [1, 3, 5] {
+            XCTAssertEqual(NFAIGeneratedPracticeCommandPolicy.resolve(stage: stage,
+                canSubmit: true, isPaused: true), .inactive,
+                "Pending commits, completed runs and unsupported phases cannot consume Resume")
+        }
+        XCTAssertEqual(NFAIGeneratedPracticeCommandPolicy.resolve(stage: 0,
+            canSubmit: true, isPaused: true, canMutate: false), .inactive,
+            "A window without writer authority cannot consume Resume")
 
         XCTAssertTrue(
             NFAIGeneratedPracticeCommandPolicy.resolve(stage: 4, canSubmit: true).canAdvance,

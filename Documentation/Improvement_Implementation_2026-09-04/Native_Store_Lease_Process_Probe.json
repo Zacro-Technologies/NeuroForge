@@ -1,0 +1,10 @@
+{
+  "recordedAt": "2026-09-05T10:08:02.789997+00:00",
+  "status": "Passed",
+  "scope": "Actual independent native Swift processes using the exact NFApplicationStoreLease class extracted from current source. A competing process fails busy; a later process acquires after first exits. Not an installed full-app restore/relaunch verification.",
+  "competingExitCode": 73,
+  "subsequentExitCode": 0,
+  "lockPayloadBytes": 0,
+  "probeSourceSHA256": "42cb7f4b14608f8ce6c963d880b40b9f1ccfc47edabd87d80093a48ef4eb0954",
+  "probeBinarySHA256": "33300ec167e8de64f7845eedba07926e98365925447115ea306547190fc3fcab"
+}

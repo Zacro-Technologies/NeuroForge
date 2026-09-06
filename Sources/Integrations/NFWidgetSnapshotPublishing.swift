@@ -10,7 +10,7 @@ extension AppStore {
         calendar: Calendar = .current
     ) {
         guard isOnboardingComplete else {
-            NFWidgetSnapshotStore.delete()
+            if allowsSharedWidgetPublishing { NFWidgetSnapshotStore.delete() }
             return
         }
 
@@ -51,6 +51,7 @@ extension AppStore {
         )
 
         do {
+            guard allowsSharedWidgetPublishing else { return }
             try NFWidgetSnapshotStore.write(snapshot)
             #if canImport(WidgetKit)
             WidgetCenter.shared.reloadTimelines(ofKind: "NeuroForgeToday")

@@ -76,7 +76,11 @@ struct SettingsView: View {
     @Environment(AppStore.self) private var store
     @Environment(NFSystemIntegrationCoordinator.self) private var systemIntegrations
     @Environment(\.openURL) private var openURL
+    @Environment(\.archiveRestoreController) private var restoreController
 
+    @State private var settingsSearch = ""
+    @FocusState private var searchIsFocused: Bool
+    @State private var expandedCategory: String?
     @State private var isShowingDeleteConfirmation = false
     @State private var isShowingCloudDeleteConfirmation = false
     @State private var isShowingPrivacyPolicy = false
@@ -84,8 +88,12 @@ struct SettingsView: View {
     @State private var exportError: String?
     @State private var isShowingRestoreImporter = false
     @State private var isShowingRestorePreview = false
-    @State private var restoreArchiveURL: URL?
+    @State private var preparedRestoreArchive: NFPreparedDataArchive?
     @State private var restorePreview: NFDataArchiveRestorePreview?
+    @State private var reviewedRestoreArchive: NFRestoreReviewedArchive?
+    @State private var restorePreparationTask: Task<Void, Never>?
+    @State private var restorePreparationID: UUID?
+    @State private var isPreparingRestore = false
     @State private var isShowingProfileEditor = false
     @State private var isShowingInputCalibration = false
     @State private var isShowingMethodologyLibrary = false
@@ -107,31 +115,74 @@ struct SettingsView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         header
 
-                        LazyVGrid(
-                            columns: [GridItem(.adaptive(minimum: 300, maximum: 460), spacing: 18, alignment: .top)],
-                            alignment: .leading,
-                            spacing: 18
-                        ) {
-                            profileAndTrainingCard
-                            aiCard
-                            syncCard
-                            SystemControlsCard()
-                            exportCard
-                                .id(NFSettingsSectionAnchor.export)
-                            if !store.itemReports.isEmpty {
-                                reportedItemsCard
+                        TextField("Search settings", text: $settingsSearch)
+                            .textFieldStyle(.roundedBorder)
+                            .focused($searchIsFocused)
+                            .frame(minHeight: 44)
+                            .contentShape(Rectangle())
+                            .onTapGesture { searchIsFocused = true }
+                            .submitLabel(.search)
+                            .onSubmit { searchIsFocused = false }
+                            .accessibilityIdentifier("settings-search")
+                        if !settingsSearch.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                           !Self.categorySearchTerms.keys.contains(where: categoryMatches) {
+                            ContentUnavailableView {
+                                Label("No settings found", systemImage: "magnifyingglass")
+                            } description: {
+                                Text("Try a setting name, such as language, timer, or export.")
+                            } actions: {
+                                Button("Clear search") {
+                                    settingsSearch = ""
+                                    searchIsFocused = true
+                                }
+                                .buttonStyle(.bordered)
+                                .frame(minHeight: 44)
                             }
-                            methodologyCard
-                                .id(NFSettingsSectionAnchor.methodology)
+                            .accessibilityElement(children: .contain)
+                            .accessibilityIdentifier("settings-no-results")
                         }
-
-                        deleteCard
+                        if categoryMatches("Practice") {
+                            settingsCategory("Practice", symbol: "slider.horizontal.3") { profileAndTrainingCard }
+                        }
+                        if categoryMatches("Accessibility") {
+                            settingsCategory("Accessibility", symbol: "accessibility") {
+                                VStack(alignment: .leading, spacing: 16) {
+                                    Text("Language, timing visibility, motion, and input preferences")
+                                    Button("Open accessibility preferences") { isShowingProfileEditor = true }.buttonStyle(.bordered)
+                                    Toggle("Haptic reinforcement", isOn: reinforcementHapticsBinding)
+                                    Toggle("Sound reinforcement", isOn: reinforcementSoundBinding)
+                                    Button("Recalibrate keyboard, touch, or pointer") { isShowingInputCalibration = true }.buttonStyle(.bordered)
+                                }.nfCard()
+                            }
+                        }
+                        if categoryMatches("Notifications") {
+                            settingsCategory("Notifications", symbol: "bell") { SystemControlsCard() }
+                        }
+                        if categoryMatches("Question Writer") {
+                            settingsCategory("Question Writer", symbol: "pencil.and.outline") { aiCard }
+                        }
+                        if categoryMatches("Data and sync") {
+                            settingsCategory("Data and sync", symbol: "externaldrive") {
+                                VStack(alignment: .leading, spacing: 24) {
+                                    syncCard
+                                    exportCard.id(NFSettingsSectionAnchor.export)
+                                    if !store.itemReports.isEmpty { reportedItemsCard }
+                                    deleteCard
+                                }
+                            }
+                        }
+                        if categoryMatches("About") {
+                            settingsCategory("About", symbol: "info.circle") {
+                                methodologyCard.id(NFSettingsSectionAnchor.methodology)
+                            }
+                        }
                     }
                     .frame(maxWidth: 960, alignment: .leading)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 24)
                     .frame(maxWidth: .infinity)
                 }
+                .scrollDismissesKeyboard(.interactively)
                 .onAppear { resolvePendingSubroute(using: scrollProxy) }
                 .onChange(of: store.pendingSettingsSubroute) { _, _ in
                     resolvePendingSubroute(using: scrollProxy)
@@ -139,6 +190,15 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Settings")
+        #if os(iOS)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { searchIsFocused = false }
+                    .accessibilityIdentifier("settings-search-done")
+            }
+        }
+        #endif
         .alert("Delete all local data?", isPresented: $isShowingDeleteConfirmation) {
             Button("Cancel", role: .cancel) {}
             Button("Delete all local data", role: .destructive) {
@@ -206,11 +266,8 @@ struct SettingsView: View {
             MethodologyLibraryView(showsDismissButton: true)
         }
         .sheet(isPresented: $isShowingRestorePreview, onDismiss: discardStagedRestoreArchive) {
-            if let restoreArchiveURL, let restorePreview {
-                NFArchiveRestorePreviewView(
-                    archiveURL: restoreArchiveURL,
-                    preview: restorePreview
-                )
+            if let reviewedRestoreArchive {
+                NFArchiveRestorePreviewView(reviewedArchive: reviewedRestoreArchive)
                 .environment(store)
             }
         }
@@ -228,6 +285,7 @@ struct SettingsView: View {
         } message: {
             Text("This returns you to onboarding but keeps your answers, skill checks, imported materials, notes, and history. Deleting history is a separate action below.")
         }
+        .onDisappear { if isPreparingRestore { discardStagedRestoreArchive() } }
         .alert("Export could not be prepared", isPresented: Binding(
             get: { exportError != nil },
             set: { if !$0 { exportError = nil } }
@@ -241,6 +299,55 @@ struct SettingsView: View {
         } message: {
             Text("This removes the report from NeuroForge and from future exports. If the question is currently excluded, deleting its report allows that question to appear again.")
         }
+    }
+
+    private static let categorySearchTerms: [String: String] = [
+        "Practice": "duration minutes timer timing contexts emphasis day boundary 練習 時間 タイマー",
+        "Accessibility": "language Japanese English dark appearance motion sound haptic hide timer keyboard 音 言語 日本語 英語 アクセシビリティ",
+        "Notifications": "reminder reminders schedule permission 通知 リマインダー",
+        "Question Writer": "Shortcut ChatGPT AI generation model 質問 ショートカット",
+        "Data and sync": "export restore backup storage reports delete iCloud privacy データ 同期 書き出し 復元 バックアップ 削除",
+        "About": "version methodology science help バージョン このアプリ 方法",
+    ]
+
+    private func categoryMatches(_ title: String) -> Bool {
+        let query = settingsSearch.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return true }
+        return [title, NFAppLocalization.localizedCatalogValue(title, locale: NFAppLocalization.preferredLocale), Self.categorySearchTerms[title] ?? ""]
+            .contains { $0.localizedCaseInsensitiveContains(query) }
+    }
+
+    private func highlightedCategoryTitle(_ title: String) -> AttributedString {
+        var result = AttributedString(NFAppLocalization.localizedCatalogValue(title, locale: NFAppLocalization.preferredLocale))
+        let query = settingsSearch.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return result }
+        if let range = result.range(of: query, options: [.caseInsensitive, .diacriticInsensitive]) {
+            result[range].backgroundColor = NFTheme.indigo.opacity(0.2)
+            result[range].foregroundColor = NFTheme.indigoForeground
+        } else {
+            // A synonym matched this category; make the matching destination
+            // visible without inserting internal search keywords into its name.
+            result.foregroundColor = NFTheme.indigoForeground
+        }
+        return result
+    }
+
+    private func settingsCategory<Content: View>(_ title: String, symbol: String, @ViewBuilder content: @escaping () -> Content) -> some View {
+        DisclosureGroup(isExpanded: Binding(
+            get: { !settingsSearch.isEmpty || expandedCategory == title },
+            set: { expandedCategory = $0 ? title : nil }
+        )) {
+            content().padding(.top, 12)
+        } label: {
+            Label {
+                Text(highlightedCategoryTitle(title))
+            } icon: {
+                Image(systemName: symbol)
+            }
+            .font(.headline)
+            .frame(minHeight: 44)
+        }
+        .nfCard(cornerRadius: 16, padding: 16)
     }
 
     private var header: some View {
@@ -486,6 +593,22 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.bordered)
 
+                #if DEBUG
+                if let support = NFUITestLaunchConfiguration.restoreFixtureSupportURL {
+                    Button {
+                        prepareRestorePreview(.success([support.appending(path: "SyntheticRestoreBackup.json")]))
+                    } label: { Text(verbatim: "Review synthetic backup") }
+                    .accessibilityIdentifier("restore-fixture-review")
+                }
+                #endif
+
+                if isPreparingRestore {
+                    HStack {
+                        ProgressView().accessibilityLabel("Restore backup")
+                        Button("Cancel") { discardStagedRestoreArchive() }
+                    }
+                }
+
                 Text("NeuroForge validates the entire backup and shows its version, record counts, warnings, and conflicts before changing local data.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -510,35 +633,48 @@ struct SettingsView: View {
 
     private func prepareRestorePreview(_ result: Result<[URL], Error>) {
         do {
-            let selectedURL = try result.get().first
-            guard let selectedURL else { return }
+            guard let selectedURL = try result.get().first else { return }
             discardStagedRestoreArchive()
-
-            let accessed = selectedURL.startAccessingSecurityScopedResource()
-            defer {
-                if accessed { selectedURL.stopAccessingSecurityScopedResource() }
-            }
-
-            let stagedURL = FileManager.default.temporaryDirectory
-                .appending(path: "NeuroForge-Restore-\(UUID().uuidString)")
-                .appendingPathExtension("json")
-            try FileManager.default.copyItem(at: selectedURL, to: stagedURL)
-            let preview = try NFDataArchiveRestoreService.preview(archiveAt: stagedURL, into: store)
-            restoreArchiveURL = stagedURL
-            restorePreview = preview
+            let identity = UUID()
+            restorePreparationID = identity
+            isPreparingRestore = true
             exportError = nil
-            isShowingRestorePreview = true
+            restorePreparationTask = Task { @MainActor in
+                let accessed = selectedURL.startAccessingSecurityScopedResource()
+                defer { if accessed { selectedURL.stopAccessingSecurityScopedResource() } }
+                do {
+                    let prepared = try await NFDataArchiveRestoreService.prepare(archiveAt: selectedURL)
+                    guard !Task.isCancelled, restorePreparationID == identity else { return }
+                    guard let restoreController else { throw NFDataArchiveRestoreError.persistenceFailed }
+                    let review = try await restoreController.prepareReview(prepared, store: store)
+                    guard !Task.isCancelled, restorePreparationID == identity else { return }
+                    preparedRestoreArchive = prepared
+                    restorePreview = review.preview
+                    reviewedRestoreArchive = review
+                    isShowingRestorePreview = true
+                } catch is CancellationError {
+                    // Cancelling disposable decoding never starts a restore.
+                } catch {
+                    if restorePreparationID == identity { exportError = error.localizedDescription }
+                }
+                if restorePreparationID == identity {
+                    isPreparingRestore = false
+                    restorePreparationTask = nil
+                }
+            }
         } catch {
             exportError = error.localizedDescription
         }
     }
 
     private func discardStagedRestoreArchive() {
-        if let restoreArchiveURL {
-            try? FileManager.default.removeItem(at: restoreArchiveURL)
-        }
-        restoreArchiveURL = nil
+        restorePreparationTask?.cancel()
+        restorePreparationTask = nil
+        restorePreparationID = nil
+        isPreparingRestore = false
+        preparedRestoreArchive = nil
         restorePreview = nil
+        reviewedRestoreArchive = nil
     }
 
     private var methodologyCard: some View {
@@ -1066,6 +1202,8 @@ struct SettingsView: View {
         guard let subroute = store.pendingSettingsSubroute else { return }
         switch subroute {
         case .export:
+            expandedCategory = "Data and sync"
+            settingsSearch = ""
             Task { @MainActor in
                 // The pending value remains durable until the destination and
                 // its lazy grid have entered the hierarchy.
@@ -1086,10 +1224,15 @@ struct SettingsView: View {
 
 private struct NFArchiveRestorePreviewView: View {
     @Environment(AppStore.self) private var store
+    @Environment(NFSystemIntegrationCoordinator.self) private var integrations
+    @Environment(\.archiveRestoreController) private var restoreController
     @Environment(\.dismiss) private var dismiss
 
-    let archiveURL: URL
-    let preview: NFDataArchiveRestorePreview
+    let reviewedArchive: NFRestoreReviewedArchive
+    @State private var updatedReview: NFRestoreReviewedArchive?
+    private var activeReview: NFRestoreReviewedArchive { updatedReview ?? reviewedArchive }
+    private var preparedArchive: NFPreparedDataArchive { activeReview.prepared }
+    private var preview: NFDataArchiveRestorePreview { activeReview.preview }
 
     @State private var selectedPolicy: NFDataArchiveRestorePolicy?
     @State private var restoreError: String?
@@ -1103,7 +1246,7 @@ private struct NFArchiveRestorePreviewView: View {
                 VStack(alignment: .leading, spacing: 20) {
                     NFSectionHeader(
                         "Restore full backup",
-                        eyebrow: archiveURL.lastPathComponent,
+                        eyebrow: preparedArchive.sourceFilename,
                         subtitle: "Review this validated archive before choosing how conflicts should be handled.",
                         headingLevel: .h1
                     )
@@ -1112,6 +1255,8 @@ private struct NFArchiveRestorePreviewView: View {
                     recordSummary
                     warningSummary
                     conflictPolicy
+                    Text("This saves a restore request. Quit and reopen NeuroForge to apply the backup before study tools start.")
+                        .font(.subheadline).foregroundStyle(.secondary)
                     restoreFeedback
 
                     if restoreResult == nil {
@@ -1123,14 +1268,14 @@ private struct NFArchiveRestorePreviewView: View {
                                 restore(using: selectedPolicy)
                             }
                         } label: {
-                            Label("Restore backup", systemImage: "arrow.uturn.backward.circle.fill")
+                            Label("Save restore request", systemImage: "arrow.uturn.backward.circle.fill")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(NFTheme.controlTint)
                         .foregroundStyle(NFTheme.controlForeground)
                         .controlSize(.large)
-                        .disabled(selectedPolicy == nil)
+                        .disabled(selectedPolicy == nil || restoreController?.isStaging != false)
                     }
                 }
                 .padding(24)
@@ -1199,6 +1344,17 @@ private struct NFArchiveRestorePreviewView: View {
                         }
                     }
                     .font(.subheadline.monospacedDigit())
+                }
+            }
+            ForEach(preview.localIncoming.keys.sorted(), id: \.self) { key in
+                if preview.localIncoming[key, default: 0] > 0 || preview.localConflicts[key, default: 0] > 0 {
+                    LabeledContent(localCategoryTitle(key)) {
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text("\(preview.localIncoming[key, default: 0]) incoming")
+                            Text("\(preview.localConflicts[key, default: 0]) conflicts")
+                                .foregroundStyle(.secondary)
+                        }.font(.subheadline.monospacedDigit())
+                    }
                 }
             }
         }
@@ -1307,19 +1463,38 @@ private struct NFArchiveRestorePreviewView: View {
     }
 
     private func restore(using policy: NFDataArchiveRestorePolicy) {
-        do {
-            let result = try NFDataArchiveRestoreService.restore(
-                archiveAt: archiveURL,
-                into: store,
-                policy: policy
-            )
-            restoreError = nil
-            restoreResult = result
-        } catch {
-            restoreResult = nil
-            restoreError = error.localizedDescription
+        guard let restoreController else { return }
+        Task { @MainActor in
+            do {
+                try await restoreController.stage(activeReview, policy: policy, store: store, integrations: integrations)
+                restoreError = nil
+                dismiss()
+            } catch NFRestoreColdCoordinator.Failure.renewedReviewRequired {
+                do {
+                    updatedReview = try await restoreController.prepareReview(preparedArchive, store: store)
+                    selectedPolicy = nil
+                    restoreError = NFAppLocalization.localized("Your saved data changed. Review the updated counts and choose a conflict policy again.", comment: "Restore preview is renewed after destination data changes.")
+                } catch { restoreError = error.localizedDescription }
+            } catch {
+                restoreError = error.localizedDescription
+            }
+            feedbackIsFocused = true
         }
-        feedbackIsFocused = true
+    }
+
+    private func localCategoryTitle(_ key: String) -> String {
+        let title = switch key {
+        case "sessions": "Local saved sessions"
+        case "snapshots": "Saved question details"
+        case "savedSets": "Saved question sets"
+        case "privateStudyRuns": "Private study drafts"
+        case "evidenceDispositions": "History evidence notes"
+        case "contentCorrections": "Content corrections"
+        case "attemptConflicts": "Retained answer conflicts"
+        case "unavailableHistorySnapshots": "Unavailable question references"
+        default: "Other local study records"
+        }
+        return NFAppLocalization.localizedCatalogValue(title, locale: NFAppLocalization.preferredLocale)
     }
 }
 
@@ -1378,7 +1553,7 @@ struct SettingsCard<Content: View>: View {
         color: Color,
         title: String,
         subtitle: String,
-        @ViewBuilder content: () -> Content
+        @ViewBuilder content: @escaping () -> Content
     ) {
         self.symbol = symbol
         self.color = color

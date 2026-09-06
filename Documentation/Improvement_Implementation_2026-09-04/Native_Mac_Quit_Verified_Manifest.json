@@ -1,0 +1,37 @@
+{
+  "createdAt": "2026-09-05T09:21:00.601071+00:00",
+  "runID": "FB461D9A-5BEF-4C54-9DE6-1B1EA266EC17",
+  "appPath": "/tmp/NeuroForge-Native-QA-fb461d9a-5bef-4c54-9de6-1b1ea266ec17/NeuroForgeNativeQA.app",
+  "bundleID": "com.zacrotech.NeuroForge.nativeqa.fb461d9a5bef4c549de61b1ea266ec17",
+  "purpose": "Actual native command verification after explicit acknowledged token teardown, disposable UUID files/preferences, CloudKit disabled",
+  "sourceManifest": "Native_Citation_Corrected_Source_Hashes.json",
+  "sourceInputManifestDigest": "412f2d3b5163cfdec90c5146e493923c287d24e4a2b141d051066caf38d99714",
+  "fixtureRoot": "/var/folders/9s/lwj2ss7d679bl8hv9dx2qf6h0000gn/T/NeuroForge-UITests-FB461D9A-5BEF-4C54-9DE6-1B1EA266EC17",
+  "NeuroForge": {
+    "builtSHA256": "a664ae4291bbfec57d86bec08832758797577eefe6e576130f12e413c673191a",
+    "copiedSHA256": "a664ae4291bbfec57d86bec08832758797577eefe6e576130f12e413c673191a"
+  },
+  "NeuroForge.debug.dylib": {
+    "builtSHA256": "2459be856f6cb65e31511ed87ad768b14fd69d21fab9e8648db296832e192755",
+    "copiedSHA256": "2459be856f6cb65e31511ed87ad768b14fd69d21fab9e8648db296832e192755"
+  },
+  "trace": "registry.register.count=1\nquit.command\nquit.dismiss-owned-presentations\nregistry.close-acknowledged.count=1\nwindow.registry-remove.count=0.requested=false\nregistry.remove.count=0.pending=true\nregistry.closed-completion\ncontinuation.start.windows=2\nwindow.registry-remove.count=0.requested=false\nregistry.remove.count=0.pending=false\ncontinuation.inspect.attached=0\ncontinuation.finish\nquit.forward-native\nquit.delegate\nregistry.register.count=1\nquit.command\nquit.blocked\nquit.command\nquit.dismiss-owned-presentations\nregistry.close-acknowledged.count=1\nwindow.registry-remove.count=0.requested=false\nregistry.remove.count=0.pending=true\nregistry.closed-completion\ncontinuation.start.windows=2\nwindow.registry-remove.count=0.requested=false\nregistry.remove.count=0.pending=false\ncontinuation.inspect.attached=0\ncontinuation.finish\nquit.forward-native\nquit.delegate\n",
+  "retainedResponse": {
+    "numeric": {
+      "_0": {
+        "value": "123"
+      }
+    }
+  },
+  "sessionStatus": "suspended",
+  "remainingQAProcesses": [],
+  "verifiedAt": "2026-09-05T09:26:59.113321+00:00",
+  "observations": [
+    "CmdQ from active draft12 saved and terminated process.",
+    "Cold relaunch+Continue+Resume showed exact draft12 and original Q1/5 prompt.",
+    "CmdW had no handler event despite enabled Training menu entry; remains open for correction.",
+    "UUID fixture-only save obstruction preserved disk draft12; editing to123 and CmdQ retained app with Save interrupted recovery and unsaved123.",
+    "After restoring exact disk file, Retry save retained paused session; fresh CmdQ saved123 and terminated process."
+  ],
+  "status": "Native Quit success and failure/retry confirmed; CmdW remains unresolved. No active test process or file obstruction."
+}

@@ -1,0 +1,175 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "00006020-000228AE0287401E",
+        "deviceName" : "My Mac",
+        "modelName" : "MacBook Pro",
+        "osBuildNumber" : "26A5425a",
+        "osVersion" : "27.0",
+        "platform" : "macOS"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 15,
+      "passedTests" : 172,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "NeuroForge · Built with macOS 27.0",
+  "expectedFailures" : 0,
+  "failedTests" : 15,
+  "finishTime" : 1788640212.939,
+  "passedTests" : 172,
+  "result" : "Failed",
+  "skippedTests" : 0,
+  "startTime" : 1788639889.934,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "XCTAssertTrue failed",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 31,
+      "testIdentifierString" : "EditorialLiveControllerPersistenceTests/testActualExternalAdmissionsUnlockTimedFluencyAfterTwoSessionsAndSurviveNextAndColdResume()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testActualExternalAdmissionsUnlockTimedFluencyAfterTwoSessionsAndSurviveNextAndColdResume",
+      "testName" : "testActualExternalAdmissionsUnlockTimedFluencyAfterTwoSessionsAndSurviveNextAndColdResume()"
+    },
+    {
+      "failureText" : "XCTAssertEqual failed: (\"0.0\") is not equal to (\"0.5\")",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 4,
+      "testIdentifierString" : "CoordinateTransformContractTests/testAllBoundedCoordinateContractsMatchIndependentAffineOracleAndTypedCredit()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/CoordinateTransformContractTests/testAllBoundedCoordinateContractsMatchIndependentAffineOracleAndTypedCredit",
+      "testName" : "testAllBoundedCoordinateContractsMatchIndependentAffineOracleAndTypedCredit()"
+    },
+    {
+      "failureText" : "Crash: NeuroForge at <external symbol>",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 11,
+      "testIdentifierString" : "DefaultContentCatalogTests/testAutomaticCatalogStartKeepsColdAndRecentReasonsDistinctFromExplicitPreference()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/DefaultContentCatalogTests/testAutomaticCatalogStartKeepsColdAndRecentReasonsDistinctFromExplicitPreference",
+      "testName" : "testAutomaticCatalogStartKeepsColdAndRecentReasonsDistinctFromExplicitPreference()"
+    },
+    {
+      "failureText" : "XCTUnwrap failed: expected non-nil value of type \"Array<String>\" - Missing Japanese draft for 'Choose a reviewed starting challenge before choosing timed fluency.' in Localizable.xcstrings",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 161,
+      "testIdentifierString" : "LocalizationCatalogTests/testEveryTranslatableCatalogEntryHasJapaneseAndMatchingPlaceholders()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/LocalizationCatalogTests/testEveryTranslatableCatalogEntryHasJapaneseAndMatchingPlaceholders",
+      "testName" : "testEveryTranslatableCatalogEntryHasJapaneseAndMatchingPlaceholders()"
+    },
+    {
+      "failureText" : "XCTAssertTrue failed",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 46,
+      "testIdentifierString" : "EditorialLiveControllerPersistenceTests/testFluencyActivityGateUsesExactContractWhenLegacyMechanicLabelIsAbsent()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testFluencyActivityGateUsesExactContractWhenLegacyMechanicLabelIsAbsent",
+      "testName" : "testFluencyActivityGateUsesExactContractWhenLegacyMechanicLabelIsAbsent()"
+    },
+    {
+      "failureText" : "XCTAssertEqual failed: (\"0\") is not equal to (\"7\")",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 47,
+      "testIdentifierString" : "EditorialLiveControllerPersistenceTests/testFluencyReadinessRejectsWrongFamilyBandProfileAndMutatedOriginalCommit()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testFluencyReadinessRejectsWrongFamilyBandProfileAndMutatedOriginalCommit",
+      "testName" : "testFluencyReadinessRejectsWrongFamilyBandProfileAndMutatedOriginalCommit()"
+    },
+    {
+      "failureText" : "XCTAssertEqual failed: (\"Optional(0.0)\") is not equal to (\"Optional(0.5)\")",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 175,
+      "testIdentifierString" : "ReviewedCoordinateProtocolTests/testHalfCreditIsNotFullSuccessAndHelpIsExcludedWithoutChangingOriginalPoint()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/ReviewedCoordinateProtocolTests/testHalfCreditIsNotFullSuccessAndHelpIsExcludedWithoutChangingOriginalPoint",
+      "testName" : "testHalfCreditIsNotFullSuccessAndHelpIsExcludedWithoutChangingOriginalPoint()"
+    },
+    {
+      "failureText" : "XCTAssertEqual failed: (\"Optional(0.0)\") is not equal to (\"Optional(0.5)\")",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 176,
+      "testIdentifierString" : "ReviewedCoordinateProtocolTests/testHarderPreferenceAndColdFileResumeRetainActualBandWithoutInventingDemonstration()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/ReviewedCoordinateProtocolTests/testHarderPreferenceAndColdFileResumeRetainActualBandWithoutInventingDemonstration",
+      "testName" : "testHarderPreferenceAndColdFileResumeRetainActualBandWithoutInventingDemonstration()"
+    },
+    {
+      "failureText" : "Crash: NeuroForge at <external symbol>",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 21,
+      "testIdentifierString" : "DefaultContentCatalogTests/testPrelaunchFieldMismatchAndMissingPrerequisitesCannotOfferOrLaunchHigherBand()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/DefaultContentCatalogTests/testPrelaunchFieldMismatchAndMissingPrerequisitesCannotOfferOrLaunchHigherBand",
+      "testName" : "testPrelaunchFieldMismatchAndMissingPrerequisitesCannotOfferOrLaunchHigherBand()"
+    },
+    {
+      "failureText" : "Crash: NeuroForge at <external symbol>",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 24,
+      "testIdentifierString" : "DefaultContentCatalogTests/testReviewedLaunchRechecksQuarantineAfterReadOnlyInventoryPreview()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/DefaultContentCatalogTests/testReviewedLaunchRechecksQuarantineAfterReadOnlyInventoryPreview",
+      "testName" : "testReviewedLaunchRechecksQuarantineAfterReadOnlyInventoryPreview()"
+    },
+    {
+      "failureText" : "Crash: NeuroForge at <external symbol>",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 25,
+      "testIdentifierString" : "DefaultContentCatalogTests/testReviewedPrelaunchShortageRequiresExplicitSmallerCountAndRechecksAtAcceptance()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/DefaultContentCatalogTests/testReviewedPrelaunchShortageRequiresExplicitSmallerCountAndRechecksAtAcceptance",
+      "testName" : "testReviewedPrelaunchShortageRequiresExplicitSmallerCountAndRechecksAtAcceptance()"
+    },
+    {
+      "failureText" : "Crash: NeuroForge at <external symbol>",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 26,
+      "testIdentifierString" : "DefaultContentCatalogTests/testReviewedPreviewReadsAllBandsAndActualDemandsWithoutCreatingPlansOrReservations()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/DefaultContentCatalogTests/testReviewedPreviewReadsAllBandsAndActualDemandsWithoutCreatingPlansOrReservations",
+      "testName" : "testReviewedPreviewReadsAllBandsAndActualDemandsWithoutCreatingPlansOrReservations()"
+    },
+    {
+      "failureText" : "Crash: NeuroForge at <external symbol>",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 27,
+      "testIdentifierString" : "DefaultContentCatalogTests/testReviewedPreviewUsesCurrentQuarantineAndUntimedElapsedDoNotChangeDemand()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/DefaultContentCatalogTests/testReviewedPreviewUsesCurrentQuarantineAndUntimedElapsedDoNotChangeDemand",
+      "testName" : "testReviewedPreviewUsesCurrentQuarantineAndUntimedElapsedDoNotChangeDemand()"
+    },
+    {
+      "failureText" : "XCTUnwrap failed: expected non-nil value of type \"NFSessionTimingCondition\"",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 79,
+      "testIdentifierString" : "EditorialLiveControllerPersistenceTests/testTimedLaunchRejectsWrongScopeAndColdManifestDriftWithoutPublishingDraftOrClock()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testTimedLaunchRejectsWrongScopeAndColdManifestDriftWithoutPublishingDraftOrClock",
+      "testName" : "testTimedLaunchRejectsWrongScopeAndColdManifestDriftWithoutPublishingDraftOrClock()"
+    },
+    {
+      "failureText" : "Crash: NeuroForge at <external symbol>",
+      "targetName" : "NeuroForgeTests",
+      "testIdentifier" : 29,
+      "testIdentifierString" : "DefaultContentCatalogTests/testTypedRetrievalAssetPreviewAndNextRemainInEquationActivity()",
+      "testIdentifierURL" : "test://com.apple.xcode/NeuroForge/NeuroForgeTests/DefaultContentCatalogTests/testTypedRetrievalAssetPreviewAndNextRemainInEquationActivity",
+      "testName" : "testTypedRetrievalAssetPreviewAndNextRemainInEquationActivity()"
+    }
+  ],
+  "title" : "Test - NeuroForge",
+  "topInsights" : [
+    {
+      "category" : "Common Failures",
+      "impact" : "6% of failures",
+      "text" : "336 runs of 1 test failed with XCTAssertEqual failed: (\"0.0\") is not equal to (\"0.5\")"
+    },
+    {
+      "category" : "Common Failures",
+      "impact" : "46% of failures",
+      "text" : "7 runs of 7 tests failed with Crash: NeuroForge at <external symbol>"
+    },
+    {
+      "category" : "Common Failures",
+      "impact" : "13% of failures",
+      "text" : "5 runs of 2 tests failed with XCTAssertEqual failed: (\"Optional(0.0)\") is not equal to (\"Optional(0.5)\")"
+    }
+  ],
+  "totalTestCount" : 187
+}

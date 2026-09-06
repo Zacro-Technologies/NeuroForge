@@ -1,5 +1,26 @@
 import Foundation
 
+/// Keeps test-host preferences in a disposable domain, including @AppStorage
+/// and compatibility helpers that otherwise default to the learner's domain.
+enum NFAppPreferenceScope {
+    private static let processID = UUID().uuidString
+    static var testSuiteName: String? {
+        #if DEBUG
+        guard NFUITestLaunchConfiguration.isEnabled else { return nil }
+        return "com.zacrotech.NeuroForge.ui-testing.\(NFUITestLaunchConfiguration.persistentRunID?.uuidString ?? processID)"
+        #else
+        return nil
+        #endif
+    }
+    static var defaults: UserDefaults {
+        guard let name = testSuiteName else { return .standard }
+        guard let defaults = UserDefaults(suiteName: name) else {
+            preconditionFailure("Unable to initialize isolated test preferences.")
+        }
+        return defaults
+    }
+}
+
 /// Resolves dynamic copy that is materialized as `String` before SwiftUI sees it.
 /// Direct SwiftUI literals use the view's locale environment; computed model and
 /// status strings use this mirrored preference so they follow the same in-app
@@ -17,7 +38,12 @@ enum NFAppLocalization {
     }
 
     static var preferredLanguageCode: String {
-        if let stored = UserDefaults.standard.string(forKey: preferredLanguageDefaultsKey) {
+        // Process-only command-line overrides remain supported without reading
+        // or mutating the production persistent domain in a test process.
+        if let argument = UserDefaults.standard.volatileDomain(forName: UserDefaults.argumentDomain)[preferredLanguageDefaultsKey] as? String {
+            return normalizedLanguageCode(argument)
+        }
+        if let stored = NFAppPreferenceScope.defaults.string(forKey: preferredLanguageDefaultsKey) {
             return normalizedLanguageCode(stored)
         }
         return normalizedLanguageCode(Locale.current.identifier)
@@ -28,7 +54,7 @@ enum NFAppLocalization {
     }
 
     static func setPreferredLanguageCode(_ identifier: String) {
-        UserDefaults.standard.set(
+        NFAppPreferenceScope.defaults.set(
             normalizedLanguageCode(identifier),
             forKey: preferredLanguageDefaultsKey
         )

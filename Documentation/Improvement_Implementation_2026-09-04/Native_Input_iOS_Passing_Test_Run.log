@@ -1,0 +1,59 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project NeuroForge.xcodeproj -scheme NeuroForgeNativeInput -destination "platform=iOS Simulator,id=064C7C8F-D941-4D8C-9B55-958F4123AF02" -derivedDataPath /tmp/NeuroForge-improvement-ios-native-input CODE_SIGNING_ALLOWED=NO "-only-testing:NeuroForgeNativeInputTests/ScratchpadSafetyTests" test-without-building
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  SwiftMath: https://github.com/mgriebling/SwiftMath.git @ 1d2c908
+
+2026-09-05 05:22:49.286469-0400 NeuroForge[31818:3943991] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-09-05 05:22:49.403024-0400 NeuroForge[31818:3943989] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+Test Suite 'Selected tests' started at 2026-09-05 05:22:49.692.
+Test Suite 'NeuroForgeNativeInputTests.xctest' started at 2026-09-05 05:22:49.693.
+Test Suite 'ScratchpadSafetyTests' started at 2026-09-05 05:22:49.693.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testContextLayoutUsesAvailableWidthAndAccessibilityFallback]' started.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testContextLayoutUsesAvailableWidthAndAccessibilityFallback]' passed (0.002 seconds).
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testEncodedAndDecodedSizeBoundariesRefuseBeforeDrawingInterpretation]' started.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testEncodedAndDecodedSizeBoundariesRefuseBeforeDrawingInterpretation]' passed (0.003 seconds).
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testLegacyAndSupportedScratchpadRemainEditableWithoutLosingDrawingBytes]' started.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testLegacyAndSupportedScratchpadRemainEditableWithoutLosingDrawingBytes]' passed (0.001 seconds).
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testMalformedAndFutureEnvelopesRetainExactRawValueAndCannotAcceptEdits]' started.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testMalformedAndFutureEnvelopesRetainExactRawValueAndCannotAcceptEdits]' passed (0.006 seconds).
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testNativeDrawingClearUndoAndRedoUseSameRetainedCanvas]' started.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testNativeDrawingClearUndoAndRedoUseSameRetainedCanvas]' passed (0.087 seconds).
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testNativeNotesClearUndoAndRedoPreserveUninterpretedDrawingAndSavedWork]' started.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testNativeNotesClearUndoAndRedoPreserveUninterpretedDrawingAndSavedWork]' passed (0.091 seconds).
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testPencilKitRejectsCorruptAndHugeSpanDrawingsWithoutRenderingThem]' started.
+2026-09-05 05:22:49.935896-0400 NeuroForge[31818:3943989] fopen failed for data file: errno = 2 (No such file or directory)
+2026-09-05 05:22:50.310969-0400 NeuroForge[31818:3943989] fopen failed for data file: errno = 2 (No such file or directory)
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testPencilKitRejectsCorruptAndHugeSpanDrawingsWithoutRenderingThem]' passed (1.029 seconds).
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testPreviewPlanCapsBothPixelDimensionsAndRefusesUnsafeGeometry]' started.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testPreviewPlanCapsBothPixelDimensionsAndRefusesUnsafeGeometry]' passed (0.001 seconds).
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testRecoveryDocumentWritesExactUnsupportedBytesAndDoesNotNormalizeThem]' started.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testRecoveryDocumentWritesExactUnsupportedBytesAndDoesNotNormalizeThem]' passed (0.003 seconds).
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testScratchpadContextIncludesOnlyExactIndependentGivensEvenForProtectedExercise]' started.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testScratchpadContextIncludesOnlyExactIndependentGivensEvenForProtectedExercise]' passed (0.041 seconds).
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testScratchpadContextPreservesInitialLogicStateAndNeverUsesSelfCheckReference]' started.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testScratchpadContextPreservesInitialLogicStateAndNeverUsesSelfCheckReference]' passed (0.012 seconds).
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testUnavailableScratchpadSurvivesExactSessionResumeAndPortableBackup]' started.
+Test Case '-[NeuroForgeNativeInputTests.ScratchpadSafetyTests testUnavailableScratchpadSurvivesExactSessionResumeAndPortableBackup]' passed (0.084 seconds).
+Test Suite 'ScratchpadSafetyTests' passed at 2026-09-05 05:22:51.067.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 1.361 (1.374) seconds
+Test Suite 'NeuroForgeNativeInputTests.xctest' passed at 2026-09-05 05:22:51.067.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 1.361 (1.374) seconds
+Test Suite 'Selected tests' passed at 2026-09-05 05:22:51.067.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 1.361 (1.375) seconds
+2026-09-05 05:22:51.403 xcodebuild[31778:3943243] [MT] IDETestOperationsObserverDebug: 8.384 elapsed -- Testing started completed.
+2026-09-05 05:22:51.403 xcodebuild[31778:3943243] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-05 05:22:51.403 xcodebuild[31778:3943243] [MT] IDETestOperationsObserverDebug: 8.384 sec, +8.384 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/NeuroForge-improvement-ios-native-input/Logs/Test/Test-NeuroForgeNativeInput-2026.09.05_05-22-42--0400.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

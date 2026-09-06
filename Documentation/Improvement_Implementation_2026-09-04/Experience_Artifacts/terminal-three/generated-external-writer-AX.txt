@@ -1,0 +1,216 @@
+Application, 0x10b416bc0, pid: 26061, label: 'NeuroForge' <App element pid: 26061>
+  Window (Main), 0x10b414640, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4372809728.4>
+    Other, 0x10b414780, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4430012416.5>
+      Other, 0x10b414140, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4431282176.6>
+        Other, 0x10b4175c0, {{-375.0, -667.0}, {1125.0, 2001.0}} <AX element pid: 26061, elementOrHash.elementID: 4717697280.247>
+        Other, 0x10b416d00, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4372808704.7>
+          Other, 0x10b414000, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4429468032.8>
+            Other, 0x10b414500, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4430045504.9>
+              Other, 0x10b415540, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4430017024.10>
+                Other, 0x10b415e00, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4374346624.12>
+                  Other, 0x10b417d40, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4372815872.124>
+                    Other, 0x10b416e40, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4429538048.125>
+                      Other, 0x10b415040, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4429537600.126>
+                        Other, 0x10b416f80, {{0.0, 0.0}, {375.0, 667.0}}, identifier: 'destination-train' <AX element pid: 26061, elementOrHash.elementID: 4429508416.127>
+                          NavigationBar, 0x10b416300, {{0.0, 20.0}, {375.0, 54.0}}, identifier: 'Practice' <AX element pid: 26061, elementOrHash.elementID: 4705272576.129>
+                            StaticText, 0x10b416940, {{154.5, 31.5}, {66.0, 21.0}}, label: 'Practice' <AX element pid: 26061, elementOrHash.elementID: 4705834240.180>
+                          Other, 0x10b415b80, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4429508864.130>
+                            Other, 0x10b4143c0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4429519872.134>
+                              Other, 0x10b414c80, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4705829760.137>
+                                Other, 0x10b415180, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4429495616.138>
+                                  ScrollView, 0x10b487840, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4372436992.139>
+                                    Other, 0x10b4857c0, {{0.0, -2499.5}, {375.0, 3206.0}} <AX element pid: 26061, elementOrHash.elementID: 4715697152.142>
+                                      Other, 0x10b485040, {{20.0, -1715.3}, {335.0, 2400.8}} <AX element pid: 26061, elementOrHash.elementID: 4429514048.147>
+                                        StaticText, 0x10b485a40, {{20.0, -1715.3}, {70.0, 33.5}}, label: 'Skills' <AX element pid: 26061, elementOrHash.elementID: 4429543872.160>
+                                        StaticText, 0x10b486d00, {{20.0, -1675.8}, {309.5, 38.0}}, label: 'Train each part of the toolkit on its own, then combine them in crossover work.' <AX element pid: 26061, elementOrHash.elementID: 4429544320.161>
+                                        Other, 0x10b486300, {{20.0, -720.0}, {335.0, 438.0}} <AX element pid: 26061, elementOrHash.elementID: 4429514496.162>
+                                          Button, 0x10b4861c0, {{20.0, -720.0}, {335.0, 212.0}}, label: 'Logic & Debugging, Assumptions, edge cases, and state tracking, Unassessed, No practice yet' <AX element pid: 26061, elementOrHash.elementID: 4800140992.405>
+                                            Image, 0x10b487980, {{36.0, -704.0}, {48.0, 48.0}}, identifier: 'point.3.connected.trianglepath.dotted', label: 'point.3.connected.trianglepath.dotted' <AX element pid: 26061, elementOrHash.elementID: 4800138304.406>
+                                            Image, 0x10b487ac0, {{328.0, -684.5}, {9.5, 9.5}}, identifier: 'arrow.up.right', label: 'arrow.up.right' <AX element pid: 26061, elementOrHash.elementID: 4800138752.407>
+                                            StaticText, 0x10b487c00, {{36.0, -639.8}, {150.5, 20.5}}, label: 'Logic & Debugging' <AX element pid: 26061, elementOrHash.elementID: 4800139200.408>
+                                            StaticText, 0x10b487480, {{36.0, -614.3}, {213.0, 38.0}}, label: 'Assumptions, edge cases, and state tracking' <AX element pid: 26061, elementOrHash.elementID: 4800139648.409>
+                                            StaticText, 0x10b484f00, {{36.0, -538.3}, {71.5, 14.5}}, label: 'Unassessed' <AX element pid: 26061, elementOrHash.elementID: 4800140096.410>
+                                            StaticText, 0x10b484b40, {{252.5, -538.3}, {86.5, 14.5}}, label: 'No practice yet' <AX element pid: 26061, elementOrHash.elementID: 4800140544.411>
+                                          Button, 0x10b486a80, {{20.0, -494.0}, {335.0, 212.0}}, label: 'Retrieval Practice, Durable recall from your own materials, Unassessed, No practice yet' <AX element pid: 26061, elementOrHash.elementID: 4429611456.211>
+                                            Image, 0x10b484640, {{36.0, -478.0}, {48.0, 48.0}}, identifier: 'text.book.closed.fill', label: 'text.book.closed.fill' <AX element pid: 26061, elementOrHash.elementID: 4429576192.212>
+                                            Image, 0x10b485cc0, {{328.0, -458.5}, {9.5, 9.5}}, identifier: 'arrow.up.right', label: 'arrow.up.right' <AX element pid: 26061, elementOrHash.elementID: 4429576640.213>
+                                            StaticText, 0x10b4848c0, {{36.0, -413.8}, {139.5, 20.5}}, label: 'Retrieval Practice' <AX element pid: 26061, elementOrHash.elementID: 4429575744.214>
+                                            StaticText, 0x10b486e40, {{36.0, -388.3}, {263.5, 18.0}}, label: 'Durable recall from your own materials' <AX element pid: 26061, elementOrHash.elementID: 4429577088.215>
+                                            StaticText, 0x10b486940, {{36.0, -312.3}, {71.5, 14.5}}, label: 'Unassessed' <AX element pid: 26061, elementOrHash.elementID: 4429410560.216>
+                                            StaticText, 0x10b484dc0, {{252.5, -312.3}, {86.5, 14.5}}, label: 'No practice yet' <AX element pid: 26061, elementOrHash.elementID: 4429611008.217>
+                                        StaticText, 0x10b484a00, {{20.0, -257.8}, {302.5, 33.5}}, label: 'Cross-ability challenge' <AX element pid: 26061, elementOrHash.elementID: 4429611904.218>
+                                        StaticText, 0x10b485900, {{20.0, -218.3}, {234.0, 38.0}}, label: 'Apply familiar skills together in an unfamiliar context.' <AX element pid: 26061, elementOrHash.elementID: 4429612800.219>
+                                        Button, 0x10b486bc0, {{20.0, -166.5}, {335.0, 170.5}}, label: 'Try a new context, Apply skills together, Apply familiar structure in unfamiliar contexts, Unassessed, Open challenge' <AX element pid: 26061, elementOrHash.elementID: 4429616384.220>
+                                          Image, 0x10b485e00, {{38.0, -148.5}, {54.0, 54.0}}, identifier: 'arrow.triangle.swap', label: 'Swap' <AX element pid: 26061, elementOrHash.elementID: 4429613248.221>
+                                          StaticText, 0x10b485f40, {{106.0, -142.0}, {131.0, 14.5}}, label: 'TRY A NEW CONTEXT' <AX element pid: 26061, elementOrHash.elementID: 4429613696.222>
+                                          StaticText, 0x10b486080, {{106.0, -124.5}, {187.5, 24.0}}, label: 'Apply skills together' <AX element pid: 26061, elementOrHash.elementID: 4429614144.223>
+                                          StaticText, 0x10b484780, {{38.0, -80.3}, {179.5, 38.0}}, label: 'Apply familiar structure in unfamiliar contexts' <AX element pid: 26061, elementOrHash.elementID: 4429614592.224>
+                                          StaticText, 0x10b4875c0, {{38.0, -28.3}, {71.5, 14.5}}, label: 'Unassessed' <AX element pid: 26061, elementOrHash.elementID: 4429615040.225>
+                                          Image, 0x10721b700, {{226.0, -25.5}, {9.5, 9.5}}, identifier: 'arrow.up.right', label: 'arrow.up.right' <AX element pid: 26061, elementOrHash.elementID: 4429615488.226>
+                                          StaticText, 0x10721bac0, {{226.0, -28.3}, {111.0, 14.5}}, label: 'Open challenge' <AX element pid: 26061, elementOrHash.elementID: 4429615936.227>
+                                        StaticText, 0x10721b480, {{20.0, 28.2}, {286.5, 33.5}}, label: 'More ways to practice' <AX element pid: 26061, elementOrHash.elementID: 4429617728.228>
+                                        StaticText, 0x10721bd40, {{20.0, 67.7}, {335.0, 38.0}}, label: 'Browse an exact activity or create a question set for your own topic.' <AX element pid: 26061, elementOrHash.elementID: 4429618176.229>
+                                        Other, 0x10721b5c0, {{20.0, 137.7}, {335.0, 547.8}} <AX element pid: 26061, elementOrHash.elementID: 4429622656.230>
+                                          Image, 0x10721b980, {{54.5, 158.5}, {25.0, 25.0}}, identifier: 'square.grid.3x3.square', label: 'square.grid.3x3.square' <AX element pid: 26061, elementOrHash.elementID: 4429624000.239>
+                                          StaticText, 0x10721b340, {{110.0, 137.7}, {119.0, 14.5}}, label: 'ACTIVITY CATALOG' <AX element pid: 26061, elementOrHash.elementID: 4429623104.240>
+                                          StaticText, 0x10721be80, {{110.0, 155.2}, {166.5, 49.0}}, label: 'Choose a specific challenge' <AX element pid: 26061, elementOrHash.elementID: 4429624448.241>
+                                          StaticText, 0x10721b840, {{38.0, 218.2}, {295.0, 58.0}}, label: 'Browse 58 activity families across 7 paths, available offline and adaptable to 8 STEM contexts.' <AX element pid: 26061, elementOrHash.elementID: 4429625344.242>
+                                          Button, 0x10721bc00, {{103.5, 290.0}, {168.0, 50.5}}, label: 'Browse activities' <AX element pid: 26061, elementOrHash.elementID: 4429625792.243>
+                                          Image, 0x117b60000, {{51.5, 409.0}, {31.5, 30.0}}, identifier: 'apple.intelligence', label: 'apple.intelligence' <AX element pid: 26061, elementOrHash.elementID: 4429617280.231>
+                                          StaticText, 0x117b60140, {{110.0, 390.7}, {156.5, 14.5}}, label: 'CUSTOM QUESTION SETS' <AX element pid: 26061, elementOrHash.elementID: 4429619072.232>
+                                          StaticText, 0x117b60280, {{110.0, 408.2}, {176.0, 49.0}}, label: 'Create practice for a topic' <AX element pid: 26061, elementOrHash.elementID: 4429619520.233>
+                                          StaticText, 0x117b603c0, {{38.0, 471.2}, {275.0, 38.0}}, label: 'Choose from 42 starter sets, enter your own topic, or use imported material.' <AX element pid: 26061, elementOrHash.elementID: 4429619968.234>
+                                          Button, 0x117b60500, {{93.0, 523.0}, {189.0, 50.5}}, identifier: 'open-ai-studio', label: 'Create question set' <AX element pid: 26061, elementOrHash.elementID: 4429620416.235>
+                                          Button, 0x117b60640, {{20.0, 605.5}, {335.0, 80.0}}, label: 'Step through code' <AX element pid: 26061, elementOrHash.elementID: 4429621760.236>
+                                            Image, 0x117b60780, {{105.0, 636.5}, {15.5, 17.5}}, identifier: 'curlybraces', label: 'curlybraces' <AX element pid: 26061, elementOrHash.elementID: 4429620864.237>
+                                            StaticText, 0x117b608c0, {{105.0, 635.5}, {167.2, 20.5}}, label: 'Step through code' <AX element pid: 26061, elementOrHash.elementID: 4429621312.238>
+                                    Other, 0x117b60a00, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4429507968.140>
+                                      Other, 0x117b60b40, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 26061, elementOrHash.elementID: 4429526592.144>
+                                      Other, 0x117b60c80, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 26061, elementOrHash.elementID: 4429531776.145>
+                                    Other, 0x117b60dc0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4429507072.141>
+                                      Other, 0x117b60f00, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 26061, elementOrHash.elementID: 4756938240.181>
+                                        Other, 0x117b61040, {{0.0, 0.0}, {375.0, 52.5}} <AX element pid: 26061, elementOrHash.elementID: 4429528384.182>
+                                        Other, 0x117b61180, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 26061, elementOrHash.elementID: 4705281792.183>
+                                          Other, 0x117b612c0, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 26061, elementOrHash.elementID: 4429527040.188>
+                                        Other, 0x117b61400, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 26061, elementOrHash.elementID: 4756450816.184>
+                                          Other, 0x117b61540, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 26061, elementOrHash.elementID: 4429534464.189>
+                                        Other, 0x117b61680, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 26061, elementOrHash.elementID: 4756938880.185>
+                                          Other, 0x117b617c0, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 26061, elementOrHash.elementID: 4429527488.190>
+                                          Other, 0x117b61900, {{0.0, 0.0}, {375.0, 128.8}} <AX element pid: 26061, elementOrHash.elementID: 4429534912.191>
+                                      Other, 0x117b61a40, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 26061, elementOrHash.elementID: 4756940800.146>
+                                        Image, 0x117b61b80, {{-120.0, 524.0}, {615.0, 286.0}}, identifier: 'AdditionalDimmingOverlay' <AX element pid: 26061, elementOrHash.elementID: 4756454912.149>
+                                        Other, 0x117b61cc0, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 26061, elementOrHash.elementID: 4705283328.150>
+                                          Other, 0x117b61e00, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 26061, elementOrHash.elementID: 4429532224.163>
+                                        Other, 0x117b61f40, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 26061, elementOrHash.elementID: 4756941440.151>
+                                          Other, 0x117b62080, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 26061, elementOrHash.elementID: 4429532672.164>
+                                          Other, 0x117b621c0, {{0.0, 519.2}, {375.0, 147.8}} <AX element pid: 26061, elementOrHash.elementID: 4429535808.165>
+                                    Other, 0x117b62300, {{342.0, 74.0}, {30.0, 510.0}}, label: 'Vertical scroll bar, 7 pages', value: 95% <AX element pid: 26061, elementOrHash.elementID: 4756445696.143>
+                                      Other, 0x117b62440, {{369.0, 462.5}, {3.0, 100.0}} <AX element pid: 26061, elementOrHash.elementID: 4429523904.148>
+                                    Other, 0x117b62580, {{342.0, 74.0}, {30.0, 510.0}}, label: 'Vertical scroll bar, 7 pages', value: 95% <AX element pid: 26061, elementOrHash.elementID: 4756445696.143>
+                                      Other, 0x117b626c0, {{369.0, 462.5}, {3.0, 100.0}} <AX element pid: 26061, elementOrHash.elementID: 4429523904.148>
+                          Other, 0x117b62800, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4715698688.131>
+                            Other, 0x117b62940, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4715700736.135>
+                        Other, 0x117b62a80, {{0.0, 516.0}, {375.0, 68.0}} <AX element pid: 26061, elementOrHash.elementID: 4429537152.128>
+              Other, 0x117b62bc0, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 26061, elementOrHash.elementID: 4430045952.11>
+                Other, 0x117b62d00, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4430052672.13>
+                  TabBar, 0x117b62e40, {{0.0, 584.0}, {375.0, 83.0}}, label: 'Tab Bar' <AX element pid: 26061, elementOrHash.elementID: 4431283456.16>
+                    Other, 0x117b62f80, {{21.0, 584.0}, {333.0, 62.0}} <AX element pid: 26061, elementOrHash.elementID: 4430046400.19>
+                      Other, 0x117b630c0, {{21.0, 584.0}, {74.0, 54.0}} <AX element pid: 26061, elementOrHash.elementID: 4374347072.22>
+                      Other, 0x117b63200, {{21.0, 584.0}, {333.0, 62.0}} <AX element pid: 26061, elementOrHash.elementID: 4430046848.23>
+                        Button, 0x117b63340, {{25.0, 588.0}, {74.0, 54.0}}, identifier: 'flame.fill', label: 'Today' <AX element pid: 26061, elementOrHash.elementID: 4372831744.29>
+                          Image, 0x117b63480, {{50.0, 592.5}, {23.5, 29.0}}, identifier: 'flame.fill', label: 'Flame' <AX element pid: 26061, elementOrHash.elementID: 4430017536.40>
+                        Button, 0x117b635c0, {{87.2, 588.0}, {74.0, 54.0}}, identifier: 'scope', label: 'Practice', Selected <AX element pid: 26061, elementOrHash.elementID: 4372834304.30>
+                          Image, 0x117b63700, {{108.2, 592.5}, {31.5, 31.5}}, identifier: 'scope', label: 'scope' <AX element pid: 26061, elementOrHash.elementID: 4430019072.41>
+                        Button, 0x117b63840, {{149.5, 588.0}, {76.0, 54.0}}, identifier: 'chart.line.uptrend.xyaxis', label: 'Progress' <AX element pid: 26061, elementOrHash.elementID: 4372836864.31>
+                          Image, 0x117b63980, {{172.5, 595.5}, {31.0, 25.5}}, identifier: 'chart.line.uptrend.xyaxis', label: 'chart line' <AX element pid: 26061, elementOrHash.elementID: 4430020096.42>
+                        Button, 0x117b63ac0, {{213.8, 588.0}, {74.0, 54.0}}, identifier: 'books.vertical.fill', label: 'Sources' <AX element pid: 26061, elementOrHash.elementID: 4691181568.32>
+                          Image, 0x117b63c00, {{233.8, 593.0}, {33.5, 29.5}}, identifier: 'books.vertical.fill', label: 'Bookshelf' <AX element pid: 26061, elementOrHash.elementID: 4429766144.43>
+                        Button, 0x117b63d40, {{276.0, 588.0}, {74.0, 54.0}}, identifier: 'gearshape.fill', label: 'Settings' <AX element pid: 26061, elementOrHash.elementID: 4691184128.33>
+                          Image, 0x117b63e80, {{299.0, 594.0}, {28.0, 28.0}}, identifier: 'gearshape.fill', label: 'gearshape.fill' <AX element pid: 26061, elementOrHash.elementID: 4691231232.44>
+                      Other, 0x118814000, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 26061, elementOrHash.elementID: 4431286656.24>
+                        Other, 0x118814140, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 26061, elementOrHash.elementID: 4430048640.34>
+                          Other, 0x118814280, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 26061, elementOrHash.elementID: 4430047296.45>
+                          Other, 0x1188143c0, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 26061, elementOrHash.elementID: 4430049088.46>
+                            Other, 0x118814500, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 26061, elementOrHash.elementID: 4430050432.51>
+                              Other, 0x118814640, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 26061, elementOrHash.elementID: 4430050880.54>
+                                Other, 0x118814780, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 26061, elementOrHash.elementID: 4430051328.57>
+                              Other, 0x1188148c0, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 26061, elementOrHash.elementID: 4430049536.55>
+                            Other, 0x118814a00, {{87.2, 588.0}, {74.0, 54.0}} <AX element pid: 26061, elementOrHash.elementID: 4430049984.52>
+                Other, 0x118814b40, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 26061, elementOrHash.elementID: 4430013440.14>
+                  Other, 0x118814c80, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 26061, elementOrHash.elementID: 4374471424.17>
+                    Other, 0x118814dc0, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 26061, elementOrHash.elementID: 4373217280.20>
+                      Other, 0x118814f00, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 26061, elementOrHash.elementID: 4373218624.25>
+                        Other, 0x118815040, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 26061, elementOrHash.elementID: 4691233280.35>
+                          Other, 0x118815180, {{0.0, 584.0}, {375.0, 83.0}} <AX element pid: 26061, elementOrHash.elementID: 4373220416.47>
+    Other, 0x1188152c0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4770017280.244>
+      Other, 0x118815400, {{-375.0, -667.0}, {1125.0, 2001.0}} <AX element pid: 26061, elementOrHash.elementID: 4717694080.245>
+      Other, 0x118815540, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4717691520.246>
+        Other, 0x118815680, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4429642624.248>
+          Other, 0x1188157c0, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4429643072.249>
+            Other, 0x118815900, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4704952320.250>
+              Other, 0x118815a40, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4429831616.251>
+                Other, 0x118815b80, {{0.0, 30.0}, {375.0, 637.0}}, identifier: 'ai-studio-root' <AX element pid: 26061, elementOrHash.elementID: 4429638144.252>
+                  NavigationBar, 0x118815cc0, {{0.0, 46.0}, {375.0, 54.0}}, identifier: 'Create a question set' <AX element pid: 26061, elementOrHash.elementID: 4705284096.253>
+                    Other, 0x118815e00, {{20.0, 50.0}, {67.0, 36.0}}, label: 'Close' <AX element pid: 26061, elementOrHash.elementID: 4691195648.256>
+                      Other, 0x118815f40, {{20.0, 50.0}, {67.0, 36.0}} <AX element pid: 26061, elementOrHash.elementID: 4429626240.260>
+                        Button, 0x118816080, {{20.0, 50.0}, {67.0, 36.0}}, label: 'Close' <AX element pid: 26061, elementOrHash.elementID: 4429612352.262>
+                    StaticText, 0x1188161c0, {{103.0, 57.5}, {169.0, 21.0}}, label: 'Create a question set' <AX element pid: 26061, elementOrHash.elementID: 4705840512.326>
+                  Other, 0x118816300, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4429638592.254>
+                    Other, 0x118816440, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4429634560.258>
+                      Other, 0x118816580, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4705832448.261>
+                        Other, 0x1188166c0, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4429939136.263>
+                          ScrollView, 0x118816800, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4372443136.264>
+                            Other, 0x118816940, {{0.0, -543.0}, {375.0, 1381.5}} <AX element pid: 26061, elementOrHash.elementID: 4770013184.267>
+                              StaticText, 0x118816a80, {{38.0, -505.0}, {127.0, 54.5}}, label: 'Start with a question set' <AX element pid: 26061, elementOrHash.elementID: 4429832064.270>
+                              Button, 0x118816bc0, {{247.5, -503.5}, {89.5, 28.0}}, label: 'Browse all' <AX element pid: 26061, elementOrHash.elementID: 4429832960.271>
+                              StaticText, 0x118816d00, {{38.0, -447.5}, {147.0, 38.0}}, label: 'Pick one, then adjust anything below.' <AX element pid: 26061, elementOrHash.elementID: 4429832512.272>
+                              ScrollView, 0x118816e40, {{38.0, -395.5}, {299.0, 202.0}} <AX element pid: 26061, elementOrHash.elementID: 4372440064.273>
+                                Other, 0x118816f80, {{38.0, -395.5}, {1548.0, 202.0}} <AX element pid: 26061, elementOrHash.elementID: 4770009088.291>
+                                  Other, 0x1188170c0, {{38.0, -395.5}, {768.0, 202.0}} <AX element pid: 26061, elementOrHash.elementID: 4429892672.296>
+                                    Button, 0x118817200, {{38.0, -395.5}, {248.0, 202.0}}, identifier: 'ai-studio-starter-set', label: 'General STEM, Read tables and charts without overclaiming, Compute the visible contrast and keep it separate from the story around it., Use this set', value: Not selected <AX element pid: 26061, elementOrHash.elementID: 4429836992.297>
+                                      Image, 0x118817340, {{53.5, -380.5}, {13.5, 12.0}}, identifier: 'chart.xyaxis.line', label: 'chart.xyaxis.line' <AX element pid: 26061, elementOrHash.elementID: 4429833408.300>
+                                      StaticText, 0x118817480, {{53.5, -381.5}, {107.5, 14.5}}, label: 'General STEM' <AX element pid: 26061, elementOrHash.elementID: 4429833856.301>
+                                      StaticText, 0x1188175c0, {{52.0, -358.0}, {186.0, 42.5}}, label: 'Read tables and charts without overclaiming' <AX element pid: 26061, elementOrHash.elementID: 4429834304.302>
+                                      StaticText, 0x118817700, {{52.0, -306.5}, {220.0, 30.5}}, label: 'Compute the visible contrast and keep it separate from the story around it.' <AX element pid: 26061, elementOrHash.elementID: 4429835200.303>
+                                      Image, 0x118817840, {{53.0, -221.0}, {12.5, 12.5}}, identifier: 'arrow.right.circle', label: 'Arrow Right Circle' <AX element pid: 26061, elementOrHash.elementID: 4429835648.304>
+                                      StaticText, 0x118817980, {{53.0, -222.0}, {91.5, 14.5}}, label: 'Use this set' <AX element pid: 26061, elementOrHash.elementID: 4429836096.305>
+                                    Button, 0x118817ac0, {{298.0, -395.5}, {248.0, 202.0}}, identifier: 'ai-studio-starter-set', label: 'General STEM, Estimation and sanity checks, Break an unfamiliar quantity into factors, estimate it, and test the scale., Use this set', value: Not selected <AX element pid: 26061, elementOrHash.elementID: 4429482624.298>
+                                      Image, 0x118817c00, {{313.5, -380.5}, {13.5, 12.0}}, identifier: 'chart.xyaxis.line', label: 'chart.xyaxis.line' <AX element pid: 26061, elementOrHash.elementID: 4429837888.306>
+                                      StaticText, 0x118817d40, {{313.5, -381.5}, {107.5, 14.5}}, label: 'General STEM' <AX element pid: 26061, elementOrHash.elementID: 4429838784.307>
+                                      StaticText, 0x118817e80, {{312.0, -358.0}, {122.0, 42.5}}, label: 'Estimation and sanity checks' <AX element pid: 26061, elementOrHash.elementID: 4429839232.308>
+                                      StaticText, 0x11882c000, {{312.0, -306.5}, {217.5, 30.5}}, label: 'Break an unfamiliar quantity into factors, estimate it, and test the scale.' <AX element pid: 26061, elementOrHash.elementID: 4429839680.309>
+                                      Image, 0x11882c140, {{313.0, -221.0}, {12.5, 12.5}}, identifier: 'arrow.right.circle', label: 'Arrow Right Circle' <AX element pid: 26061, elementOrHash.elementID: 4429566336.310>
+                                      StaticText, 0x11882c280, {{313.0, -222.0}, {91.5, 14.5}}, label: 'Use this set' <AX element pid: 26061, elementOrHash.elementID: 4429641280.311>
+                                    Button, 0x11882c3c0, {{558.0, -395.5}, {248.0, 202.0}}, identifier: 'ai-studio-starter-set', label: 'General STEM, Evidence, association, and causation, Judge what an experiment or observational comparison actually supports., Use this set', value: Not selected <AX element pid: 26061, elementOrHash.elementID: 4429892224.299>
+                                      Image, 0x11882c500, {{573.0, -380.5}, {12.0, 13.5}}, identifier: 'flask.fill', label: 'flask.fill' <AX element pid: 26061, elementOrHash.elementID: 4429482176.312>
+                                      StaticText, 0x11882c640, {{573.0, -381.0}, {105.5, 14.5}}, label: 'General STEM' <AX element pid: 26061, elementOrHash.elementID: 4429889536.313>
+                                      StaticText, 0x11882c780, {{572.0, -357.0}, {181.5, 42.5}}, label: 'Evidence, association, and causation' <AX element pid: 26061, elementOrHash.elementID: 4429889984.314>
+                                      StaticText, 0x11882c8c0, {{572.0, -305.5}, {196.5, 46.5}}, label: 'Judge what an experiment or observational comparison actually supports.' <AX element pid: 26061, elementOrHash.elementID: 4429890432.315>
+                                      Image, 0x11882ca00, {{573.0, -221.0}, {12.5, 12.5}}, identifier: 'arrow.right.circle', label: 'Arrow Right Circle' <AX element pid: 26061, elementOrHash.elementID: 4429890880.316>
+                                      StaticText, 0x11882cb40, {{573.0, -222.0}, {91.5, 14.5}}, label: 'Use this set' <AX element pid: 26061, elementOrHash.elementID: 4429891328.317>
+                              StaticText, 0x11882cc80, {{38.0, -135.5}, {188.5, 54.5}}, label: 'What do you want to practice?' <AX element pid: 26061, elementOrHash.elementID: 4429893568.274>
+                              TextField, 0x11882cdc0, {{38.0, -65.0}, {299.0, 44.0}}, label: 'What do you want to practice?', placeholderValue: 'e.g. limiting reagents, induction proofs, or graph traversal', value: Condition reasoning <AX element pid: 26061, elementOrHash.elementID: 4691191808.275>
+                              Other, 0x11882cf00, {{113.5, 43.5}, {148.5, 34.5}} <AX element pid: 26061, elementOrHash.elementID: 4429894464.289>
+                                Button, 0x11882d040, {{113.5, 43.5}, {148.5, 34.5}}, label: 'Field, General STEM' <AX element pid: 26061, elementOrHash.elementID: 4432543744.328>
+                                  StaticText, 0x11882d180, {{125.5, 50.5}, {108.5, 20.5}}, label: 'General STEM' <AX element pid: 26061, elementOrHash.elementID: 4705837824.332>
+                              StaticText, 0x11882d2c0, {{38.0, 94.0}, {256.5, 18.0}}, label: 'Debugging · 5 questions · Developing' <AX element pid: 26061, elementOrHash.elementID: 4429894912.276>
+                              Button, 0x11882d400, {{38.0, 128.0}, {299.0, 28.5}}, identifier: 'ai-studio-more-options', label: 'More options' <AX element pid: 26061, elementOrHash.elementID: 4429896256.277>
+                                StaticText, 0x11882d540, {{38.0, 128.0}, {299.0, 28.5}}, label: 'More options' <AX element pid: 26061, elementOrHash.elementID: 4429895360.292>
+                                Image, 0x11882d680, {{329.0, 136.0}, {7.0, 12.0}}, identifier: 'collapsed' <AX element pid: 26061, elementOrHash.elementID: 4429895808.293>
+                              StaticText, 0x11882d7c0, {{40.5, 216.0}, {209.5, 28.0}}, label: 'Use your material' <AX element pid: 26061, elementOrHash.elementID: 4429897152.278>
+                              StaticText, 0x11882d900, {{38.0, 260.0}, {293.5, 58.0}}, label: 'Optional. Sources set to Question Writer + offline can use approved excerpts; prose sources can also create questions offline.' <AX element pid: 26061, elementOrHash.elementID: 4429897600.279>
+                              StaticText, 0x11882da40, {{38.0, 332.0}, {213.5, 20.5}}, label: 'No study material ready yet.' <AX element pid: 26061, elementOrHash.elementID: 4429898048.280>
+                              Button, 0x11882db80, {{38.0, 366.5}, {158.5, 34.5}}, label: 'Import in Sources' <AX element pid: 26061, elementOrHash.elementID: 4429898496.281>
+                              StaticText, 0x11882dcc0, {{40.0, 460.0}, {190.5, 26.5}}, label: 'Create your set' <AX element pid: 26061, elementOrHash.elementID: 4429899840.282>
+                              StaticText, 0x11882de00, {{40.0, 500.5}, {176.0, 18.0}}, label: 'Uses Question Writer' <AX element pid: 26061, elementOrHash.elementID: 4429900736.283>
+                              StaticText, 0x11882df40, {{38.0, 532.5}, {277.5, 58.0}}, label: 'Question Writer will create a tailored set through your user-configured Shortcut. ChatGPT is recommended.' <AX element pid: 26061, elementOrHash.elementID: 4429901632.284>
+                              Button, 0x11882e080, {{38.0, 604.5}, {299.0, 50.5}}, identifier: 'ai-studio-generate-action', label: 'Creating questions…', value: 1, Disabled <AX element pid: 26061, elementOrHash.elementID: 4429902976.285>
+                                ActivityIndicator, 0x11882e1c0, {{58.0, 623.0}, {14.0, 14.0}}, value: 1, Disabled <AX element pid: 26061, elementOrHash.elementID: 4800143232.413>
+                                  ActivityIndicator, 0x11882e300, {{58.0, 623.0}, {14.0, 14.0}}, value: 1 <AX element pid: 26061, elementOrHash.elementID: 4776222208.414>
+                                Image, 0x11882e440, {{107.5, 620.5}, {16.5, 16.5}}, identifier: 'wand.and.stars', label: 'wand.and.stars', Disabled <AX element pid: 26061, elementOrHash.elementID: 4429902080.294>
+                                StaticText, 0x11882e580, {{38.0, 604.5}, {299.0, 50.5}}, label: 'Creating questions…', Disabled <AX element pid: 26061, elementOrHash.elementID: 4429902528.295>
+                              Button, 0x11882e6c0, {{38.0, 669.0}, {261.5, 34.5}}, label: 'Add or reinstall Question Writer', Disabled <AX element pid: 26061, elementOrHash.elementID: 4429903424.286>
+                              Button, 0x11882e800, {{38.0, 717.5}, {186.5, 34.5}}, label: 'Create offline instead', Disabled <AX element pid: 26061, elementOrHash.elementID: 4429904320.287>
+                              Button, 0x11882e940, {{38.0, 766.0}, {76.5, 34.5}}, label: 'Cancel' <AX element pid: 26061, elementOrHash.elementID: 4800142336.412>
+                            Other, 0x11882ea80, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4429637696.265>
+                              Other, 0x11882ebc0, {{0.0, 30.0}, {375.0, 124.8}} <AX element pid: 26061, elementOrHash.elementID: 4429681472.269>
+                            Other, 0x11882ed00, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4429637248.266>
+                              Other, 0x11882ee40, {{0.0, 30.0}, {375.0, 124.8}} <AX element pid: 26061, elementOrHash.elementID: 4717701120.319>
+                                Image, 0x11882ef80, {{-120.0, -90.0}, {615.0, 240.0}}, identifier: 'AdditionalDimmingOverlay' <AX element pid: 26061, elementOrHash.elementID: 4773176320.320>
+                                Other, 0x11882f0c0, {{0.0, 30.0}, {375.0, 60.0}} <AX element pid: 26061, elementOrHash.elementID: 4429683712.329>
+                                Other, 0x11882f200, {{0.0, 30.0}, {375.0, 124.8}} <AX element pid: 26061, elementOrHash.elementID: 4771828992.321>
+                                  Other, 0x11882f340, {{0.0, 30.0}, {375.0, 124.8}} <AX element pid: 26061, elementOrHash.elementID: 4429681920.323>
+                                Other, 0x11882f480, {{0.0, 30.0}, {375.0, 124.8}} <AX element pid: 26061, elementOrHash.elementID: 4773175808.330>
+                                  Other, 0x11882f5c0, {{0.0, 30.0}, {375.0, 124.8}} <AX element pid: 26061, elementOrHash.elementID: 4429733312.333>
+                                Other, 0x11882f700, {{0.0, 30.0}, {375.0, 124.8}} <AX element pid: 26061, elementOrHash.elementID: 4717701760.322>
+                                  Other, 0x11882f840, {{0.0, 30.0}, {375.0, 124.8}} <AX element pid: 26061, elementOrHash.elementID: 4429682816.324>
+                                  Other, 0x11882f980, {{0.0, 30.0}, {375.0, 124.8}} <AX element pid: 26061, elementOrHash.elementID: 4429734208.325>
+                            Other, 0x11882fac0, {{342.0, 84.0}, {30.0, 583.0}}, label: 'Vertical scroll bar, 3 pages', value: 79% <AX element pid: 26061, elementOrHash.elementID: 4773172224.268>
+                              Other, 0x11882fc00, {{369.0, 351.5}, {3.0, 262.0}} <AX element pid: 26061, elementOrHash.elementID: 4429677440.290>
+                            Other, 0x11882fd40, {{342.0, 84.0}, {30.0, 583.0}}, label: 'Vertical scroll bar, 3 pages', value: 79% <AX element pid: 26061, elementOrHash.elementID: 4773172224.268>
+                              Other, 0x11882fe80, {{369.0, 351.5}, {3.0, 262.0}} <AX element pid: 26061, elementOrHash.elementID: 4429677440.290>
+                  Other, 0x118840000, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4770014720.255>
+                    Other, 0x118840140, {{0.0, 30.0}, {375.0, 637.0}} <AX element pid: 26061, elementOrHash.elementID: 4770016768.259>
+  Window, 0x118840280, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4775513856.338>
+    Other, 0x1188403c0, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4429988288.340>
+      Other, 0x118840500, {{0.0, 0.0}, {375.0, 667.0}} <AX element pid: 26061, elementOrHash.elementID: 4429989632.342>

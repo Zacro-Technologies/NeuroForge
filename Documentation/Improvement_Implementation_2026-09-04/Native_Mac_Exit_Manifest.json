@@ -1,0 +1,33 @@
+{
+  "createdAt": "2026-09-05T07:59:37.985196+00:00",
+  "runID": "22CD3789-D123-4DAF-9916-D80072639D1F",
+  "appPath": "/tmp/NeuroForge-Native-QA-22cd3789-d123-4daf-9916-d80072639d1f/NeuroForgeNativeQA.app",
+  "bundleID": "com.zacrotech.NeuroForge.nativeqa.22cd3789d1234daf9916d80072639d1f",
+  "purpose": "Disposable unsigned native close/quit verification, UUID-scoped fixture stores, distinct preferences domain, URL registrations removed",
+  "originalMainSHA256": "a664ae4291bbfec57d86bec08832758797577eefe6e576130f12e413c673191a",
+  "copiedMainSHA256": "a664ae4291bbfec57d86bec08832758797577eefe6e576130f12e413c673191a",
+  "originalDebugSHA256": "7306e7a78319adbd41fc18ba7a5eb557fb1636f72ada9f8128e13b6f1eff0338",
+  "copiedDebugSHA256": "7306e7a78319adbd41fc18ba7a5eb557fb1636f72ada9f8128e13b6f1eff0338",
+  "fixtureRoot": "/var/folders/9s/lwj2ss7d679bl8hv9dx2qf6h0000gn/T/NeuroForge-UITests-22CD3789-D123-4DAF-9916-D80072639D1F",
+  "nativeCheckpointAfterRetry": {
+    "sessionID": "F75BBC90-3CDD-410B-A0E7-3057E1993933",
+    "response": {
+      "numeric": {
+        "_0": {
+          "value": "123"
+        }
+      }
+    },
+    "phase": "item",
+    "status": "suspended"
+  },
+  "observations": [
+    "Blocked test checkpoint: changed draft12to123 remained visible in save-recovery sheet. Autosave also invokes recovery, so native CmdW/CmdQ callback execution is not established by that popup.",
+    "Restored exact predecessor path; Retry persisted123 and returned to session.",
+    "Repeated CmdW, CmdQ, and explicit native Quit menu left active session sheet open without a save error.",
+    "Explicit Pause > Save & close returned to Today with Continue Q1of5.",
+    "CmdQ after sheet dismissal terminated the test app; native process5033 absent."
+  ],
+  "status": "Failure of successful native close/quit while session sheet active; callback tracing and fix pending. Explicit saved-session close and post-sheet Quit succeeded.",
+  "recordedAt": "2026-09-05T08:11:26.753415+00:00"
+}

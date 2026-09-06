@@ -20,7 +20,7 @@ settings:
     SWIFT_EMIT_LOC_STRINGS: YES
     CLANG_WARN_DOCUMENTATION_COMMENTS: YES
     MARKETING_VERSION: 1.0.0
-    CURRENT_PROJECT_VERSION: 4
+    CURRENT_PROJECT_VERSION: 5
 
 packages:
   SwiftMath:
@@ -66,6 +66,8 @@ targets:
     platform: macOS
     sources:
       - path: Tests
+        excludes:
+          - Fixtures
     dependencies:
       - target: NeuroForge
     settings:
@@ -74,6 +76,23 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         CODE_SIGNING_ALLOWED: NO
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/NeuroForge.app/Contents/MacOS/NeuroForge"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
+  NeuroForgeNativeInputTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/LocalLearningLifecycleTests.swift
+      - path: Tests/ExactSessionContinuityTests.swift
+      - path: Tests/AIAndSourceTests.swift
+    dependencies:
+      - target: NeuroForge
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.zacrotech.NeuroForgeNativeInputTests
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGNING_ALLOWED: NO
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/NeuroForge.app/NeuroForge"
         BUNDLE_LOADER: "$(TEST_HOST)"
 
   NeuroForgeUITests:
@@ -120,3 +139,13 @@ schemes:
       config: Debug
       targets:
         - NeuroForgeUITests
+
+  NeuroForgeNativeInput:
+    build:
+      targets:
+        NeuroForge: all
+        NeuroForgeNativeInputTests: [test]
+    test:
+      config: Debug
+      targets:
+        - NeuroForgeNativeInputTests

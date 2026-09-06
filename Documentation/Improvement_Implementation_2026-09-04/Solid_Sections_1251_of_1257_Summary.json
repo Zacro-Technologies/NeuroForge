@@ -1,0 +1,96 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "00006020-000228AE0287401E",
+        "deviceName": "My Mac",
+        "modelName": "MacBook Pro",
+        "osBuildNumber": "26A5425a",
+        "osVersion": "27.0",
+        "platform": "macOS"
+      },
+      "expectedFailures": 0,
+      "failedTests": 6,
+      "passedTests": 1251,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "NeuroForge \u00b7 Built with macOS 27.0",
+  "expectedFailures": 0,
+  "failedTests": 6,
+  "finishTime": 1788642541.103,
+  "passedTests": 1251,
+  "result": "Failed",
+  "skippedTests": 0,
+  "startTime": 1788642163.63,
+  "statistics": [],
+  "testFailures": [
+    {
+      "failureText": "failed: caught error: \"corruptSnapshot\"",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 352,
+      "testIdentifierString": "EditorialLiveControllerPersistenceTests/testActualDemonstratedInitialTargetPersistsAcrossLowerSuccessNextAndColdResume()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testActualDemonstratedInitialTargetPersistsAcrossLowerSuccessNextAndColdResume",
+      "testName": "testActualDemonstratedInitialTargetPersistsAcrossLowerSuccessNextAndColdResume()"
+    },
+    {
+      "failureText": "failed: caught error: \"corruptSnapshot\"",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 354,
+      "testIdentifierString": "EditorialLiveControllerPersistenceTests/testActualHistoricalDemonstrationRefreshPinsSameBandAndOriginalEvidenceAfterLongGap()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testActualHistoricalDemonstrationRefreshPinsSameBandAndOriginalEvidenceAfterLongGap",
+      "testName": "testActualHistoricalDemonstrationRefreshPinsSameBandAndOriginalEvidenceAfterLongGap()"
+    },
+    {
+      "failureText": "failed: caught error: \"corruptSnapshot\"",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 365,
+      "testIdentifierString": "EditorialLiveControllerPersistenceTests/testDemonstratedInitialTargetAcceptanceRejectsChangedEvidenceWithoutCursorPublication()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testDemonstratedInitialTargetAcceptanceRejectsChangedEvidenceWithoutCursorPublication",
+      "testName": "testDemonstratedInitialTargetAcceptanceRejectsChangedEvidenceWithoutCursorPublication()"
+    },
+    {
+      "failureText": "failed: caught error: \"corruptSnapshot\"",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 366,
+      "testIdentifierString": "EditorialLiveControllerPersistenceTests/testDemonstratedTargetShortageRefusesLaunchWithoutReplacingPriorBandOrConsumingInventory()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testDemonstratedTargetShortageRefusesLaunchWithoutReplacingPriorBandOrConsumingInventory",
+      "testName": "testDemonstratedTargetShortageRefusesLaunchWithoutReplacingPriorBandOrConsumingInventory()"
+    },
+    {
+      "failureText": "XCTAssertEqual failed: (\"[]\") is not equal to (\"[\"cross-section.sphere\", \"cross-section.cube\", \"cross-section.cylinder\"]\")",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 263,
+      "testIdentifierString": "DefaultContentCatalogTests/testEnumeratedLegacySubvariantsKeepActivityScopeWithoutPrefixWidening()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/DefaultContentCatalogTests/testEnumeratedLegacySubvariantsKeepActivityScopeWithoutPrefixWidening",
+      "testName": "testEnumeratedLegacySubvariantsKeepActivityScopeWithoutPrefixWidening()"
+    },
+    {
+      "failureText": "failed: caught error: \"corruptSnapshot\"",
+      "targetName": "NeuroForgeTests",
+      "testIdentifier": 376,
+      "testIdentifierString": "EditorialLiveControllerPersistenceTests/testLegacyInitialControllerKeepsFrozenRecentTargetAndFutureVersionCannotLaunch()",
+      "testIdentifierURL": "test://com.apple.xcode/NeuroForge/NeuroForgeTests/EditorialLiveControllerPersistenceTests/testLegacyInitialControllerKeepsFrozenRecentTargetAndFutureVersionCannotLaunch",
+      "testName": "testLegacyInitialControllerKeepsFrozenRecentTargetAndFutureVersionCannotLaunch()"
+    }
+  ],
+  "title": "Test - NeuroForge",
+  "topInsights": [
+    {
+      "category": "Common Failures",
+      "impact": "83% of failures",
+      "text": "5 runs of 5 tests failed with failed: caught error: \"corruptSnapshot\""
+    },
+    {
+      "category": "Longest Test Runs",
+      "impact": "57% of duration",
+      "text": "12 longest test runs with outlier durations exceeding 3.95s (three standard deviations)"
+    }
+  ],
+  "totalTestCount": 1257
+}

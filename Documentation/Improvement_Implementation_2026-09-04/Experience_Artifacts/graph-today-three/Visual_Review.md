@@ -1,0 +1,7 @@
+# Installed source05fdef: graph and Today pass
+
+Root visually reviewed retained graph cold feedback, Today preview and saved acknowledgement, plus generated failure video end-frame. Graph exact typed point is (2 seconds,10 meters); saved feedback explains2×5=10 with Next available. The test independently computed this from displayed givens and verified native single-drag placement, coordinate increments, Undo, cold resume, answer locking and advancement. Today changes Logic to Mental Math with the exact proposed title and retained5minute duration. The actual native journey verifies all five reason choices, cancel then cold preservation, Apply, acknowledgement, another cold reopen, and no second replacement.
+
+Generated failure occurs before entering Question Studio. Its Create question set button is fully visible above the floating tab bar. The strict helper repeatedly makes16–17point drags because the bar's accessibility frame extends into transparent space above the visible surface. The next test uses the existing public catalog native-hittable helper and retains the real destination, input, count, cold-run and end/history assertions.
+
+Actual injected runner PID32154 SHA256b6a759720f8c0b843fa37776681834d6dc5dbded119198788454ad64905072b4 was verified. The bundle also collected the simultaneous Mac prelaunch worker crash report; this is not an iOS graph crash. No full specification or newer writer-source native pass is claimed.

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "recipe": "fallback13/schema10 solidSectionPolicyVersion1",
+  "parameterCases": 370,
+  "semanticQueryClasses": 132,
+  "reviewedAdmissions": 0,
+  "quotaPromised": 167,
+  "minimumQuotaDeficitBeforeAdmissionAndActualBankReachability": 35,
+  "shapes": {
+    "circle": 111,
+    "clippedEllipse": 14,
+    "ellipse": 5,
+    "empty": 76,
+    "hexagon": 13,
+    "pentagon": 14,
+    "point": 20,
+    "rectangle": 45,
+    "rhombus": 1,
+    "segment": 6,
+    "square": 9,
+    "triangle": 56
+  },
+  "canonicalBySolid": {
+    "cube": 92,
+    "cylinder": 12,
+    "sphere": 28
+  },
+  "countMeaning": "Query and substantive plane-parameter classes, not unique solids or topology. Cube signed axis permutations and plane equation sign collapse; sphere shape-only questions collapse by shape and central/offset role, while radius questions retain exact radius squared; cylinder axial symmetries collapse. No editorial band assignment.",
+  "oracle": "All source cases agree with independent exact rational linear-system intersections, convex-cycle classification, sphere distance formula and finite-cylinder support/cap inequalities; all render boundary samples satisfy exact givens within stated floating render tolerance."
+}

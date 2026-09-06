@@ -297,8 +297,14 @@ final class GeneralExerciseEngineTests: XCTestCase {
                 let response = correctResponse(for: exercise.interaction)
                 let result = NFExerciseScoringEngine.score(response, for: exercise)
 
-                XCTAssertTrue(result.isCorrect, "Expected correct score for \(lab.rawValue), \(interactionKind(exercise.interaction))")
-                XCTAssertEqual(result.credit, 1, accuracy: 1e-12)
+                if case .selfCheck = exercise.interaction {
+                    XCTAssertEqual(result.outcome, .selfReported)
+                    XCTAssertNil(result.objectiveCorrectness)
+                    XCTAssertEqual(result.credit, 0)
+                } else {
+                    XCTAssertTrue(result.isCorrect, "Expected correct score for \(lab.rawValue), \(interactionKind(exercise.interaction))")
+                    XCTAssertEqual(result.credit, 1, accuracy: 1e-12)
+                }
                 XCTAssertNil(result.errorCode)
                 XCTAssertFalse(result.feedback.isDelayed)
                 XCTAssertNotNil(result.expectedAnswerSummary)
@@ -402,8 +408,13 @@ final class GeneralExerciseEngineTests: XCTestCase {
                 XCTAssertNoThrow(try NFExerciseSchemaValidator.validate(exercise))
 
                 let result = NFExerciseScoringEngine.score(correctResponse(for: exercise.interaction), for: exercise)
-                XCTAssertTrue(result.isCorrect, "Authoritative key failed for \(exercise.templateID)")
-                XCTAssertEqual(result.credit, 1, accuracy: 1e-12)
+                if case .selfCheck = exercise.interaction {
+                    XCTAssertEqual(result.outcome, .selfReported)
+                    XCTAssertNil(result.objectiveCorrectness)
+                } else {
+                    XCTAssertTrue(result.isCorrect, "Authoritative key failed for \(exercise.templateID)")
+                    XCTAssertEqual(result.credit, 1, accuracy: 1e-12)
+                }
             }
 
             XCTAssertGreaterThanOrEqual(templates.count, minimumTemplateCounts[lab] ?? 0, "Insufficient deterministic breadth for \(lab.rawValue)")
@@ -782,7 +793,7 @@ final class GeneralExerciseEngineTests: XCTestCase {
         XCTAssertNoThrow(try NFExerciseSchemaValidator.validate(personalPractice))
     }
 
-    func testAssessmentFeedbackIsDelayedUntilExplicitReveal() throws {
+    func testReusableAssessmentFeedbackNeverRevealsPerItemKeys() throws {
         let exercise = try generate(lab: .logicDebugging, purpose: .baseline, seed: 9)
         let response = correctResponse(for: exercise.interaction)
 
@@ -799,9 +810,9 @@ final class GeneralExerciseEngineTests: XCTestCase {
             revealDelayedFeedback: true
         )
         XCTAssertTrue(revealed.isCorrect)
-        XCTAssertFalse(revealed.feedback.isDelayed)
-        XCTAssertNotNil(revealed.expectedAnswerSummary)
-        XCTAssertNotNil(revealed.feedback.decisiveStep)
+        XCTAssertTrue(revealed.feedback.isDelayed)
+        XCTAssertNil(revealed.expectedAnswerSummary)
+        XCTAssertNil(revealed.feedback.decisiveStep)
     }
 
     func testNumericScoringEnforcesUnitsAndToleranceBoundaries() throws {
@@ -819,8 +830,18 @@ final class GeneralExerciseEngineTests: XCTestCase {
             return XCTFail("Expected absolute tolerance")
         }
 
+        // The scoring authority is rational: a binary Double sum can land
+        // just beyond the declared boundary. Construct that boundary exactly.
+        let exactExpected = schema.answer.authoritativeValue
+        guard case let .absolute(exactTolerance) = schema.answer.authoritativeTolerance else {
+            return XCTFail("Expected exact absolute tolerance")
+        }
+        let boundary = try NFExactNumber(
+            numerator: exactExpected.numerator * exactTolerance.denominator + exactTolerance.numerator * exactExpected.denominator,
+            denominator: exactExpected.denominator * exactTolerance.denominator
+        )
         let accepted = NFExerciseScoringEngine.score(
-            .numeric(NFNumericSubmission(value: String(expected + tolerance), unit: "percent")),
+            .numeric(NFNumericSubmission(value: boundary.canonicalString, unit: "percent")),
             for: exercise
         )
         XCTAssertTrue(accepted.isCorrect)
@@ -860,8 +881,12 @@ final class GeneralExerciseEngineTests: XCTestCase {
             for: multipleChoice
         )
         XCTAssertFalse(partialMultiple.isCorrect)
-        XCTAssertGreaterThan(partialMultiple.credit, 0)
-        XCTAssertLessThan(partialMultiple.credit, 1)
+        if multipleChoice.rubric.permitsPartialCredit {
+            XCTAssertGreaterThan(partialMultiple.credit, 0)
+            XCTAssertLessThan(partialMultiple.credit, 1)
+        } else {
+            XCTAssertEqual(partialMultiple.credit, 0, "Exact-set contracts must not invent partial credit")
+        }
 
         let ordered = try firstExercise(lab: .transfer) {
             if case .orderedSteps = $0 { return true }
@@ -877,8 +902,12 @@ final class GeneralExerciseEngineTests: XCTestCase {
             for: ordered
         )
         XCTAssertFalse(partialOrder.isCorrect)
-        XCTAssertGreaterThan(partialOrder.credit, 0)
-        XCTAssertLessThan(partialOrder.credit, 1)
+        if ordered.rubric.permitsPartialCredit {
+            XCTAssertGreaterThan(partialOrder.credit, 0)
+            XCTAssertLessThan(partialOrder.credit, 1)
+        } else {
+            XCTAssertEqual(partialOrder.credit, 0, "Exact-set contracts must not invent partial credit")
+        }
 
         let claimExercise = try firstExercise(lab: .scientificReasoning) {
             if case .claimEvidence = $0 { return true }
@@ -906,11 +935,15 @@ final class GeneralExerciseEngineTests: XCTestCase {
             for: claimExercise
         )
         XCTAssertFalse(partialClaim.isCorrect)
-        XCTAssertGreaterThan(partialClaim.credit, 0)
-        XCTAssertLessThan(partialClaim.credit, 1)
+        if claimExercise.rubric.permitsPartialCredit {
+            XCTAssertGreaterThan(partialClaim.credit, 0)
+            XCTAssertLessThan(partialClaim.credit, 1)
+        } else {
+            XCTAssertEqual(partialClaim.credit, 0, "Exact-set contracts must not invent partial credit")
+        }
     }
 
-    func testSharedResponseValidatorRejectsZeroPartialDuplicateAndExcessiveMappings() throws {
+    func testSharedResponseValidatorAllowsSemanticMistakesButRejectsStaleMappings() throws {
         let exercise = try firstExercise(lab: .scientificReasoning) {
             if case .claimEvidence = $0 { return true }
             return false
@@ -926,7 +959,7 @@ final class GeneralExerciseEngineTests: XCTestCase {
             for: exercise.interaction,
             localeIdentifier: exercise.localeIdentifier
         )
-        XCTAssertEqual(zero.issue?.errorCode, "claim_evidence_relationships")
+        XCTAssertTrue(zero.isValid)
 
         var partialPairs = emptyPairs
         partialPairs[0] = schema.correctPairs[0]
@@ -935,7 +968,7 @@ final class GeneralExerciseEngineTests: XCTestCase {
             for: exercise.interaction,
             localeIdentifier: exercise.localeIdentifier
         )
-        XCTAssertEqual(partial.issue?.errorCode, "claim_evidence_relationships")
+        XCTAssertTrue(partial.isValid)
 
         let exact = NFExerciseResponseValidator.validate(
             .claimEvidence(NFClaimEvidenceSubmission(pairs: schema.correctPairs)),
@@ -956,7 +989,7 @@ final class GeneralExerciseEngineTests: XCTestCase {
                 for: exercise.interaction,
                 localeIdentifier: exercise.localeIdentifier
             )
-            XCTAssertEqual(excessive.issue?.errorCode, "claim_evidence_relationships")
+            XCTAssertTrue(excessive.isValid)
         }
 
         let duplicate = NFExerciseResponseValidator.validate(
@@ -1125,22 +1158,25 @@ final class GeneralExerciseEngineTests: XCTestCase {
             for: exercise
         )
         XCTAssertFalse(partial.isCorrect)
-        XCTAssertEqual(partial.credit, 0.5, accuracy: 1e-12)
-        XCTAssertEqual(partial.errorCode, "self_check_partial")
+        XCTAssertEqual(partial.credit, 0, accuracy: 1e-12)
+        XCTAssertEqual(partial.outcome, .selfReported)
+        XCTAssertNil(partial.objectiveCorrectness)
 
         let matched = NFExerciseScoringEngine.score(
             .selfCheck(NFSelfCheckSubmission(rating: .matched, reflection: "Matched the reference.")),
             for: exercise
         )
-        XCTAssertTrue(matched.isCorrect)
-        XCTAssertEqual(matched.credit, 1, accuracy: 1e-12)
+        XCTAssertFalse(matched.isCorrect)
+        XCTAssertEqual(matched.credit, 0, accuracy: 1e-12)
+        XCTAssertEqual(matched.outcome, .selfReported)
+        XCTAssertNil(matched.objectiveCorrectness)
 
         let missingRequiredComparison = NFExerciseScoringEngine.score(
             .selfCheck(NFSelfCheckSubmission(rating: .matched, reflection: nil)),
             for: exercise
         )
         XCTAssertFalse(missingRequiredComparison.isCorrect)
-        XCTAssertEqual(missingRequiredComparison.errorCode, "self_check_reflection_missing")
+        XCTAssertEqual(missingRequiredComparison.outcome, .selfReported)
     }
 
     func testWrongResponseTypeFailsClosed() throws {

@@ -1,0 +1,40 @@
+(lldb) target create "/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForge.app/NeuroForge.debug.dylib"
+Current executable set to '/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForge.app/NeuroForge.debug.dylib' (arm64).
+(lldb) disassemble -c 17 -n $s10NeuroForge10NFExerciseV30requiresRetrievalAssetContractSbvg
+NeuroForge.debug.dylib`NFExercise.requiresRetrievalAssetContract.getter:
+NeuroForge.debug.dylib[0xb866f8] <+0>:  stp    x28, x27, [sp, #-0x20]!
+NeuroForge.debug.dylib[0xb866fc] <+4>:  stp    x29, x30, [sp, #0x10]
+NeuroForge.debug.dylib[0xb86700] <+8>:  add    x29, sp, #0x10
+NeuroForge.debug.dylib[0xb86704] <+12>: sub    sp, sp, #0x5, lsl #12     ; =0x5000 
+NeuroForge.debug.dylib[0xb86708] <+16>: sub    sp, sp, #0x8f0
+NeuroForge.debug.dylib[0xb8670c] <+20>: str    x20, [sp, #0xd0]
+NeuroForge.debug.dylib[0xb86710] <+24>: str    xzr, [sp, #0x3c78]
+NeuroForge.debug.dylib[0xb86714] <+28>: mov    x8, x20
+NeuroForge.debug.dylib[0xb86718] <+32>: str    x8, [sp, #0x3c78]
+NeuroForge.debug.dylib[0xb8671c] <+36>: add    x1, x20, #0x3a8
+NeuroForge.debug.dylib[0xb86720] <+40>: add    x0, sp, #0x3, lsl #12     ; =0x3000 
+NeuroForge.debug.dylib[0xb86724] <+44>: add    x0, x0, #0xd00
+NeuroForge.debug.dylib[0xb86728] <+48>: str    x0, [sp, #0xd8]
+NeuroForge.debug.dylib[0xb8672c] <+52>: mov    w8, #0x781                ; =1921 
+NeuroForge.debug.dylib[0xb86730] <+56>: mov    x2, x8
+NeuroForge.debug.dylib[0xb86734] <+60>: str    x2, [sp, #0xe0]
+NeuroForge.debug.dylib[0xb86738] <+64>: bl     0x20c542c                 ; symbol stub for: memcpy
+(lldb) disassemble -c 17 -n $s10NeuroForge14SessionRequestV26permitsCoordinateTransform8exerciseSbAA10NFExerciseVSg_tF
+NeuroForge.debug.dylib`SessionRequest.permitsCoordinateTransform(exercise:):
+NeuroForge.debug.dylib[0x1821cf4] <+0>:  stp    x20, x19, [sp, #-0x20]!
+NeuroForge.debug.dylib[0x1821cf8] <+4>:  stp    x29, x30, [sp, #0x10]
+NeuroForge.debug.dylib[0x1821cfc] <+8>:  add    x29, sp, #0x10
+NeuroForge.debug.dylib[0x1821d00] <+12>: sub    sp, sp, #0xa, lsl #12     ; =0xa000 
+NeuroForge.debug.dylib[0x1821d04] <+16>: sub    sp, sp, #0x810
+NeuroForge.debug.dylib[0x1821d08] <+20>: add    x8, sp, #0xa, lsl #12     ; =0xa000 
+NeuroForge.debug.dylib[0x1821d0c] <+24>: add    x8, x8, #0x88
+NeuroForge.debug.dylib[0x1821d10] <+28>: str    x8, [sp, #0x210]
+NeuroForge.debug.dylib[0x1821d14] <+32>: add    x8, sp, #0x2, lsl #12     ; =0x2000 
+NeuroForge.debug.dylib[0x1821d18] <+36>: add    x8, x8, #0xc0
+NeuroForge.debug.dylib[0x1821d1c] <+40>: str    x8, [sp, #0x230]
+NeuroForge.debug.dylib[0x1821d20] <+44>: add    x9, sp, #0x9c8
+NeuroForge.debug.dylib[0x1821d24] <+48>: str    x9, [sp, #0x218]
+NeuroForge.debug.dylib[0x1821d28] <+52>: str    x0, [sp, #0x228]
+NeuroForge.debug.dylib[0x1821d2c] <+56>: str    x20, [sp, #0x220]
+NeuroForge.debug.dylib[0x1821d30] <+60>: str    xzr, [x8, #0x16b0]
+NeuroForge.debug.dylib[0x1821d34] <+64>: str    xzr, [x8, #0x16a8]

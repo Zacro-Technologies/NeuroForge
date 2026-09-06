@@ -17,6 +17,12 @@ enum NFExerciseValidationError: Error, Equatable, Sendable {
 
 enum NFExerciseSchemaValidator {
     static let validatorVersion = 2
+    // Authored sets use schema 1; static fallback uses 2; pinned linked science uses 3.
+    // Enumerate known contracts rather than accepting arbitrary positive values.
+    static let supportedExerciseSchemaVersions: Set<Int> = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    static func supportsExerciseSchemaVersion(_ version: Int) -> Bool {
+        supportedExerciseSchemaVersions.contains(version)
+    }
 
     static func validate(_ exercise: NFExercise) throws {
         let requiredFields: [(String, String)] = [
@@ -34,7 +40,7 @@ enum NFExerciseSchemaValidator {
             throw NFExerciseValidationError.missingField(name)
         }
 
-        guard exercise.schemaVersion > 0,
+        guard supportsExerciseSchemaVersion(exercise.schemaVersion),
               exercise.generatorVersion > 0,
               exercise.templateVersion > 0,
               exercise.provenance.generatorVersion > 0,
@@ -136,7 +142,8 @@ enum NFExerciseSchemaValidator {
         }
         for case let .spatial(metadata) in exercise.representations {
             let parameters = metadata.difficultyParameters
-            guard !parameters.viewpoint.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+            guard NFSpatialRenderingSafety.permits(metadata),
+                  !parameters.viewpoint.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                   parameters.viewpoint == metadata.viewpoint,
                   parameters.rotationMagnitudeDegrees.isFinite,
                   (0...360).contains(parameters.rotationMagnitudeDegrees),
@@ -147,13 +154,25 @@ enum NFExerciseSchemaValidator {
                 throw NFExerciseValidationError.invalidDifficulty("invalid spatial difficulty parameter vector")
             }
         }
+        guard exercise.hasSupportedSpatialAssembly, exercise.hasSupportedCoordinateReasoning, exercise.hasSupportedNetFolding, exercise.hasSupportedSolidSection, exercise.hasSupportedCoordinateTransform, exercise.hasSupportedSpatialStructure, exercise.hasSupportedRetrievalAsset, exercise.hasSupportedRetrievalAuthorityRecipe else {
+            throw NFExerciseValidationError.invalidResponseSchema("unsupported retrieval authority recipe")
+        }
+        guard exercise.hasSupportedTransferRelationship else {
+            throw NFExerciseValidationError.invalidResponseSchema("unsupported linked transfer contract")
+        }
+        guard exercise.hasSupportedGraphConstruction, exercise.hasSupportedScienceStudy else {
+            throw NFExerciseValidationError.invalidResponseSchema("unsupported linked study contract")
+        }
+        guard exercise.hasSupportedTraceContract else {
+            throw NFExerciseValidationError.invalidResponseSchema("unsupported state trace contract")
+        }
         try validateInteraction(exercise.interaction)
         if let violation = NFUserFacingContentLinter.firstViolation(in: exercise) {
             throw NFExerciseValidationError.invalidUserFacingContent(violation.description)
         }
     }
 
-    private static func validateInteraction(_ interaction: NFExerciseInteraction) throws {
+    static func validateInteraction(_ interaction: NFExerciseInteraction) throws {
         switch interaction {
         case let .numeric(schema):
             guard schema.answer.value.isFinite,
@@ -172,7 +191,8 @@ enum NFExerciseSchemaValidator {
             let IDs = schema.options.map(\.id)
             guard schema.options.count >= 2,
                   Set(IDs).count == IDs.count,
-                  IDs.contains(schema.correctOptionID) else {
+                  IDs.contains(schema.correctOptionID),
+                  NFAnswerSemanticIdentity.hasDistinctOptions(schema.options) else {
                 throw NFExerciseValidationError.invalidResponseSchema("single-choice key or options")
             }
 
@@ -185,7 +205,11 @@ enum NFExerciseSchemaValidator {
                   correct.isSubset(of: Set(IDs)),
                   schema.minimumSelections >= 1,
                   schema.maximumSelections >= schema.minimumSelections,
-                  schema.maximumSelections <= schema.options.count else {
+                  schema.maximumSelections <= schema.options.count,
+                  (schema.acceptedAlternativeSets ?? []).allSatisfy({
+                      !$0.isEmpty && Set($0).count == $0.count && Set($0).isSubset(of: Set(IDs))
+                          && $0.count >= schema.minimumSelections && $0.count <= schema.maximumSelections
+                  }) else {
                 throw NFExerciseValidationError.invalidResponseSchema("multiple-choice key or bounds")
             }
 
@@ -194,13 +218,22 @@ enum NFExerciseSchemaValidator {
             guard schema.steps.count >= 2,
                   Set(IDs).count == IDs.count,
                   Set(IDs) == Set(schema.correctOrder),
-                  schema.correctOrder.count == IDs.count else {
+                  schema.correctOrder.count == IDs.count,
+                  NFOrderingAuthority.isValid(schema) else {
                 throw NFExerciseValidationError.invalidResponseSchema("ordered-step key")
             }
 
         case let .shortText(schema):
             guard !schema.expectedAnswer.isEmpty, schema.maximumCharacters > 0 else {
                 throw NFExerciseValidationError.invalidResponseSchema("short-text answer")
+            }
+            if case let .symbolic(contract)? = schema.authority {
+                guard NFRestrictedSymbolicAuthority.compare(contract.acceptedExpressions.first ?? "", contract: contract) == .equivalent else {
+                    throw NFExerciseValidationError.invalidResponseSchema("unsupported symbolic authority")
+                }
+            }
+            if case let .unsignedBinaryNumeral(contract)? = schema.authority, !contract.isSupported {
+                throw NFExerciseValidationError.invalidResponseSchema("unsupported binary numeral authority")
             }
             switch schema.scoringRule {
             case let .normalizedExact(acceptedAnswers):
@@ -239,6 +272,38 @@ enum NFExerciseSchemaValidator {
                   keyedClaimIDs.count == claimIDs.count else {
                 throw NFExerciseValidationError.invalidResponseSchema("claim-evidence options")
             }
+            if let scopes = schema.selectionScopes {
+                guard scopes.count == claimIDs.count, Set(scopes.map(\.claimID)) == claimIDs,
+                      scopes.allSatisfy({ scope in
+                          scope.schemaVersion == 1 && !scope.evidenceIDs.isEmpty
+                            && Set(scope.evidenceIDs).count == scope.evidenceIDs.count
+                            && Set(scope.evidenceIDs).isSubset(of: evidenceIDs)
+                            && scope.minimumSelections >= 0 && scope.maximumSelections >= scope.minimumSelections
+                            && scope.maximumSelections <= scope.evidenceIDs.count
+                      }), schema.correctPairs.allSatisfy({ pair in
+                          guard let scope = scopes.first(where: { $0.claimID == pair.claimID }) else { return false }
+                          return Set(pair.evidenceIDs).isSubset(of: Set(scope.evidenceIDs))
+                            && (scope.minimumSelections...scope.maximumSelections).contains(pair.evidenceIDs.count)
+                      }) else { throw NFExerciseValidationError.invalidResponseSchema("claim evidence selection scope") }
+            }
+            if let contracts = schema.supportContracts {
+                guard Set(contracts.map(\.claimID)) == claimIDs,
+                      contracts.count == claimIDs.count,
+                      contracts.allSatisfy({ contract in
+                          !contract.sufficientBundles.isEmpty && contract.sufficientBundles.allSatisfy {
+                              !$0.isEmpty && Set($0).count == $0.count && Set($0).isSubset(of: evidenceIDs)
+                          }
+                      }) else { throw NFExerciseValidationError.invalidResponseSchema("claim support bundles") }
+            }
+            if let scopes = schema.selectionScopes, let contracts = schema.supportContracts {
+                guard contracts.allSatisfy({ contract in
+                    guard let scope = scopes.first(where: { $0.claimID == contract.claimID }) else { return false }
+                    return contract.sufficientBundles.allSatisfy { bundle in
+                        Set(bundle).isSubset(of: Set(scope.evidenceIDs))
+                            && (scope.minimumSelections...scope.maximumSelections).contains(bundle.count)
+                    }
+                }) else { throw NFExerciseValidationError.invalidResponseSchema("claim support bundle scope") }
+            }
             for pair in schema.correctPairs {
                 guard claimIDs.contains(pair.claimID),
                       !pair.evidenceIDs.isEmpty,
@@ -251,14 +316,38 @@ enum NFExerciseSchemaValidator {
         case let .logicState(schema):
             guard !schema.initialState.isEmpty,
                   !schema.expectedFinalState.isEmpty,
-                  Set(schema.ruleOptions.map(\.id)).count == schema.ruleOptions.count else {
+                  Set(schema.ruleOptions.map(\.id)).count == schema.ruleOptions.count,
+                  schema.acceptedEquivalentStates.allSatisfy({ Set($0.keys) == Set(schema.expectedFinalState.keys) }) else {
                 throw NFExerciseValidationError.invalidResponseSchema("logic-state key")
+            }
+            if let domains = schema.fieldDomains {
+                let states = [schema.expectedFinalState] + schema.acceptedEquivalentStates
+                guard Set(domains.keys) == Set(schema.expectedFinalState.keys),
+                      states.allSatisfy({ state in state.allSatisfy { NFStateValueAuthority.isParseable($0.value, domain: domains[$0.key]) } }) else {
+                    throw NFExerciseValidationError.invalidResponseSchema("typed logic-state values")
+                }
+            }
+            guard !hasContradictoryEstimateExactNumericAliases(schema) else {
+                throw NFExerciseValidationError.invalidResponseSchema("contradictory estimate-exact numeric aliases")
             }
             if let expectedRule = schema.expectedViolatedRuleID {
                 guard schema.ruleOptions.contains(where: { $0.id == expectedRule }) else {
                     throw NFExerciseValidationError.invalidResponseSchema("unknown violated rule")
                 }
             }
+        }
+    }
+
+    /// This explicit contract promises a single exact numeric result. A regional
+    /// display such as "9.504" cannot alias 9504 under the canonical decimal
+    /// grammar. Estimates may legitimately differ, judgments may use reviewed
+    /// labels, and unrelated logic tasks may have distinct accepted outputs.
+    static func hasContradictoryEstimateExactNumericAliases(_ schema: NFLogicStateResponseSchema) -> Bool {
+        guard NFEstimateExactContract.isComposite(schema),
+              let exact = schema.expectedFinalState[NFEstimateExactContract.exactKey],
+              let canonical = NFStateValueAuthority.exactNumber(exact) else { return false }
+        return schema.acceptedEquivalentStates.contains { state in
+            NFStateValueAuthority.exactNumber(state[NFEstimateExactContract.exactKey] ?? "") != canonical
         }
     }
 
@@ -288,6 +377,7 @@ enum NFExerciseResponseValidationIssue: Equatable, Sendable {
     case claimEvidenceUnknown
     case claimEvidenceRelationships(claim: String, expected: Int, actual: Int)
     case logicStateIncomplete
+    case logicStateSyntax
     case logicRuleMissing
     case logicRuleUnknown
 
@@ -308,6 +398,7 @@ enum NFExerciseResponseValidationIssue: Equatable, Sendable {
         case .claimEvidenceUnknown: "claim_evidence_unknown"
         case .claimEvidenceRelationships: "claim_evidence_relationships"
         case .logicStateIncomplete: "logic_state_incomplete"
+        case .logicStateSyntax: "logic_state_syntax"
         case .logicRuleMissing: "logic_rule_missing"
         case .logicRuleUnknown: "logic_rule_unknown"
         }
@@ -350,6 +441,8 @@ enum NFExerciseResponseValidationIssue: Equatable, Sendable {
                 locale: NFAppLocalization.preferredLocale,
                 comment: "Claim-and-evidence validation guidance with a localized required evidence-item count, visible claim label, and current count."
             )
+        case .logicStateSyntax:
+            return NFAppLocalization.localized("Use a valid number or true/false in each typed state field.", locale: NFAppLocalization.preferredLocale, comment: "State response guidance when a numeric or Boolean field cannot be parsed; no answer is revealed.")
         case .logicStateIncomplete:
             return NFAppLocalization.localized("Complete every required final-state field.", locale: NFAppLocalization.preferredLocale, comment: "Logic-state response validation guidance for incomplete state fields.")
         case .logicRuleMissing:
@@ -445,18 +538,13 @@ enum NFExerciseResponseValidator {
                   }) else {
                 return invalid(.claimEvidenceUnknown)
             }
-            let expectedCounts = Dictionary(uniqueKeysWithValues: schema.correctPairs.map {
-                ($0.claimID, $0.evidenceIDs.count)
-            })
-            let claimLabels = Dictionary(uniqueKeysWithValues: schema.claims.map { ($0.id, $0.text) })
-            for pair in submission.pairs.sorted(by: { $0.claimID < $1.claimID }) {
-                let expected = expectedCounts[pair.claimID] ?? 0
-                guard pair.evidenceIDs.count == expected else {
-                    return invalid(.claimEvidenceRelationships(
-                        claim: claimLabels[pair.claimID] ?? pair.claimID,
-                        expected: expected,
-                        actual: pair.evidenceIDs.count
-                    ))
+            for scope in schema.selectionScopes ?? [] {
+                guard scope.schemaVersion == 1, scope.minimumSelections >= 0, scope.maximumSelections >= scope.minimumSelections,
+                      scope.maximumSelections <= scope.evidenceIDs.count,
+                      let pair = submission.pairs.first(where: { $0.claimID == scope.claimID }),
+                      Set(pair.evidenceIDs).isSubset(of: Set(scope.evidenceIDs)) else { return invalid(.claimEvidenceUnknown) }
+                if !(scope.minimumSelections...scope.maximumSelections).contains(pair.evidenceIDs.count) {
+                    return invalid(.selectionBounds(minimum: scope.minimumSelections, maximum: scope.maximumSelections, actual: pair.evidenceIDs.count))
                 }
             }
             return .valid
@@ -468,6 +556,9 @@ enum NFExerciseResponseValidator {
                       !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                   }) else {
                 return invalid(.logicStateIncomplete)
+            }
+            guard submission.finalState.allSatisfy({ NFStateValueAuthority.isParseable($0.value, domain: schema.fieldDomains?[$0.key]) }) else {
+                return invalid(.logicStateSyntax)
             }
             let availableRules = Set(schema.ruleOptions.map(\.id))
             if schema.expectedViolatedRuleID != nil, submission.violatedRuleID == nil {
@@ -492,6 +583,14 @@ enum NFExerciseResponseValidator {
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .replacingOccurrences(of: "−", with: "-")
         guard !number.isEmpty else { return invalid(.numericMissing) }
+        var inlineUnit: String?
+        if let regex = try? NSRegularExpression(pattern: #"^(.+?)\s+([A-Za-zµμ%][^\s]*)$"#),
+           let match = regex.firstMatch(in: number, range: NSRange(number.startIndex..., in: number)),
+           let valueRange = Range(match.range(at: 1), in: number),
+           let unitRange = Range(match.range(at: 2), in: number) {
+            inlineUnit = normalizeUnit(String(number[unitRange]))
+            number = String(number[valueRange])
+        }
 
         let hasInlinePercent = number.hasSuffix("%")
         if hasInlinePercent {
@@ -525,7 +624,8 @@ enum NFExerciseResponseValidator {
         if hasInlinePercent, let typedUnit, typedUnit != "%" {
             return invalid(.numericAmbiguous)
         }
-        let submittedUnit = hasInlinePercent ? "%" : typedUnit
+        if let inlineUnit, let typedUnit, inlineUnit != typedUnit { return invalid(.numericAmbiguous) }
+        let submittedUnit = hasInlinePercent ? "%" : (inlineUnit ?? typedUnit)
         if schema.answer.unitRequired, submittedUnit == nil {
             return invalid(.unitMissing)
         }
@@ -541,7 +641,7 @@ enum NFExerciseResponseValidator {
 
     static func normalizeUnit(_ unit: String) -> String {
         unit
-            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "en_US_POSIX"))
+            .folding(options: [.diacriticInsensitive, .widthInsensitive], locale: Locale(identifier: "en_US_POSIX"))
             .replacingOccurrences(of: " ", with: "")
             .replacingOccurrences(of: "μ", with: "u")
             .replacingOccurrences(of: "µ", with: "u")
@@ -706,7 +806,7 @@ enum NFExerciseResponseValidator {
 }
 
 enum NFExerciseScoringEngine {
-    static let scoringVersion = 7
+    static let scoringVersion = 8
 
     struct NumericAuthorityResult: Equatable, Sendable {
         let isCorrect: Bool
@@ -759,6 +859,13 @@ enum NFExerciseScoringEngine {
         _ submission: String,
         acceptedAnswers: [String]
     ) -> Bool {
+        if acceptedAnswers.contains(where: { $0.contains("F(b)") && $0.contains("F(a)") }) {
+            let text = submission.trimmingCharacters(in: .whitespacesAndNewlines)
+            if acceptedAnswers.contains(text) { return true }
+            let expression = text.replacingOccurrences(of: " minus ", with: "-")
+            return NFRestrictedSymbolicAuthority.compare(expression,
+                contract: NFSymbolicAnswerContract(acceptedExpressions: ["F(b)-F(a)"], variables: ["a", "b"], functions: ["F", "f"])) == .equivalent
+        }
         let normalizedSubmission = NFBundledRetrievalCatalog.normalized(submission)
         guard !normalizedSubmission.isEmpty else { return false }
         return acceptedAnswers.contains {
@@ -771,12 +878,42 @@ enum NFExerciseScoringEngine {
         for exercise: NFExercise,
         revealDelayedFeedback: Bool = false
     ) -> NFExerciseScoringResult {
+        guard NFExerciseSchemaValidator.supportsExerciseSchemaVersion(exercise.schemaVersion) else {
+            return NFExerciseScoringResult(exerciseID: exercise.id, scoringVersion: scoringVersion,
+                isCorrect: false, credit: 0, normalizedResponse: nil, errorCode: "unsupported_exercise_schema",
+                expectedAnswerSummary: nil, feedback: NFExerciseFeedback(title: "Question unavailable",
+                    explanation: "This saved work needs a compatible version of NeuroForge. Your original answers remain saved.",
+                    decisiveStep: nil, strategy: nil, errorCode: "unsupported_exercise_schema", isDelayed: false),
+                outcome: .invalidItem)
+        }
+        if let reason = exercise.availabilityReason {
+            return NFExerciseScoringResult(exerciseID: exercise.id, scoringVersion: scoringVersion,
+                isCorrect: false, credit: 0, normalizedResponse: nil, errorCode: "inventory_unavailable",
+                expectedAnswerSummary: nil, feedback: NFExerciseFeedback(title: "Question unavailable",
+                    explanation: reason, decisiveStep: nil, strategy: nil, errorCode: "inventory_unavailable", isDelayed: false),
+                outcome: .invalidItem)
+        }
+        do {
+            guard exercise.hasSupportedSpatialAssembly, exercise.hasSupportedCoordinateReasoning, exercise.hasSupportedNetFolding, exercise.hasSupportedSolidSection, exercise.hasSupportedCoordinateTransform, exercise.hasSupportedSpatialStructure, exercise.hasSupportedRetrievalAsset, exercise.hasSupportedRetrievalAuthorityRecipe, exercise.hasSupportedGraphConstruction, exercise.hasSupportedScienceStudy, exercise.hasSupportedTransferRelationship else {
+                throw NFExerciseValidationError.invalidResponseSchema("unsupported linked study contract")
+            }
+            try NFExerciseSchemaValidator.validateInteraction(exercise.interaction)
+        } catch {
+            return NFExerciseScoringResult(
+                exerciseID: exercise.id, scoringVersion: scoringVersion, isCorrect: false, credit: 0,
+                normalizedResponse: nil, errorCode: "invalid_item", expectedAnswerSummary: nil,
+                feedback: NFExerciseFeedback(title: "Question unavailable",
+                    explanation: "This question has an invalid answer contract. It will not count against you.",
+                    decisiveStep: nil, strategy: nil, errorCode: "invalid_item", isDelayed: false),
+                outcome: .invalidItem
+            )
+        }
         let validation = NFExerciseResponseValidator.validate(
             response,
             for: exercise.interaction,
             localeIdentifier: exercise.localeIdentifier
         )
-        let raw: RawScore
+        var raw: RawScore
         if let issue = validation.issue {
             raw = RawScore(
                 isCorrect: false,
@@ -787,11 +924,35 @@ enum NFExerciseScoringEngine {
         } else {
             raw = rawScore(
                 response,
-                interaction: exercise.interaction,
+                interaction: NFRetrievalResponseAuthority.auditedInteraction(for: exercise),
                 numericSubmission: validation.numericSubmission
             )
         }
-        let feedbackIsDelayed = exercise.feedback.timing == .afterAssessmentBlock && !revealDelayedFeedback
+        let isSelfReport: Bool = if case .selfCheck = exercise.interaction { true } else { false }
+        let needsClarification = validation.issue != nil || ["symbolic_unsupported", "prose_review_required"].contains(raw.errorCode ?? "")
+        if !raw.isCorrect && (!exercise.rubric.permitsPartialCredit || exercise.assessmentProtected) {
+            raw = RawScore(isCorrect: false, credit: 0, normalizedResponse: raw.normalizedResponse, errorCode: raw.errorCode)
+        }
+        let outcome: NFScoringOutcome = needsClarification ? .needsClarification
+            : (isSelfReport ? .selfReported : (raw.isCorrect ? .correct : (raw.credit > 0 ? .partial : .incorrect)))
+        let components = componentResults(response, interaction: exercise.interaction, raw: raw, outcome: outcome)
+        if needsClarification || isSelfReport {
+            let explanation = validation.issue?.guidance ?? (isSelfReport
+                ? "Your comparison is saved as a self-report. It does not establish independently verified correctness."
+                : (raw.errorCode == "symbolic_unsupported"
+                    ? "I could not interpret that formula. Use declared symbols, parentheses, and * for multiplication; variable denominators need separate review."
+                    : "This wording is outside the reviewed answer coverage. Compare it with the reference or report a grading issue."))
+            return NFExerciseScoringResult(
+                exerciseID: exercise.id, scoringVersion: scoringVersion, isCorrect: false, credit: 0,
+                normalizedResponse: raw.normalizedResponse, errorCode: raw.errorCode,
+                expectedAnswerSummary: isSelfReport && !exercise.assessmentProtected ? expectedAnswerSummary(exercise.interaction) : nil,
+                feedback: NFExerciseFeedback(title: isSelfReport ? "Self-check saved" : "Check your response",
+                    explanation: explanation, decisiveStep: nil, strategy: nil, errorCode: raw.errorCode, isDelayed: false),
+                outcome: outcome, components: components
+            )
+        }
+        let feedbackIsDelayed = exercise.assessmentProtected
+            || (exercise.feedback.timing == .afterAssessmentBlock && !revealDelayedFeedback)
 
         if feedbackIsDelayed {
             return NFExerciseScoringResult(
@@ -803,13 +964,14 @@ enum NFExerciseScoringEngine {
                 errorCode: raw.errorCode,
                 expectedAnswerSummary: nil,
                 feedback: NFExerciseFeedback(
-                    title: "Response recorded",
-                    explanation: "Feedback is available after this assessment block is complete.",
+                    title: "Answer saved",
+                    explanation: "Skill guidance is available when this assessment block is complete.",
                     decisiveStep: nil,
                     strategy: nil,
                     errorCode: nil,
                     isDelayed: true
-                )
+                ),
+                outcome: outcome, components: []
             )
         }
 
@@ -843,8 +1005,8 @@ enum NFExerciseScoringEngine {
             credit: raw.credit,
             normalizedResponse: raw.normalizedResponse,
             errorCode: raw.errorCode,
-            expectedAnswerSummary: expectedAnswerSummary(exercise.interaction),
-            feedback: feedback
+            expectedAnswerSummary: exercise.contractMetadata?.solidSection?.exactAnswerSummary ?? NFTransferRelationshipContract.make(exercise: exercise).flatMap { $0.responseText($0.expectedResponse) } ?? expectedAnswerSummary(exercise.interaction),
+            feedback: feedback, outcome: outcome, components: components
         )
     }
 
@@ -963,10 +1125,11 @@ enum NFExerciseScoringEngine {
                 errorCode: "selection_bounds"
             )
         }
-        let expected = Set(schema.correctOptionIDs)
-        let union = selected.union(expected)
-        let credit = union.isEmpty ? 1 : Double(selected.intersection(expected).count) / Double(union.count)
-        let correct = selected == expected
+        let accepted = [Set(schema.correctOptionIDs)] + (schema.acceptedAlternativeSets ?? []).map(Set.init)
+        let credit = accepted.map { expected in
+            max(0, Double(selected.intersection(expected).count - selected.subtracting(expected).count) / Double(max(1, expected.count)))
+        }.max() ?? 0
+        let correct = accepted.contains(selected)
         return RawScore(
             isCorrect: correct,
             credit: credit,
@@ -988,11 +1151,13 @@ enum NFExerciseScoringEngine {
                 errorCode: "ordered_steps_membership"
             )
         }
-        let positionMatches = zip(stepIDs, expected).filter(==).count
-        let correct = stepIDs == expected
+        let edges = NFOrderingAuthority.dependencies(for: schema)
+        let positions = Dictionary(uniqueKeysWithValues: stepIDs.enumerated().map { ($0.element, $0.offset) })
+        let matched = edges.filter { (positions[$0.before] ?? Int.max) < (positions[$0.after] ?? Int.min) }.count
+        let correct = matched == edges.count
         return RawScore(
             isCorrect: correct,
-            credit: Double(positionMatches) / Double(expected.count),
+            credit: edges.isEmpty ? 1 : Double(matched) / Double(edges.count),
             normalizedResponse: stepIDs.joined(separator: ">"),
             errorCode: correct ? nil : "ordered_steps_sequence"
         )
@@ -1010,6 +1175,14 @@ enum NFExerciseScoringEngine {
             return RawScore(isCorrect: false, credit: 0, normalizedResponse: normalized, errorCode: "text_too_long")
         }
 
+        if let authority = schema.authority {
+            if !NFRetrievalResponseAuthority.requiresStrictDispatch(authority),
+               case let .normalizedExact(acceptedAnswers) = schema.scoringRule,
+               acceptedAnswers.contains(response.trimmingCharacters(in: .whitespacesAndNewlines)) {
+                return RawScore(isCorrect: true, credit: 1, normalizedResponse: response, errorCode: nil)
+            }
+            return scoreTextAuthority(response, authority: authority)
+        }
         switch schema.scoringRule {
         case let .normalizedExact(acceptedAnswers):
             let exactNormalized = NFBundledRetrievalCatalog.normalized(response)
@@ -1082,25 +1255,100 @@ enum NFExerciseScoringEngine {
         }
     }
 
-    private static func scoreSelfCheck(_ submission: NFSelfCheckSubmission) -> RawScore {
-        switch submission.rating {
-        case .matched:
-            RawScore(isCorrect: true, credit: 1, normalizedResponse: submission.rating.rawValue, errorCode: nil)
-        case .partiallyMatched:
-            RawScore(
-                isCorrect: false,
-                credit: 0.5,
-                normalizedResponse: submission.rating.rawValue,
-                errorCode: "self_check_partial"
-            )
-        case .notYet:
-            RawScore(
-                isCorrect: false,
-                credit: 0,
-                normalizedResponse: submission.rating.rawValue,
-                errorCode: "self_check_not_yet"
-            )
+    private static func scoreTextAuthority(_ response: String, authority: NFShortTextAuthority) -> RawScore {
+        func result(_ correct: Bool, _ code: String? = nil, parsed: String? = nil) -> RawScore {
+            RawScore(isCorrect: correct, credit: correct ? 1 : 0,
+                normalizedResponse: parsed ?? response.trimmingCharacters(in: .whitespacesAndNewlines),
+                errorCode: correct ? nil : (code ?? "text_answer"))
         }
+        switch authority {
+        case let .symbolic(contract):
+            switch NFRestrictedSymbolicAuthority.compare(response, contract: contract) {
+            case .equivalent: return result(true)
+            case .different: return result(false, "symbolic_value")
+            case .unsupported: return result(false, "symbolic_unsupported")
+            }
+        case let .unsignedBinaryNumeral(contract):
+            guard contract.isSupported, let canonical = contract.canonical(response) else { return result(false, "symbolic_unsupported") }
+            return result(canonical == contract.expectedDigits, "text_answer", parsed: canonical)
+        case let .identifier(acceptedAnswers):
+            return result(acceptedAnswers.contains(response.trimmingCharacters(in: .whitespacesAndNewlines)))
+        case let .reviewedProse(acceptedAnswers, rejectedAssertions):
+            let normalized = normalizeText(response)
+            if acceptedAnswers.map(normalizeText).contains(normalized) { return result(true, parsed: normalized) }
+            if rejectedAssertions.contains(where: { normalized.contains(normalizeText($0)) }) {
+                return result(false, "text_contradiction", parsed: normalized)
+            }
+            return result(false, "prose_review_required", parsed: normalized)
+        case let .exactQuantity(schema):
+            let text = response.trimmingCharacters(in: .whitespacesAndNewlines)
+            let pattern = #"^([+\-−]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+\-]?[0-9]+)?(?:\s*/\s*[+\-]?[0-9]+)?)(?:\s*([^0-9\s].*))?$"#
+            guard let regex = try? NSRegularExpression(pattern: pattern),
+                  let match = regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)),
+                  let valueRange = Range(match.range(at: 1), in: text) else { return result(false, "symbolic_unsupported") }
+            let unit = Range(match.range(at: 2), in: text).map { String(text[$0]) }
+            let validation = NFExerciseResponseValidator.validateNumeric(
+                NFNumericSubmission(value: String(text[valueRange]), unit: unit), schema: schema)
+            guard let parsed = validation.numericSubmission, validation.isValid else { return result(false, "symbolic_unsupported") }
+            return scoreNumeric(parsed, schema: schema)
+        }
+    }
+
+    private static func componentResults(
+        _ response: NFExerciseResponse, interaction: NFExerciseInteraction,
+        raw: RawScore, outcome: NFScoringOutcome
+    ) -> [NFScoringComponentResult] {
+        func component(_ id: String, _ submitted: String, _ parsed: String?, _ credit: Double,
+                       _ maximum: Double, _ code: String? = nil) -> NFScoringComponentResult {
+            let componentOutcome: NFScoringOutcome = outcome.objectiveCorrectness == nil ? outcome
+                : (credit == maximum ? .correct : (credit > 0 ? .partial : .incorrect))
+            return NFScoringComponentResult(id: id, submittedValue: submitted, parsedValue: parsed,
+                ruleVersion: scoringVersion, outcome: componentOutcome, awardedCredit: credit,
+                maximumCredit: maximum, misconceptionCode: code,
+                explanation: componentOutcome == .correct ? "This part matches the answer contract."
+                    : (componentOutcome.objectiveCorrectness == nil ? "This part has no objective score." : "Recheck this part of your response."))
+        }
+        if case let .logicState(schema) = interaction, case let .logicState(submission) = response {
+            let keys = schema.expectedFinalState.keys.sorted()
+            let accepted = ([schema.expectedFinalState] + schema.acceptedEquivalentStates).max { a, b in
+                keys.filter { NFStateValueAuthority.equivalent(submission.finalState[$0] ?? "", a[$0] ?? "", domain: schema.fieldDomains?[$0]) }.count
+                < keys.filter { NFStateValueAuthority.equivalent(submission.finalState[$0] ?? "", b[$0] ?? "", domain: schema.fieldDomains?[$0]) }.count
+            } ?? schema.expectedFinalState
+            let maximum = (schema.expectedViolatedRuleID == nil ? 1.0 : 0.8) / Double(max(1, keys.count))
+            var parts = keys.map { key in
+                let input = submission.finalState[key] ?? ""
+                let correct: Bool = if let policy = schema.plausibilityPolicy, key == policy.judgmentKey {
+                    policy.accepts(submission.finalState)
+                } else {
+                    NFStateValueAuthority.equivalent(input, accepted[key] ?? "", domain: schema.fieldDomains?[key])
+                }
+                return component(key, input, input.trimmingCharacters(in: .whitespacesAndNewlines), correct ? maximum : 0, maximum, correct ? nil : "logic_state")
+            }
+            if schema.expectedViolatedRuleID != nil {
+                let correct = submission.violatedRuleID == schema.expectedViolatedRuleID
+                parts.append(component("invariant", submission.violatedRuleID ?? "", submission.violatedRuleID, correct ? 0.2 : 0, 0.2, correct ? nil : "logic_rule"))
+            }
+            // Exact-set contracts may suppress component credit; preserve
+            // inspection while ensuring the awarded amounts sum to the result.
+            if raw.credit == 0 && parts.contains(where: { $0.awardedCredit > 0 }) {
+                return [component("response", raw.normalizedResponse ?? "", raw.normalizedResponse, 0, 1, raw.errorCode)]
+            }
+            return parts
+        }
+        let submitted: String
+        switch response {
+        case let .numeric(value): submitted = value.value + (value.unit.map { " \($0)" } ?? "")
+        case let .shortText(value): submitted = value
+        case let .singleChoice(id): submitted = id
+        case let .multipleChoice(ids), let .orderedSteps(ids): submitted = ids.joined(separator: ", ")
+        case let .selfCheck(value): submitted = value.rating.rawValue
+        case .claimEvidence, .logicState: submitted = raw.normalizedResponse ?? ""
+        }
+        return [component("response", submitted, raw.normalizedResponse, raw.credit, 1, raw.errorCode)]
+    }
+
+    private static func scoreSelfCheck(_ submission: NFSelfCheckSubmission) -> RawScore {
+        RawScore(isCorrect: false, credit: 0, normalizedResponse: submission.rating.rawValue, errorCode: nil)
     }
 
     private static func scoreClaimEvidence(
@@ -1115,16 +1363,21 @@ enum NFExerciseScoringEngine {
             return RawScore(isCorrect: false, credit: 0, normalizedResponse: nil, errorCode: "claim_evidence_unknown")
         }
 
-        let expectedMap = pairMap(schema.correctPairs)
-        let claimIDs = Set(expectedMap.keys).union(submittedMap.keys)
-        let scores = claimIDs.map { claimID -> Double in
-            let expected = expectedMap[claimID] ?? []
-            let selected = submittedMap[claimID] ?? []
-            let union = expected.union(selected)
-            return union.isEmpty ? 1 : Double(expected.intersection(selected).count) / Double(union.count)
+        let contracts = schema.supportContracts ?? schema.correctPairs.map {
+            NFClaimSupportContract(claimID: $0.claimID, sufficientBundles: [$0.evidenceIDs])
+        }
+        let scores = contracts.map { contract -> Double in
+            let selected = submittedMap[contract.claimID] ?? []
+            return contract.sufficientBundles.map { bundle in
+                let expected = Set(bundle)
+                return max(0, Double(selected.intersection(expected).count - selected.subtracting(expected).count)
+                    / Double(max(1, expected.count)))
+            }.max() ?? 0
         }
         let credit = scores.isEmpty ? 0 : scores.reduce(0, +) / Double(scores.count)
-        let correct = submittedMap == expectedMap
+        let correct = contracts.allSatisfy { contract in
+            contract.sufficientBundles.contains { Set($0) == (submittedMap[contract.claimID] ?? []) }
+        }
         return RawScore(
             isCorrect: correct,
             credit: credit,
@@ -1138,9 +1391,17 @@ enum NFExerciseScoringEngine {
         schema: NFLogicStateResponseSchema
     ) -> RawScore {
         let acceptedStates = [schema.expectedFinalState] + schema.acceptedEquivalentStates
-        let stateCorrect = acceptedStates.contains(submission.finalState)
         let keys = Set(schema.expectedFinalState.keys)
-        let matchingKeys = keys.filter { submission.finalState[$0] == schema.expectedFinalState[$0] }.count
+        let matchingKeys = acceptedStates.map { accepted in
+            keys.filter { key in
+                if let policy = schema.plausibilityPolicy, key == policy.judgmentKey {
+                    return policy.accepts(submission.finalState)
+                }
+                return NFStateValueAuthority.equivalent(submission.finalState[key] ?? "", accepted[key] ?? "",
+                    domain: schema.fieldDomains?[key])
+            }.count
+        }.max() ?? 0
+        let stateCorrect = matchingKeys == keys.count
         let stateCredit = keys.isEmpty ? 0 : Double(matchingKeys) / Double(keys.count)
 
         let ruleCorrect = submission.violatedRuleID == schema.expectedViolatedRuleID

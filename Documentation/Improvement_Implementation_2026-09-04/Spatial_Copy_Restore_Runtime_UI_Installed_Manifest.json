@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-09-05T16:43:10.035922+00:00",
+  "sourceInputManifestDigest": "b2e0798cae83ce32ea705a5ea0c22bc420fe6e35dc7b0a72525f3b33b9656245",
+  "simulatorUDID": "064C7C8F-D941-4D8C-9B55-958F4123AF02",
+  "scope": "Installed science/trace/data rerun after long label and placeholder identity corrections; result requires per-journey inspection.",
+  "files": [
+    {
+      "builtPath": "/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForge.app/NeuroForge",
+      "installedPath": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/387C53E6-DC40-44D5-9582-65D5648EC9E9/NeuroForge.app/NeuroForge",
+      "builtSHA256": "064490886945fd4ecc5fe41c9ee2270ecd43fabc0f844c0608b5f18050c6fa75",
+      "installedSHA256": "064490886945fd4ecc5fe41c9ee2270ecd43fabc0f844c0608b5f18050c6fa75"
+    },
+    {
+      "builtPath": "/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForge.app/NeuroForge.debug.dylib",
+      "installedPath": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/387C53E6-DC40-44D5-9582-65D5648EC9E9/NeuroForge.app/NeuroForge.debug.dylib",
+      "builtSHA256": "e8f58e9f8e82440d5d22bd687801d30ba41c624ca369da129700c3f00cbdc329",
+      "installedSHA256": "e8f58e9f8e82440d5d22bd687801d30ba41c624ca369da129700c3f00cbdc329"
+    },
+    {
+      "builtPath": "/tmp/NeuroForge-improvement-ios/Build/Products/Debug-iphonesimulator/NeuroForgeUITests-Runner.app/PlugIns/NeuroForgeUITests.xctest/NeuroForgeUITests",
+      "installedPath": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/29D8A7FB-EDEB-4FE0-AD89-F1E3B4D4742A/NeuroForgeUITests-Runner.app/PlugIns/NeuroForgeUITests.xctest/NeuroForgeUITests",
+      "builtSHA256": "aef22f3dac67f08e5277b8cd59a4a3c746fbb798277738d2ccf53a49f1e2720f",
+      "installedSHA256": "aef22f3dac67f08e5277b8cd59a4a3c746fbb798277738d2ccf53a49f1e2720f"
+    }
+  ],
+  "runnerContainerObserved": {
+    "pid": 59765,
+    "path": "/Users/takamimarsh/Library/Developer/CoreSimulator/Devices/064C7C8F-D941-4D8C-9B55-958F4123AF02/data/Containers/Bundle/Application/FE6D2F28-A460-473B-9AE6-D14707C2EBB2/NeuroForgeUITests-Runner.app/PlugIns/NeuroForgeUITests.xctest/NeuroForgeUITests",
+    "sha256": "aef22f3dac67f08e5277b8cd59a4a3c746fbb798277738d2ccf53a49f1e2720f",
+    "basis": "pgrep observed live runner executable in this exact new container; plugin file SHA256 checked after process exit. Loaded-plugin lsof check was missed; this is weaker than loaded image verification."
+  }
+}
